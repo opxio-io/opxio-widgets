@@ -31,6 +31,21 @@ export default async function handler(req, res) {
   try {
     const data = await fetchProposalData(pageId, token)
 
+    // Fetch page blocks for custom content
+    let customBlocks = []
+    try {
+      const br = await fetch(`https://api.notion.com/v1/blocks/${pageId}/children?page_size=100`, {
+        headers: { Authorization: `Bearer ${token}`, "Notion-Version": "2022-06-28" }
+      })
+      const bd = await br.json()
+      customBlocks = (bd.results || []).map(b => {
+        const type = b.type
+        const richText = b[type]?.rich_text || []
+        const text = richText.map(t => t.plain_text).join("")
+        return { type, text }
+      }).filter(b => b.text)
+    } catch {}
+
     // Query overrides — allow editor to preview live edits before saving
     const q = req.query
     if (q.situation       !== undefined) data.situation       = q.situation
@@ -85,6 +100,7 @@ export default async function handler(req, res) {
       modules,
       addons_now:   addonNowItems,
       addons_later: addonsLater,
+      custom_blocks: customBlocks,
     })
 
     res.setHeader("Content-Type", "text/html; charset=utf-8")

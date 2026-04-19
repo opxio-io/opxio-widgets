@@ -151,6 +151,8 @@ export default function ProposalEditor() {
   const [notionPlan,     setNotionPlan]     = useState("")
   const [installTier,    setInstallTier]    = useState("")
   const [retainer,       setRetainer]       = useState("")
+  const [blocks,         setBlocks]         = useState([])
+  const [blocksLoading,  setBlocksLoading]  = useState(false)
 
   const saveTimerRef = useRef(null)
   const pendingRef   = useRef({})
@@ -180,6 +182,19 @@ export default function ProposalEditor() {
         console.error(e)
         setLoading(false)
       })
+
+    // Load page blocks
+    setBlocksLoading(true)
+    fetch(`/api/proposals/${id}/blocks`)
+      .then(r => r.json())
+      .then(d => {
+        setBlocks(d.blocks || [])
+        setBlocksLoading(false)
+      })
+      .catch(e => {
+        console.error("Blocks load failed:", e)
+        setBlocksLoading(false)
+      })
   }, [id])
 
   // ── Debounced auto-save ───────────────────────────────────────────────────
@@ -208,6 +223,24 @@ export default function ProposalEditor() {
       }
     }, 1200)
   }, [id])
+
+  // ── Save blocks ───────────────────────────────────────────────────────────
+  const saveBlocks = async () => {
+    setSaveStatus("saving")
+    try {
+      await fetch(`/api/proposals/${id}/blocks`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ blocks })
+      })
+      setSaveStatus("saved")
+      setPreviewKey(k => k + 1)
+      setTimeout(() => setSaveStatus("idle"), 2000)
+    } catch (e) {
+      setSaveStatus("error")
+      setTimeout(() => setSaveStatus("idle"), 3000)
+    }
+  }
 
   // ── Export PDF ────────────────────────────────────────────────────────────
   const exportPdf = async () => {
@@ -421,6 +454,54 @@ export default function ProposalEditor() {
                   onBlur={() => scheduleSave({ valid_until: validUntil })}
                 />
               </Field>
+            </div>
+
+            {/* Page Content */}
+            <div style={{ marginBottom: 32 }}>
+              <SectionHeader title="Page Content" icon="📝" />
+              <p style={{ fontSize: 11, color: "#555", marginBottom: 14, lineHeight: 1.5 }}>
+                Add notes or custom text to include in the proposal. Each block renders as a paragraph, heading, or bullet in the PDF.
+              </p>
+
+              {blocks.map((block, i) => (
+                <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+                  <select
+                    value={block.type}
+                    onChange={e => {
+                      const nb = [...blocks]; nb[i] = { ...nb[i], type: e.target.value }; setBlocks(nb)
+                    }}
+                    style={{ background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#888", fontSize: 11, padding: "6px 8px", flexShrink: 0, width: 110 }}
+                  >
+                    <option value="paragraph">Paragraph</option>
+                    <option value="heading_1">Heading 1</option>
+                    <option value="heading_2">Heading 2</option>
+                    <option value="bulleted_list_item">Bullet</option>
+                  </select>
+                  <textarea
+                    value={block.text}
+                    onChange={e => {
+                      const nb = [...blocks]; nb[i] = { ...nb[i], text: e.target.value }; setBlocks(nb)
+                    }}
+                    rows={2}
+                    style={{ flex: 1, background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#FFF", fontFamily: "inherit", fontSize: 12, padding: "6px 10px", resize: "vertical", outline: "none", lineHeight: 1.6 }}
+                  />
+                  <button
+                    onClick={() => setBlocks(blocks.filter((_, j) => j !== i))}
+                    style={{ background: "none", border: "1px solid #2A2A2A", borderRadius: 4, color: "#555", width: 28, cursor: "pointer", flexShrink: 0, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >×</button>
+                </div>
+              ))}
+
+              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+                <button
+                  onClick={() => setBlocks([...blocks, { type: "paragraph", text: "" }])}
+                  style={{ flex: 1, background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#666", fontSize: 11, fontWeight: 600, padding: "8px", cursor: "pointer", letterSpacing: ".05em" }}
+                >+ Add Block</button>
+                <button
+                  onClick={saveBlocks}
+                  style={{ background: "#AAFF00", border: "none", borderRadius: 4, color: "#000", fontSize: 11, fontWeight: 700, padding: "8px 14px", cursor: "pointer", letterSpacing: ".08em", textTransform: "uppercase" }}
+                >Save</button>
+              </div>
             </div>
 
             {/* Refresh preview */}

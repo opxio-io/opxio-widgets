@@ -5,10 +5,16 @@ import { useState, useEffect, useRef, useCallback } from "react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 
+// Core OS (combinable)
 const OS_OPTIONS = [
-  "Revenue OS", "Operations OS", "Marketing OS", "Finance OS",
-  "Business OS", "Agency OS", "Team OS", "Retention OS", "Sales OS",
-  "Starter OS", "Intelligence OS",
+  "Revenue OS",
+  "Operations OS",
+  "Marketing OS",
+  "Finance OS",
+  // Additional layers
+  "Team OS",
+  "Retention OS",
+  "Sales OS",
 ]
 
 const RETAINER_OPTIONS = [

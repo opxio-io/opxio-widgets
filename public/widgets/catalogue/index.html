@@ -189,6 +189,16 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#0D0D0D;color:#ff
 .d-pills{display:flex;flex-wrap:wrap;gap:5px;}
 .d-avail-chip{background:var(--gm);border:1px solid var(--gb);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:var(--g);}
 .d-req-chip{background:rgba(255,154,60,.07);border:1px solid rgba(255,154,60,.14);border-radius:6px;padding:3px 9px;font-size:11px;font-weight:600;color:rgba(255,154,60,.75);}
+.d-req-banner{display:flex;align-items:flex-start;gap:10px;background:rgba(255,154,60,.07);border:1px solid rgba(255,154,60,.2);border-radius:10px;padding:12px 14px;margin-top:12px;}
+.d-req-banner-icon{font-size:14px;line-height:1;flex-shrink:0;margin-top:1px;}
+.d-req-banner-label{font-size:9px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,154,60,.5);margin-bottom:3px;}
+.d-req-banner-val{font-size:12px;font-weight:600;color:rgba(255,154,60,.85);line-height:1.4;}
+.d-layers-list{display:flex;flex-direction:column;gap:6px;}
+.d-layer-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(170,255,0,.04);border:1px solid rgba(170,255,0,.08);border-radius:8px;padding:9px 12px;}
+.d-layer-info{display:flex;flex-direction:column;gap:2px;}
+.d-layer-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.7);}
+.d-layer-req{font-size:10px;font-weight:500;color:rgba(255,255,255,.25);}
+.d-layer-price{font-size:13px;font-weight:900;color:var(--g);letter-spacing:-.02em;flex-shrink:0;}
 .d-tier-row{display:flex;align-items:center;gap:8px;}
 .d-tier-dot{width:8px;height:8px;border-radius:50%;}
 .d-tier-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.4);}
@@ -906,7 +916,21 @@ function openDrawer(idx){
     </div>`
     if (item.model) body += `<div class="d-sub">${item.model}${item.model === 'Setup + Subscription' && item.monthly ? ` · ${sym()} ${fmtAmt(item.monthly).toLocaleString()}/mo from Month ${item.term||'6'}` : ''}</div>`
   }
-  body += `</div><div class="d-divider"></div>`
+  body += `</div>`
+
+  // Requires — prominent banner right under price for Additional OS Layers
+  const reqNames = item.requiresNames && item.requiresNames.length ? item.requiresNames
+    : (item.tier === 'Additional OS Layer' ? (ADDON_OS.find(a=>a.name===item.name)?.req ? [ADDON_OS.find(a=>a.name===item.name).req] : null) : null)
+  if (reqNames && reqNames.length){
+    body += `<div class="d-req-banner">
+      <div class="d-req-banner-icon">⚠</div>
+      <div>
+        <div class="d-req-banner-label">Requires</div>
+        <div class="d-req-banner-val">${reqNames.join(' + ')} must be installed for this OS to function</div>
+      </div>
+    </div>`
+  }
+  body += `<div class="d-divider"></div>`
 
   // About
   const desc = MODULE_DESC[item.name] || item.desc
@@ -930,6 +954,30 @@ function openDrawer(idx){
       <div style="font-size:10px;font-weight:700;color:rgba(170,255,0,.4);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;">Base OS — Complimentary</div>
       <div class="d-db-row">${['Companies & People','Client Accounts','Team Members & Staff Directory','Company Profile','Dashboard Hub'].map(m=>`<span class="d-db-chip">${m}</span>`).join('')}</div>
     </div><div class="d-divider"></div>`
+
+    // Add-on OS Layers available for this OS Package
+    if (item.tier === 'OS Package'){
+      const availLayers = allItems.filter(x =>
+        x.tier === 'Additional OS Layer' && x.name !== 'Base OS' &&
+        (x.requiresNames.length === 0 || x.requiresNames.includes(item.name))
+      )
+      if (availLayers.length){
+        body += `<div class="d-section"><div class="d-label">Add-on OS Layers</div>`
+        body += `<div class="d-layers-list">`
+        availLayers.forEach(layer => {
+          const price = livePrice(layer.name) ?? layer.price
+          const reqLabel = layer.requiresNames.length ? `Req: ${layer.requiresNames.join(' + ')}` : 'No dependency'
+          body += `<div class="d-layer-row">
+            <div class="d-layer-info">
+              <div class="d-layer-name">${layer.name}</div>
+              <div class="d-layer-req">${reqLabel}</div>
+            </div>
+            <div class="d-layer-price">${sym()} ${fmtAmt(price).toLocaleString()}</div>
+          </div>`
+        })
+        body += `</div></div><div class="d-divider"></div>`
+      }
+    }
   }
 
   // Databases
@@ -949,12 +997,7 @@ function openDrawer(idx){
     body += `</div></div>`
   }
 
-  // Requires
-  if (item.requiresNames && item.requiresNames.length){
-    body += `<div class="d-section"><div class="d-label">Requires</div><div class="d-pills">`
-    item.requiresNames.forEach(r => { body += `<span class="d-req-chip">${r}</span>` })
-    body += `</div></div>`
-  }
+  // (Requires shown as banner under pricing — not repeated here)
 
   // ── Edit form (Opxio only, edit mode active) ─────────────────────────────
   if (isOpxio && editMode){

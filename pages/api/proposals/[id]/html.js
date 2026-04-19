@@ -9,6 +9,7 @@ import {
   OS_DEFAULT_ADDONS_LATER,
   renderProposal,
 } from "../../../../lib/proposal_template"
+import { fetchCatalogueForProposal } from "../../../../lib/catalogue"
 
 function fmtDate(iso) {
   if (!iso) return ""
@@ -29,7 +30,11 @@ export default async function handler(req, res) {
   const token  = process.env.NOTION_API_KEY
 
   try {
-    const data = await fetchProposalData(pageId, token)
+    // Fetch proposal data, page blocks, and catalogue modules in parallel
+    const [data, catalogueData] = await Promise.all([
+      fetchProposalData(pageId, token),
+      fetchCatalogueForProposal(token).catch(() => ({ modulesByOs: {}, osOptions: [] })),
+    ])
 
     // Fetch page blocks for custom content
     let customBlocks = []
@@ -57,8 +62,14 @@ export default async function handler(req, res) {
     if (q.notion_plan     !== undefined) data.notion_plan     = q.notion_plan
     if (q.install_tier    !== undefined) data.install_tier    = q.install_tier
 
-    const osType     = data.os_type || ""
-    const modules    = OS_DEFAULT_MODULES[osType] || {}
+    const osType = data.os_type || ""
+
+    // Build modules: prefer live Catalogue data, fall back to hardcoded defaults
+    const liveMods = catalogueData.modulesByOs[osType]
+    const modules  = liveMods
+      ? { [osType]: liveMods }
+      : (OS_DEFAULT_MODULES[osType] || {})
+
     const addonsLater = OS_DEFAULT_ADDONS_LATER[osType] || []
 
     const coreItems  = (data.line_items || []).filter(i => isCoreItem(i.name || ""))

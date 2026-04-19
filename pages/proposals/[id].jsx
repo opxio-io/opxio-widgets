@@ -6,15 +6,15 @@ import Head from "next/head"
 import { useRouter } from "next/router"
 
 // Core OS (combinable)
-const OS_OPTIONS = [
-  "Revenue OS",
-  "Operations OS",
-  "Marketing OS",
-  "Finance OS",
-  // Additional layers
-  "Team OS",
-  "Retention OS",
-  "Sales OS",
+// OS options are loaded dynamically from Catalogue — this is a fallback only
+const OS_OPTIONS_FALLBACK = [
+  { name: "Revenue OS",    tier: "OS Package" },
+  { name: "Operations OS", tier: "OS Package" },
+  { name: "Marketing OS",  tier: "OS Package" },
+  { name: "Finance OS",    tier: "OS Package" },
+  { name: "Team OS",       tier: "Additional OS Layer" },
+  { name: "Retention OS",  tier: "Additional OS Layer" },
+  { name: "Sales OS",      tier: "Additional OS Layer" },
 ]
 
 const RETAINER_OPTIONS = [
@@ -171,6 +171,7 @@ export default function ProposalEditor() {
   const [previewKey,  setPreviewKey]  = useState(0)
   const [exporting,   setExporting]   = useState(false)
   const [editMode,    setEditMode]    = useState(false)
+  const [osOptions,   setOsOptions]   = useState(OS_OPTIONS_FALLBACK)
 
   // Editable fields
   const [situation,      setSituation]      = useState("")
@@ -202,7 +203,8 @@ export default function ProposalEditor() {
     Promise.all([
       fetch(`/api/proposals/${id}`).then(r => r.json()),
       fetch(`/api/proposals/${id}/blocks`).then(r => r.json()),
-    ]).then(([d, b]) => {
+      fetch(`/api/proposals/catalogue-options`).then(r => r.json()).catch(() => null),
+    ]).then(([d, b, cat]) => {
       setData(d)
       setSituation(d.situation           || "")
       setProblemsSolved(d.problems_solved || "")
@@ -216,6 +218,7 @@ export default function ProposalEditor() {
       setInstallTier(d.install_tier      || "Standard")
       setRetainer(d.retainer             || "maintenance")
       setBlocks(b.blocks                 || [])
+      if (cat?.osOptions?.length) setOsOptions(cat.osOptions)
       setLoading(false)
     }).catch(() => setLoading(false))
   }, [id])
@@ -502,11 +505,19 @@ export default function ProposalEditor() {
                 <select
                   className="f-select"
                   value={osType}
-                  onChange={e => setOsType(e.target.value)}
-                  onBlur={() => scheduleSave({ os_type: osType })}
+                  onChange={e => { setOsType(e.target.value); scheduleSave({ os_type: e.target.value }) }}
                 >
                   <option value="">— select OS —</option>
-                  {OS_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                  <optgroup label="Core OS">
+                    {osOptions.filter(o => o.tier === "OS Package").map(o => (
+                      <option key={o.name} value={o.name}>{o.name}</option>
+                    ))}
+                  </optgroup>
+                  <optgroup label="Additional Layers">
+                    {osOptions.filter(o => o.tier === "Additional OS Layer").map(o => (
+                      <option key={o.name} value={o.name}>{o.name}</option>
+                    ))}
+                  </optgroup>
                 </select>
               </Field>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>

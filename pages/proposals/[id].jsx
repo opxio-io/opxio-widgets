@@ -183,6 +183,10 @@ export default function ProposalEditor() {
   const saveTimerRef      = useRef(null)
   const pendingRef        = useRef({})
   const blockSaveTimerRef = useRef(null)
+  const editModeRef       = useRef(false)
+
+  // Keep editModeRef in sync so callbacks can read it without stale closure
+  useEffect(() => { editModeRef.current = editMode }, [editMode])
 
   // ── Load data ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -226,7 +230,8 @@ export default function ProposalEditor() {
         })
         if (!r.ok) throw new Error()
         setSaveStatus("saved")
-        setPreviewKey(k => k + 1)
+        // Don't reload iframe while user is actively editing inline
+        if (!editModeRef.current) setPreviewKey(k => k + 1)
         setTimeout(() => setSaveStatus("idle"), 2000)
       } catch {
         setSaveStatus("error")
@@ -288,7 +293,7 @@ export default function ProposalEditor() {
         body: JSON.stringify({ blocks }),
       })
       setSaveStatus("saved")
-      setPreviewKey(k => k + 1)
+      if (!editModeRef.current) setPreviewKey(k => k + 1)
       setTimeout(() => setSaveStatus("idle"), 2000)
     } catch {
       setSaveStatus("error")

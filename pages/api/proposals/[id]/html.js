@@ -81,7 +81,7 @@ export default async function handler(req, res) {
       data.goals           ? { label: "Goals",           text: data.goals }           : null,
     ].filter(Boolean)
 
-    const html = renderProposal({
+    let html = renderProposal({
       ref_number:   data.proposal_no || "",
       date:         fmtDate(data.issue_date) || new Date().toLocaleDateString("en-MY", { month: "long", year: "numeric" }),
       valid_until:  fmtDate(data.valid_until),
@@ -102,6 +102,65 @@ export default async function handler(req, res) {
       addons_later: addonsLater,
       custom_blocks: customBlocks,
     })
+
+    // ── Edit mode: inject contenteditable + postMessage script ──────────────
+    if (req.query.edit === "1") {
+      const editScript = `<script>
+(function(){
+  // Styles
+  var s=document.createElement('style');
+  s.textContent=
+    '[contenteditable]{outline:none;cursor:text;transition:box-shadow .15s}'
+   +'[contenteditable]:hover{box-shadow:0 0 0 2px rgba(170,255,0,.35);border-radius:3px}'
+   +'[contenteditable]:focus{box-shadow:0 0 0 2px #AAFF00;border-radius:3px;background:rgba(170,255,0,.04)}'
+   +'#_eb{position:fixed;top:0;left:0;right:0;background:#AAFF00;color:#000;'
+   +'text-align:center;font-size:11px;font-family:-apple-system,sans-serif;'
+   +'font-weight:700;padding:6px;z-index:9999;letter-spacing:.06em}';
+  document.head.appendChild(s);
+
+  // Banner
+  var banner=document.createElement('div');
+  banner.id='_eb';
+  banner.textContent='\u270f  EDIT MODE \u2014 click any highlighted text to edit \u00b7 saves automatically';
+  document.body.prepend(banner);
+  document.body.style.paddingTop='28px';
+
+  // Make situation fields editable
+  document.querySelectorAll('[data-field]').forEach(function(el){
+    el.contentEditable='true';
+  });
+  // Make custom block elements editable
+  document.querySelectorAll('[data-block-idx]').forEach(function(el){
+    el.contentEditable='true';
+  });
+
+  // Debounced postMessage on input
+  var timers={};
+  document.addEventListener('input',function(e){
+    var el=e.target;
+    if(!el.isContentEditable) return;
+    var key=el.dataset.field||('b'+el.dataset.blockIdx);
+    var val=el.innerText.replace(/\\n+$/,'');
+    clearTimeout(timers[key]);
+    timers[key]=setTimeout(function(){
+      var msg={type:'proposal-edit'};
+      if(el.dataset.field){msg.field=el.dataset.field;msg.value=val;}
+      else if(el.dataset.blockIdx!==undefined){msg.blockIdx=+el.dataset.blockIdx;msg.value=val;}
+      window.parent.postMessage(msg,'*');
+    },700);
+  });
+
+  // Prevent Enter from inserting <div> — use line break instead
+  document.addEventListener('keydown',function(e){
+    if(e.key==='Enter'&&e.target.isContentEditable){
+      e.preventDefault();
+      document.execCommand('insertLineBreak');
+    }
+  });
+})();
+<\/script>`
+      html = html.replace("</body>", editScript + "</body>")
+    }
 
     res.setHeader("Content-Type", "text/html; charset=utf-8")
     res.setHeader("Cache-Control", "no-store")

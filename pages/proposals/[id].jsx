@@ -164,6 +164,7 @@ export default function ProposalEditor() {
   const [saveStatus,  setSaveStatus]  = useState("idle")
   const [previewKey,  setPreviewKey]  = useState(0)
   const [exporting,   setExporting]   = useState(false)
+  const [editMode,    setEditMode]    = useState(false)
 
   // Editable fields
   const [situation,      setSituation]      = useState("")
@@ -179,8 +180,9 @@ export default function ProposalEditor() {
   const [retainer,       setRetainer]       = useState("")
   const [blocks,         setBlocks]         = useState([])
 
-  const saveTimerRef = useRef(null)
-  const pendingRef   = useRef({})
+  const saveTimerRef      = useRef(null)
+  const pendingRef        = useRef({})
+  const blockSaveTimerRef = useRef(null)
 
   // ── Load data ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -232,6 +234,49 @@ export default function ProposalEditor() {
       }
     }, 1200)
   }, [id])
+
+  // ── Listen for inline edit messages from iframe ─────────────────────────────
+  useEffect(() => {
+    const handler = (e) => {
+      if (!e.data || e.data.type !== "proposal-edit") return
+      const { field, blockIdx, value } = e.data
+
+      if (field === "situation") {
+        setSituation(value)
+        scheduleSave({ situation: value })
+      } else if (field === "problems_solved") {
+        setProblemsSolved(value)
+        scheduleSave({ problems_solved: value })
+      } else if (field === "goals") {
+        setGoals(value)
+        scheduleSave({ goals: value })
+      } else if (blockIdx !== undefined && blockIdx !== null) {
+        setBlocks(prev => {
+          const nb = [...prev]
+          if (nb[blockIdx]) nb[blockIdx] = { ...nb[blockIdx], text: value }
+          return nb
+        })
+        // Debounced blocks save
+        if (blockSaveTimerRef.current) clearTimeout(blockSaveTimerRef.current)
+        blockSaveTimerRef.current = setTimeout(() => {
+          setBlocks(current => {
+            fetch(`/api/proposals/${id}/blocks`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ blocks: current }),
+            }).then(() => {
+              setSaveStatus("saved")
+              setTimeout(() => setSaveStatus("idle"), 2000)
+            }).catch(() => setSaveStatus("error"))
+            return current
+          })
+        }, 1200)
+      }
+    }
+
+    window.addEventListener("message", handler)
+    return () => window.removeEventListener("message", handler)
+  }, [id, scheduleSave])
 
   // ── Save blocks ─────────────────────────────────────────────────────────────
   const saveBlocks = async () => {
@@ -332,6 +377,23 @@ export default function ProposalEditor() {
           {/* Right: save status + actions */}
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             <SaveDot status={saveStatus} />
+            <button
+              onClick={() => {
+                const next = !editMode
+                setEditMode(next)
+                setPreviewKey(k => k + 1)
+              }}
+              style={{
+                fontSize: 11, fontWeight: 700, letterSpacing: ".04em",
+                color:       editMode ? "#000"                     : "rgba(255,255,255,.3)",
+                background:  editMode ? "#AAFF00"                  : "rgba(255,255,255,.04)",
+                border:      editMode ? "1px solid #AAFF00"        : "1px solid rgba(255,255,255,.08)",
+                borderRadius: 7, padding: "6px 12px",
+                cursor: "pointer", transition: "all .2s",
+              }}
+            >
+              {editMode ? "✏ Editing" : "✏ Edit"}
+            </button>
             <a
               href={notionUrl} target="_blank" rel="noopener noreferrer"
               style={{
@@ -571,20 +633,22 @@ export default function ProposalEditor() {
           <div style={{ flex: 1, background: "#1A1A1A", overflow: "hidden", position: "relative" }}>
             <iframe
               key={previewKey}
-              src={`/api/proposals/${id}/html`}
+              src={`/api/proposals/${id}/html${editMode ? "?edit=1" : ""}`}
               style={{ width: "100%", height: "100%", border: "none", display: "block" }}
               title="Proposal Preview"
             />
             <div style={{
               position: "absolute", top: 12, right: 14,
-              background: "rgba(0,0,0,.7)", backdropFilter: "blur(8px)",
-              border: "1px solid rgba(255,255,255,.06)",
+              background: editMode ? "rgba(170,255,0,.12)" : "rgba(0,0,0,.7)",
+              backdropFilter: "blur(8px)",
+              border: editMode ? "1px solid rgba(170,255,0,.3)" : "1px solid rgba(255,255,255,.06)",
               borderRadius: 7, padding: "3px 10px",
-              fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,.2)",
+              fontSize: 10, fontWeight: 700,
+              color: editMode ? "rgba(170,255,0,.8)" : "rgba(255,255,255,.2)",
               letterSpacing: ".07em", textTransform: "uppercase",
               pointerEvents: "none",
             }}>
-              Preview
+              {editMode ? "✏ Editing" : "Preview"}
             </div>
           </div>
 

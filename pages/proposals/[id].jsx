@@ -1,12 +1,10 @@
 // pages/proposals/[id].jsx
-// Proposal editor — pre-filled from Notion, editable, saves back to Notion.
-// Access: app.opxio.io/proposals/[id]
+// Proposal editor — app.opxio.io/proposals/[id]
 
 import { useState, useEffect, useRef, useCallback } from "react"
 import Head from "next/head"
 import { useRouter } from "next/router"
 
-// ─── OS type options ────────────────────────────────────────────────────────
 const OS_OPTIONS = [
   "Revenue OS", "Operations OS", "Marketing OS", "Finance OS",
   "Business OS", "Agency OS", "Team OS", "Retention OS", "Sales OS",
@@ -19,125 +17,153 @@ const RETAINER_OPTIONS = [
   { value: "active",      label: "Active Retainer — RM 900/mo" },
 ]
 
-// ─── Save status indicator ───────────────────────────────────────────────────
-function SaveStatus({ status }) {
-  const map = {
-    idle:    { text: "",          color: "transparent" },
-    saving:  { text: "Saving…",   color: "#AAFF00" },
-    saved:   { text: "Saved ✓",   color: "#AAFF00" },
-    error:   { text: "Save failed", color: "#FF4444" },
-  }
-  const s = map[status] || map.idle
-  return (
-    <span style={{ fontSize: 12, fontWeight: 500, color: s.color, letterSpacing: ".05em", opacity: status === "idle" ? 0 : 1, transition: "opacity .3s" }}>
-      {s.text}
-    </span>
-  )
-}
+const BLOCK_TYPES = [
+  { value: "paragraph",         label: "¶  Para" },
+  { value: "heading_1",         label: "H1" },
+  { value: "heading_2",         label: "H2" },
+  { value: "bulleted_list_item",label: "•  Bullet" },
+]
 
-// ─── Form field components ───────────────────────────────────────────────────
-function Field({ label, hint, children }) {
+// ─── Global styles (catalogue widget aesthetic) ──────────────────────────────
+const GLOBAL_CSS = `
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; overflow: hidden; }
+  body {
+    font-family: 'Satoshi', -apple-system, sans-serif;
+    background: #0D0D0D;
+    color: rgba(255,255,255,.87);
+    -webkit-font-smoothing: antialiased;
+  }
+  :root { --g: #AAFF00; --gm: rgba(170,255,0,.08); --gb: rgba(170,255,0,.2); }
+  input, textarea, select { font-family: inherit; }
+  select option { background: #1A1A1A; }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.3); cursor: pointer; }
+
+  /* Scrollbar — same as catalogue */
+  ::-webkit-scrollbar { width: 3px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 99px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.15); }
+
+  /* Input/textarea/select — catalogue .d-edit-input */
+  .f-input, .f-textarea, .f-select {
+    width: 100%;
+    background: #1A1A1A;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 8px 11px;
+    outline: none;
+    transition: border-color .2s;
+    box-sizing: border-box;
+  }
+  .f-input::placeholder, .f-textarea::placeholder { color: rgba(255,255,255,.2); }
+  .f-input:focus, .f-textarea:focus, .f-select:focus { border-color: rgba(170,255,0,.4); }
+  .f-textarea { resize: vertical; min-height: 80px; line-height: 1.6; }
+  .f-select { cursor: pointer; }
+  .f-input:disabled { color: rgba(255,255,255,.2); cursor: not-allowed; }
+  input[type="date"].f-input { color: rgba(255,255,255,.6); }
+
+  /* Pill button for block type selector */
+  .block-type-sel {
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 7px;
+    color: rgba(255,255,255,.4);
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 9px;
+    outline: none;
+    cursor: pointer;
+    flex-shrink: 0;
+    width: 90px;
+    transition: border-color .2s;
+  }
+  .block-type-sel:focus { border-color: rgba(170,255,0,.3); }
+`
+
+// ─── Section card wrapper ────────────────────────────────────────────────────
+function Card({ children, style }) {
   return (
-    <div style={{ marginBottom: 20 }}>
-      <label style={{ display: "block", fontSize: 10, fontWeight: 700, letterSpacing: ".14em", textTransform: "uppercase", color: "#888", marginBottom: 6 }}>
-        {label}
-      </label>
-      {hint && <p style={{ fontSize: 11, color: "#666", marginBottom: 6, lineHeight: 1.5 }}>{hint}</p>}
+    <div style={{
+      background: "#111",
+      border: "1px solid rgba(255,255,255,.06)",
+      borderRadius: 12,
+      padding: "18px 20px",
+      marginBottom: 10,
+      ...style,
+    }}>
       {children}
     </div>
   )
 }
 
-const inputStyle = {
-  width: "100%", background: "#1A1A1A", border: "1px solid #2A2A2A",
-  borderRadius: 4, color: "#FFFFFF", fontFamily: "inherit", fontSize: 13,
-  padding: "8px 12px", outline: "none", boxSizing: "border-box",
-  transition: "border-color .15s",
-}
-
-const textareaStyle = {
-  ...inputStyle,
-  resize: "vertical", minHeight: 80, lineHeight: 1.65,
-}
-
-function Input({ value, onChange, onBlur, placeholder, type = "text", disabled }) {
+// ─── Section header — catalogue .section-hdr style ───────────────────────────
+function SectionHdr({ label, color = "#AAFF00" }) {
   return (
-    <input
-      type={type}
-      value={value ?? ""}
-      onChange={e => onChange(e.target.value)}
-      onBlur={onBlur}
-      placeholder={placeholder}
-      disabled={disabled}
-      style={{ ...inputStyle, color: disabled ? "#666" : "#FFF", cursor: disabled ? "not-allowed" : "text" }}
-      onFocus={e => !disabled && (e.target.style.borderColor = "#AAFF00")}
-    />
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 16 }}>
+      <div style={{ width: 3, height: 14, borderRadius: 2, background: color, flexShrink: 0 }} />
+      <span style={{ fontSize: 10, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.45)" }}>
+        {label}
+      </span>
+      <div style={{ flex: 1, height: 1, background: "rgba(255,255,255,.04)", marginLeft: 4 }} />
+    </div>
   )
 }
 
-function Textarea({ value, onChange, onBlur, placeholder, rows = 4 }) {
+// ─── Field wrapper ───────────────────────────────────────────────────────────
+function Field({ label, children }) {
   return (
-    <textarea
-      value={value ?? ""}
-      onChange={e => onChange(e.target.value)}
-      onBlur={onBlur}
-      placeholder={placeholder}
-      rows={rows}
-      style={textareaStyle}
-      onFocus={e => (e.target.style.borderColor = "#AAFF00")}
-    />
+    <div style={{ marginBottom: 14 }}>
+      <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".1em", textTransform: "uppercase", color: "rgba(255,255,255,.25)", marginBottom: 6 }}>
+        {label}
+      </div>
+      {children}
+    </div>
   )
 }
 
-function Select({ value, onChange, onBlur, options }) {
+// ─── Readonly row — catalogue .d-about-row style ─────────────────────────────
+function ReadonlyRow({ label, value }) {
   return (
-    <select
-      value={value ?? ""}
-      onChange={e => onChange(e.target.value)}
-      onBlur={onBlur}
-      style={{ ...inputStyle, cursor: "pointer" }}
-      onFocus={e => (e.target.style.borderColor = "#AAFF00")}
-    >
-      <option value="">— select —</option>
-      {options.map(opt =>
-        typeof opt === "string"
-          ? <option key={opt} value={opt}>{opt}</option>
-          : <option key={opt.value} value={opt.value}>{opt.label}</option>
-      )}
-    </select>
-  )
-}
-
-function SectionHeader({ title, icon }) {
-  return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 20, paddingBottom: 10, borderBottom: "1px solid #222" }}>
-      {icon && <span style={{ fontSize: 14 }}>{icon}</span>}
-      <span style={{ fontFamily: "'Syne', sans-serif", fontSize: 13, fontWeight: 700, letterSpacing: ".08em", textTransform: "uppercase", color: "#AAFF00" }}>
-        {title}
+    <div style={{ display: "flex", gap: 8, alignItems: "flex-start", marginBottom: 8 }}>
+      <span style={{ fontSize: 9, fontWeight: 700, letterSpacing: ".07em", textTransform: "uppercase", color: "rgba(255,255,255,.18)", whiteSpace: "nowrap", paddingTop: 2, minWidth: 60 }}>
+        {label}
+      </span>
+      <span style={{ fontSize: 12, fontWeight: 500, color: "rgba(255,255,255,.45)", lineHeight: 1.5 }}>
+        {value || "—"}
       </span>
     </div>
   )
 }
 
-function ReadonlyRow({ label, value }) {
+// ─── Save indicator ──────────────────────────────────────────────────────────
+function SaveDot({ status }) {
+  const colors = { saving: "#AAFF00", saved: "#AAFF00", error: "#FF4444", idle: "transparent" }
+  const labels = { saving: "Saving…", saved: "Saved", error: "Failed", idle: "" }
   return (
-    <div style={{ display: "flex", gap: 12, marginBottom: 12, fontSize: 13 }}>
-      <span style={{ minWidth: 100, color: "#666", fontWeight: 500, fontSize: 11, textTransform: "uppercase", letterSpacing: ".1em", paddingTop: 1 }}>{label}</span>
-      <span style={{ color: "#CCC", flex: 1 }}>{value || "—"}</span>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, opacity: status === "idle" ? 0 : 1, transition: "opacity .3s" }}>
+      <div style={{ width: 6, height: 6, borderRadius: "50%", background: colors[status] || "transparent", animation: status === "saving" ? "pulse 1.2s infinite" : "none" }} />
+      <span style={{ fontSize: 11, fontWeight: 600, color: colors[status] || "transparent", letterSpacing: ".05em" }}>
+        {labels[status] || ""}
+      </span>
     </div>
   )
 }
 
-// ─── Main editor ─────────────────────────────────────────────────────────────
+// ─── Main editor component ───────────────────────────────────────────────────
 export default function ProposalEditor() {
-  const router     = useRouter()
-  const { id }     = router.query
+  const router = useRouter()
+  const { id } = router.query
 
-  const [data,      setData]      = useState(null)
-  const [loading,   setLoading]   = useState(true)
-  const [saveStatus, setSaveStatus] = useState("idle")
-  const [previewKey, setPreviewKey] = useState(0)  // bump to reload iframe
-  const [exporting, setExporting]  = useState(false)
+  const [data,        setData]        = useState(null)
+  const [loading,     setLoading]     = useState(true)
+  const [saveStatus,  setSaveStatus]  = useState("idle")
+  const [previewKey,  setPreviewKey]  = useState(0)
+  const [exporting,   setExporting]   = useState(false)
 
   // Editable fields
   const [situation,      setSituation]      = useState("")
@@ -152,54 +178,38 @@ export default function ProposalEditor() {
   const [installTier,    setInstallTier]    = useState("")
   const [retainer,       setRetainer]       = useState("")
   const [blocks,         setBlocks]         = useState([])
-  const [blocksLoading,  setBlocksLoading]  = useState(false)
 
   const saveTimerRef = useRef(null)
   const pendingRef   = useRef({})
 
-  // ── Load proposal data ────────────────────────────────────────────────────
+  // ── Load data ───────────────────────────────────────────────────────────────
   useEffect(() => {
     if (!id) return
     setLoading(true)
-    fetch(`/api/proposals/${id}`)
-      .then(r => r.json())
-      .then(d => {
-        setData(d)
-        setSituation(d.situation      || "")
-        setProblemsSolved(d.problems_solved || "")
-        setGoals(d.goals             || "")
-        setOsType(d.os_type          || "")
-        setFee(d.fee !== undefined    ? String(d.fee) : "")
-        setValidUntil(d.valid_until   || "")
-        setIssueDate(d.issue_date     || "")
-        setTimeline(d.timeline        || "3–4 weeks")
-        setNotionPlan(d.notion_plan   || "Plus")
-        setInstallTier(d.install_tier || "Standard")
-        setRetainer(d.retainer        || "maintenance")
-        setLoading(false)
-      })
-      .catch(e => {
-        console.error(e)
-        setLoading(false)
-      })
 
-    // Load page blocks
-    setBlocksLoading(true)
-    fetch(`/api/proposals/${id}/blocks`)
-      .then(r => r.json())
-      .then(d => {
-        setBlocks(d.blocks || [])
-        setBlocksLoading(false)
-      })
-      .catch(e => {
-        console.error("Blocks load failed:", e)
-        setBlocksLoading(false)
-      })
+    Promise.all([
+      fetch(`/api/proposals/${id}`).then(r => r.json()),
+      fetch(`/api/proposals/${id}/blocks`).then(r => r.json()),
+    ]).then(([d, b]) => {
+      setData(d)
+      setSituation(d.situation           || "")
+      setProblemsSolved(d.problems_solved || "")
+      setGoals(d.goals                   || "")
+      setOsType(d.os_type                || "")
+      setFee(d.fee != null               ? String(d.fee) : "")
+      setValidUntil(d.valid_until        || "")
+      setIssueDate(d.issue_date          || "")
+      setTimeline(d.timeline             || "3–4 weeks")
+      setNotionPlan(d.notion_plan        || "Plus")
+      setInstallTier(d.install_tier      || "Standard")
+      setRetainer(d.retainer             || "maintenance")
+      setBlocks(b.blocks                 || [])
+      setLoading(false)
+    }).catch(() => setLoading(false))
   }, [id])
 
-  // ── Debounced auto-save ───────────────────────────────────────────────────
+  // ── Debounced auto-save to Notion ───────────────────────────────────────────
   const scheduleSave = useCallback((patch) => {
-    // Merge pending patches
     pendingRef.current = { ...pendingRef.current, ...patch }
     setSaveStatus("saving")
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
@@ -208,56 +218,49 @@ export default function ProposalEditor() {
       pendingRef.current = {}
       try {
         const r = await fetch(`/api/proposals/${id}`, {
-          method:  "PATCH",
+          method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body:    JSON.stringify(toSave),
+          body: JSON.stringify(toSave),
         })
-        if (!r.ok) throw new Error(await r.text())
+        if (!r.ok) throw new Error()
         setSaveStatus("saved")
-        setPreviewKey(k => k + 1)  // refresh iframe after save
+        setPreviewKey(k => k + 1)
         setTimeout(() => setSaveStatus("idle"), 2000)
-      } catch (e) {
-        console.error("[save]", e.message)
+      } catch {
         setSaveStatus("error")
-        setTimeout(() => setSaveStatus("idle"), 4000)
+        setTimeout(() => setSaveStatus("idle"), 3000)
       }
     }, 1200)
   }, [id])
 
-  // ── Save blocks ───────────────────────────────────────────────────────────
+  // ── Save blocks ─────────────────────────────────────────────────────────────
   const saveBlocks = async () => {
     setSaveStatus("saving")
     try {
       await fetch(`/api/proposals/${id}/blocks`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ blocks })
+        body: JSON.stringify({ blocks }),
       })
       setSaveStatus("saved")
       setPreviewKey(k => k + 1)
       setTimeout(() => setSaveStatus("idle"), 2000)
-    } catch (e) {
+    } catch {
       setSaveStatus("error")
       setTimeout(() => setSaveStatus("idle"), 3000)
     }
   }
 
-  // ── Export PDF ────────────────────────────────────────────────────────────
+  // ── Export PDF ──────────────────────────────────────────────────────────────
   const exportPdf = async () => {
     if (!id || exporting) return
     setExporting(true)
     try {
-      const r = await fetch(`/api/generate?type=proposal&page_id=${id}`, { method: "POST" })
-      if (!r.ok) throw new Error("Generate failed")
-      const json = await r.json()
-      // Poll for a moment then reload to pick up the updated PDF URL
-      await new Promise(res => setTimeout(res, 5000))
+      await fetch(`/api/generate?type=proposal&page_id=${id}`, { method: "POST" })
+      await new Promise(res => setTimeout(res, 5500))
       const fresh = await fetch(`/api/proposals/${id}`).then(r => r.json())
-      if (fresh.pdf_url) {
-        window.open(fresh.pdf_url, "_blank")
-      } else {
-        alert("PDF is being generated. Check the Notion page for the PDF link in ~10 seconds.")
-      }
+      if (fresh.pdf_url) window.open(fresh.pdf_url, "_blank")
+      else alert("PDF generating — check Notion page in ~10s for the link.")
     } catch (e) {
       alert("Export failed: " + e.message)
     } finally {
@@ -267,249 +270,297 @@ export default function ProposalEditor() {
 
   if (!id) return null
 
-  // ─── Loading state ───────────────────────────────────────────────────────
   if (loading) {
     return (
-      <div style={{ height: "100vh", background: "#0D0D0D", display: "flex", alignItems: "center", justifyContent: "center", color: "#AAFF00", fontFamily: "sans-serif", fontSize: 14 }}>
-        Loading proposal…
+      <div style={{ height: "100vh", background: "#0D0D0D", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#AAFF00", animation: "pulse 1.2s infinite" }} />
+          <span style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,255,255,.4)", letterSpacing: ".06em" }}>Loading proposal…</span>
+        </div>
       </div>
     )
   }
 
-  const notionUrl = `https://notion.so/${id.replace(/-/g, "")}`
+  const notionUrl = `https://notion.so/${(id || "").replace(/-/g, "")}`
 
   return (
     <>
       <Head>
-        <title>Proposal Editor — {data?.company_name || id}</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
-        <style>{`
-          * { box-sizing: border-box; margin: 0; padding: 0; }
-          body { font-family: 'DM Sans', -apple-system, sans-serif; background: #0D0D0D; color: #FFF; overflow: hidden; }
-          select option { background: #1A1A1A; }
-          input:focus, textarea:focus, select:focus { outline: none; border-color: #AAFF00 !important; }
-          ::-webkit-scrollbar { width: 6px; }
-          ::-webkit-scrollbar-track { background: #111; }
-          ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
-          ::-webkit-scrollbar-thumb:hover { background: #444; }
-        `}</style>
+        <title>{data?.company_name ? `${data.company_name} — Proposal` : "Proposal Editor"}</title>
+        <link rel="preconnect" href="https://api.fontshare.com" />
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+        <style>{GLOBAL_CSS}</style>
+        <style>{`@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}`}</style>
       </Head>
 
-      {/* ── LAYOUT ── */}
-      <div style={{ display: "flex", flexDirection: "column", height: "100vh" }}>
+      <div style={{ display: "flex", flexDirection: "column", height: "100vh", background: "#0D0D0D" }}>
 
-        {/* ── HEADER ── */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "12px 24px", background: "#111", borderBottom: "1px solid #222", flexShrink: 0 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <span style={{ fontFamily: "'Syne', sans-serif", fontWeight: 800, fontSize: 13, letterSpacing: ".18em", color: "#AAFF00", textTransform: "uppercase" }}>Opxio</span>
-            <span style={{ color: "#333", fontSize: 13 }}>|</span>
-            <span style={{ fontSize: 12, color: "#888", letterSpacing: ".05em" }}>Proposal Editor</span>
+        {/* ── TOP BAR ── */}
+        <div style={{
+          display: "flex", alignItems: "center", justifyContent: "space-between",
+          padding: "0 20px", height: 52,
+          background: "#0D0D0D",
+          borderBottom: "1px solid rgba(255,255,255,.06)",
+          flexShrink: 0,
+        }}>
+          {/* Left: brand + context */}
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
+              <div style={{ width: 7, height: 7, borderRadius: "50%", background: "#AAFF00" }} />
+              <span style={{ fontSize: 11, fontWeight: 900, letterSpacing: ".16em", color: "rgba(255,255,255,.3)", textTransform: "uppercase" }}>Opxio</span>
+            </div>
+            <div style={{ width: 1, height: 16, background: "rgba(255,255,255,.06)" }} />
+            <span style={{ fontSize: 11, fontWeight: 600, color: "rgba(255,255,255,.2)", letterSpacing: ".06em" }}>Proposal Editor</span>
             {data?.proposal_no && (
-              <span style={{ fontSize: 12, color: "#555", background: "#1A1A1A", padding: "2px 8px", borderRadius: 3, fontFamily: "monospace" }}>
+              <span style={{
+                fontSize: 10, fontWeight: 700, letterSpacing: ".06em",
+                color: "rgba(170,255,0,.5)",
+                background: "rgba(170,255,0,.06)",
+                border: "1px solid rgba(170,255,0,.15)",
+                borderRadius: 6, padding: "2px 8px",
+              }}>
                 {data.proposal_no}
               </span>
             )}
+            {data?.company_name && (
+              <span style={{ fontSize: 12, fontWeight: 500, color: "rgba(255,255,255,.35)" }}>
+                — {data.company_name}
+              </span>
+            )}
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-            <SaveStatus status={saveStatus} />
+
+          {/* Right: save status + actions */}
+          <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+            <SaveDot status={saveStatus} />
             <a
-              href={notionUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ fontSize: 12, color: "#666", textDecoration: "none", padding: "6px 12px", border: "1px solid #2A2A2A", borderRadius: 4, transition: "all .15s" }}
-              onMouseEnter={e => { e.target.style.color = "#FFF"; e.target.style.borderColor = "#555" }}
-              onMouseLeave={e => { e.target.style.color = "#666"; e.target.style.borderColor = "#2A2A2A" }}
+              href={notionUrl} target="_blank" rel="noopener noreferrer"
+              style={{
+                fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,.3)",
+                textDecoration: "none", padding: "6px 12px",
+                background: "rgba(255,255,255,.04)",
+                border: "1px solid rgba(255,255,255,.08)",
+                borderRadius: 7, letterSpacing: ".04em",
+                transition: "all .2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = "rgba(255,255,255,.7)"; e.currentTarget.style.borderColor = "rgba(255,255,255,.15)" }}
+              onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,.3)"; e.currentTarget.style.borderColor = "rgba(255,255,255,.08)" }}
             >
-              Open in Notion ↗
+              Notion ↗
             </a>
             <button
-              onClick={exportPdf}
-              disabled={exporting}
-              style={{ fontSize: 12, fontWeight: 600, letterSpacing: ".08em", textTransform: "uppercase", color: "#000", background: exporting ? "#666" : "#AAFF00", border: "none", borderRadius: 4, padding: "8px 16px", cursor: exporting ? "not-allowed" : "pointer", transition: "background .15s" }}
+              onClick={exportPdf} disabled={exporting}
+              style={{
+                fontSize: 11, fontWeight: 900, letterSpacing: ".08em", textTransform: "uppercase",
+                color: exporting ? "rgba(0,0,0,.4)" : "#000",
+                background: exporting ? "rgba(170,255,0,.4)" : "#AAFF00",
+                border: "none", borderRadius: 7, padding: "7px 16px",
+                cursor: exporting ? "not-allowed" : "pointer",
+                transition: "all .2s",
+              }}
             >
               {exporting ? "Generating…" : "Export PDF"}
             </button>
           </div>
         </div>
 
-        {/* ── MAIN SPLIT ── */}
+        {/* ── SPLIT PANE ── */}
         <div style={{ display: "flex", flex: 1, overflow: "hidden" }}>
 
-          {/* ── LEFT PANEL — FORM ── */}
-          <div style={{ width: 380, minWidth: 320, background: "#111", borderRight: "1px solid #1E1E1E", overflowY: "auto", padding: "28px 24px", flexShrink: 0 }}>
+          {/* ── LEFT PANEL ── */}
+          <div style={{
+            width: 360, minWidth: 300,
+            background: "#0D0D0D",
+            borderRight: "1px solid rgba(255,255,255,.05)",
+            overflowY: "auto",
+            padding: "16px 14px 32px",
+            flexShrink: 0,
+          }}>
 
-            {/* Client info */}
-            <div style={{ marginBottom: 32 }}>
-              <SectionHeader title="Client" icon="👤" />
+            {/* ── CLIENT ── */}
+            <Card>
+              <SectionHdr label="Client" />
               <ReadonlyRow label="Company"  value={data?.company_name} />
               <ReadonlyRow label="Contact"  value={data?.pic_name} />
               <ReadonlyRow label="WhatsApp" value={data?.pic_phone} />
-              <p style={{ fontSize: 11, color: "#444", marginTop: 10 }}>Client details are pulled from Notion relations. Edit them in Notion directly.</p>
-            </div>
+              <div style={{ marginTop: 10, fontSize: 10, fontWeight: 600, color: "rgba(255,255,255,.15)", lineHeight: 1.5 }}>
+                Edit client details in Notion directly.
+              </div>
+            </Card>
 
-            {/* Context */}
-            <div style={{ marginBottom: 32 }}>
-              <SectionHeader title="Context" icon="💬" />
-              <Field label="Situation" hint="What problem brought them here?">
-                <Textarea
+            {/* ── CONTEXT ── */}
+            <Card>
+              <SectionHdr label="Context" />
+              <Field label="Situation">
+                <textarea
+                  className="f-textarea"
                   value={situation}
-                  onChange={setSituation}
+                  onChange={e => setSituation(e.target.value)}
                   onBlur={() => scheduleSave({ situation })}
-                  placeholder="Describe the client's current situation…"
+                  placeholder="What problem brought them here?"
                   rows={4}
                 />
               </Field>
-              <Field label="Problems Solved" hint="What does this OS solve for them?">
-                <Textarea
+              <Field label="Problems Solved">
+                <textarea
+                  className="f-textarea"
                   value={problemsSolved}
-                  onChange={setProblemsSolved}
+                  onChange={e => setProblemsSolved(e.target.value)}
                   onBlur={() => scheduleSave({ problems_solved: problemsSolved })}
                   placeholder="Key pain points this install addresses…"
                   rows={3}
                 />
               </Field>
-              <Field label="Goals" hint="What does success look like?">
-                <Textarea
+              <Field label="Goals">
+                <textarea
+                  className="f-textarea"
                   value={goals}
-                  onChange={setGoals}
+                  onChange={e => setGoals(e.target.value)}
                   onBlur={() => scheduleSave({ goals })}
                   placeholder="What they want to achieve in 90 days…"
                   rows={3}
                 />
               </Field>
-            </div>
+            </Card>
 
-            {/* Install */}
-            <div style={{ marginBottom: 32 }}>
-              <SectionHeader title="Install" icon="⚙️" />
+            {/* ── INSTALL ── */}
+            <Card>
+              <SectionHdr label="Install" />
               <Field label="OS Type">
-                <Select
+                <select
+                  className="f-select"
                   value={osType}
-                  onChange={setOsType}
+                  onChange={e => setOsType(e.target.value)}
                   onBlur={() => scheduleSave({ os_type: osType })}
-                  options={OS_OPTIONS}
-                />
+                >
+                  <option value="">— select OS —</option>
+                  {OS_OPTIONS.map(o => <option key={o} value={o}>{o}</option>)}
+                </select>
               </Field>
-              <Field label="Install Tier">
-                <Input
-                  value={installTier}
-                  onChange={setInstallTier}
-                  onBlur={() => scheduleSave({ install_tier: installTier })}
-                  placeholder="Standard"
-                />
-              </Field>
-              <Field label="Notion Plan">
-                <Input
-                  value={notionPlan}
-                  onChange={setNotionPlan}
-                  onBlur={() => scheduleSave({ notion_plan: notionPlan })}
-                  placeholder="Plus"
-                />
-              </Field>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label="Install Tier">
+                  <input className="f-input" value={installTier} onChange={e => setInstallTier(e.target.value)} onBlur={() => scheduleSave({ install_tier: installTier })} placeholder="Standard" />
+                </Field>
+                <Field label="Notion Plan">
+                  <input className="f-input" value={notionPlan} onChange={e => setNotionPlan(e.target.value)} onBlur={() => scheduleSave({ notion_plan: notionPlan })} placeholder="Plus" />
+                </Field>
+              </div>
               <Field label="Timeline">
-                <Input
-                  value={timeline}
-                  onChange={setTimeline}
-                  onBlur={() => scheduleSave({ timeline })}
-                  placeholder="3–4 weeks"
-                />
+                <input className="f-input" value={timeline} onChange={e => setTimeline(e.target.value)} onBlur={() => scheduleSave({ timeline })} placeholder="3–4 weeks" />
               </Field>
-            </div>
+            </Card>
 
-            {/* Investment */}
-            <div style={{ marginBottom: 32 }}>
-              <SectionHeader title="Investment" icon="💰" />
+            {/* ── INVESTMENT ── */}
+            <Card>
+              <SectionHdr label="Investment" />
               <Field label="One-time Fee (MYR)">
-                <Input
-                  type="number"
-                  value={fee}
-                  onChange={setFee}
-                  onBlur={() => scheduleSave({ fee: Number(fee) || 0 })}
-                  placeholder="6000"
-                />
+                <input className="f-input" type="number" value={fee} onChange={e => setFee(e.target.value)} onBlur={() => scheduleSave({ fee: Number(fee) || 0 })} placeholder="6000" />
               </Field>
               <Field label="Retainer Plan">
-                <Select
-                  value={retainer}
-                  onChange={setRetainer}
-                  onBlur={() => scheduleSave({ retainer })}
-                  options={RETAINER_OPTIONS}
-                />
+                <select className="f-select" value={retainer} onChange={e => setRetainer(e.target.value)} onBlur={() => scheduleSave({ retainer })}>
+                  {RETAINER_OPTIONS.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+                </select>
               </Field>
-              <Field label="Issue Date">
-                <Input
-                  type="date"
-                  value={issueDate}
-                  onChange={setIssueDate}
-                  onBlur={() => scheduleSave({ issue_date: issueDate })}
-                />
-              </Field>
-              <Field label="Valid Until">
-                <Input
-                  type="date"
-                  value={validUntil}
-                  onChange={setValidUntil}
-                  onBlur={() => scheduleSave({ valid_until: validUntil })}
-                />
-              </Field>
-            </div>
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <Field label="Issue Date">
+                  <input className="f-input" type="date" value={issueDate} onChange={e => setIssueDate(e.target.value)} onBlur={() => scheduleSave({ issue_date: issueDate })} />
+                </Field>
+                <Field label="Valid Until">
+                  <input className="f-input" type="date" value={validUntil} onChange={e => setValidUntil(e.target.value)} onBlur={() => scheduleSave({ valid_until: validUntil })} />
+                </Field>
+              </div>
+            </Card>
 
-            {/* Page Content */}
-            <div style={{ marginBottom: 32 }}>
-              <SectionHeader title="Page Content" icon="📝" />
-              <p style={{ fontSize: 11, color: "#555", marginBottom: 14, lineHeight: 1.5 }}>
-                Add notes or custom text to include in the proposal. Each block renders as a paragraph, heading, or bullet in the PDF.
+            {/* ── PAGE BLOCKS ── */}
+            <Card>
+              <SectionHdr label="Page Content" color="rgba(170,255,0,.5)" />
+              <p style={{ fontSize: 11, fontWeight: 500, color: "rgba(255,255,255,.2)", lineHeight: 1.6, marginBottom: 14 }}>
+                Custom blocks appear as a Notes page in the proposal.
               </p>
 
-              {blocks.map((block, i) => (
-                <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-                  <select
-                    value={block.type}
-                    onChange={e => {
-                      const nb = [...blocks]; nb[i] = { ...nb[i], type: e.target.value }; setBlocks(nb)
-                    }}
-                    style={{ background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#888", fontSize: 11, padding: "6px 8px", flexShrink: 0, width: 110 }}
-                  >
-                    <option value="paragraph">Paragraph</option>
-                    <option value="heading_1">Heading 1</option>
-                    <option value="heading_2">Heading 2</option>
-                    <option value="bulleted_list_item">Bullet</option>
-                  </select>
-                  <textarea
-                    value={block.text}
-                    onChange={e => {
-                      const nb = [...blocks]; nb[i] = { ...nb[i], text: e.target.value }; setBlocks(nb)
-                    }}
-                    rows={2}
-                    style={{ flex: 1, background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#FFF", fontFamily: "inherit", fontSize: 12, padding: "6px 10px", resize: "vertical", outline: "none", lineHeight: 1.6 }}
-                  />
-                  <button
-                    onClick={() => setBlocks(blocks.filter((_, j) => j !== i))}
-                    style={{ background: "none", border: "1px solid #2A2A2A", borderRadius: 4, color: "#555", width: 28, cursor: "pointer", flexShrink: 0, fontSize: 14, display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >×</button>
-                </div>
-              ))}
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {blocks.map((block, i) => (
+                  <div key={i} style={{
+                    display: "flex", gap: 6, alignItems: "flex-start",
+                    background: "rgba(255,255,255,.03)",
+                    border: "1px solid rgba(255,255,255,.06)",
+                    borderRadius: 8, padding: "8px 10px",
+                  }}>
+                    <select
+                      className="block-type-sel"
+                      value={block.type}
+                      onChange={e => {
+                        const nb = [...blocks]; nb[i] = { ...nb[i], type: e.target.value }; setBlocks(nb)
+                      }}
+                    >
+                      {BLOCK_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                    </select>
+                    <textarea
+                      className="f-textarea"
+                      value={block.text}
+                      onChange={e => {
+                        const nb = [...blocks]; nb[i] = { ...nb[i], text: e.target.value }; setBlocks(nb)
+                      }}
+                      rows={2}
+                      style={{ minHeight: 48, fontSize: 12 }}
+                      placeholder="Block content…"
+                    />
+                    <button
+                      onClick={() => setBlocks(blocks.filter((_, j) => j !== i))}
+                      style={{
+                        background: "none", border: "1px solid rgba(255,255,255,.08)",
+                        borderRadius: 7, color: "rgba(255,255,255,.25)",
+                        width: 28, height: 28, cursor: "pointer", flexShrink: 0,
+                        fontSize: 16, display: "flex", alignItems: "center", justifyContent: "center",
+                        transition: "all .2s", marginTop: 1,
+                      }}
+                      onMouseEnter={e => { e.currentTarget.style.color = "#FF4444"; e.currentTarget.style.borderColor = "rgba(255,68,68,.3)" }}
+                      onMouseLeave={e => { e.currentTarget.style.color = "rgba(255,255,255,.25)"; e.currentTarget.style.borderColor = "rgba(255,255,255,.08)" }}
+                    >×</button>
+                  </div>
+                ))}
+              </div>
 
-              <div style={{ display: "flex", gap: 8, marginTop: 10 }}>
+              <div style={{ display: "flex", gap: 6, marginTop: 10 }}>
                 <button
                   onClick={() => setBlocks([...blocks, { type: "paragraph", text: "" }])}
-                  style={{ flex: 1, background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#666", fontSize: 11, fontWeight: 600, padding: "8px", cursor: "pointer", letterSpacing: ".05em" }}
+                  style={{
+                    flex: 1, background: "rgba(255,255,255,.04)",
+                    border: "1px solid rgba(255,255,255,.08)",
+                    borderRadius: 7, color: "rgba(255,255,255,.35)",
+                    fontSize: 11, fontWeight: 700, padding: "8px 10px", cursor: "pointer",
+                    letterSpacing: ".06em", transition: "all .2s",
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.15)"; e.currentTarget.style.color = "rgba(255,255,255,.6)" }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.08)"; e.currentTarget.style.color = "rgba(255,255,255,.35)" }}
                 >+ Add Block</button>
                 <button
                   onClick={saveBlocks}
-                  style={{ background: "#AAFF00", border: "none", borderRadius: 4, color: "#000", fontSize: 11, fontWeight: 700, padding: "8px 14px", cursor: "pointer", letterSpacing: ".08em", textTransform: "uppercase" }}
+                  style={{
+                    background: "var(--g)", border: "none", borderRadius: 7,
+                    color: "#000", fontSize: 11, fontWeight: 900,
+                    padding: "8px 16px", cursor: "pointer", letterSpacing: ".08em", textTransform: "uppercase",
+                    transition: "opacity .2s",
+                  }}
+                  onMouseEnter={e => (e.currentTarget.style.opacity = ".85")}
+                  onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
                 >Save</button>
               </div>
-            </div>
+            </Card>
 
-            {/* Refresh preview */}
+            {/* ── REFRESH PREVIEW ── */}
             <button
               onClick={() => setPreviewKey(k => k + 1)}
-              style={{ width: "100%", background: "#1A1A1A", border: "1px solid #2A2A2A", borderRadius: 4, color: "#888", fontSize: 12, fontWeight: 500, padding: "10px", cursor: "pointer", letterSpacing: ".08em", textTransform: "uppercase", transition: "all .15s" }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = "#AAFF00"; e.currentTarget.style.color = "#AAFF00" }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = "#2A2A2A"; e.currentTarget.style.color = "#888" }}
+              style={{
+                width: "100%", marginTop: 4,
+                background: "transparent",
+                border: "1px solid rgba(255,255,255,.07)",
+                borderRadius: 8, color: "rgba(255,255,255,.25)",
+                fontSize: 11, fontWeight: 700, padding: "10px",
+                cursor: "pointer", letterSpacing: ".08em", textTransform: "uppercase",
+                transition: "all .2s",
+              }}
+              onMouseEnter={e => { e.currentTarget.style.borderColor = "var(--gb)"; e.currentTarget.style.color = "var(--g)" }}
+              onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,.07)"; e.currentTarget.style.color = "rgba(255,255,255,.25)" }}
             >
               ↻ Refresh Preview
             </button>
@@ -517,16 +568,23 @@ export default function ProposalEditor() {
           </div>
 
           {/* ── RIGHT PANEL — PREVIEW ── */}
-          <div style={{ flex: 1, background: "#F0F0F0", overflow: "hidden", position: "relative" }}>
+          <div style={{ flex: 1, background: "#1A1A1A", overflow: "hidden", position: "relative" }}>
             <iframe
               key={previewKey}
               src={`/api/proposals/${id}/html`}
               style={{ width: "100%", height: "100%", border: "none", display: "block" }}
               title="Proposal Preview"
             />
-            {/* Overlay label */}
-            <div style={{ position: "absolute", top: 12, right: 16, background: "rgba(0,0,0,.6)", backdropFilter: "blur(4px)", borderRadius: 4, padding: "4px 10px", fontSize: 11, color: "#888", letterSpacing: ".06em", pointerEvents: "none" }}>
-              Preview — saved state
+            <div style={{
+              position: "absolute", top: 12, right: 14,
+              background: "rgba(0,0,0,.7)", backdropFilter: "blur(8px)",
+              border: "1px solid rgba(255,255,255,.06)",
+              borderRadius: 7, padding: "3px 10px",
+              fontSize: 10, fontWeight: 700, color: "rgba(255,255,255,.2)",
+              letterSpacing: ".07em", textTransform: "uppercase",
+              pointerEvents: "none",
+            }}>
+              Preview
             </div>
           </div>
 

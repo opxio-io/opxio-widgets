@@ -78,10 +78,13 @@ export default async function handler(req, res) {
 
       let contentStatusUpdated = false, campaignStatusUpdated = false, campaignSkipped = false;
 
+      const isPostingStart = /posting/i.test(taskName);
+
       if (contentRelation.length > 0) {
         const contentId = contentRelation[0].id;
+        const contentStartStatus = isPostingStart ? 'Ready for Posting' : 'In Production';
         try {
-          const cr = await patch(contentId, { 'Content Status': { status: { name: 'In Production' } } });
+          const cr = await patch(contentId, { 'Content Status': { status: { name: contentStartStatus } } });
           if (cr.ok) contentStatusUpdated = true;
         } catch (e) { console.error('Content status (non-fatal):', e.message); }
 
@@ -117,7 +120,9 @@ export default async function handler(req, res) {
         success: true, action,
         message: isQcRejection
           ? `"${taskName}" restarted after QC rejection. Accumulated time preserved (${Math.round(newAccumulatedMins)} mins).`
-          : `"${taskName}" started. Timer running.`,
+          : isPostingStart
+            ? `"${taskName}" started — content marked Ready for Posting.`
+            : `"${taskName}" started. Timer running.`,
         task: taskName, startedAt: now, accumulatedMins: newAccumulatedMins,
         isQcRejection, contentStatusUpdated, campaignStatusUpdated, campaignSkipped,
       });

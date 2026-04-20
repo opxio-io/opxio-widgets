@@ -3,7 +3,7 @@ import Head from 'next/head'
 
 export default function PortalLogin() {
   const [email, setEmail] = useState('')
-  const [status, setStatus] = useState('idle') // idle | loading | sent | error
+  const [status, setStatus] = useState('idle')
   const [error, setError] = useState('')
 
   async function handleSubmit(e) {
@@ -30,33 +30,37 @@ export default function PortalLogin() {
     <>
       <Head>
         <title>Opxio — Client Portal</title>
-        <link href="https://api.fontshare.com/v2/css?f[]=syne@700,800&f[]=dm-sans@400,500&display=swap" rel="stylesheet" />
+        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
       </Head>
       <style>{`
         *{margin:0;padding:0;box-sizing:border-box}
-        html,body{height:100%;background:#0A0A0A;color:#fff;font-family:'DM Sans',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
-        :root{--g:#AAFF00;--gb:rgba(170,255,0,.2);--gm:rgba(170,255,0,.08)}
+        html,body{min-height:100%;background:#0D0D0D;color:#fff;font-family:'Satoshi',-apple-system,sans-serif;-webkit-font-smoothing:antialiased}
+        :root{--g:#AAFF00;--gm:rgba(170,255,0,.08);--gb:rgba(170,255,0,.2)}
         .wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px}
-        .logo{font-family:'Syne',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.03em;color:#fff;margin-bottom:48px}
-        .logo span{color:var(--g)}
-        .card{width:100%;max-width:400px;background:#111;border:1px solid #1E1E1E;border-radius:16px;padding:36px 32px}
-        .title{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.03em;margin-bottom:6px}
-        .sub{font-size:14px;color:#555;margin-bottom:28px;line-height:1.5}
-        label{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#444;margin-bottom:8px}
-        input{width:100%;background:#161616;border:1px solid #222;border-radius:10px;padding:12px 16px;font-size:14px;color:#fff;outline:none;font-family:'DM Sans',sans-serif;transition:border-color .15s}
-        input:focus{border-color:var(--g)}
-        input::placeholder{color:#333}
-        .btn{width:100%;margin-top:16px;background:var(--g);color:#000;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;padding:13px;border:none;border-radius:10px;cursor:pointer;transition:opacity .15s}
-        .btn:hover{opacity:.9}
+        .brand{display:flex;align-items:center;gap:8px;margin-bottom:48px}
+        .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--g)}
+        .brand-name{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35)}
+        .card{width:100%;max-width:380px;background:#111;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:32px 28px}
+        .title{font-size:22px;font-weight:900;letter-spacing:-.03em;margin-bottom:6px}
+        .sub{font-size:12px;font-weight:500;color:rgba(255,255,255,.3);margin-bottom:28px;line-height:1.6}
+        label{display:block;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:7px}
+        input{width:100%;background:#1A1A1A;border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:11px 14px;font-size:13px;font-weight:500;color:#fff;outline:none;font-family:'Satoshi',sans-serif;transition:border-color .2s}
+        input:focus{border-color:rgba(170,255,0,.4)}
+        input::placeholder{color:rgba(255,255,255,.2)}
+        .btn{width:100%;margin-top:14px;background:var(--g);color:#000;font-family:'Satoshi',sans-serif;font-size:12px;font-weight:900;padding:12px;border:none;border-radius:9px;cursor:pointer;transition:opacity .2s;letter-spacing:.01em}
+        .btn:hover{opacity:.88}
         .btn:disabled{opacity:.4;cursor:not-allowed}
         .success{text-align:center;padding:8px 0}
-        .success-icon{width:44px;height:44px;border-radius:50%;background:var(--gm);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:18px}
-        .success-title{font-family:'Syne',sans-serif;font-size:17px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
-        .success-msg{font-size:13px;color:#555;line-height:1.6}
-        .err{font-size:12px;color:#FF6B6B;margin-top:10px}
+        .success-icon{width:40px;height:40px;border-radius:50%;background:var(--gm);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;color:var(--g);font-size:15px;font-weight:900}
+        .success-title{font-size:18px;font-weight:900;letter-spacing:-.02em;margin-bottom:8px}
+        .success-msg{font-size:12px;font-weight:500;color:rgba(255,255,255,.3);line-height:1.6}
+        .err{font-size:11px;font-weight:600;color:rgba(255,100,100,.7);margin-top:9px}
       `}</style>
       <div className="wrap">
-        <div className="logo">op<span>x</span>io</div>
+        <div className="brand">
+          <div className="brand-dot"/>
+          <span className="brand-name">Opxio Client Portal</span>
+        </div>
         <div className="card">
           {status === 'sent' ? (
             <div className="success">
@@ -70,14 +74,7 @@ export default function PortalLogin() {
               <div className="sub">Enter your email to receive a secure login link.</div>
               <form onSubmit={handleSubmit}>
                 <label>Email address</label>
-                <input
-                  type="email"
-                  placeholder="you@company.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  autoFocus
-                  required
-                />
+                <input type="email" placeholder="you@company.com" value={email} onChange={e => setEmail(e.target.value)} autoFocus required />
                 {error && <div className="err">{error}</div>}
                 <button className="btn" type="submit" disabled={status === 'loading'}>
                   {status === 'loading' ? 'Sending…' : 'Send access link'}

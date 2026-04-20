@@ -9,6 +9,15 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
+body.light{background:#FFFFFF;color:#111;}
+body.light{--g:#4F8B00;--gm:rgba(79,139,0,.1);--gb:rgba(79,139,0,.22);}
+body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+body.light .card:hover{border-color:rgba(0,0,0,.15);}
+body.light .eyebrow{color:rgba(0,0,0,.45);}
+body.light .h-title{color:#111;}
+body.light .ts{color:rgba(0,0,0,.35);}
+body.light .sec-lbl{color:rgba(0,0,0,.45);}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--orange:#FB923C;--blue:#60A5FA;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
@@ -136,6 +145,14 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;backg
 .save-msg{font-size:11px;text-align:center;font-weight:700;padding:8px;border-radius:7px;margin-top:10px;display:none;}
 .save-msg.ok{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 .save-msg.err{background:rgba(241,113,113,.1);color:var(--red);border:1px solid rgba(241,113,113,.2);}
+.h-left{display:flex;flex-direction:column;gap:2px;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
+body.light .icon-btn:hover{background:rgba(79,139,0,.08);border-color:rgba(79,139,0,.2);color:var(--g);}
 </style>
 </head>
 <body>
@@ -147,7 +164,8 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;backg
   </div>
   <div class="h-right">
     <span class="ts" id="ts"></span>
-    <button class="btn" id="rb" onclick="load()">↻ Refresh</button>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
   </div>
 </div>
 
@@ -771,7 +789,6 @@ window.switchTab = function(id){
 
 // ── LOAD ─────────────────────────────────────────────────────────────────────
 async function load(){
-  document.getElementById('rb').textContent = '↻ Refreshing…';
 
   try{
     // Step 1: resolve sections — role preset overrides saved config
@@ -866,12 +883,14 @@ async function load(){
         <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:4px;">${esc(e.message)}</div>
       </div>`;
   } finally {
-    document.getElementById('rb').textContent = '↻ Refresh';
   }
 }
 
 load();
 setInterval(load, 600000);
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');load().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
+const SUN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';const MOON_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;}
 </script>
 
 <div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>

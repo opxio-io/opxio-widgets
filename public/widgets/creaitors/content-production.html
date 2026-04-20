@@ -140,11 +140,13 @@ body.light .prog-sub.flag{color:var(--red);}
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
+let _lastData = null;
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
 // Semantic color by status label keyword
-function statusColor(label){
+// isLight: pass true when in light mode so white-based colors become dark
+function statusColor(label, isLight){
   const l = (label||'').toLowerCase();
   if(l.includes('done') || l.includes('published'))                          return 'var(--g)';
   if(l.includes('ready for posting') || l.includes('ready to work'))         return '#FB923C';
@@ -152,12 +154,15 @@ function statusColor(label){
   if(l.includes('pending qc') || l.includes('qc review') || l.includes('final qc')) return 'var(--amber)';
   if(l.includes('qc') || l.includes('pending'))                              return 'var(--amber)';
   if(l.includes('progress') || l.includes('production') || l.includes('scripting') || l.includes('editing') || l.includes('recording')) return '#60A5FA';
-  if(l.includes('waiting'))                                                   return 'rgba(255,255,255,.45)';
-  if(l.includes('not started') || l.includes('pre-production'))              return 'rgba(255,255,255,.25)';
-  return 'rgba(255,255,255,.35)';
+  if(l.includes('waiting'))   return isLight ? 'rgba(0,0,0,.4)'  : 'rgba(255,255,255,.45)';
+  if(l.includes('not started') || l.includes('pre-production')) return isLight ? 'rgba(0,0,0,.28)' : 'rgba(255,255,255,.25)';
+  return isLight ? 'rgba(0,0,0,.35)' : 'rgba(255,255,255,.35)';
 }
 
 function render(d){
+  if(d) _lastData = d; else d = _lastData;
+  if(!d) return;
+  const isLight = document.body.classList.contains('light');
   const ab             = d.attentionBreakdown || {};
   const overdue        = ab.overdue || 0;
   const dueWeek        = d.dueThisWeek || 0;
@@ -226,7 +231,7 @@ function render(d){
 
   for(const label of taskStatuses){
     const count = taskStatusCounts[label] || 0;
-    const col   = statusColor(label);
+    const col   = statusColor(label, isLight);
     const active = count > 0;
     html += `<div class="ts-row">
       <div class="ts-dot" style="background:${col};${!active?'opacity:.35;':''}"></div>
@@ -246,7 +251,7 @@ function render(d){
     </div>`;
   for(const label of contentStatuses){
     const count = contentStatusCounts[label] || 0;
-    const col   = statusColor(label);
+    const col   = statusColor(label, isLight);
     const pct   = Math.round((count / csMax) * 100);
     const isDone   = label.toLowerCase().includes('done') || label.toLowerCase().includes('ready for posting');
     const isFlag   = label.toLowerCase().includes('revision') || label.toLowerCase().includes('review needed');

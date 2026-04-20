@@ -94,6 +94,8 @@ body.light .num-active{color:rgba(0,0,0,.7);}
 /* Time cell */
 .time-cell{text-align:center;}
 .time-val{font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1;}
+.time-has{color:rgba(255,255,255,.6);}
+body.light .time-has{color:rgba(0,0,0,.65);}
 .time-unit{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-top:3px;}
 body.light .time-unit{color:rgba(0,0,0,.3);}
 
@@ -135,6 +137,8 @@ let _tab = 'week', _data = null;
 
 // Roles to exclude from staff view
 const EXCLUDE_ROLES = ['part time', 'live host', 'part-time', 'freelance'];
+// Names to exclude (management/leadership not in production)
+const EXCLUDE_NAMES = ['danil husaini', 'azim harun', 'azim'];
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 
@@ -160,10 +164,11 @@ function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add(
 function render(data){
   if(!data?.employees) return;
 
-  // Filter out part-time / live-host roles
+  // Filter out part-time / live-host roles and specific management names
   const emps = data.employees.filter(e => {
     const r = (e.role||'').toLowerCase();
-    return !EXCLUDE_ROLES.some(x => r.includes(x));
+    const n = (e.name||'').toLowerCase();
+    return !EXCLUDE_ROLES.some(x => r.includes(x)) && !EXCLUDE_NAMES.some(x => n.includes(x));
   });
 
   const periodText = _tab==='week' ? fmtRange(data.weekLabel||'') :
@@ -226,7 +231,7 @@ function render(data){
         <div class="stat-cell"><div class="stat-num ${overdue?'num-over':'num-zero'}">${overdue||'—'}</div></div>
         <div class="stat-cell"><div class="stat-num ${total?'num-active':'num-zero'}">${total||'—'}</div></div>
         <div class="time-cell">
-          <div class="time-val" style="color:${hrs?'rgba(255,255,255,.6)':'rgba(255,255,255,.12)'};">${fmtHrs(hrs)}</div>
+          <div class="time-val ${hrs?'time-has':'num-zero'}">${fmtHrs(hrs)}</div>
         </div>
       </div>`;
     }

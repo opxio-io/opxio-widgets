@@ -40,10 +40,15 @@ export default async function handler(req, res) {
         const avail    = (pp["Available To"]?.multi_select || []).map(x => x.name)
         const requires = (pp["Requires"]?.relation || []).map(x => x.id.replace(/-/g,""))
         const slug     = plain(pp["Slug"]?.rich_text || [])
-        const desc     = plain(pp["Description"]?.rich_text || [])
-        const avail2   = pp["Availability"]?.select?.name || "Public"
-        const buildDays= pp["Build Days"]?.number ?? null
-        return { id: p.id.replace(/-/g,""), name, tier, order, price, priceMax, monthly, model, term, quoteType, avail, requires, slug, desc, visibility: avail2, buildDays }
+        const desc        = plain(pp["Description"]?.rich_text || [])
+        const covers      = plain(pp["Covers"]?.rich_text || [])
+        const solves      = plain(pp["Solves"]?.rich_text || [])
+        const noteLabel   = plain(pp["Note Label"]?.rich_text || [])
+        const note        = plain(pp["Note"]?.rich_text || [])
+        const connectedDbs= plain(pp["Connected Databases"]?.rich_text || [])
+        const avail2      = pp["Availability"]?.select?.name || "Public"
+        const buildDays   = pp["Build Days"]?.number ?? null
+        return { id: p.id.replace(/-/g,""), name, tier, order, price, priceMax, monthly, model, term, quoteType, avail, requires, slug, desc, covers, solves, noteLabel, note, connectedDbs, visibility: avail2, buildDays }
       })
       .filter(x => x.name)
       .sort((a, b) => a.order - b.order)

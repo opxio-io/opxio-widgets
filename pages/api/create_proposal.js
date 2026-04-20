@@ -382,10 +382,33 @@ async function processProposal(sourceId) {
     if (picIds.length) break
   }
 
-  // Resolve OS type — Lead uses "OS Interest", Deal uses "Package Type"
-  const osName = sourceProps["OS Interest"]?.select?.name || sourceProps["Package Type"]?.select?.name || ""
-  const pkgRaw = osName.toLowerCase().trim()
-  const slug   = OS_TYPE_SLUG_MAP[pkgRaw] || "operations-os"
+  // Resolve OS type:
+  // - Lead: "OS Interest" multi_select (use first value) or select
+  // - Deal: "OS Type" relation to Catalogue (fetch the page) or "Packages" multi_select (first value)
+  let osName = ""
+  let slug   = ""
+  if (isFromDeal) {
+    // Primary: OS Type relation → fetch Catalogue item
+    const osTypeIds = (sourceProps["OS Type"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+    if (osTypeIds.length) {
+      try {
+        const osPg = await getPage(osTypeIds[0], token)
+        osName = plain(osPg.properties["Product Name"]?.title || "")
+        slug   = plain(osPg.properties["Slug"]?.rich_text || "")
+      } catch {}
+    }
+    // Fallback: Packages multi_select first value
+    if (!osName) {
+      const pkgs = (sourceProps["Packages"]?.multi_select || []).map(x => x.name)
+      osName = pkgs[0] || ""
+    }
+  } else {
+    // Lead: OS Interest (multi_select first or select)
+    const oiMulti = (sourceProps["OS Interest"]?.multi_select || []).map(x => x.name)
+    osName = oiMulti[0] || sourceProps["OS Interest"]?.select?.name || ""
+  }
+  if (!slug) slug = OS_TYPE_SLUG_MAP[osName.toLowerCase().trim()] || ""
+  console.log("[create_proposal] osName:", osName, "slug:", slug)
 
   const addonSlugs = []
   const addonNames = []
@@ -421,12 +444,12 @@ async function processProposal(sourceId) {
 
   const isOS = OS_PACKAGE_SLUGS.has(slug)
   const [mainProduct, baseProduct, ...addonProducts] = await Promise.all([
-    fetchProductInfo(slug),
+    slug ? fetchProductInfo(slug) : Promise.resolve(null),
     isOS ? fetchProductInfo("base-os") : Promise.resolve(null),
     ...addonSlugs.map(s => fetchProductInfo(s)),
   ])
 
-  console.log("[create_proposal] slug:", slug, "addons:", addonSlugs.length, "fromDeal:", isFromDeal)
+  console.log("[create_proposal] slug:", slug, "osName:", osName, "addons:", addonSlugs.length, "fromDeal:", isFromDeal)
 
   // ── 2. Find recently created Proposal page ─────────────────────────────────
   // Notion button Action 1 creates the proposal before Action 2 fires the

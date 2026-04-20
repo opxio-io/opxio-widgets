@@ -494,10 +494,8 @@ async function processProposal(sourceId) {
         "Status":        { select: { name: "Draft" } },
         "Date":          { date: { start: today } },
         "Payment Terms": { select: { name: "50% Deposit" } },
-        ...(osName        ? { "OS Type":         { select:   { name: osName } } } : {}),
         ...(companyIds.length ? { "Company":      { relation: [{ id: companyIds[0] }] } } : {}),
         ...(picIds.length     ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
-        ...(leadId        ? { "Lead Source":      { relation: [{ id: leadId }] } } : {}),
         ...(dealId        ? { "Deal Source":      { relation: [{ id: dealId }] } } : {}),
       },
     }, token)
@@ -522,11 +520,9 @@ async function processProposal(sourceId) {
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },
     ...(packagesList.length     ? { "Packages":        { multi_select: packagesList } } : {}),
-    ...(osName                  ? { "OS Type":         { select:   { name: osName } } } : {}),
     ...(mainProduct?.quote_type ? { "Quote Type":      { select:   { name: mainProduct.quote_type } } } : {}),
     ...(companyIds.length       ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
     ...(picIds.length           ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
-    ...(leadId                  ? { "Lead Source":     { relation: [{ id: leadId }] } } : {}),
     ...(dealId                  ? { "Deal Source":     { relation: [{ id: dealId }] } } : {}),
     ...(situation               ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
   }, token)

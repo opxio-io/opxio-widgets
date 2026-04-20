@@ -7,7 +7,7 @@
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
 body.light{background:#F5F5F5;color:#111;}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);--lostb:rgba(255,107,53,.22);}
-body.light{--g:#fff;--gb:rgba(255,255,255,.16);--lost:#D94F1E;}
+body.light{--g:#fff;--gb:rgba(255,255,255,.16);--lost:#fff;}
 
 /* cards */
 .card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s,background .2s;overflow:hidden;position:relative;}
@@ -37,7 +37,7 @@ body.light .s-lbl{color:rgba(255,255,255,.85);}
 .s-val{font-size:34px;font-weight:900;letter-spacing:-1.8px;line-height:1;color:var(--g);}
 .s-val.is-lost{color:var(--lost);}
 body.light .s-val{color:var(--g);}
-body.light .s-val.is-lost{color:var(--lost);}
+
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;line-height:1.4;}
 body.light .s-sub{color:rgba(255,255,255,.22);}
 .s-tag{display:inline-flex;align-items:center;gap:4px;margin-top:9px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid rgba(170,255,0,.18);}

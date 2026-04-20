@@ -9,7 +9,7 @@
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
 body.light{background:#F0F0F0;color:#111;}
 :root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;}
-body.light{--muted:rgba(0,0,0,.4);--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);}
+body.light{--muted:rgba(255,255,255,.4);--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--lost:#fff;}
 .card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.08);}
 body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
@@ -125,13 +125,13 @@ body.light .seg-count{color:rgba(255,255,255,.85);}
 .map-canvas-side{flex:1;display:flex;flex-direction:column;position:relative;overflow:hidden;background:#191919;}
 body.light .map-canvas-side{background:#2a2a2a;}
 .map-canvas-label{position:absolute;top:12px;left:14px;font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.22);z-index:2;pointer-events:none;}
-body.light .map-canvas-label{color:rgba(0,0,0,0.43);}
+body.light .map-canvas-label{color:rgba(255,255,255,.35);}
 /* D3 map wrap — flex:1 so it stretches to fill map-canvas-side height */
 .map-d3-wrap{flex:1;width:100%;overflow:hidden;}
 .map-d3-wrap svg{display:block;width:100%;height:100%;}
 /* Right stats panel — no extra bg, sits on top of .card bg (#1E1E1E) */
 .map-stats-side{width:216px;flex-shrink:0;display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-left:1px solid rgba(255,255,255,.05);}
-body.light .map-stats-side{border-left-color:rgba(0,0,0,.06);}
+body.light .map-stats-side{border-left-color:rgba(255,255,255,.06);}
 /* Total leads card — matches widget .stat style */
 .ms-total{background:none;border:none;border-radius:10px;padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-shrink:0;}
 body.light .ms-total{background:none;}
@@ -186,29 +186,26 @@ body.light .utm-empty{color:rgba(0,0,0,0.31);}
 /* Win/Loss log */
 .log-panel{padding:20px 22px;}
 .wl-tabs{display:flex;gap:3px;background:rgba(255,255,255,.04);border-radius:8px;padding:3px;width:fit-content;margin-bottom:18px;}
-body.light .wl-tabs{background:rgba(0,0,0,.06);}
+body.light .wl-tabs{background:rgba(255,255,255,.06);}
 .wl-tab{background:transparent;border:none;color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:10px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer;transition:all .18s;}
-body.light .wl-tab{color:rgba(0,0,0,0.54);}
 .wl-tab.won{background:rgba(170,255,0,.14);color:#AAFF00;}
 body.light .wl-tab.won{background:rgba(255,255,255,.12);color:#fff;}
 .wl-tab.lost-active{background:rgba(255,107,53,.14);color:#FF6B35;}
 .log-row{display:flex;align-items:flex-start;gap:12px;padding:11px 6px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;border-radius:6px;margin:0 -6px;}
-body.light .log-row{border-bottom-color:rgba(0,0,0,.05);}
+body.light .log-row{border-bottom-color:rgba(255,255,255,.06);}
 .log-row:last-child{border-bottom:none;}
 .log-row:hover{background:rgba(255,255,255,.03);}
 .log-info{flex:1;min-width:0;}
 .log-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
-body.light .log-name{color:rgba(0,0,0,0.62);}
 .log-meta{font-size:11px;font-weight:500;color:rgba(255,255,255,.25);}
-body.light .log-meta{color:rgba(0,0,0,0.54);}
 .log-right{display:flex;flex-direction:column;align-items:flex-end;gap:5px;flex-shrink:0;}
 .badge{font-size:9.5px;font-weight:700;padding:2px 8px;border-radius:4px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
-.badge-won{background:rgba(170,255,0,.1);color:var(--g);border:1px solid rgba(170,255,0,.2);}
-.badge-lost-lead{background:rgba(255,107,53,.1);color:#FF6B35;border:1px solid rgba(255,107,53,.2);}
-.badge-lost-deal{background:rgba(255,107,53,.16);color:#FF6B35;border:1px solid rgba(255,107,53,.25);}
-.reason-pill{font-size:10px;font-weight:700;color:#FF6B35;background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.18);border-radius:4px;padding:2px 7px;margin-top:4px;display:inline-block;}
+.badge-won{background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);border:1px solid rgba(255,255,255,.18);}
+.badge-lost-lead{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12);}
+.badge-lost-deal{background:rgba(255,255,255,.07);color:rgba(255,255,255,.55);border:1px solid rgba(255,255,255,.12);}
+body.light .badge-lost-lead,.body.light .badge-lost-deal{background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border-color:rgba(255,255,255,.1);}
+.reason-pill{font-size:10px;font-weight:700;color:rgba(255,255,255,.45);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:4px;padding:2px 7px;margin-top:4px;display:inline-block;}
 .log-val{font-size:13px;font-weight:900;color:rgba(255,255,255,.45);letter-spacing:-.4px;}
-body.light .log-val{color:rgba(0,0,0,0.62);}
 .log-val.won-val{color:var(--g);opacity:.9;}
 .empty{padding:36px 0;text-align:center;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
 /* Responsive */

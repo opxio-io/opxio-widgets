@@ -169,6 +169,10 @@ body.light .gr-cell.wknd-col{background:rgba(0,0,0,.01);}
 .b-Blocked{background:var(--red);opacity:.85;}
 /* Overdue — task past due date and not done */
 .b-Overdue{background:linear-gradient(90deg,var(--amber),var(--red));}
+/* Deadline tick line — shown on overdue active tasks to mark original due date */
+.g-deadline{position:absolute;top:6px;bottom:6px;width:2px;background:var(--red);opacity:.75;z-index:3;border-radius:1px;pointer-events:none;}
+.g-deadline::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);opacity:.9;}
+.g-deadline::after{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);opacity:.9;}
 /* Due date pin for Not Started tasks */
 .g-due-mark{position:absolute;top:10px;width:20px;height:20px;border-radius:50%;background:rgba(255,107,107,.12);border:1.5px solid rgba(255,107,107,.5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--red);z-index:2;cursor:default;transition:background .15s;}
 .g-due-mark:hover{background:rgba(255,107,107,.22);}
@@ -522,8 +526,15 @@ function renderGantt(){
       } else {
         const barLeft=si*DAY_W+3;
         const barWidth=Math.max((ei-si+1)*DAY_W-6,18);
+        // Deadline tick: for overdue in-progress/blocked tasks, mark the original due date
+        let deadlineHTML='';
+        if(t._overdue&&t.due&&dayIdx[t.due]!=null){
+          const dlX=dayIdx[t.due]*DAY_W+DAY_W/2-1;
+          deadlineHTML=`<div class="g-deadline" style="left:${dlX}px;" title="Deadline: ${fmtShort(t.due)}"></div>`;
+        }
         rowsHTML+=`<div class="gr-row">${makeCells()}
           <div class="g-bar ${cls}" style="left:${barLeft}px;width:${barWidth}px;" title="${tooltip}"></div>
+          ${deadlineHTML}
         </div>`;
         taskRowMap[t.id]={row:rowIdx,x:barLeft+barWidth};
       }

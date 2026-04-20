@@ -1,11 +1,28 @@
 // POST /api/portal/feedback|expansion|message
 // GET  /api/portal/download?type=invoice|receipt&id=xxx
-// No auth in V1
+// Token validated via Supabase clients table
 
-import { getPage, createPage, plain, DB, hdrs } from '../../../lib/notion'
+import { getPage, createPage, plain, DB } from '../../../lib/notion'
+import { createClient as createSupabaseClient } from "@supabase/supabase-js"
+
+async function getProjectIdFromToken(portalToken) {
+  if (!portalToken) return null
+  try {
+    const supabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
+    )
+    const { data } = await supabase
+      .from('clients')
+      .select('project_id')
+      .eq('portal_token', portalToken)
+      .single()
+    return data?.project_id || null
+  } catch { return null }
+}
 
 async function notify(subject, body) {
-  if (!process.env.RESEND_API_KEY) { console.log('[portal]', subject, '\n', body); return }
+  if (!process.env.RESEND_API_KEY) { console.log('[portal]', subject); return }
   await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { 'Authorization': `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
@@ -16,14 +33,14 @@ async function notify(subject, body) {
 export default async function handler(req, res) {
   const { action } = req.query
   const nToken = process.env.NOTION_API_KEY
-  const today = new Date().toISOString().split('T')[0]
+  const today  = new Date().toISOString().split('T')[0]
 
-  // ── FEEDBACK ────────────────────────────────────────────────────────────────
+  // ── FEEDBACK ──────────────────────────────────────────────────────────────
   if (action === 'feedback') {
     if (req.method !== 'POST') return res.status(405).end()
-    const { project_id, phase_name, type, description, attachment } = req.body || {}
+    const { portal_token, phase_name, type, description, attachment } = req.body || {}
     if (!description) return res.status(400).json({ error: 'Description required' })
-
+    const project_id = await getProjectIdFromToken(portal_token)
     try {
       await createPage({
         parent: { database_id: DB.CLIENT_IMPL },
@@ -35,27 +52,21 @@ export default async function handler(req, res) {
           'Source': { select: { name: 'Client Portal' } },
         }
       }, nToken)
-      await notify(`[Portal] ${type} — ${phase_name}`, `Project: ${project_id}\nPhase: ${phase_name}\nType: ${type}\n\n${description}${attachment?`\n\nAttachment: ${attachment}`:''}`)
+      await notify(`[Portal] ${type} — ${phase_name}`, `Project: ${project_id}\nPhase: ${phase_name}\nType: ${type}\n\n${description}`)
       return res.json({ ok: true })
-    } catch (e) {
-      console.error('[portal/feedback]', e)
-      return res.status(500).json({ error: e.message })
-    }
+    } catch (e) { console.error('[portal/feedback]', e); return res.status(500).json({ error: e.message }) }
   }
 
-  // ── EXPANSION ────────────────────────────────────────────────────────────────
+  // ── EXPANSION ─────────────────────────────────────────────────────────────
   if (action === 'expansion') {
     if (req.method !== 'POST') return res.status(405).end()
-    const { project_id, description, area, urgency } = req.body || {}
+    const { portal_token, description, area, urgency } = req.body || {}
     if (!description) return res.status(400).json({ error: 'Description required' })
-
+    const project_id = await getProjectIdFromToken(portal_token)
     try {
       let companyId = null
       if (project_id) {
-        try {
-          const p = await getPage(project_id, nToken)
-          companyId = p.properties.Company?.relation?.[0]?.id?.replace(/-/g, '') || null
-        } catch {}
+        try { const p = await getPage(project_id, nToken); companyId = p.properties.Company?.relation?.[0]?.id?.replace(/-/g,'') || null } catch {}
       }
       await createPage({
         parent: { database_id: DB.EXPANSIONS },
@@ -70,25 +81,19 @@ export default async function handler(req, res) {
       }, nToken)
       await notify(`[Portal] Expansion — ${area}`, `Project: ${project_id}\nArea: ${area}\nUrgency: ${urgency}\n\n${description}`)
       return res.json({ ok: true })
-    } catch (e) {
-      console.error('[portal/expansion]', e)
-      return res.status(500).json({ error: e.message })
-    }
+    } catch (e) { console.error('[portal/expansion]', e); return res.status(500).json({ error: e.message }) }
   }
 
-  // ── MESSAGE ──────────────────────────────────────────────────────────────────
+  // ── MESSAGE ───────────────────────────────────────────────────────────────
   if (action === 'message') {
     if (req.method !== 'POST') return res.status(405).end()
-    const { project_id, subject, message } = req.body || {}
+    const { portal_token, subject, message } = req.body || {}
     if (!subject || !message) return res.status(400).json({ error: 'Subject and message required' })
-
+    const project_id = await getProjectIdFromToken(portal_token)
     try {
       let companyId = null
       if (project_id) {
-        try {
-          const p = await getPage(project_id, nToken)
-          companyId = p.properties.Company?.relation?.[0]?.id?.replace(/-/g, '') || null
-        } catch {}
+        try { const p = await getPage(project_id, nToken); companyId = p.properties.Company?.relation?.[0]?.id?.replace(/-/g,'') || null } catch {}
       }
       await createPage({
         parent: { database_id: DB.ACTIVITY_LOG },
@@ -101,23 +106,19 @@ export default async function handler(req, res) {
           'Type': { select: { name: 'Client Portal Message' } },
         }
       }, nToken)
-      await notify(`[Portal] Message — ${subject}`, `Project: ${project_id}\nSubject: ${subject}\n\n${message}`)
+      await notify(`[Portal] Message — ${subject}`, `Project: ${project_id}\n\n${message}`)
       return res.json({ ok: true })
-    } catch (e) {
-      console.error('[portal/message]', e)
-      return res.status(500).json({ error: e.message })
-    }
+    } catch (e) { console.error('[portal/message]', e); return res.status(500).json({ error: e.message }) }
   }
 
-  // ── DOWNLOAD ─────────────────────────────────────────────────────────────────
+  // ── DOWNLOAD ──────────────────────────────────────────────────────────────
   if (action === 'download') {
     if (req.method !== 'GET') return res.status(405).end()
     const { type, id } = req.query
     const endpoint = type === 'receipt' ? 'generate_receipt' : 'generate_invoice'
     try {
       const apiRes = await fetch(`https://api.opxio.io/api/${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ page_id: id }),
       })
       if (!apiRes.ok) return res.status(500).json({ error: 'PDF generation failed' })
@@ -125,9 +126,7 @@ export default async function handler(req, res) {
       res.setHeader('Content-Type', 'application/pdf')
       res.setHeader('Content-Disposition', `attachment; filename="${type}-${id.slice(0,8)}.pdf"`)
       return res.send(Buffer.from(buffer))
-    } catch (e) {
-      return res.status(500).json({ error: e.message })
-    }
+    } catch (e) { return res.status(500).json({ error: e.message }) }
   }
 
   return res.status(404).json({ error: 'Not found' })

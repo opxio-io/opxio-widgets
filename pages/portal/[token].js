@@ -155,7 +155,7 @@ const labelStyle = {
 
 export default function PortalProject() {
   const router = useRouter()
-  const { project_id } = router.query
+  const { token: portalToken } = router.query
 
   const [data, setData] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -177,7 +177,7 @@ export default function PortalProject() {
 
   useEffect(() => {
     if (!project_id) return
-    fetch(`/api/portal/data?project_id=${project_id}`)
+    fetch(`/api/portal/data?token=${portalToken}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false) })
       .catch(() => setLoading(false))
@@ -203,17 +203,17 @@ export default function PortalProject() {
 
   async function submitFeedback() {
     if (!fbDesc) return
-    const ok = await post('/api/portal/feedback', { project_id, phase_name: feedbackPhase?.name, type: fbType, description: fbDesc, attachment: fbLink })
+    const ok = await post('/api/portal/feedback', { portal_token: portalToken, phase_name: feedbackPhase?.name, type: fbType, description: fbDesc, attachment: fbLink })
     if (ok) { setFormStatus('success'); setSuccessMsg('Feedback submitted. We\'ll review and get back to you shortly.') }
   }
   async function submitExpansion() {
     if (!expDesc) return
-    const ok = await post('/api/portal/expansion', { project_id, description: expDesc, area: expArea, urgency: expUrgency })
+    const ok = await post('/api/portal/expansion', { portal_token: portalToken, description: expDesc, area: expArea, urgency: expUrgency })
     if (ok) { setFormStatus('success'); setSuccessMsg('Expansion request sent. Kai will be in touch to scope and quote this.') }
   }
   async function submitMessage() {
     if (!msgSubject || !msgBody) return
-    const ok = await post('/api/portal/message', { project_id, subject: msgSubject, message: msgBody })
+    const ok = await post('/api/portal/message', { portal_token: portalToken, subject: msgSubject, message: msgBody })
     if (ok) { setFormStatus('success'); setSuccessMsg('Message sent. We\'ll respond within 1 business day.') }
   }
 

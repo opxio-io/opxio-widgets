@@ -3,6 +3,78 @@
 // Triggered by Notion button "Mark Deposit Paid" on Invoice page.
 
 import { getPage, patchPage, createPage, queryDB, plain, DB, createLedgerEntry, hdrs } from "../../lib/notion"
+import { createClient as createSupabaseClient } from "@supabase/supabase-js"
+import crypto from "crypto"
+
+// ── Create Supabase portal record for new client ─────────────────────────
+async function createPortalClient({ companyName, projectId, contactEmail, packages }) {
+  try {
+    const supabase = createSupabaseClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
+    )
+
+    const portalToken = crypto.randomBytes(48).toString("hex")
+    const slug = (companyName || "client")
+      .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
+      + "-" + Date.now().toString(36)
+
+    const { data, error } = await supabase.from("clients").insert({
+      client_name:   companyName || "New Client",
+      slug,
+      status:        "active",
+      portal_token:  portalToken,
+      project_id:    projectId,
+      portal_email:  contactEmail || null,
+      portal_active: true,
+      os_type:       packages || [],
+      notion_token:  process.env.NOTION_API_KEY,
+      databases:     {},
+      field_map:     {},
+      labels:        {},
+      custom_widgets:[],
+    }).select("id,portal_token,slug").single()
+
+    if (error) {
+      console.warn("[deposit_paid] createPortalClient supabase error:", error.message)
+      return null
+    }
+
+    console.log("[deposit_paid] Portal client created:", data.slug, "token:", portalToken.slice(0,8) + "…")
+    return { portalToken, supabaseId: data.id, slug }
+  } catch (e) {
+    console.warn("[deposit_paid] createPortalClient:", e.message)
+    return null
+  }
+}
+
+// ── Send portal activation email ─────────────────────────────────────────
+async function sendPortalEmail({ email, firstName, companyName, portalToken }) {
+  if (!email) return
+  const portalUrl = `https://app.opxio.io/portal/${portalToken}`
+  if (!process.env.RESEND_API_KEY) {
+    console.log("[deposit_paid] Portal link for", email, ":", portalUrl)
+    return
+  }
+  await fetch("https://api.resend.com/emails", {
+    method: "POST",
+    headers: { "Authorization": `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+    body: JSON.stringify({
+      from: "Opxio <hello@opxio.io>",
+      to: email,
+      subject: "Your Opxio project portal is ready",
+      html: `<div style="font-family:'Satoshi',Helvetica,sans-serif;background:#0D0D0D;color:#fff;padding:48px 36px;max-width:520px;margin:0 auto;border-radius:16px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:32px">
+          <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:#AAFF00;margin-right:8px;vertical-align:middle"></span>Opxio
+        </div>
+        <p style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:8px">Hi ${firstName || companyName || "there"},</p>
+        <p style="font-size:15px;color:rgba(255,255,255,.5);margin-bottom:28px;line-height:1.7">Your deposit has been received — your build is now underway.<br>Track progress, view invoices, and send us requests from your portal.</p>
+        <a href="${portalUrl}" style="display:inline-block;background:#AAFF00;color:#000;font-size:12px;font-weight:900;padding:13px 28px;border-radius:9px;text-decoration:none;letter-spacing:.02em;text-transform:uppercase">Access your portal →</a>
+        <p style="font-size:11px;color:rgba(255,255,255,.15);margin-top:36px">— Opxio</p>
+      </div>`,
+    }),
+  }).catch(e => console.warn("[deposit_paid] portal email:", e.message))
+}
 
 // ── Extract OS package + add-ons from any page's properties ─────────────────
 // Works across Leads ("OS Interest" select + "Add-ons" multi_select)
@@ -537,6 +609,41 @@ async function run(payload) {
     notes:     "Auto-created when deposit marked received",
   }, token).catch(() => {})
 
+  // ── Create Supabase portal record + send activation email ─────────────────
+  // Runs after all Notion work is done — non-blocking, failure doesn't break flow
+  let portalToken = null
+  let portalSlug  = null
+  try {
+    // Get PIC email for portal activation email
+    let contactEmail = ""
+    let firstName    = ""
+    if (picId) {
+      try {
+        const picPage = await getPage(picId, token)
+        for (const [, prop] of Object.entries(picPage.properties)) {
+          if (prop.type === "email" && prop.email) { contactEmail = prop.email; break }
+        }
+        firstName = plain(picPage.properties["First Name"]?.rich_text || []) ||
+                    plain(picPage.properties.Name?.title || []).split(" ")[0] || ""
+      } catch {}
+    }
+
+    const portalResult = await createPortalClient({
+      companyName:   companyName,
+      projectId:     projectId,
+      contactEmail:  contactEmail,
+      packages:      packages,
+    })
+
+    if (portalResult) {
+      portalToken = portalResult.portalToken
+      portalSlug  = portalResult.slug
+      await sendPortalEmail({ email: contactEmail, firstName, companyName, portalToken })
+    }
+  } catch (e) {
+    console.warn("[deposit_paid] portal setup:", e.message)
+  }
+
   return {
     status:            "success",
     invoice_id:        pageId,
@@ -552,6 +659,8 @@ async function run(payload) {
     packages,
     phases_created:    phasesCount,
     tasks_created:     tasksCount,
+    portal_token:      portalToken,
+    portal_slug:       portalSlug,
   }
 }
 

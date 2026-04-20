@@ -481,7 +481,7 @@ export default async function handler(req, res) {
             name: t.name,
             status: t.status,
             priority: t.priority,
-            phase: t.phaseStage || "",
+            phase: (t.phaseId && phaseMap[t.phaseId]?.name) || t.phaseStage || "",
             due: t.due,
             plannedStart: t.plannedStart || null,
             startDate: t.startDate || null,

@@ -73,10 +73,15 @@ export default async function handler(req, res) {
           else taskNotStarted++
 
           // Extract task details for active/upcoming lists
-          const assignees = (tp.Assignee?.people || []).map(p => ({
+          // Priority: Assignee (people field) → Assigned To (people field) → Assigned To (select) → Owner (select)
+          const rawPeople = tp.Assignee?.people || tp["Assigned To"]?.people || []
+          const assignees = rawPeople.map(p => ({
             name: p.name || "",
             avatar: p.avatar_url || "",
           }))
+          const assignedTo = assignees.length
+            ? null
+            : tp["Assigned To"]?.select?.name || tp.Owner?.select?.name || null
 
           allTaskDetails.push({
             id: t.id.replace(/-/g, ""),
@@ -86,6 +91,7 @@ export default async function handler(req, res) {
             dueDate: tp["Due Date"]?.date?.start || null,
             completedDate: tp["Completed Date"]?.date?.start || null,
             assignees,
+            assignedTo,
             phaseNo,
             phaseName,
           })

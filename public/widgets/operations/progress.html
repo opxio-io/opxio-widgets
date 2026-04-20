@@ -211,6 +211,25 @@ function renderTaskRow(t) {
   const dotColor = t.status === 'In Progress' ? 'var(--amber)' : t.status === 'Done' ? 'var(--g)' : 'rgba(255,255,255,.12)';
   const rel = relativeDate(t.dueDate);
   const assignee = (t.assignees || [])[0];
+  const assignedTo = t.assignedTo || null; // select-field fallback
+
+  let assigneeHTML;
+  if (assignee) {
+    // People field — show avatar + name
+    assigneeHTML = `<div class="t-assignee">
+      ${renderAvatar(assignee)}
+      <span class="t-assignee-name">${esc(assignee.name)}</span>
+    </div>`;
+  } else if (assignedTo) {
+    // Select field fallback — show initials + name
+    const initials = assignedTo.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    assigneeHTML = `<div class="t-assignee">
+      <div class="avatar-placeholder" title="${esc(assignedTo)}">${esc(initials)}</div>
+      <span class="t-assignee-name">${esc(assignedTo)}</span>
+    </div>`;
+  } else {
+    assigneeHTML = '<div class="avatar-placeholder">—</div>';
+  }
 
   return `<div class="task-row">
     <div class="t-dot" style="background:${dotColor}"></div>
@@ -226,10 +245,7 @@ function renderTaskRow(t) {
       ${t.dueDate ? `<div class="t-due-box">
         <div class="t-due-rel ${rel.cls}">${rel.text}</div>
       </div>` : ''}
-      ${assignee ? `<div class="t-assignee">
-        ${renderAvatar(assignee)}
-        <span class="t-assignee-name">${esc(assignee.name)}</span>
-      </div>` : '<div class="avatar-placeholder">—</div>'}
+      ${assigneeHTML}
     </div>
   </div>`;
 }

@@ -263,68 +263,49 @@ function avatarHTML(assignees){
   return`<div class="gl-avatar-wrap"><div class="gl-initials">${esc(initials)}</div>${tooltip}</div>`;
 }
 
-// ── Start Task action ──
-async function startTask(taskId, btnEl){
+// ── Advance Task — single button: Not Started→In Progress→Done ──
+async function advanceTask(taskId, btnEl){
+  const prevText=btnEl.textContent;
   btnEl.classList.add('loading');
   btnEl.textContent='…';
   try{
-    const r=await fetch(apiUrl('/api/data/projects'),{
+    const r=await fetch(apiUrl('/api/setup_project?action=advance'),{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'start_task',taskId}),
+      body:JSON.stringify({page_id:taskId}),
     });
     const j=await r.json();
-    if(j.ok){
-      showToast('Task started — '+fmtNice(j.date));
-      // Update local data and re-render
+    if(j.status==='advanced'){
+      const phaseNote=j.phase_update?' · Phase: '+j.phase_update:'';
+      showToast(j.from+' → '+j.to+phaseNote);
       const proj=allProjects[activeIdx];
       if(proj){
         const t=proj.tasks.find(t=>t.id===taskId);
-        if(t){t.status='In Progress';t.startDate=j.date;}
+        if(t){
+          t.status=j.to;
+          const today=new Date().toISOString().split('T')[0];
+          if(j.to==='In Progress') t.startDate=today;
+          if(j.to==='Done') t.completedDate=today;
+        }
       }
       renderGantt();
-    } else {
-      showToast('Error: '+(j.error||'Unknown'));
+    } else if(j.status==='blocked'){
+      const names=(j.blockers||[]).map(b=>b.name).join(', ');
+      showToast('Blocked — '+names);
       btnEl.classList.remove('loading');
-      btnEl.textContent='▶';
+      btnEl.textContent=prevText;
+    } else {
+      showToast(j.message||'No change');
+      btnEl.classList.remove('loading');
+      btnEl.textContent=prevText;
     }
   }catch(e){
     showToast('Error: '+e.message);
     btnEl.classList.remove('loading');
-    btnEl.textContent='▶';
+    btnEl.textContent=prevText;
   }
 }
-async function completeTask(taskId, btnEl){
-  btnEl.classList.add('loading');
-  btnEl.textContent='…';
-  try{
-    const r=await fetch(apiUrl('/api/data/projects'),{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'complete_task',taskId}),
-    });
-    const j=await r.json();
-    if(j.ok){
-      showToast('Task completed — '+fmtNice(j.date));
-      const proj=allProjects[activeIdx];
-      if(proj){
-        const t=proj.tasks.find(t=>t.id===taskId);
-        if(t){t.status='Done';t.completedDate=j.date;}
-      }
-      renderGantt();
-    } else {
-      showToast('Error: '+(j.error||'Unknown'));
-      btnEl.classList.remove('loading');
-      btnEl.textContent='✓';
-    }
-  }catch(e){
-    showToast('Error: '+e.message);
-    btnEl.classList.remove('loading');
-    btnEl.textContent='✓';
-  }
-}
-window.startTask=startTask;
-window.completeTask=completeTask;
+window.advanceTask=advanceTask;
 
 // Sort: In Progress → Blocked → Not Started → Done, then by due date
 const STATUS_ORDER={'In Progress':0,'Blocked':1,'Not Started':2,'Done':3};
@@ -432,10 +413,10 @@ function renderGantt(){
       const isNS=t.status==='Not Started';
       const isIP=t.status==='In Progress';
       let actionHTML='';
-      if(isNS&&!t.startDate){
-        actionHTML=`<button class="gl-start" onclick="startTask('${t.id}',this)" title="Start Task">▶</button>`;
+      if(isNS){
+        actionHTML=`<button class="gl-start" onclick="advanceTask('${t.id}',this)" title="Start Task">▶</button>`;
       } else if(isIP||t.status==='Blocked'){
-        actionHTML=`<button class="gl-complete" onclick="completeTask('${t.id}',this)" title="Mark Complete">✓</button>`;
+        actionHTML=`<button class="gl-complete" onclick="advanceTask('${t.id}',this)" title="Mark Complete">✓</button>`;
       }
       const msIcon=t.milestone?'<div style="width:8px;height:8px;transform:rotate(45deg);border-radius:1px;background:var(--g);flex-shrink:0;margin-right:2px;"></div>':'';
       leftHTML+=`<div class="gl-task">

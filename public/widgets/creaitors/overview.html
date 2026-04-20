@@ -173,7 +173,18 @@ body.light .s-lbl{color:rgba(0,0,0,.7);}
 body.light .s-sub{color:rgba(0,0,0,.42);}
 body.light .sect-desc{color:rgba(0,0,0,.42);}
 body.light .sect-name{color:#111;}
-body.light .tab-btn{color:rgba(0,0,0,.55);}
+body.light .tab-btn{color:rgba(0,0,0,.5);}
+body.light .tab-bar{background:rgba(0,0,0,.06);}
+body.light .tab-btn.active{background:#fff;border-color:rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.07);}
+body.light .tab-btn:hover:not(.active){color:rgba(0,0,0,.75);}
+body.light .wl-tabs{background:rgba(0,0,0,.05);}
+body.light .camp-track{background:rgba(0,0,0,.07);}
+body.light .camp-item{border-bottom-color:rgba(0,0,0,.06);}
+body.light .sect-item{border-bottom-color:rgba(0,0,0,.06) !important;}
+body.light .sect-item.sortable-chosen{background:#f5f5f5;}
+body.light .spinner{border-color:rgba(0,0,0,.07);border-top-color:var(--g);}
+body.light .deliv-count{color:rgba(0,0,0,.6);}
+body.light .kol-detail{color:rgba(0,0,0,.45);}
 body.light .wl-name{color:#111;}
 body.light .wl-tab{color:rgba(0,0,0,.55);}
 body.light .wl-val{color:rgba(0,0,0,.55);}
@@ -341,7 +352,7 @@ function renderCampaign(d){
       const cb2 = c.contentBreakdown || {};
       const typeParts = Object.entries(TYPE_LABELS)
         .filter(([k]) => (cb2[k]?.planned||0) > 0)
-        .map(([k,lbl]) => `<span style="color:rgba(255,255,255,.55);font-weight:700;">${cb2[k].planned} ${lbl}</span>`);
+        .map(([k,lbl]) => `<span class="deliv-count">${cb2[k].planned} ${lbl}</span>`);
       const statusStr = remC > 0
         ? `<span style="color:var(--red);">${remC} left</span>`
         : `<span style="color:var(--g);">All done</span>`;
@@ -441,12 +452,12 @@ function renderKOL(d){
       const kUrl = notionUrl(k.id);
       h += `<${kUrl ? `a href="${kUrl}" target="_blank" rel="noopener"` : 'div'} class="camp-item" style="${kUrl ? 'text-decoration:none;cursor:pointer;' : ''}">
         <div class="camp-info">
-          <div class="camp-name" style="color:rgba(255,255,255,.85);">${esc(k.name)}</div>
+          <div class="camp-name">${esc(k.name)}</div>
           <div class="camp-delivs">
-            <span style="color:rgba(255,255,255,.4);">${platStr}</span>
-            ${k.followers ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.5);">${fmtNum(k.followers)} followers</span>` : ''}
-            ${k.avgViews  ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.5);">${fmtNum(k.avgViews)} avg views</span>`  : ''}
-            ${k.category  ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.35);">${esc(k.category)}</span>` : ''}
+            <span class="kol-detail">${platStr}</span>
+            ${k.followers ? `&nbsp;·&nbsp;<span class="kol-detail">${fmtNum(k.followers)} followers</span>` : ''}
+            ${k.avgViews  ? `&nbsp;·&nbsp;<span class="kol-detail">${fmtNum(k.avgViews)} avg views</span>`  : ''}
+            ${k.category  ? `&nbsp;·&nbsp;<span class="kol-detail">${esc(k.category)}</span>` : ''}
           </div>
         </div>
         <span class="camp-type" style="background:${sc}22;color:${sc};border-color:${sc}44;">${esc(k.status)}</span>
@@ -475,9 +486,9 @@ function renderKOL(d){
       const cUrl = notionUrl(c.id);
       h += `<${cUrl ? `a href="${cUrl}" target="_blank" rel="noopener"` : 'div'} class="camp-item" style="${cUrl ? 'text-decoration:none;cursor:pointer;' : ''}">
         <div class="camp-info">
-          <div class="camp-name" style="color:rgba(255,255,255,.85);">${esc(c.title)}</div>
+          <div class="camp-name">${esc(c.title)}</div>
           <div class="camp-delivs">
-            <span style="color:rgba(255,255,255,.4);">${platStr}</span>
+            <span class="kol-detail">${platStr}</span>
             ${c.fee ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.5);">${fmtRM(c.fee)}</span>` : ''}
             ${c.postingDate ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.35);">${c.postingDate}</span>` : ''}
             ${c.views ? `&nbsp;·&nbsp;<span style="color:rgba(255,255,255,.4);">${fmtNum(c.views)} views</span>` : ''}

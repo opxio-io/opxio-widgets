@@ -19,19 +19,6 @@ body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#C44428;--ghosted:#9A7A00;
 body.light .card{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.05);}
 body.light .card:hover{border-color:rgba(0,0,0,.14);}
 
-/* top accent line on hover */
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .22s;}
-.card:hover::before{opacity:1;}
-.card.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.card.is-ghosted::before{background:linear-gradient(90deg,var(--ghosted),transparent);}
-.card.is-disq::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
-
-/* zero state — dimmed but structure preserved */
-.card.is-zero{border-color:rgba(255,255,255,.03);}
-.card.is-zero .s-val{opacity:.2!important;}
-.card.is-zero .s-lbl{opacity:.45!important;}
-.card.is-zero .s-sub{opacity:.45!important;}
-body.light .card.is-zero{border-color:rgba(0,0,0,.04);}
 
 /* eyebrow / title */
 .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
@@ -41,19 +28,28 @@ body.light .h-title{color:#111;}
 .ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.15);}
 body.light .ts{color:rgba(0,0,0,.3);}
 
-/* stat card internals */
-.stat{padding:16px 16px 14px;}
-.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px;line-height:1.4;}
-body.light .s-lbl{color:rgba(0,0,0,.55);}
-.s-val{font-size:34px;font-weight:900;letter-spacing:-1.8px;line-height:1;color:var(--g);}
+/* stat card internals — matches CRM widget */
+.stat{padding:18px 18px 16px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
+.stat:hover::before{opacity:1;}
+.card.is-lost .stat::before{background:linear-gradient(90deg,var(--lost),transparent);}
+.card.is-ghosted .stat::before{background:linear-gradient(90deg,var(--ghosted),transparent);}
+.card.is-disq .stat::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
+.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.55;}
+.s-dot.is-lost{background:var(--lost);opacity:.6;}
+.s-dot.is-ghosted{background:var(--ghosted);opacity:.6;}
+.s-dot.is-disq{background:rgba(255,255,255,.25);opacity:1;}
+.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.85);margin-bottom:10px;line-height:1.4;display:block;}
+body.light .s-lbl{color:rgba(0,0,0,.62);}
+.s-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 .s-val.is-lost{color:var(--lost);}
 .s-val.is-ghosted{color:var(--ghosted);}
 .s-val.is-disq{color:rgba(255,255,255,.22);}
 body.light .s-val{color:var(--g);}
 body.light .s-val.is-lost{color:var(--lost);}
 body.light .s-val.is-ghosted{color:var(--ghosted);}
-.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;line-height:1.4;}
-body.light .s-sub{color:rgba(0,0,0,.4);}
+.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:7px;}
+body.light .s-sub{color:rgba(0,0,0,.46);}
 
 /* section label */
 .sec-lbl{display:flex;align-items:center;gap:8px;margin:16px 0 8px;}
@@ -115,37 +111,37 @@ body.light .wgt-footer{color:rgba(0,0,0,.22);}
 
 <div class="sec-lbl"><div class="sec-lbl-bar"></div><span>Active Pipeline</span></div>
 <div class="grid5">
-  <div class="card" id="c-incoming">
-    <div class="stat">
-      <div class="s-lbl">Incoming</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Incoming</span>
       <div class="s-val" id="v-incoming">—</div>
       <div class="s-sub">New enquiries</div>
     </div>
   </div>
-  <div class="card" id="c-contacted">
-    <div class="stat">
-      <div class="s-lbl">Contacted</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Contacted</span>
       <div class="s-val" id="v-contacted">—</div>
       <div class="s-sub">First touch done</div>
     </div>
   </div>
-  <div class="card" id="c-qualified">
-    <div class="stat">
-      <div class="s-lbl">Qualified</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Qualified</span>
       <div class="s-val" id="v-qualified">—</div>
       <div class="s-sub">Fit confirmed</div>
     </div>
   </div>
-  <div class="card" id="c-booked">
-    <div class="stat">
-      <div class="s-lbl">Discovery Booked</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Discovery Booked</span>
       <div class="s-val" id="v-booked">—</div>
       <div class="s-sub">Call scheduled</div>
     </div>
   </div>
-  <div class="card" id="c-discovery">
-    <div class="stat">
-      <div class="s-lbl">Discovery Done</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Discovery Done</span>
       <div class="s-val" id="v-discovery">—</div>
       <div class="s-sub">Call completed</div>
     </div>
@@ -154,30 +150,30 @@ body.light .wgt-footer{color:rgba(0,0,0,.22);}
 
 <div class="sec-lbl"><div class="sec-lbl-bar is-muted"></div><span>Outcomes</span></div>
 <div class="grid4">
-  <div class="card" id="c-converted">
-    <div class="stat">
-      <div class="s-lbl">Converted</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <span class="s-lbl">Converted</span>
       <div class="s-val" id="v-converted">—</div>
       <div class="s-sub">Moved to deal</div>
     </div>
   </div>
-  <div class="card is-lost" id="c-lost">
-    <div class="stat">
-      <div class="s-lbl">Lost</div>
+  <div class="card is-lost">
+    <div class="stat"><div class="s-dot is-lost"></div>
+      <span class="s-lbl">Lost</span>
       <div class="s-val is-lost" id="v-lost">—</div>
       <div class="s-sub">Did not proceed</div>
     </div>
   </div>
-  <div class="card is-ghosted" id="c-ghosted">
-    <div class="stat">
-      <div class="s-lbl">Ghosted</div>
+  <div class="card is-ghosted">
+    <div class="stat"><div class="s-dot is-ghosted"></div>
+      <span class="s-lbl">Ghosted</span>
       <div class="s-val is-ghosted" id="v-ghosted">—</div>
       <div class="s-sub">No response</div>
     </div>
   </div>
-  <div class="card is-disq" id="c-disqualified">
-    <div class="stat">
-      <div class="s-lbl">Disqualified</div>
+  <div class="card is-disq">
+    <div class="stat"><div class="s-dot is-disq"></div>
+      <span class="s-lbl">Disqualified</span>
       <div class="s-val is-disq" id="v-disqualified">—</div>
       <div class="s-sub">Wrong fit</div>
     </div>
@@ -199,29 +195,20 @@ let light=false;
 function toggleMode(){light=!light;document.body.classList.toggle('light',light);}
 function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 
-const STAGE_MAP=[
-  ['v-incoming','c-incoming','Incoming'],
-  ['v-contacted','c-contacted','Contacted'],
-  ['v-qualified','c-qualified','Qualified'],
-  ['v-booked','c-booked','Discovery Booked'],
-  ['v-discovery','c-discovery','Discovery Done'],
-  ['v-converted','c-converted','Converted'],
-  ['v-lost','c-lost','Lost'],
-  ['v-ghosted','c-ghosted','Ghosted'],
-  ['v-disqualified','c-disqualified','Disqualified'],
-];
-
 async function loadData(){
   try{
     const r=await fetch(apiUrl('/api/data/pipeline'));
     const j=await r.json();
     const s=j.stages||{};
-    STAGE_MAP.forEach(([valId,cardId,key])=>{
-      const n=s[key]??0;
-      document.getElementById(valId).textContent=n;
-      const card=document.getElementById(cardId);
-      if(card) card.classList.toggle('is-zero',n===0);
-    });
+    document.getElementById('v-incoming').textContent    = s['Incoming']         ??0;
+    document.getElementById('v-contacted').textContent   = s['Contacted']        ??0;
+    document.getElementById('v-qualified').textContent   = s['Qualified']        ??0;
+    document.getElementById('v-booked').textContent      = s['Discovery Booked'] ??0;
+    document.getElementById('v-discovery').textContent   = s['Discovery Done']   ??0;
+    document.getElementById('v-converted').textContent   = s['Converted']        ??0;
+    document.getElementById('v-lost').textContent        = s['Lost']             ??0;
+    document.getElementById('v-ghosted').textContent     = s['Ghosted']          ??0;
+    document.getElementById('v-disqualified').textContent= s['Disqualified']     ??0;
     document.getElementById('f-active').textContent    = j.totalActive        ??0;
     document.getElementById('f-monthly').textContent   = j.thisMonthLeads     ??0;
     document.getElementById('f-converted').textContent = j.thisMonthConverted ??0;

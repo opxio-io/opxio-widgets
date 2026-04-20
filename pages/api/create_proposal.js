@@ -389,11 +389,33 @@ async function processProposal(sourceId) {
 
   const addonSlugs = []
   const addonNames = []
-  for (const item of (sourceProps["Add-ons"]?.multi_select || sourceProps["Add-Ons"]?.multi_select || [])) {
-    addonNames.push(item.name)
-    const k = item.name.toLowerCase().trim()
-    for (const [key, val] of Object.entries(ADDON_SLUG_MAP)) {
-      if (k.includes(key)) { addonSlugs.push(val); break }
+
+  // Deals: Add-ons is a relation to Catalogue. Leads: Add-ons is multi_select (may not exist).
+  const addonRelationIds = (sourceProps["Add-ons"]?.relation || sourceProps["Add-Ons"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+  if (addonRelationIds.length) {
+    // Fetch Catalogue items to get their names + slugs
+    const addonPages = await Promise.all(addonRelationIds.map(id => getPage(id, token).catch(() => null)))
+    for (const ap of addonPages.filter(Boolean)) {
+      const name = plain(ap.properties["Product Name"]?.title || [])
+      const slug = plain(ap.properties["Slug"]?.rich_text || [])
+      if (name) addonNames.push(name)
+      if (slug) addonSlugs.push(slug)
+      else {
+        // fallback: map name via ADDON_SLUG_MAP
+        const k = name.toLowerCase().trim()
+        for (const [key, val] of Object.entries(ADDON_SLUG_MAP)) {
+          if (k.includes(key)) { addonSlugs.push(val); break }
+        }
+      }
+    }
+  } else {
+    // Leads fallback: multi_select
+    for (const item of (sourceProps["Add-ons"]?.multi_select || sourceProps["Add-Ons"]?.multi_select || [])) {
+      addonNames.push(item.name)
+      const k = item.name.toLowerCase().trim()
+      for (const [key, val] of Object.entries(ADDON_SLUG_MAP)) {
+        if (k.includes(key)) { addonSlugs.push(val); break }
+      }
     }
   }
 

@@ -69,7 +69,8 @@ export default async function handler(req, res) {
         name: plain(p.properties['Phase Name']?.title || p.properties.Name?.title || []),
         status: p.properties.Status?.status?.name || p.properties.Status?.select?.name || 'Not Started',
         order: p.properties.Order?.number || p.properties['Phase Number']?.number || 0,
-        target_date: p.properties['Target Date']?.date?.start || null,
+        start_date: p.properties['Start Date']?.date?.start || null,
+        target_date: p.properties['Target Date']?.date?.start || p.properties['Due Date']?.date?.start || null,
       }))
       .sort((a, b) => {
         // If order values are all 0, fall back to phase number in name

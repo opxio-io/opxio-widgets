@@ -292,13 +292,13 @@ export default function PortalToken() {
 
                 return (
                   <div key={phase.id} style={{ display: 'flex', gap: 14, marginBottom: 8, position: 'relative', zIndex: 1 }}>
-                    {/* Node */}
+                    {/* Node — always lime green */}
                     <div style={{ position: 'absolute', left: -26, top: 20, width: 14, display: 'flex', justifyContent: 'center' }}>
                       {isDone ? (
                         <div style={{
                           width: 14, height: 14, borderRadius: '50%',
-                          background: '#AAFF00', border: '2px solid rgba(170,255,0,.35)',
-                          boxShadow: '0 0 0 3px rgba(170,255,0,.07)',
+                          background: '#AAFF00', border: '2px solid rgba(170,255,0,.4)',
+                          boxShadow: '0 0 0 3px rgba(170,255,0,.1)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
                         }}>
                           <svg width="6" height="5" viewBox="0 0 6 5" fill="none"><path d="M1 2.5L2.4 4L5 1" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>
@@ -306,13 +306,13 @@ export default function PortalToken() {
                       ) : isActive ? (
                         <div style={{
                           width: 12, height: 12, borderRadius: '50%', marginTop: 1,
-                          background: '#fff', border: '2px solid rgba(255,255,255,.4)',
-                          boxShadow: '0 0 0 4px rgba(255,255,255,.06)',
+                          background: '#AAFF00', border: '2px solid rgba(170,255,0,.5)',
+                          boxShadow: '0 0 0 4px rgba(170,255,0,.1)',
                         }} />
                       ) : (
                         <div style={{
-                          width: 8, height: 8, borderRadius: '50%', marginTop: 3,
-                          background: '#222', border: '1.5px solid rgba(255,255,255,.12)',
+                          width: 10, height: 10, borderRadius: '50%', marginTop: 2,
+                          background: 'transparent', border: '2px solid rgba(170,255,0,.25)',
                         }} />
                       )}
                     </div>
@@ -336,19 +336,26 @@ export default function PortalToken() {
                           <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-.01em', color: isLocked ? 'rgba(255,255,255,.35)' : '#fff', lineHeight: 1.3 }}>
                             {displayName}
                           </div>
-                          {phase.target_date && !isLocked && (
-                            <div style={{ fontSize: 10.5, fontWeight: 500, color: 'rgba(255,255,255,.25)', marginTop: 5 }}>
-                              {fmtDate(phase.target_date)}
+                          {(phase.start_date || phase.target_date) && (
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 7, flexWrap: 'wrap' }}>
+                              {phase.start_date && (
+                                <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.28)' }}>
+                                  {fmtDate(phase.start_date)}
+                                </span>
+                              )}
+                              {phase.start_date && phase.target_date && (
+                                <span style={{ fontSize: 9, color: 'rgba(255,255,255,.15)' }}>→</span>
+                              )}
+                              {phase.target_date && (
+                                <span style={{ fontSize: 10, fontWeight: 600, color: isDone ? 'rgba(170,255,0,.5)' : isActive ? 'rgba(255,255,255,.45)' : 'rgba(255,255,255,.28)' }}>
+                                  {fmtDate(phase.target_date)}
+                                </span>
+                              )}
                             </div>
                           )}
                         </div>
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+                        <div style={{ flexShrink: 0 }}>
                           <Pill status={phase.status} map={PHASE_STATUS} />
-                          {phaseTasks.length > 0 && !isLocked && (
-                            <span style={{ fontSize: 9, fontWeight: 700, color: isDone ? 'rgba(170,255,0,.4)' : 'rgba(255,255,255,.18)', letterSpacing: '.04em' }}>
-                              {doneTasks}/{phaseTasks.length} tasks
-                            </span>
-                          )}
                         </div>
                       </div>
 

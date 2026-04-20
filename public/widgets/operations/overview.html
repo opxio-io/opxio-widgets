@@ -14,7 +14,7 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.08);}
-body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,0.17);box-shadow:0 1px 4px rgba(0,0,0,.04);}
+body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
 
 /* Icon buttons — matches progress widget */
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
@@ -81,6 +81,8 @@ body.light .dl-bar-track{background:rgba(0,0,0,.05);}
 .ov-ring-pct{font-size:32px;font-weight:900;color:var(--g);letter-spacing:-1.5px;line-height:1;}
 .ov-ring-sub{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:4px;}
 body.light .ov-ring-sub{color:rgba(0,0,0,0.39);}
+.ov-ring-track{fill:none;stroke:rgba(255,255,255,.06);}
+body.light .ov-ring-track{stroke:rgba(0,0,0,.1);}
 .task-bars{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;}
 .tb-row{display:flex;align-items:center;gap:8px;}
 .tb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
@@ -178,7 +180,7 @@ body.light .empty{color:rgba(0,0,0,0.28);}
     <div class="donut-wrap">
       <div class="ov-ring-wrap">
         <svg class="donut-svg ring-svg" width="120" height="120" viewBox="0 0 120 120" id="donut-svg">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+          <circle class="ov-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
         </svg>
         <div class="ov-ring-center">
           <div class="ov-ring-pct" id="donut-val">0</div>
@@ -209,7 +211,7 @@ body.light .empty{color:rgba(0,0,0,0.28);}
     <div class="task-wrap">
       <div class="ov-ring-wrap">
         <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="task-ring-svg">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+          <circle class="ov-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
         </svg>
         <div class="ov-ring-center">
           <div class="ov-ring-pct" id="ring-pct">0%</div>
@@ -227,7 +229,7 @@ body.light .empty{color:rgba(0,0,0,0.28);}
     <div class="task-wrap">
       <div class="ov-ring-wrap">
         <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="pri-ring-svg">
-          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+          <circle class="ov-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
         </svg>
         <div class="ov-ring-center">
           <div class="ov-ring-pct" id="pri-ring-val">—</div>

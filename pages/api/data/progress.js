@@ -19,10 +19,10 @@ export default async function handler(req, res) {
 
     const projectName  = plain(props["Project Name"]?.title || props["Name"]?.title || [])
     const status       = props["Status"]?.status?.name || props["Status"]?.select?.name || ""
-    const packageType  = props["Package"]?.select?.name || ""
-    const currentPhase = props["Phase"]?.select?.name || ""
+    const packageType  = props["OS Scope"]?.multi_select?.map(s => s.name).join(", ") || props["Package"]?.select?.name || ""
+    const currentPhase = props["Current Phase"]?.select?.name || ""
     const startDate    = props["Start Date"]?.date?.start || null
-    const targetDate   = props["Targeted Completion"]?.date?.start || null
+    const targetDate   = props["Target Handover Date"]?.date?.start || null
 
     // 2. Get all phases linked to this project
     const phaseRels = props["Phases"]?.relation || []
@@ -55,8 +55,8 @@ export default async function handler(req, res) {
       const dueDt       = pp["Due Date"]?.date?.start || null
       const completedDt = pp["Completed Date"]?.date?.start || null
 
-      // Get sub-items (tasks) for this phase
-      const subItems = pp["Sub-item"]?.relation || []
+      // Get tasks for this phase via Tasks relation
+      const subItems = pp["Tasks"]?.relation || []
       let taskTotal = subItems.length
       let taskDone = 0, taskInProgress = 0, taskNotStarted = 0
 
@@ -80,11 +80,11 @@ export default async function handler(req, res) {
 
           allTaskDetails.push({
             id: t.id.replace(/-/g, ""),
-            name: plain(tp["Phase Name"]?.title || []),
+            name: plain(tp["Task Name"]?.title || []),
             status: ts,
             priority: tp.Priority?.select?.name || null,
-            startDate: tp["Start Date"]?.date?.start || null,
             dueDate: tp["Due Date"]?.date?.start || null,
+            completedDate: tp["Completed Date"]?.date?.start || null,
             assignees,
             phaseNo,
             phaseName,

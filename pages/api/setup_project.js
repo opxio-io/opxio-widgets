@@ -2,46 +2,47 @@
 // POST /api/setup_project   { "page_id": "<project_page_id>" }
 // Called by deposit_paid.js after deposit is confirmed.
 //
-// What it does (template-driven):
-//   1. Reads Project → Package (OS type)
-//   2. Queries Phase Templates DB for phase definitions matching this OS type
-//   3. Queries Phase Template Tasks DB for task definitions (OS-specific + common)
-//   4. For composite OS types (Business OS, Agency OS), resolves Source OS references
-//      e.g. Business OS Phase 2 pulls tasks from Operations OS Phases 2,3
-//   5. Creates phases as parent items in Phase Tasks DB (DB.PHASES)
-//   6. Creates tasks as sub-items in Phase Tasks DB using Parent item relation
-//   7. Links phases to Project, sets current phase
+// Architecture (JSON config driven):
+//   1. Reads Project → OS Scope (multi_select) to determine what's in scope
+//   2. Reads config/tasks.json — the single source of truth for all phases + tasks
+//   3. Filters phases and tasks based on scope
+//   4. Resolves dependency ordering for multi-OS installs
+//   5. Creates Phase records in Project Phases DB (DB.PHASES)
+//   6. Creates Task records in Project Tasks DB (DB.TASKS) linked to phases
+//   7. Links phases to Project, sets first phase to In Progress
 //
-// Sub-item architecture:
-//   Phase Tasks DB has a self-relation (Parent item ↔ Sub-item).
-//   Phases are top-level entries; tasks nest under them as sub-items.
-//   This gives native Notion collapsing/grouping in the Phase Tasks view.
+// To edit tasks: update config/tasks.json — no Notion DB changes needed.
 
-import { getPage, patchPage, createPage, queryDB, plain, DB } from "../../lib/notion"
+import { getPage, patchPage, createPage, plain, DB } from "../../lib/notion"
+import taskConfig from "../../config/tasks.json"
 
-// ─── Addon slug ↔ Deal add-on name mapping ──────────────────────────────────
-const ADDON_SLUGS = {
-  "addon-ai-agent":              "AI Agent Integration",
-  "addon-lead-capture":          "Lead Capture System",
-  "addon-widget":                "Custom Widget",
-  "addon-workflow-integration":  "Automation & Workflow Integration",
-  "addon-automation-within":     "Automation (within database)",
-  "addon-automation-cross":      "Automation (cross-database)",
-  "addon-client-portal":         "Client Portal View",
-  "addon-api-integration":       "API / External Integration",
-  "addon-system-module":         "Additional System Module",
+// ─── Scope key mapping ───────────────────────────────────────────────────────
+// Maps Notion "OS Scope" multi_select values → internal scope keys in tasks.json
+const SCOPE_MAP = {
+  "Revenue OS":         "revenue_os",
+  "Operations OS":      "operations_os",
+  "Marketing OS":       "marketing_os",
+  "Finance OS":         "finance_os",
+  "Team OS":            "team_os",
+  "Retention OS":       "retention_os",
+  "Enhanced Dashboard": "enhanced_dashboard",
+  "Automations":        "automations",
+  "Custom Widget":      "custom_widget",
 }
-// Reverse: addon display name → slug
-const ADDON_NAMES = Object.fromEntries(
-  Object.entries(ADDON_SLUGS).map(([slug, name]) => [name, slug])
-)
 
-// ─── Page icons (matches the database template: red map-pin) ─────────────────
-const PHASE_ICON  = { type: "icon", icon: { name: "map-pin", color: "red" } }
-const TASK_ICON   = { type: "icon", icon: { name: "map-pin", color: "red" } }
+// Dependency resolution order — when a phase has a dependency, this defines
+// which OS must complete before it can start
+const DEPENDENCY_ORDER = [
+  "revenue_os",
+  "operations_os",
+  "finance_os",
+  "retention_os",
+  "team_os",
+  "marketing_os",
+]
 
 // ─── Date helpers ────────────────────────────────────────────────────────────
-const LENGTH_DAYS = {
+const TIMELINE_DAYS = {
   "Under 2 weeks": 14,
   "2–4 weeks":     28,
   "1–3 months":    75,
@@ -54,413 +55,181 @@ function addDays(iso, days) {
   return d.toISOString().split("T")[0]
 }
 
-// ─── Extract task info from a Phase Template Tasks page ─────────────────────
-function extractTask(page) {
-  const p = page.properties
-  return {
-    name:         plain(p["Task Name"]?.title || []),
-    order:        p["Task Order"]?.number || 0,
-    priority:     p["Priority"]?.select?.name || "Medium",
-    phaseNo:      p["Phase No."]?.number ?? null,
-    slug:         plain(p["Product Slug"]?.rich_text || []),
-    deliverables: plain(p["Deliverables"]?.rich_text || []),
-  }
-}
+// ─── Resolve which phases apply to this project scope ───────────────────────
+function resolvePhasesForScope(scope) {
+  const phases = []
 
-// ─── Parse "2,3" → [2, 3] from Source Phase Nos. ───────────────────────────
-function parseSourcePhaseNos(templatePage) {
-  const text = plain(templatePage.properties["Source Phase Nos."]?.rich_text || [])
-  if (!text) return []
-  return text.split(",").map(s => parseInt(s.trim())).filter(n => !isNaN(n))
-}
+  for (const phase of taskConfig.phases) {
+    const phaseScope = phase.scope
 
-// ─── Read add-ons from Deal ─────────────────────────────────────────────────
-async function readDealAddons(project, token) {
-  try {
-    const dealIds = (project.properties.Deals?.relation || []).map(r => r.id.replace(/-/g, ""))
-    for (const dealId of dealIds) {
-      const deal = await getPage(dealId, token)
-      const addons = (deal.properties["Add-ons"]?.multi_select || []).map(a => a.name)
-      if (addons.length) return addons
+    // Always include phases scoped to "all"
+    if (phaseScope.includes("all")) {
+      phases.push({ ...phase })
+      continue
     }
-  } catch (e) {
-    console.warn("[setup_project] readDealAddons:", e.message)
+
+    // Include OS/add-on phases if any scope key matches
+    const match = phaseScope.some(s => scope.includes(s))
+    if (match) phases.push({ ...phase })
   }
-  return []
-}
 
-// ─── Read existing phases for project → { map: {phaseNo: pageId}, hasSubItems } ─
-async function readExistingPhases(project, token) {
-  const map = {}
-  let hasSubItems = false
-  const rels = project.properties.Phases?.relation || []
-  if (!rels.length) return { map, hasSubItems }
-
-  const reads = rels.map(async (rel) => {
-    try {
-      const ph = await getPage(rel.id.replace(/-/g, ""), token)
-      const no = ph.properties["Phase No."]?.number
-      if (no != null) map[no] = rel.id.replace(/-/g, "")
-      const subs = ph.properties["Sub-item"]?.relation || []
-      if (subs.length) hasSubItems = true
-    } catch {}
+  // Sort: first by phase_no, then by dependency order within same phase_no
+  phases.sort((a, b) => {
+    if (a.phase_no !== b.phase_no) return a.phase_no - b.phase_no
+    const aIdx = DEPENDENCY_ORDER.indexOf(a.scope[0])
+    const bIdx = DEPENDENCY_ORDER.indexOf(b.scope[0])
+    if (aIdx === -1) return 1
+    if (bIdx === -1) return -1
+    return aIdx - bIdx
   })
-  await Promise.all(reads)
-  return { map, hasSubItems }
-}
 
-// ─── Read Client Intake for timeline info ────────────────────────────────────
-async function readIntakeTimeline(project, token) {
-  try {
-    const dealIds = (project.properties.Deals?.relation || []).map(r => r.id.replace(/-/g, ""))
-    for (const dealId of dealIds) {
-      const deal = await getPage(dealId, token)
-      const implIds = (deal.properties.Implementation?.relation || []).map(r => r.id.replace(/-/g, ""))
-      if (implIds.length) {
-        const intake = await getPage(implIds[0], token)
-        return intake.properties["Typical Project Length"]?.select?.name || ""
-      }
-    }
-  } catch {}
-  return ""
+  return phases
 }
 
 // ─── MAIN SETUP ──────────────────────────────────────────────────────────────
 async function setup(payload) {
-  const token = process.env.NOTION_API_KEY
-  const rawId = payload.page_id || payload.data?.id || payload.data?.page_id || payload.source?.page_id || payload.source?.id
+  const token   = process.env.NOTION_API_KEY
+  const rawId   = payload.page_id || payload.data?.id || payload.data?.page_id || payload.source?.page_id || payload.source?.id
   if (!rawId) throw new Error("No page_id in payload")
   const projectId = rawId.replace(/-/g, "")
 
   const project = await getPage(projectId, token)
-  const osType  = project.properties.Package?.select?.name || ""
-  console.log(`[setup_project] OS type: "${osType}"`)
+  const props   = project.properties
+
+  // ── Read OS Scope from project ─────────────────────────────────────────────
+  const rawScope  = (props["OS Scope"]?.multi_select || []).map(s => s.name)
+  const scope     = rawScope.map(s => SCOPE_MAP[s]).filter(Boolean)
+
+  // Fallback: if OS Scope not set, try to infer from legacy Package field
+  if (!scope.length) {
+    const pkg = props.Package?.select?.name || ""
+    console.warn(`[setup_project] OS Scope empty — falling back to Package: "${pkg}"`)
+    if (pkg.includes("Revenue")) scope.push("revenue_os")
+    if (pkg.includes("Operations")) scope.push("operations_os")
+    if (pkg.includes("Marketing")) scope.push("marketing_os")
+    if (pkg.includes("Finance")) scope.push("finance_os")
+    if (pkg.includes("Business")) { scope.push("revenue_os"); scope.push("operations_os") }
+  }
+
+  if (!scope.length) {
+    console.warn(`[setup_project] No scope detected — using revenue_os as default fallback`)
+    scope.push("revenue_os")
+  }
+
+  console.log(`[setup_project] Project ${projectId} | Scope: ${scope.join(", ")}`)
 
   const today     = new Date().toISOString().split("T")[0]
-  const startDate = project.properties["Start Date"]?.date?.start || today
+  const startDate = props["Start Date"]?.date?.start || today
+  const totalDays = TIMELINE_DAYS["2–4 weeks"]  // default; override from intake if available
+  const targetDate = addDays(startDate, totalDays)
 
-  // ── Parallel reads: templates, tasks, existing phases, addons, timeline ──
-  const [phaseTemplates, osTasks, commonTasks, phaseInfo, addons, timelineLabel] = await Promise.all([
-    // Phase definitions for this OS type
-    osType
-      ? queryDB(DB.PHASE_TEMPLATES, { property: "OS Type", select: { equals: osType } }, token)
-      : Promise.resolve([]),
-    // OS-specific template tasks
-    osType
-      ? queryDB(DB.PHASE_TEMPLATE_TASKS, { property: "OS Type", select: { equals: osType } }, token)
-      : Promise.resolve([]),
-    // Common template tasks (OS Type empty — shared across all OS types)
-    queryDB(DB.PHASE_TEMPLATE_TASKS, { property: "OS Type", select: { is_empty: true } }, token),
-    // Existing phases from create_invoice
-    readExistingPhases(project, token),
-    // Deal add-ons
-    readDealAddons(project, token),
-    // Client intake timeline
-    readIntakeTimeline(project, token),
-  ])
-
-  const { map: existingPhaseMap, hasSubItems } = phaseInfo
-
-  // Guard: don't recreate if sub-item tasks already exist
-  if (hasSubItems) {
-    console.log(`[setup_project] sub-items already exist — skipping`)
-    return { status: "skipped", reason: "tasks already exist", project_id: projectId }
+  // ── Guard: skip if phases already exist ──────────────────────────────────
+  const existingPhases = props.Phases?.relation || []
+  if (existingPhases.length > 0) {
+    console.log(`[setup_project] Phases already exist (${existingPhases.length}) — skipping`)
+    return { status: "skipped", reason: "phases already exist", project_id: projectId }
   }
 
-  console.log(`[setup_project] Templates: ${phaseTemplates.length} phases, ${osTasks.length} OS tasks, ${commonTasks.length} common tasks`)
-  console.log(`[setup_project] Existing phases: ${Object.keys(existingPhaseMap).length}, Add-ons: ${addons.length ? addons.join(", ") : "(none)"}`)
+  // ── Resolve phases from config ────────────────────────────────────────────
+  const phases = resolvePhasesForScope(scope)
+  console.log(`[setup_project] Resolved ${phases.length} phases from config`)
 
-  // ── Resolve Source OS tasks for composite phases (e.g. Business OS) ──────
-  // Phase Templates with Source OS reference another OS type's tasks.
-  // Business OS Phase 2 → Source OS: Operations OS, Source Phase Nos: "2,3"
-  // Business OS Phase 3 → Source OS: Revenue OS, Source Phase Nos: "2,3"
-  const sourceOSNames = new Set()
-  const sourcePhaseConfig = [] // { targetPhaseNo, sourceOS, sourcePhaseNos }
+  // ── Create phase records ──────────────────────────────────────────────────
+  const PHASE_ICON = { type: "icon", icon: { name: "map-pin", color: "red" } }
+  const TASK_ICON  = { type: "icon", icon: { name: "map-pin", color: "red" } }
 
-  for (const pt of phaseTemplates) {
-    const srcOS  = pt.properties["Source OS"]?.select?.name
-    const srcNos = parseSourcePhaseNos(pt)
-    if (srcOS && srcNos.length) {
-      sourceOSNames.add(srcOS)
-      sourcePhaseConfig.push({
-        targetPhaseNo: pt.properties["Phase No."]?.number,
-        sourceOS:      srcOS,
-        sourcePhaseNos: srcNos,
-      })
-    }
+  const totalPhases = phases.length
+  const createdPhases = []
+
+  for (let idx = 0; idx < phases.length; idx++) {
+    const phase    = phases[idx]
+    const phStart  = addDays(startDate, Math.round(totalDays * (idx / totalPhases)))
+    const phEnd    = addDays(startDate, Math.round(totalDays * ((idx + 1) / totalPhases)))
+
+    const phasePage = await createPage({
+      parent: { database_id: DB.PHASES },
+      icon: PHASE_ICON,
+      properties: {
+        "Phase Name":  { title: [{ text: { content: `Phase ${phase.phase_no} — ${phase.name}` } }] },
+        "Phase No.":   { number: phase.phase_no },
+        "Phase Type":  { select: { name: phase.phase_type } },
+        "OS Type":     { select: { name: phase.os_type } },
+        "Owner":       { select: { name: phase.owner } },
+        "Status":      { status: { name: "Not Started" } },
+        "Start Date":  { date: { start: phStart } },
+        "Due Date":    { date: { start: phEnd } },
+        "Project":     { relation: [{ id: projectId }] },
+      },
+    }, token)
+
+    const phaseId = phasePage.id.replace(/-/g, "")
+    createdPhases.push({ phase, phaseId, phStart, phEnd })
+    console.log(`[setup_project] Created phase: ${phase.name} → ${phaseId}`)
   }
 
-  // Fetch source OS tasks in parallel
-  const sourceTasksByOS = {}
-  if (sourceOSNames.size) {
-    const queries = [...sourceOSNames].map(async (srcOS) => {
-      const tasks = await queryDB(DB.PHASE_TEMPLATE_TASKS, {
-        property: "OS Type", select: { equals: srcOS }
-      }, token)
-      sourceTasksByOS[srcOS] = tasks
-    })
-    await Promise.all(queries)
-    console.log(`[setup_project] Source OS tasks fetched: ${[...sourceOSNames].map(os => `${os}(${sourceTasksByOS[os]?.length || 0})`).join(", ")}`)
-  }
-
-  // ── Build task map: phaseNo → [task objects] ──────────────────────────────
-  const taskMap = {}
-
-  function addTask(phaseNo, task) {
-    if (phaseNo == null) return
-    if (!taskMap[phaseNo]) taskMap[phaseNo] = []
-    // Deduplicate by task name within the same phase
-    if (taskMap[phaseNo].some(t => t.name === task.name)) return
-    taskMap[phaseNo].push(task)
-  }
-
-  // Each OS type in the template DB has a COMPLETE task set (Phase 0 pre-build,
-  // Phase 1 foundation, Phase 4 review, Phase 5 handover included). The "common"
-  // tasks (OS Type empty) are a generic fallback set — NOT additive fragments.
-  //
-  // Logic:
-  //   - If OS has specific tasks → use those (step 2) + source tasks (step 3)
-  //   - If OS has no specific tasks → use common tasks (step 1) as fallback
-
-  const hasOSTasks = osTasks.length > 0
-
-  // 1. Common tasks — fallback only when no OS-specific tasks exist
-  if (!hasOSTasks) {
-    for (const page of commonTasks) {
-      const task = extractTask(page)
-      if (task.slug) continue  // addon-specific — handle in step 4
-      if (task.phaseNo == null) continue
-      addTask(task.phaseNo, task)
-    }
-  }
-
-  // 2. OS-specific tasks (complete set for this OS type)
-  for (const page of osTasks) {
-    const task = extractTask(page)
-    if (task.phaseNo == null) continue
-    addTask(task.phaseNo, task)
-  }
-
-  // 3. Source OS tasks (remapped to target phase for composite OS types)
-  // e.g. Business OS Phase 2 sources from Operations OS Phases 2,3
-  for (const cfg of sourcePhaseConfig) {
-    const srcTasks = sourceTasksByOS[cfg.sourceOS] || []
-    for (const page of srcTasks) {
-      const task = extractTask(page)
-      if (cfg.sourcePhaseNos.includes(task.phaseNo)) {
-        addTask(cfg.targetPhaseNo, task)
-      }
-    }
-  }
-
-  // 4. Addon tasks (Product Slug matches project's add-ons)
-  if (addons.length) {
-    // Build set of slugs from deal add-on names
-    const addonSlugs = new Set()
-    for (const addon of addons) {
-      // Try exact name → slug mapping
-      if (ADDON_NAMES[addon]) addonSlugs.add(ADDON_NAMES[addon])
-      // Also try generating slug from name
-      const generated = "addon-" + addon.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
-      addonSlugs.add(generated)
-    }
-
-    // Find the last "build" phase number (before review/handover phases)
-    const phaseNos = phaseTemplates
-      .map(pt => pt.properties["Phase No."]?.number)
-      .filter(n => n != null)
-      .sort((a, b) => a - b)
-    // Default addon phase = second-to-last build phase, or phase 2
-    const addonPhaseNo = phaseNos.length >= 4 ? phaseNos[phaseNos.length - 3] : (phaseNos[1] || 2)
-
-    for (const page of commonTasks) {
-      const task = extractTask(page)
-      if (!task.slug) continue
-      if (!addonSlugs.has(task.slug)) continue
-      // Use the task's phase number if set, otherwise assign to addon build phase
-      addTask(task.phaseNo ?? addonPhaseNo, task)
-    }
-    console.log(`[setup_project] Addon slugs matched: ${[...addonSlugs].join(", ")}`)
-  }
-
-  // Sort tasks within each phase by Task Order
-  for (const phaseNo of Object.keys(taskMap)) {
-    taskMap[phaseNo].sort((a, b) => (a.order || 0) - (b.order || 0))
-  }
-
-  // ── Sort phase templates by Phase No. ─────────────────────────────────────
-  phaseTemplates.sort((a, b) =>
-    (a.properties["Phase No."]?.number || 0) - (b.properties["Phase No."]?.number || 0)
-  )
-
-  // Fallback: if no templates found for this OS type, create generic phases
-  if (!phaseTemplates.length) {
-    console.warn(`[setup_project] No templates for "${osType}" — using generic 3-phase fallback`)
-    const fallback = [
-      { no: 1, name: "Phase 1 — Setup",     del: "Workspace setup, scope confirmation" },
-      { no: 2, name: "Phase 2 — Build",     del: "Core modules built and configured" },
-      { no: 3, name: "Phase 3 — Handover",  del: "Client review, QA, handover" },
-    ]
-    for (const f of fallback) {
-      phaseTemplates.push({
-        properties: {
-          "Phase Name":   { title: [{ text: { content: f.name } }] },
-          "Phase No.":    { number: f.no },
-          "Deliverables": { rich_text: [{ text: { content: f.del } }] },
-          "Source OS":    { select: null },
-        },
-      })
-    }
-  }
-
-  // ── Calculate timeline ────────────────────────────────────────────────────
-  const totalDays   = LENGTH_DAYS[timelineLabel] || LENGTH_DAYS["2–4 weeks"]
-  const totalPhases = phaseTemplates.length
-  const targetDate  = addDays(startDate, totalDays)
-
-  // ── Create / reuse phases (parallel) ──────────────────────────────────────
-  const phasePromises = phaseTemplates.map(async (pt, idx) => {
-    const phaseNo      = pt.properties["Phase No."]?.number
-    const phaseName    = plain(pt.properties["Phase Name"]?.title || [])
-    const deliverables = plain(pt.properties["Deliverables"]?.rich_text || [])
-
-    // Proportional date split
-    const phStart = addDays(startDate, Math.round(totalDays * (idx / totalPhases)))
-    const phEnd   = addDays(startDate, Math.round(totalDays * ((idx + 1) / totalPhases)))
-
-    let phaseId = existingPhaseMap[phaseNo] || null
-
-    if (!phaseId) {
-      // Create new phase (with pin icon)
-      const created = await createPage({
-        parent: { database_id: DB.PHASES },
-        icon: PHASE_ICON,
-        properties: {
-          "Phase Name":   { title: [{ text: { content: phaseName } }] },
-          "Phase No.":    { number: phaseNo },
-          "Status":       { status: { name: "Not Started" } },
-          "Start Date":   { date: { start: phStart } },
-          "Due Date":     { date: { start: phEnd } },
-          "Project":        { relation: [{ id: projectId }] },
-          "Impl. Project":  { relation: [{ id: projectId }] },
-          ...(deliverables ? { "Deliverables": { rich_text: [{ text: { content: deliverables } }] } } : {}),
-        },
-      }, token)
-      phaseId = created.id.replace(/-/g, "")
-      console.log(`[setup_project] Created ${phaseName} → ${phaseId}`)
-    } else {
-      // Reuse existing — update name, dates, deliverables, icon to match template
-      const patchBody = {
-        "Phase Name":   { title: [{ text: { content: phaseName } }] },
-        "Start Date":   { date: { start: phStart } },
-        "Due Date":     { date: { start: phEnd } },
-        ...(deliverables ? { "Deliverables": { rich_text: [{ text: { content: deliverables } }] } } : {}),
-      }
-      // patchPage only sends properties — also set icon via raw fetch
-      const res = await fetch(`https://api.notion.com/v1/pages/${phaseId}`, {
-        method: "PATCH",
-        headers: {
-          "Authorization":  `Bearer ${token}`,
-          "Notion-Version": "2022-06-28",
-          "Content-Type":   "application/json",
-        },
-        body: JSON.stringify({ icon: PHASE_ICON, properties: patchBody }),
-      }).catch(() => {})
-      console.log(`[setup_project] Reusing ${phaseName} → ${phaseId}`)
-    }
-
-    return { no: phaseNo, id: phaseId, name: phaseName }
-  })
-
-  const resolvedPhases = await Promise.all(phasePromises)
-  resolvedPhases.sort((a, b) => a.no - b.no)
-
-  // ── Build phase date lookup (for task due date calculation) ──
-  const phaseDates = {}
-  for (const phase of resolvedPhases) {
-    const pt = phaseTemplates.find(t => (t.properties["Phase No."]?.number) === phase.no)
-    const idx = pt ? phaseTemplates.indexOf(pt) : 0
-    phaseDates[phase.no] = {
-      start: addDays(startDate, Math.round(totalDays * (idx / totalPhases))),
-      end:   addDays(startDate, Math.round(totalDays * ((idx + 1) / totalPhases))),
-    }
-  }
-
-  // ── Build sub-item task bodies ────────────────────────────────────────────
+  // ── Create task records in batches ────────────────────────────────────────
   const allTaskBodies = []
-  const taskBreakdown = {}
+  let taskNo = 1
 
-  for (const phase of resolvedPhases) {
-    const tasks = taskMap[phase.no] || []
-    taskBreakdown[`phase_${phase.no}`] = tasks.length
-
-    const pd = phaseDates[phase.no] || { start: startDate, end: targetDate }
+  for (const { phase, phaseId, phStart, phEnd } of createdPhases) {
     const phaseDays = Math.max(1, Math.round(
-      (new Date(pd.end) - new Date(pd.start)) / (1000 * 60 * 60 * 24)
+      (new Date(phEnd) - new Date(phStart)) / (1000 * 60 * 60 * 24)
     ))
+    const tasks = phase.tasks || []
 
     for (let i = 0; i < tasks.length; i++) {
-      const task = tasks[i]
-      // Spread task due dates evenly across the phase's time window
-      const taskDueDate = addDays(pd.start, Math.round(phaseDays * ((i + 1) / tasks.length)))
+      const task        = tasks[i]
+      const taskDueDate = addDays(phStart, Math.round(phaseDays * ((i + 1) / tasks.length)))
 
-      const props = {
-        "Phase Name":   { title: [{ text: { content: task.name } }] },
+      const taskProps = {
+        "Task Name":    { title: [{ text: { content: task.name } }] },
+        "Task No.":     { number: taskNo++ },
+        "Owner":        { select: { name: task.owner } },
+        "OS Type":      { select: { name: phase.os_type } },
+        "Priority":     { select: { name: task.priority || "Medium" } },
         "Status":       { status: { name: "Not Started" } },
-        "Phase No.":    { number: phase.no },
-        "Project":        { relation: [{ id: projectId }] },
-        "Impl. Project":  { relation: [{ id: projectId }] },
-        "Parent item":    { relation: [{ id: phase.id }] },
         "Due Date":     { date: { start: taskDueDate } },
-      }
-      // Store deliverables / priority info in Notes if present
-      const noteParts = []
-      if (task.priority && task.priority !== "Medium") noteParts.push(`Priority: ${task.priority}`)
-      if (task.deliverables) noteParts.push(task.deliverables)
-      if (noteParts.length) {
-        props["Notes"] = { rich_text: [{ text: { content: noteParts.join(" · ") } }] }
+        "Project":      { relation: [{ id: projectId }] },
+        "Phase":        { relation: [{ id: phaseId }] },
+        "Review Round": { select: { name: task.review_round || "N/A" } },
       }
 
       allTaskBodies.push({
-        parent: { database_id: DB.PHASES },
+        parent: { database_id: DB.TASKS },
         icon: TASK_ICON,
-        properties: props,
+        properties: taskProps,
       })
     }
   }
 
-  // ── Create tasks in parallel batches of 8 ─────────────────────────────────
+  // Create tasks in parallel batches of 8
   const BATCH = 8
-  const tasksCreated = []
+  let tasksCreated = 0
   for (let i = 0; i < allTaskBodies.length; i += BATCH) {
     const batch = allTaskBodies.slice(i, i + BATCH)
-    const results = await Promise.all(
-      batch.map(body => createPage(body, token).then(p => p.id.replace(/-/g, "")))
-    )
-    tasksCreated.push(...results)
+    await Promise.all(batch.map(body => createPage(body, token)))
+    tasksCreated += batch.length
   }
 
-  // ── Link phases to project + set current phase + target date ──────────────
-  const phaseIds   = resolvedPhases.map(p => p.id)
-  const firstPhase = resolvedPhases[0]
+  // ── Link phases to project + set first phase In Progress ─────────────────
+  const phaseIds    = createdPhases.map(p => p.phaseId)
+  const firstPhase  = createdPhases[0]
 
   await Promise.all([
     patchPage(projectId, {
-      "Phases":               { relation: phaseIds.map(id => ({ id })) },
-      "Phase":                { select: { name: firstPhase?.name || "Phase 0 — Pre-Build" } },
-      "Targeted Completion":  { date: { start: targetDate } },
+      "Phases":              { relation: phaseIds.map(id => ({ id })) },
+      "Target Handover Date": { date: { start: targetDate } },
     }, token),
-    // Set first phase to In Progress
     firstPhase
-      ? patchPage(firstPhase.id, { "Status": { status: { name: "In Progress" } } }, token)
+      ? patchPage(firstPhase.phaseId, { "Status": { status: { name: "In Progress" } } }, token)
       : Promise.resolve(),
   ])
 
-  // ── Add progress widget embed to the project page ──────────────────────────
+  // ── Embed progress widget on project page ─────────────────────────────────
   const widgetUrl = `https://widgets.opxio.io/operations/progress?project=${projectId}`
   try {
     await fetch(`https://api.notion.com/v1/blocks/${projectId}/children`, {
-      method: "PATCH",
+      method:  "PATCH",
       headers: {
         "Authorization":  `Bearer ${token}`,
         "Notion-Version": "2022-06-28",
@@ -469,22 +238,11 @@ async function setup(payload) {
       body: JSON.stringify({
         children: [
           { object: "block", type: "divider", divider: {} },
-          {
-            object: "block",
-            type: "heading_3",
-            heading_3: {
-              rich_text: [{ type: "text", text: { content: "📊 Project Progress" } }],
-            },
-          },
-          {
-            object: "block",
-            type: "embed",
-            embed: { url: widgetUrl },
-          },
+          { object: "block", type: "heading_3", heading_3: { rich_text: [{ type: "text", text: { content: "📊 Project Progress" } }] } },
+          { object: "block", type: "embed", embed: { url: widgetUrl } },
         ],
       }),
     })
-    console.log(`[setup_project] Progress widget embedded on project page`)
   } catch (e) {
     console.warn("[setup_project] embed widget failed (non-fatal):", e.message)
   }
@@ -492,22 +250,20 @@ async function setup(payload) {
   const summary = {
     status:         "success",
     project_id:     projectId,
-    os_type:        osType || "(generic)",
-    addons,
+    scope:          scope,
     phases_created: phaseIds.length,
-    tasks_created:  tasksCreated.length,
+    tasks_created:  tasksCreated,
     target_date:    targetDate,
-    task_breakdown: taskBreakdown,
   }
 
-  console.log(`[setup_project] Done: ${phaseIds.length} phases, ${tasksCreated.length} sub-item tasks for ${osType || "generic"} project ${projectId}`)
+  console.log(`[setup_project] Done: ${phaseIds.length} phases, ${tasksCreated} tasks | scope: ${scope.join(", ")}`)
   return summary
 }
 
 // ─── ADVANCE TASK STATUS ─────────────────────────────────────────────────────
 // POST /api/setup_project?action=advance  { "page_id": "<task_page_id>" }
 // Smart single-button: Not Started → In Progress → Done
-// Checks "Depends On" relation before allowing Done.
+// Checks "Blocked by" relation before allowing Done.
 // Also auto-advances the parent phase status.
 async function advanceTask(payload) {
   const token = process.env.NOTION_API_KEY
@@ -518,14 +274,12 @@ async function advanceTask(payload) {
   const task  = await getPage(taskId, token)
   const props = task.properties
   const currentStatus = props.Status?.status?.name || "Not Started"
-  const taskName      = plain(props["Phase Name"]?.title || [])
+  const taskName      = plain(props["Task Name"]?.title || [])
 
-  // Determine next status
   const STATUS_FLOW = {
-    "Not Started":  "In Progress",
-    "In Progress":  "Done",
-    "On Hold":      "In Progress",
-    // "Done" and "Review" have no automatic next step
+    "Not Started": "In Progress",
+    "In Progress": "Done",
+    "Blocked":     "In Progress",
   }
   const nextStatus = STATUS_FLOW[currentStatus]
   if (!nextStatus) {
@@ -540,29 +294,16 @@ async function advanceTask(payload) {
     }
   }
 
-  // ── Check dependencies before ANY advance ──
-  // A task can't start or complete if its dependencies aren't Done.
-  // Checks both "Depends On" and "Blocked by" relations.
-  const depIds = [
-    ...(props["Depends On"]?.relation || []),
-    ...(props["Blocked by"]?.relation || []),
-  ].map(r => r.id.replace(/-/g, ""))
-
-  // Deduplicate (same task could appear in both relations)
-  const uniqueDepIds = [...new Set(depIds)]
-
-  if (uniqueDepIds.length) {
-    // Read all dependency tasks in parallel
-    const deps = await Promise.all(
-      uniqueDepIds.map(id => getPage(id, token).catch(() => null))
-    )
+  // ── Check Blocked by dependencies ─────────────────────────────────────────
+  const depIds = (props["Blocked by"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+  if (depIds.length) {
+    const deps = await Promise.all(depIds.map(id => getPage(id, token).catch(() => null)))
     const blockers = []
     for (const dep of deps) {
       if (!dep) continue
       const depStatus = dep.properties.Status?.status?.name || "Not Started"
       if (depStatus !== "Done") {
-        const depName = plain(dep.properties["Phase Name"]?.title || [])
-        blockers.push({ name: depName, status: depStatus })
+        blockers.push({ name: plain(dep.properties["Task Name"]?.title || []), status: depStatus })
       }
     }
     if (blockers.length) {
@@ -571,64 +312,67 @@ async function advanceTask(payload) {
         task_id:  taskId,
         task:     taskName,
         current:  currentStatus,
-        blockers: blockers,
+        blockers,
         message:  `Blocked — ${blockers.length} task(s) must be completed first: ${blockers.map(b => b.name).join(", ")}`,
       }
     }
   }
 
-  // ── Update task status ──
-  const updates = {
-    "Status": { status: { name: nextStatus } },
-  }
-  // Set start date when beginning, completed date when finishing
-  const today = new Date().toISOString().split("T")[0]
-  if (nextStatus === "In Progress") {
-    updates["Start Date"] = { date: { start: today } }
-  }
-  if (nextStatus === "Done") {
-    updates["Completed Date"] = { date: { start: today } }
-  }
-
+  // ── Update task status ─────────────────────────────────────────────────────
+  const today   = new Date().toISOString().split("T")[0]
+  const updates = { "Status": { status: { name: nextStatus } } }
+  if (nextStatus === "In Progress") updates["Start Date"]      = { date: { start: today } }
+  if (nextStatus === "Done")        updates["Completed Date"]  = { date: { start: today } }
   await patchPage(taskId, updates, token)
 
-  // ── Auto-advance parent phase status ──
-  const parentId = props["Parent item"]?.relation?.[0]?.id?.replace(/-/g, "")
+  // ── Auto-advance parent phase status ──────────────────────────────────────
+  const phaseId = (props["Phase"]?.relation || [])[0]?.id?.replace(/-/g, "")
   let phaseUpdate = null
-  if (parentId) {
+
+  if (phaseId) {
     try {
-      const parent  = await getPage(parentId, token)
-      const phStatus = parent.properties.Status?.status?.name || "Not Started"
+      const phase    = await getPage(phaseId, token)
+      const phStatus = phase.properties.Status?.status?.name || "Not Started"
+      const projectId = (phase.properties.Project?.relation || [])[0]?.id?.replace(/-/g, "")
 
       if (nextStatus === "In Progress" && phStatus === "Not Started") {
-        // First task started → phase starts
-        await patchPage(parentId, {
+        await patchPage(phaseId, {
           "Status":     { status: { name: "In Progress" } },
           "Start Date": { date: { start: today } },
         }, token)
         phaseUpdate = "In Progress"
 
-        // Also update Project's Phase select to this phase
-        const projectId = parent.properties.Project?.relation?.[0]?.id?.replace(/-/g, "")
-        const phaseName = plain(parent.properties["Phase Name"]?.title || [])
+        // Update project's Current Phase
+        const phaseName = plain(phase.properties["Phase Name"]?.title || [])
         if (projectId && phaseName) {
           await patchPage(projectId, {
-            "Phase": { select: { name: phaseName } },
+            "Current Phase": { select: { name: phaseName } },
           }, token).catch(() => {})
         }
       }
 
       if (nextStatus === "Done") {
-        // Check if ALL sibling sub-items are now Done
-        const siblingIds = (parent.properties["Sub-item"]?.relation || []).map(r => r.id.replace(/-/g, ""))
-        const siblings = await Promise.all(
-          siblingIds.map(id => getPage(id, token).catch(() => null))
-        )
-        const allDone = siblings.every(s =>
-          s && (s.properties.Status?.status?.name === "Done")
+        // Check if all sibling tasks are Done
+        const projectTasks = await fetch(
+          `https://api.notion.com/v1/databases/${DB.TASKS}/query`,
+          {
+            method: "POST",
+            headers: {
+              "Authorization":  `Bearer ${token}`,
+              "Notion-Version": "2022-06-28",
+              "Content-Type":   "application/json",
+            },
+            body: JSON.stringify({
+              filter: { property: "Phase", relation: { contains: phaseId } }
+            }),
+          }
+        ).then(r => r.json()).catch(() => ({ results: [] }))
+
+        const allDone = (projectTasks.results || []).every(t =>
+          t.properties?.Status?.status?.name === "Done"
         )
         if (allDone) {
-          await patchPage(parentId, {
+          await patchPage(phaseId, {
             "Status":         { status: { name: "Done" } },
             "Completed Date": { date: { start: today } },
           }, token)
@@ -640,40 +384,6 @@ async function advanceTask(payload) {
     }
   }
 
-  // ── Recalculate & write overall progress to Project ──
-  let overallPct = null
-  if (parentId) {
-    try {
-      const parent    = await getPage(parentId, token)
-      const projectId = parent.properties.Project?.relation?.[0]?.id?.replace(/-/g, "")
-      if (projectId) {
-        const project   = await getPage(projectId, token)
-        const phaseRels = project.properties.Phases?.relation || []
-        let totalT = 0, doneT = 0
-        const phaseReads = await Promise.all(
-          phaseRels.map(r => getPage(r.id.replace(/-/g, ""), token).catch(() => null))
-        )
-        const subReads = []
-        for (const ph of phaseReads) {
-          if (!ph) continue
-          const subs = ph.properties["Sub-item"]?.relation || []
-          for (const s of subs) subReads.push(getPage(s.id.replace(/-/g, ""), token).catch(() => null))
-        }
-        const allTasks = await Promise.all(subReads)
-        for (const t of allTasks) {
-          if (!t) continue
-          totalT++
-          if (t.properties.Status?.status?.name === "Done") doneT++
-        }
-        overallPct = totalT > 0 ? Math.round((doneT / totalT) * 100) : 0
-        // "Completion" is now a native rollup (percent_checked on All Tasks → Status)
-        // No separate progress field needed — Notion computes it automatically
-      }
-    } catch (e) {
-      console.warn("[advanceTask] progress calc:", e.message)
-    }
-  }
-
   return {
     status:       "advanced",
     task_id:      taskId,
@@ -681,81 +391,66 @@ async function advanceTask(payload) {
     from:         currentStatus,
     to:           nextStatus,
     phase_update: phaseUpdate,
-    overall_pct:  overallPct,
   }
 }
 
-// ─── AUTO-DETECT action from page's parent database ─────────────────────────
-// Notion button webhooks POST { page_id } but may not pass query params.
-// We read the page and check which DB it belongs to:
-//   Phase Tasks DB (DB.PHASES) → advance task
-//   Projects DB (DB.PROJECTS)  → setup project
+// ─── AUTO-DETECT action ───────────────────────────────────────────────────────
 async function detectAction(payload) {
-  const token  = process.env.NOTION_API_KEY
-  const rawId  = payload.page_id || payload.data?.id || payload.data?.page_id || payload.source?.page_id || payload.source?.id
-  if (!rawId) return "setup" // fallback
+  const token = process.env.NOTION_API_KEY
+  const rawId = payload.page_id || payload.data?.id || payload.data?.page_id || payload.source?.page_id || payload.source?.id
+  if (!rawId) return "setup"
 
-  // Fast path: Notion webhook payloads include parent DB directly in data
   const inlineDb = (payload.data?.parent?.database_id || "").replace(/-/g, "")
-  if (inlineDb === DB.PHASES.replace(/-/g, "")) return "advance"
+  if (inlineDb === DB.TASKS.replace(/-/g, ""))    return "advance"
   if (inlineDb === DB.PROJECTS.replace(/-/g, "")) return "setup"
 
-  // Fallback: fetch page from API (for manual/curl calls that don't include data.parent)
-  const pageId = rawId.replace(/-/g, "")
   try {
-    const page     = await getPage(pageId, token)
+    const page     = await getPage(rawId.replace(/-/g, ""), token)
     const parentDb = page.parent?.database_id?.replace(/-/g, "") || ""
-
-    if (parentDb === DB.PHASES.replace(/-/g, "")) return "advance"
+    if (parentDb === DB.TASKS.replace(/-/g, ""))    return "advance"
     if (parentDb === DB.PROJECTS.replace(/-/g, "")) return "setup"
-
-    // Fallback: check if page has "Parent item" relation (→ it's a task sub-item)
-    const hasParent = (page.properties?.["Parent item"]?.relation || []).length > 0
-    if (hasParent) return "advance"
+    // If page has a Phase relation, it's a task
+    const hasPhase = (page.properties?.["Phase"]?.relation || []).length > 0
+    if (hasPhase) return "advance"
   } catch (e) {
     console.warn("[detectAction]", e.message)
   }
   return "setup"
 }
 
-// ─── HTML result page (for browser-based advance via URL click) ─────────────
+// ─── HTML result page ─────────────────────────────────────────────────────────
 function resultHTML(result) {
-  const ok = result.status === "advanced"
+  const ok      = result.status === "advanced"
   const blocked = result.status === "blocked"
-  const bg = ok ? "#0a0a0a" : blocked ? "#0a0a0a" : "#1a0a0a"
-  const accent = ok ? "#AAFF00" : blocked ? "#FBBF24" : "#FF4444"
-  const icon = ok ? "✓" : blocked ? "⚠" : "—"
+  const accent  = ok ? "#AAFF00" : blocked ? "#FBBF24" : "#FF4444"
+  const icon    = ok ? "✓" : blocked ? "⚠" : "—"
 
   let title = "", msg = ""
   if (ok) {
-    title = `${result.task}`
-    msg = `${result.from} → <strong style="color:${accent}">${result.to}</strong>`
+    title = result.task
+    msg   = `${result.from} → <strong style="color:${accent}">${result.to}</strong>`
     if (result.phase_update) msg += `<br><span style="opacity:.5">Phase → ${result.phase_update}</span>`
   } else if (blocked) {
     title = "Blocked"
-    const blockerList = (result.blockers || []).map(b => `<li>${b.name} <span style="opacity:.4">(${b.status})</span></li>`).join("")
-    msg = `<strong>${result.task}</strong> can't be completed yet.<br><ul style="text-align:left;margin-top:8px;padding-left:18px;list-style:disc">${blockerList}</ul>`
+    const list = (result.blockers || []).map(b => `<li>${b.name} <span style="opacity:.4">(${b.status})</span></li>`).join("")
+    msg   = `<strong>${result.task}</strong> can't be completed yet.<br><ul style="text-align:left;margin-top:8px;padding-left:18px;list-style:disc">${list}</ul>`
   } else {
     title = result.task || "No change"
-    msg = result.message || "Task is already complete or has no next step."
+    msg   = result.message || "Task is already complete or has no next step."
   }
 
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
-<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Satoshi',sans-serif;background:${bg};color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Satoshi',sans-serif;background:#0a0a0a;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:24px}
 .card{background:#191919;border:1px solid ${accent}22;border-radius:16px;padding:40px;max-width:420px;text-align:center;width:100%}
 .icon{width:56px;height:56px;border-radius:50%;background:${accent}18;color:${accent};display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin-bottom:16px}
-h1{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}
-p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
-ul{color:rgba(255,255,255,.5);font-size:13px;line-height:1.8}
-.hint{margin-top:20px;font-size:12px;color:rgba(255,255,255,.25)}
-</style></head>
+h1{font-size:18px;font-weight:800;margin-bottom:8px;letter-spacing:-.02em}p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
+.hint{margin-top:20px;font-size:12px;color:rgba(255,255,255,.25)}</style></head>
 <body><div class="card"><div class="icon">${icon}</div><h1>${title}</h1><p>${msg}</p><p class="hint">You can close this tab and return to Notion.</p></div></body></html>`
 }
 
 // ─── HANDLER ─────────────────────────────────────────────────────────────────
 export default async function handler(req, res) {
-  // CORS preflight — Notion sends OPTIONS before POST webhooks
   if (req.method === "OPTIONS") {
     res.setHeader("Access-Control-Allow-Origin", "*")
     res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS")
@@ -763,7 +458,6 @@ export default async function handler(req, res) {
     return res.status(200).end()
   }
 
-  // GET with ?advance=<page_id> → browser-based advance (URL formula click)
   if (req.method === "GET" && req.query.advance) {
     try {
       const result = await advanceTask({ page_id: req.query.advance })
@@ -776,28 +470,23 @@ export default async function handler(req, res) {
     }
   }
 
-  // GET without params → health check
   if (req.method === "GET") {
-    return res.json({ service: "Opxio — Setup Project (template-driven)", status: "ready" })
+    return res.json({ service: "Opxio — Setup Project (config-driven)", status: "ready" })
   }
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" })
 
-  const body = req.body || {}
-
-  // Action priority: query param > body field > auto-detect from parent DB
-  let action = req.query?.action || body.action || ""
+  const body   = req.body || {}
+  let   action = req.query?.action || body.action || ""
 
   try {
     if (!action) {
       action = await detectAction(body)
       console.log(`[setup_project] Auto-detected action: "${action}"`)
     }
-
     if (action === "advance") {
       const result = await advanceTask(body)
       return res.json(result)
     }
-    // Default: full project setup
     const result = await setup(body)
     return res.json(result)
   } catch (e) {

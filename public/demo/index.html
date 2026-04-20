@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Opxio — Widget Showcase</title>
+  <title>Opxio — Live Demo</title>
   <link rel="preconnect" href="https://api.fontshare.com">
   <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
   <style>
@@ -12,11 +12,10 @@
     :root {
       --bg: #0D0D0D;
       --surface: #161616;
-      --surface2: #1E1E1E;
       --border: rgba(255,255,255,.07);
       --lime: #AAFF00;
-      --text: #FFFFFF;
-      --muted: rgba(255,255,255,.4);
+      --text: #fff;
+      --muted: rgba(255,255,255,.38);
     }
 
     html, body {
@@ -27,678 +26,324 @@
     }
 
     /* ── Header ── */
-    .header {
+    .hdr {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
-      height: 60px;
+      padding: 0 36px;
+      height: 56px;
       border-bottom: 1px solid var(--border);
       position: sticky;
       top: 0;
-      z-index: 200;
-      background: rgba(13,13,13,.95);
-      backdrop-filter: blur(16px);
+      z-index: 100;
+      background: rgba(13,13,13,.96);
+      backdrop-filter: blur(12px);
     }
     .logo {
-      display: flex;
-      align-items: center;
-      gap: 9px;
+      font-size: 16px;
       font-weight: 700;
-      font-size: 17px;
-      letter-spacing: -.3px;
+      letter-spacing: -.2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
-    .logo-mark {
-      width: 26px;
-      height: 26px;
+    .logo-sq {
+      width: 22px;
+      height: 22px;
       background: var(--lime);
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      border-radius: 5px;
     }
-    .logo-mark svg { display: block; }
-    .header-right {
+    .hdr-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 16px;
     }
-    .live-badge {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .demo-label {
       font-size: 11px;
       font-weight: 600;
       color: var(--muted);
-      letter-spacing: .5px;
+      letter-spacing: .8px;
       text-transform: uppercase;
     }
-    .live-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--lime);
-      animation: pulse 2s infinite;
-    }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: .3; }
-    }
     .btn-book {
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 700;
       background: var(--lime);
       color: #0D0D0D;
-      font-family: inherit;
-      font-weight: 700;
-      font-size: 13px;
       border: none;
-      border-radius: 8px;
-      padding: 8px 16px;
+      border-radius: 7px;
+      padding: 7px 14px;
       cursor: pointer;
       text-decoration: none;
       transition: opacity .15s;
     }
-    .btn-book:hover { opacity: .85; }
+    .btn-book:hover { opacity: .82; }
 
-    /* ── Layout: sidebar + main ── */
-    .layout {
+    /* ── OS tabs ── */
+    .os-nav {
       display: flex;
-      min-height: calc(100vh - 60px);
-    }
-
-    /* ── Sidebar ── */
-    .sidebar {
-      width: 260px;
-      flex-shrink: 0;
-      border-right: 1px solid var(--border);
+      align-items: stretch;
+      gap: 0;
+      padding: 0 36px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
       position: sticky;
-      top: 60px;
-      height: calc(100vh - 60px);
-      overflow-y: auto;
+      top: 56px;
+      z-index: 90;
+      overflow-x: auto;
       scrollbar-width: none;
-      display: flex;
-      flex-direction: column;
     }
-    .sidebar::-webkit-scrollbar { display: none; }
-
-    .sidebar-inner {
-      padding: 20px 0 40px;
-      flex: 1;
-    }
-
-    /* OS groups */
-    .os-group {
-      margin-bottom: 6px;
-    }
-    .os-group-header {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 20px 8px;
-      cursor: pointer;
-      user-select: none;
-      border-radius: 0;
-      transition: background .15s;
-    }
-    .os-group-header:hover { background: rgba(255,255,255,.03); }
-    .os-group-header.active .os-group-icon { background: rgba(170,255,0,.15); color: var(--lime); }
-    .os-group-icon {
-      width: 30px;
-      height: 30px;
-      border-radius: 8px;
-      background: rgba(255,255,255,.06);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      transition: background .15s, color .15s;
-      color: var(--muted);
-    }
-    .os-group-label {
-      flex: 1;
-      font-size: 13px;
-      font-weight: 600;
-      color: var(--muted);
-      transition: color .15s;
-      letter-spacing: -.1px;
-    }
-    .os-group-header.active .os-group-label { color: var(--text); }
-    .os-group-chevron {
-      width: 14px;
-      height: 14px;
-      color: var(--muted);
-      transition: transform .2s;
-      flex-shrink: 0;
-    }
-    .os-group-header.active .os-group-chevron { transform: rotate(90deg); color: var(--lime); }
-
-    /* Widget links */
-    .os-widgets {
-      display: none;
-      padding: 0 10px 8px;
-    }
-    .os-group-header.active + .os-widgets { display: block; }
-
-    .widget-link {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background .12s;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
+    .os-nav::-webkit-scrollbar { display: none; }
+    .os-tab {
       font-family: inherit;
-    }
-    .widget-link:hover { background: rgba(255,255,255,.04); }
-    .widget-link.active {
-      background: rgba(170,255,0,.08);
-    }
-    .widget-link-dot {
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.2);
-      flex-shrink: 0;
-      transition: background .15s;
-    }
-    .widget-link.active .widget-link-dot { background: var(--lime); }
-    .widget-link-info { flex: 1; min-width: 0; }
-    .widget-link-name {
       font-size: 13px;
       font-weight: 500;
       color: var(--muted);
-      transition: color .12s;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      padding: 0 18px;
+      height: 44px;
+      cursor: pointer;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      transition: color .15s, border-color .15s;
+      position: relative;
+      top: 1px;
     }
-    .widget-link.active .widget-link-name { color: var(--text); }
-    .widget-link-module {
-      font-size: 11px;
-      color: rgba(255,255,255,.2);
-      margin-top: 1px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .widget-link.active .widget-link-module { color: rgba(170,255,0,.4); }
-
-    /* ── Main panel ── */
-    .main {
-      flex: 1;
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
+    .os-tab:hover { color: rgba(255,255,255,.7); }
+    .os-tab.active {
+      color: var(--text);
+      border-bottom-color: var(--lime);
     }
 
-    /* Widget viewer header */
-    .viewer-header {
+    /* ── Widget sub-tabs ── */
+    .w-nav {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 20px 32px 18px;
+      gap: 6px;
+      padding: 14px 36px;
       border-bottom: 1px solid var(--border);
-      gap: 16px;
-      flex-wrap: wrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      flex-wrap: nowrap;
     }
-    .viewer-header-left {}
-    .viewer-eyebrow {
-      font-size: 11px;
-      font-weight: 600;
+    .w-nav::-webkit-scrollbar { display: none; }
+    .w-tab {
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--muted);
+      background: rgba(255,255,255,.04);
+      border: 1px solid transparent;
+      border-radius: 7px;
+      padding: 6px 13px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: color .12s, background .12s, border-color .12s;
+    }
+    .w-tab:hover {
+      color: rgba(255,255,255,.7);
+      background: rgba(255,255,255,.07);
+    }
+    .w-tab.active {
       color: var(--lime);
-      letter-spacing: .8px;
-      text-transform: uppercase;
-      margin-bottom: 4px;
+      background: rgba(170,255,0,.08);
+      border-color: rgba(170,255,0,.18);
+    }
+
+    /* ── Viewer ── */
+    .viewer {
+      padding: 28px 36px 60px;
+    }
+    .viewer-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 20px;
     }
     .viewer-title {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 700;
-      letter-spacing: -.4px;
+      letter-spacing: -.3px;
     }
     .viewer-desc {
       font-size: 13px;
       color: var(--muted);
       margin-top: 3px;
+      line-height: 1.5;
     }
-    .viewer-header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-    .viewer-tag {
+    .viewer-badge {
       font-size: 11px;
       font-weight: 600;
       color: var(--muted);
       border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 4px 10px;
-      letter-spacing: .3px;
+      border-radius: 5px;
+      padding: 4px 9px;
       white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
     }
 
-    /* Widget frame area */
-    .viewer-body {
-      flex: 1;
-      padding: 28px 32px 40px;
-    }
-    .viewer-frame-wrap {
-      background: var(--surface);
+    .frame-wrap {
       border: 1px solid var(--border);
-      border-radius: 16px;
+      border-radius: 14px;
       overflow: hidden;
+      background: #191919;
     }
-    .viewer-frame {
+    .frame-wrap iframe {
       width: 100%;
       border: none;
       display: block;
     }
 
-    /* Empty state */
-    .viewer-empty {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 14px;
-      height: 400px;
-      text-align: center;
-      color: var(--muted);
-    }
-    .viewer-empty-icon {
-      font-size: 32px;
-      opacity: .4;
-    }
-    .viewer-empty h3 { font-size: 16px; font-weight: 600; color: var(--text); }
-    .viewer-empty p { font-size: 13px; max-width: 300px; line-height: 1.5; }
-
     /* ── Footer ── */
-    .footer {
+    .ftr {
       border-top: 1px solid var(--border);
-      padding: 20px 32px;
+      padding: 18px 36px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       flex-wrap: wrap;
-      flex-shrink: 0;
     }
-    .footer-left {
-      font-size: 12px;
-      color: var(--muted);
-    }
-    .footer-left strong { color: var(--text); }
-    .footer-links {
-      display: flex;
-      gap: 16px;
-    }
-    .footer-links a {
+    .ftr-l { font-size: 12px; color: var(--muted); }
+    .ftr-l strong { color: var(--text); }
+    .ftr-r { display: flex; gap: 16px; }
+    .ftr-r a {
       font-size: 12px;
       color: var(--muted);
       text-decoration: none;
-      transition: color .15s;
+      transition: color .12s;
     }
-    .footer-links a:hover { color: var(--text); }
-
-    /* Sidebar CTA at bottom */
-    .sidebar-cta {
-      padding: 16px;
-      border-top: 1px solid var(--border);
-      flex-shrink: 0;
-    }
-    .sidebar-cta a {
-      display: block;
-      background: var(--lime);
-      color: #0D0D0D;
-      font-family: inherit;
-      font-weight: 700;
-      font-size: 13px;
-      border-radius: 10px;
-      padding: 11px 16px;
-      text-align: center;
-      text-decoration: none;
-      transition: opacity .15s;
-    }
-    .sidebar-cta a:hover { opacity: .85; }
-    .sidebar-cta-sub {
-      font-size: 11px;
-      color: var(--muted);
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      .sidebar { display: none; }
-      .header { padding: 0 20px; }
-    }
+    .ftr-r a:hover { color: var(--text); }
   </style>
 </head>
 <body>
 
-<!-- Header -->
-<header class="header">
+<header class="hdr">
   <div class="logo">
-    <div class="logo-mark">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <rect x="1" y="1" width="5" height="5" rx="1.5" fill="#0D0D0D"/>
-        <rect x="8" y="1" width="5" height="5" rx="1.5" fill="#0D0D0D"/>
-        <rect x="1" y="8" width="5" height="5" rx="1.5" fill="#0D0D0D"/>
-        <rect x="8" y="8" width="5" height="5" rx="1.5" fill="#0D0D0D" opacity=".4"/>
-      </svg>
-    </div>
+    <div class="logo-sq"></div>
     Opxio
   </div>
-  <div class="header-right">
-    <div class="live-badge">
-      <div class="live-dot"></div>
-      Live demo
-    </div>
+  <div class="hdr-right">
+    <span class="demo-label">Live demo</span>
     <a href="https://opxio.io/book" class="btn-book">Book Free Call</a>
   </div>
 </header>
 
-<!-- Layout -->
-<div class="layout">
+<nav class="os-nav" id="osNav">
+  <button class="os-tab active" data-os="revenue">Revenue OS</button>
+  <button class="os-tab" data-os="operations">Operations OS</button>
+  <button class="os-tab" data-os="marketing">Marketing OS</button>
+  <button class="os-tab" data-os="finance">Finance OS</button>
+</nav>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="sidebar-inner">
+<div class="w-nav" id="wNav"></div>
 
-      <!-- Revenue OS -->
-      <div class="os-group" data-os="revenue">
-        <div class="os-group-header active" onclick="toggleOS(this)">
-          <div class="os-group-icon">💰</div>
-          <span class="os-group-label">Revenue OS</span>
-          <svg class="os-group-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M5 3l4 4-4 4"/>
-          </svg>
-        </div>
-        <div class="os-widgets">
-          <button class="widget-link active" onclick="showWidget(this,'revenue','leads',460)"
-            data-title="Lead Pipeline" data-desc="Track every lead from first touch to converted. Funnel view, outcomes, and follow-up tracking." data-module="CRM & Pipeline">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Lead Pipeline</div>
-              <div class="widget-link-module">CRM & Pipeline</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','deals',520)"
-            data-title="Deals Pipeline" data-desc="Deal stages from incoming to delivered. Board view, won/lost tracking, and deal values." data-module="CRM & Pipeline">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Deals Pipeline</div>
-              <div class="widget-link-module">CRM & Pipeline</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','overview',400)"
-            data-title="Revenue Overview" data-desc="Monthly revenue trend, deal stats, and top-line numbers at a glance." data-module="Billing & Payment Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Revenue Overview</div>
-              <div class="widget-link-module">Billing & Payment Tracker</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','billing',420)"
-            data-title="Billing Tracker" data-desc="Deposit pending, balance due, and paid invoices. Full payment status at a glance." data-module="Billing & Payment Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Billing Tracker</div>
-              <div class="widget-link-module">Billing & Payment Tracker</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','finance',400)"
-            data-title="Finance Snapshot" data-desc="Income vs expenses, P&L trend, and category breakdown for the month." data-module="Retainer Management">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Finance Snapshot</div>
-              <div class="widget-link-module">Retainer Management</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','topproducts',360)"
-            data-title="Top Products" data-desc="Best-selling packages ranked by units sold. See which OS installs are winning." data-module="Product & Pricing Catalogue">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Top Products</div>
-              <div class="widget-link-module">Product & Pricing Catalogue</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','schedule',380)"
-            data-title="Upcoming Meetings" data-desc="Scheduled discovery calls, check-ins, and follow-ups for the week ahead." data-module="Meetings & Calls Log">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Upcoming Meetings</div>
-              <div class="widget-link-module">Meetings & Calls Log</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Operations OS -->
-      <div class="os-group" data-os="operations">
-        <div class="os-group-header" onclick="toggleOS(this)">
-          <div class="os-group-icon">⚙️</div>
-          <span class="os-group-label">Operations OS</span>
-          <svg class="os-group-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M5 3l4 4-4 4"/>
-          </svg>
-        </div>
-        <div class="os-widgets">
-          <button class="widget-link" onclick="showWidget(this,'operations','projects',480)"
-            data-title="Active Projects" data-desc="All active builds with phase progress, completion rate, and team assignments." data-module="Project & Task Management">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Active Projects</div>
-              <div class="widget-link-module">Project & Task Management</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'operations','kanban',460)"
-            data-title="Task Board" data-desc="Kanban view of all tasks across projects. Filter by project, status, or assignee." data-module="Project & Task Management">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Task Board</div>
-              <div class="widget-link-module">Project & Task Management</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'operations','gantt',440)"
-            data-title="Project Timeline" data-desc="Gantt view across all active projects. Phase-by-phase delivery timeline." data-module="Project & Task Management">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Project Timeline</div>
-              <div class="widget-link-module">Project & Task Management</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'operations','team',380)"
-            data-title="Team Workload" data-desc="Tasks assigned per team member, completion rate, and capacity at a glance." data-module="Resource & Capacity Planner">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Team Workload</div>
-              <div class="widget-link-module">Resource & Capacity Planner</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'operations','progress',400,'?project=demo')"
-            data-title="Project Progress" data-desc="Phase-by-phase progress for a single project. Active tasks, upcoming tasks, overall completion." data-module="Client Delivery Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Project Progress</div>
-              <div class="widget-link-module">Client Delivery Tracker</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Marketing OS -->
-      <div class="os-group" data-os="marketing">
-        <div class="os-group-header" onclick="toggleOS(this)">
-          <div class="os-group-icon">📣</div>
-          <span class="os-group-label">Marketing OS</span>
-          <svg class="os-group-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M5 3l4 4-4 4"/>
-          </svg>
-        </div>
-        <div class="os-widgets">
-          <button class="widget-link" onclick="showWidget(this,'marketing','marketing-command',460)"
-            data-title="Marketing Command" data-desc="KPIs across all marketing activity. Campaigns, content, and lead gen in one view." data-module="Marketing Performance Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Marketing Command</div>
-              <div class="widget-link-module">Marketing Performance Tracker</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'marketing','campaigns',420)"
-            data-title="Campaign Tracker" data-desc="Active campaigns with status, budget, and performance overview." data-module="Campaign Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Campaign Tracker</div>
-              <div class="widget-link-module">Campaign Tracker</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'marketing','content-pipeline',440)"
-            data-title="Content Pipeline" data-desc="Content pieces by stage — briefed, in production, review, published." data-module="Content Production Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Content Pipeline</div>
-              <div class="widget-link-module">Content Production Tracker</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <!-- Finance OS -->
-      <div class="os-group" data-os="finance">
-        <div class="os-group-header" onclick="toggleOS(this)">
-          <div class="os-group-icon">📊</div>
-          <span class="os-group-label">Finance OS</span>
-          <svg class="os-group-chevron" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M5 3l4 4-4 4"/>
-          </svg>
-        </div>
-        <div class="os-widgets">
-          <button class="widget-link" onclick="showWidget(this,'revenue','finance',460)"
-            data-title="Finance Snapshot" data-desc="Income, expenses, P&L — monthly trend and category breakdown." data-module="Finance Ledger">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Finance Snapshot</div>
-              <div class="widget-link-module">Finance Ledger</div>
-            </div>
-          </button>
-          <button class="widget-link" onclick="showWidget(this,'revenue','billing',420)"
-            data-title="Invoice Tracker" data-desc="Pending deposits, balance due, and collected payments. Full invoice pipeline." data-module="Invoice & Payment Tracker">
-            <div class="widget-link-dot"></div>
-            <div class="widget-link-info">
-              <div class="widget-link-name">Invoice Tracker</div>
-              <div class="widget-link-module">Invoice & Payment Tracker</div>
-            </div>
-          </button>
-        </div>
-      </div>
-
+<div class="viewer">
+  <div class="viewer-meta">
+    <div>
+      <div class="viewer-title" id="vTitle"></div>
+      <div class="viewer-desc" id="vDesc"></div>
     </div>
-
-    <!-- CTA -->
-    <div class="sidebar-cta">
-      <a href="https://opxio.io/book">Book a Free Discovery Call</a>
-      <div class="sidebar-cta-sub">No commitment. 30 minutes.</div>
-    </div>
-  </aside>
-
-  <!-- Main viewer -->
-  <div class="main">
-    <div class="viewer-header">
-      <div class="viewer-header-left">
-        <div class="viewer-eyebrow" id="viewer-eyebrow">Revenue OS</div>
-        <div class="viewer-title" id="viewer-title">Lead Pipeline</div>
-        <div class="viewer-desc" id="viewer-desc">Track every lead from first touch to converted. Funnel view, outcomes, and follow-up tracking.</div>
-      </div>
-      <div class="viewer-header-right">
-        <span class="viewer-tag" id="viewer-module">CRM & Pipeline</span>
-      </div>
-    </div>
-
-    <div class="viewer-body">
-      <div class="viewer-frame-wrap">
-        <iframe
-          id="viewer-iframe"
-          class="viewer-frame"
-          src="/widgets/revenue/leads.html?token=opxio_demo_showcase_2026"
-          height="460"
-          scrolling="no"
-        ></iframe>
-      </div>
-    </div>
-
-    <footer class="footer">
-      <div class="footer-left"><strong>Opxio</strong> — Business Operating Systems, built in Notion</div>
-      <div class="footer-links">
-        <a href="https://opxio.io">opxio.io</a>
-        <a href="https://opxio.io/book">Book a call</a>
-        <a href="mailto:hello@opxio.io">hello@opxio.io</a>
-      </div>
-    </footer>
+    <div class="viewer-badge" id="vBadge"></div>
   </div>
-
+  <div class="frame-wrap">
+    <iframe id="vFrame" scrolling="no"></iframe>
+  </div>
 </div>
 
+<footer class="ftr">
+  <div class="ftr-l"><strong>Opxio</strong> &mdash; Business Operating Systems, built in Notion</div>
+  <div class="ftr-r">
+    <a href="https://opxio.io">opxio.io</a>
+    <a href="https://opxio.io/book">Book a call</a>
+    <a href="mailto:hello@opxio.io">hello@opxio.io</a>
+  </div>
+</footer>
+
 <script>
-  const TOKEN = 'opxio_demo_showcase_2026'
-  const BASE  = '/widgets/'
+const T = 'opxio_demo_showcase_2026'
 
-  // OS label map
-  const OS_LABELS = {
-    revenue:    'Revenue OS',
-    operations: 'Operations OS',
-    marketing:  'Marketing OS',
-    finance:    'Finance OS',
+const OS = {
+  revenue: {
+    widgets: [
+      { name: 'Lead Pipeline',     desc: 'Every lead tracked from first touch to converted — funnel, outcomes, follow-ups.',  module: 'CRM & Pipeline',            path: 'revenue/leads',            height: 620, params: '?token='+T },
+      { name: 'Deals Pipeline',    desc: 'Deal stages from incoming to delivered. Board view, won/lost, and values.',         module: 'CRM & Pipeline',            path: 'revenue/deals',            height: 640, params: '?token='+T },
+      { name: 'Revenue Overview',  desc: 'Monthly revenue, deal stats, and top-line numbers in a single view.',               module: 'Billing & Payment Tracker', path: 'revenue/overview',         height: 500, params: '?token='+T },
+      { name: 'Billing Tracker',   desc: 'Deposit pending, balance due, and collected payments across all invoices.',         module: 'Billing & Payment Tracker', path: 'revenue/billing',          height: 540, params: '?token='+T },
+      { name: 'Top Products',      desc: 'Best-selling packages ranked by units. See which OS installs are winning.',         module: 'Product & Pricing Catalogue', path: 'revenue/topproducts',   height: 460, params: '?token='+T },
+      { name: 'Upcoming Meetings', desc: 'Discovery calls, check-ins, and follow-ups scheduled for the week ahead.',         module: 'Meetings & Calls Log',      path: 'revenue/schedule',         height: 480, params: '?token='+T },
+    ]
+  },
+  operations: {
+    widgets: [
+      { name: 'Active Projects',   desc: 'All active builds with phase progress, completion rates, and team assignments.',    module: 'Project & Task Management', path: 'operations/projects',      height: 600, params: '?token='+T },
+      { name: 'Task Board',        desc: 'Kanban across all projects. Filter by project, status, or assignee.',              module: 'Project & Task Management', path: 'operations/kanban',        height: 560, params: '?token='+T },
+      { name: 'Project Timeline',  desc: 'Gantt view across all active projects. Phase-by-phase delivery timeline.',         module: 'Project & Task Management', path: 'operations/gantt',         height: 540, params: '?token='+T },
+      { name: 'Team Workload',     desc: 'Tasks per team member, completion rate, and capacity at a glance.',                module: 'Resource & Capacity Planner', path: 'operations/team',        height: 460, params: '?token='+T },
+      { name: 'Project Progress',  desc: 'Phase-by-phase progress for a single project. Active and upcoming tasks.',         module: 'Client Delivery Tracker',   path: 'operations/progress',      height: 520, params: '?project=demo' },
+    ]
+  },
+  marketing: {
+    widgets: [
+      { name: 'Marketing Command', desc: 'KPIs across all marketing — campaigns, content, and lead gen in one view.',        module: 'Marketing Performance Tracker', path: 'marketing/marketing-command', height: 560, params: '?token='+T },
+      { name: 'Campaign Tracker',  desc: 'Active campaigns with status, budget, and performance overview.',                  module: 'Campaign Tracker',          path: 'marketing/campaigns',      height: 500, params: '?token='+T },
+      { name: 'Content Pipeline',  desc: 'Content pieces by stage — briefed, in production, review, published.',            module: 'Content Production Tracker', path: 'marketing/content-pipeline', height: 520, params: '?token='+T },
+    ]
+  },
+  finance: {
+    widgets: [
+      { name: 'Finance Snapshot',  desc: 'Income, expenses, and P&L — monthly trend and expense category breakdown.',        module: 'Finance Ledger',            path: 'revenue/finance',          height: 560, params: '?token='+T },
+      { name: 'Invoice Tracker',   desc: 'Pending deposits, balance due, and collected payments. Full invoice pipeline.',   module: 'Invoice & Payment Tracker', path: 'revenue/billing',          height: 540, params: '?token='+T },
+      { name: 'Top Products',      desc: 'Best-selling packages ranked by units sold and revenue contribution.',             module: 'Product & Pricing Catalogue', path: 'revenue/topproducts',   height: 460, params: '?token='+T },
+    ]
   }
+}
 
-  function showWidget(btn, os, widget, height, extraParams) {
-    // Update sidebar active states
-    document.querySelectorAll('.widget-link').forEach(b => b.classList.remove('active'))
-    btn.classList.add('active')
+let currentOS = 'revenue'
+let currentW  = 0
 
-    // Build URL
-    const folder = (os === 'finance' ? 'revenue' : os)  // finance widgets live in revenue folder for now
-    const tokenParam = extraParams || ('?token=' + TOKEN)
-    const src = BASE + folder + '/' + widget + '.html' + tokenParam
-
-    // Update viewer
-    const iframe = document.getElementById('viewer-iframe')
-    iframe.src = src
-    iframe.height = height || 460
-
-    // Update header
-    const osLabel = OS_LABELS[os] || os
-    document.getElementById('viewer-eyebrow').textContent = osLabel
-    document.getElementById('viewer-title').textContent = btn.dataset.title || widget
-    document.getElementById('viewer-desc').textContent = btn.dataset.desc || ''
-    document.getElementById('viewer-module').textContent = btn.dataset.module || ''
-  }
-
-  function toggleOS(header) {
-    const isActive = header.classList.contains('active')
-
-    // Close all
-    document.querySelectorAll('.os-group-header').forEach(h => h.classList.remove('active'))
-
-    // Open clicked (if wasn't active)
-    if (!isActive) header.classList.add('active')
-  }
-
-  // Auto-open the OS containing the active widget link on click
-  document.querySelectorAll('.widget-link').forEach(btn => {
-    btn.addEventListener('click', () => {
-      const group = btn.closest('.os-group')
-      if (!group) return
-      const header = group.querySelector('.os-group-header')
-      if (!header.classList.contains('active')) {
-        document.querySelectorAll('.os-group-header').forEach(h => h.classList.remove('active'))
-        header.classList.add('active')
-      }
-    })
+function renderWidgetTabs(os) {
+  const nav = document.getElementById('wNav')
+  nav.innerHTML = ''
+  OS[os].widgets.forEach((w, i) => {
+    const btn = document.createElement('button')
+    btn.className = 'w-tab' + (i === 0 ? ' active' : '')
+    btn.textContent = w.name
+    btn.onclick = () => selectWidget(os, i)
+    nav.appendChild(btn)
   })
+}
+
+function selectWidget(os, idx) {
+  currentW = idx
+  document.querySelectorAll('.w-tab').forEach((b, i) => b.classList.toggle('active', i === idx))
+
+  const w = OS[os].widgets[idx]
+  document.getElementById('vTitle').textContent  = w.name
+  document.getElementById('vDesc').textContent   = w.desc
+  document.getElementById('vBadge').textContent  = w.module
+
+  const frame = document.getElementById('vFrame')
+  frame.height = w.height
+  frame.src    = '/widgets/' + w.path + '.html' + w.params
+}
+
+function selectOS(os) {
+  currentOS = os
+  document.querySelectorAll('.os-tab').forEach(b => b.classList.toggle('active', b.dataset.os === os))
+  renderWidgetTabs(os)
+  selectWidget(os, 0)
+}
+
+document.querySelectorAll('.os-tab').forEach(btn => {
+  btn.addEventListener('click', () => selectOS(btn.dataset.os))
+})
+
+// Init
+selectOS('revenue')
 </script>
 </body>
 </html>

@@ -242,8 +242,8 @@ function render(d){
     html += `<div class="ts-row">
       <div class="ts-dot" style="background:${col};${!active?'opacity:.35;':''}"></div>
       <span class="ts-label">${esc(label)}</span>
-      <div class="ts-dash" style="background:${active?col:(document.body.classList.contains('light')?'rgba(0,0,0,.08)':'rgba(255,255,255,.1)')};"></div>
-      <span class="ts-count" style="color:${active?(document.body.classList.contains('light')?'#111':'#fff'):(document.body.classList.contains('light')?'rgba(0,0,0,.22)':'rgba(255,255,255,.25)')};">${count}</span>
+      <div class="ts-dash" style="background:${active?col:'rgba(255,255,255,.1)'};"></div>
+      <span class="ts-count" style="color:${active?'rgba(255,255,255,.9)':'rgba(255,255,255,.22)'};">${count}</span>
     </div>`;
   }
   html += `</div></div>`;
@@ -266,7 +266,7 @@ function render(d){
     html += `<div class="prog-row">
       <div class="prog-header">
         <span class="prog-label">${esc(label)}</span>
-        <span class="prog-count" style="color:${count>0?col:(document.body.classList.contains('light')?'rgba(0,0,0,.22)':'rgba(255,255,255,.25)')};">${count}</span>
+        <span class="prog-count" style="color:${count>0?col:'rgba(255,255,255,.25)'};">${count}</span>
       </div>
       <div class="prog-track">
         <div class="prog-fill" style="width:${count > 0 ? Math.max(pct, 4) : 0}%;background:${col};opacity:${count>0?'.8':'.3'};"></div>

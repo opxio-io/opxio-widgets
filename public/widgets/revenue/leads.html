@@ -9,12 +9,10 @@ body.light{background:#FFFFFF;color:#111;}
 body.light{--muted:rgba(0,0,0,.4);--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#D94F1E;}
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s;}
-.btn:hover{border-color:var(--gb);color:var(--g);}
-body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(0,0,0,0.62);}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
 body.light .eyebrow{color:rgba(0,0,0,0.46);}
 .h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
 .ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
 body.light .ts{color:rgba(0,0,0,0.34);}
 
@@ -29,37 +27,44 @@ body.light .s-lbl{color:rgba(0,0,0,0.59);}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:7px;}
 body.light .s-sub{color:rgba(0,0,0,0.43);}
 
-/* lost styling */
-.stat.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.stat.is-lost .stat-dot{background:var(--lost);}
-.stat.is-lost .s-val{color:var(--lost);}
-.stat.is-lost:hover{border-color:rgba(255,107,53,.18);}
+/* booked accent — blue */
+:root{--blue:#4FAEFF;--bluem:rgba(79,174,255,.1);}
+.stat.is-booked::before{background:linear-gradient(90deg,var(--blue),transparent);}
+.stat.is-booked .stat-dot{background:var(--blue);}
+.stat.is-booked .s-val{color:var(--blue);}
+.stat.is-booked:hover{border-color:rgba(79,174,255,.18);}
 
-/* awaiting deposit — amber accent */
-:root{--muted:rgba(255,255,255,.4);--amber:#FFB800;--amberm:rgba(255,184,0,.12);}
-.stat.is-awaiting::before{background:linear-gradient(90deg,var(--amber),transparent);}
-.stat.is-awaiting .stat-dot{background:var(--amber);}
-.stat.is-awaiting .s-val{color:var(--amber);}
-.stat.is-awaiting:hover{border-color:rgba(255,184,0,.18);}
+/* qualified accent — purple */
+:root{--purple:#B17BFF;}
+.stat.is-qualified::before{background:linear-gradient(90deg,var(--purple),transparent);}
+.stat.is-qualified .stat-dot{background:var(--purple);}
+.stat.is-qualified .s-val{color:var(--purple);}
+.stat.is-qualified:hover{border-color:rgba(177,123,255,.18);}
 
-/* grid */
-.grid6{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;}
-@media(max-width:900px){.grid6{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:500px){.grid6{grid-template-columns:repeat(2,1fr);}}
-
-/* footer */
+/* footer bar */
 .foot{display:flex;align-items:center;gap:0;margin-top:10px;background:#1E1E1E;border:1px solid rgba(255,255,255,.04);border-radius:10px;overflow:hidden;}
 body.light .foot{background:#fff;border-color:rgba(0,0,0,.06);}
 .foot-item{flex:1;padding:9px 14px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);border-right:1px solid rgba(255,255,255,.05);}
 body.light .foot-item{color:rgba(0,0,0,0.5);border-color:rgba(0,0,0,.05);}
 .foot-item:last-child{border-right:none;}
 .foot-item span{display:block;font-size:15px;font-weight:900;color:var(--g);letter-spacing:-.5px;margin-top:1px;}
+.foot-item.is-lost span{color:var(--lost);}
+
+/* section label */
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:14px 0 8px;}
+body.light .sec-lbl{color:rgba(0,0,0,0.43);}
+
+/* grids */
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+@media(max-width:900px){.grid5{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:500px){.grid5{grid-template-columns:repeat(2,1fr);}}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:700px){.grid4{grid-template-columns:repeat(2,1fr);}}
 
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
 
-/* ── Icon buttons (consistent UI) ── */
 .h-left{display:flex;flex-direction:column;gap:2px;}
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
@@ -69,8 +74,6 @@ body.light .foot-item{color:rgba(0,0,0,0.5);border-color:rgba(0,0,0,.05);}
 body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,0.46);}
 body.light .icon-btn:hover{background:rgba(79,139,0,.1);border-color:rgba(79,139,0,.22);color:var(--g);}
 
-/* Light mode text overrides */
-body.light .h-title{color:#111;}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
@@ -84,7 +87,8 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
   </div>
 </div>
 
-<div class="grid6">
+<div class="sec-lbl">Active Pipeline</div>
+<div class="grid5">
   <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Incoming</div>
@@ -97,18 +101,28 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     <div class="s-val" id="v-contacted">—</div>
     <div class="s-sub">First touch done</div>
   </div>
+  <div class="card stat is-qualified">
+    <div class="stat-dot"></div>
+    <div class="s-lbl">Qualified</div>
+    <div class="s-val" id="v-qualified">—</div>
+    <div class="s-sub">Fit confirmed</div>
+  </div>
+  <div class="card stat is-booked">
+    <div class="stat-dot"></div>
+    <div class="s-lbl">Discovery Booked</div>
+    <div class="s-val" id="v-booked">—</div>
+    <div class="s-sub">Call scheduled</div>
+  </div>
   <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Discovery Done</div>
     <div class="s-val" id="v-discovery">—</div>
     <div class="s-sub">Call completed</div>
   </div>
-  <div class="card stat is-awaiting">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Awaiting Deposit</div>
-    <div class="s-val" id="v-awaiting">—</div>
-    <div class="s-sub">Quotation approved</div>
-  </div>
+</div>
+
+<div class="sec-lbl">Outcomes</div>
+<div class="grid4">
   <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Converted</div>
@@ -116,10 +130,22 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     <div class="s-sub">Moved to deal</div>
   </div>
   <div class="card stat is-lost">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Lost</div>
-    <div class="s-val" id="v-lost">—</div>
+    <div class="stat-dot" style="background:var(--lost);"></div>
+    <div class="s-lbl" style="color:inherit;">Lost</div>
+    <div class="s-val" id="v-lost" style="color:var(--lost);">—</div>
     <div class="s-sub">Did not proceed</div>
+  </div>
+  <div class="card stat is-lost">
+    <div class="stat-dot" style="background:var(--lost);opacity:.5;"></div>
+    <div class="s-lbl">Ghosted</div>
+    <div class="s-val" id="v-ghosted" style="color:var(--lost);opacity:.7;">—</div>
+    <div class="s-sub">No response</div>
+  </div>
+  <div class="card stat">
+    <div class="stat-dot" style="background:rgba(255,255,255,.2);"></div>
+    <div class="s-lbl">Disqualified</div>
+    <div class="s-val" id="v-disqualified" style="color:rgba(255,255,255,.35);">—</div>
+    <div class="s-sub">Wrong fit</div>
   </div>
 </div>
 
@@ -134,22 +160,31 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
 let light = false;
-function toggleMode(){ light=!light; document.body.classList.toggle('light',light); document.getElementById('mb').textContent=light?'🌙 Dark':'☀ Light'; }
+function toggleMode(){
+  light=!light;
+  document.body.classList.toggle('light',light);
+  // update light-mode-sensitive inline colors
+  const dq = document.getElementById('v-disqualified');
+  if(dq) dq.style.color = light ? 'rgba(0,0,0,.25)' : 'rgba(255,255,255,.35)';
+}
 function setTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
 async function loadData(){
   try {
     const r = await fetch(apiUrl('/api/data/pipeline'));
     const j = await r.json();
     const s = j.stages || {};
-    document.getElementById('v-incoming').textContent  = s['Incoming']          ?? 0;
-    document.getElementById('v-contacted').textContent = s['Contacted']         ?? 0;
-    document.getElementById('v-discovery').textContent = s['Discovery Done']    ?? 0;
-    document.getElementById('v-awaiting').textContent  = s['Awaiting Deposit']  ?? 0;
-    document.getElementById('v-converted').textContent = s['Converted']         ?? 0;
-    document.getElementById('v-lost').textContent      = s['Lost']              ?? 0;
-    document.getElementById('f-active').textContent    = j.totalActive          ?? 0;
-    document.getElementById('f-monthly').textContent   = j.thisMonthLeads       ?? 0;
-    document.getElementById('f-converted').textContent = j.thisMonthConverted   ?? 0;
+    document.getElementById('v-incoming').textContent    = s['Incoming']          ?? 0;
+    document.getElementById('v-contacted').textContent   = s['Contacted']         ?? 0;
+    document.getElementById('v-qualified').textContent   = s['Qualified']         ?? 0;
+    document.getElementById('v-booked').textContent      = s['Discovery Booked']  ?? 0;
+    document.getElementById('v-discovery').textContent   = s['Discovery Done']    ?? 0;
+    document.getElementById('v-converted').textContent   = s['Converted']         ?? 0;
+    document.getElementById('v-lost').textContent        = s['Lost']              ?? 0;
+    document.getElementById('v-ghosted').textContent     = s['Ghosted']           ?? 0;
+    document.getElementById('v-disqualified').textContent= s['Disqualified']      ?? 0;
+    document.getElementById('f-active').textContent      = j.totalActive          ?? 0;
+    document.getElementById('f-monthly').textContent     = j.thisMonthLeads       ?? 0;
+    document.getElementById('f-converted').textContent   = j.thisMonthConverted   ?? 0;
     if (j.sources && j.sources.length) {
       document.getElementById('f-src').textContent = j.sources[0].label;
     }
@@ -161,17 +196,4 @@ function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add(
 setInterval(loadData, 5*60*1000);
 </script>
 <div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  const el = document.getElementById('_eyebrow');
-  if(!el) return;
-  el.textContent = el.dataset.os.toUpperCase(); // default until API responds
-  const tok = new URLSearchParams(location.search).get('token');
-  if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
-    .then(r => r.ok ? r.json() : null)
-    .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · ' + el.dataset.os.toUpperCase(); })
-    .catch(() => {});
-})();
-</script>
 </body></html>

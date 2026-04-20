@@ -42,9 +42,9 @@ export default async function handler(req, res) {
     const DEFAULT_LOST_LABEL  = "Lost"
 
     const DEFAULT_ALL_STAGES = [
-      "Incoming","Discovery Done","Awaiting Deposit","Building","Balance Due","Delivered","Lost",
+      "Incoming","Discovery Done","Proposal Sent","Quotation Issued","Awaiting Deposit","Building","Balance Due","Delivered","Lost",
     ]
-    const DEFAULT_POTENTIAL = ["Incoming", "Discovery Done", "Awaiting Deposit"]
+    const DEFAULT_POTENTIAL = ["Incoming","Discovery Done","Proposal Sent","Quotation Issued","Awaiting Deposit"]
     const DEFAULT_WON       = ["Building", "Balance Due", "Delivered"]
     const DEFAULT_WON_LABEL  = "Building"
     const DEFAULT_DEL_LABEL  = "Delivered"

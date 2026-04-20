@@ -5,17 +5,14 @@
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
 body.light{background:#FFFFFF;color:#111;}
-:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--bal:#F5A623;--balm:rgba(245,166,35,.1);}
-body.light{--muted:rgba(0,0,0,.4);--g:#4F8B00;--gb:rgba(92,153,0,.22);--bal:#C47D00;}
+:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--bal:#F5A623;--balm:rgba(245,166,35,.1);--lost:#FF6B35;--blue:#4FAEFF;--purple:#B17BFF;--amber:#FFB800;}
+body.light{--muted:rgba(0,0,0,.4);--g:#4F8B00;--gb:rgba(92,153,0,.22);--bal:#C47D00;--lost:#D94F1E;}
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.12);}
 body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
-.btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s;}
-.btn:hover{border-color:var(--gb);color:var(--g);}
-body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(0,0,0,0.62);}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
 body.light .eyebrow{color:rgba(0,0,0,0.46);}
 .h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
 .ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
 body.light .ts{color:rgba(0,0,0,0.34);}
 
@@ -31,31 +28,58 @@ body.light .s-val{color:#4F8B00;}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.35);margin-top:7px;}
 body.light .s-sub{color:rgba(0,0,0,0.54);}
 .s-tag{display:inline-block;margin-top:8px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1);}
+body.light .s-tag{color:rgba(0,0,0,.7);background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.09);}
 
-/* active deal accent (Building) */
-.stat.is-active .stat-dot{background:var(--g);opacity:.6;}
+/* stage accents */
+.stat.is-proposal::before{background:linear-gradient(90deg,var(--purple),transparent);}
+.stat.is-proposal .stat-dot{background:var(--purple);opacity:.6;}
+.stat.is-proposal .s-val{color:var(--purple);}
+.stat.is-proposal:hover{border-color:rgba(177,123,255,.18);}
+.stat.is-proposal .s-tag{background:rgba(177,123,255,.1);color:var(--purple);border-color:rgba(177,123,255,.2);}
+
+.stat.is-quotation::before{background:linear-gradient(90deg,var(--blue),transparent);}
+.stat.is-quotation .stat-dot{background:var(--blue);opacity:.6;}
+.stat.is-quotation .s-val{color:var(--blue);}
+.stat.is-quotation:hover{border-color:rgba(79,174,255,.18);}
+.stat.is-quotation .s-tag{background:rgba(79,174,255,.1);color:var(--blue);border-color:rgba(79,174,255,.2);}
+
+.stat.is-awaiting::before{background:linear-gradient(90deg,var(--amber),transparent);}
+.stat.is-awaiting .stat-dot{background:var(--amber);opacity:.7;}
+.stat.is-awaiting .s-val{color:var(--amber);}
+.stat.is-awaiting:hover{border-color:rgba(255,184,0,.18);}
+.stat.is-awaiting .s-tag{background:rgba(255,184,0,.1);color:var(--amber);border-color:rgba(255,184,0,.2);}
+
 .stat.is-active::before{background:linear-gradient(90deg,var(--g),transparent);}
+.stat.is-active .stat-dot{background:var(--g);opacity:.6;}
 .stat.is-active .s-val{color:var(--g);}
 .stat.is-active .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.15);}
 .stat.is-active:hover{border-color:rgba(170,255,0,.12);}
+body.light .stat.is-active .s-val{color:#4F8B00;}
 
-/* balance due amber */
-.stat.is-balance .stat-dot{background:var(--bal);opacity:.7;}
 .stat.is-balance::before{background:linear-gradient(90deg,var(--bal),transparent);}
+.stat.is-balance .stat-dot{background:var(--bal);opacity:.7;}
 .stat.is-balance .s-val{color:var(--bal);}
 .stat.is-balance .s-tag{background:rgba(245,166,35,.1);color:var(--bal);border-color:rgba(245,166,35,.2);}
 .stat.is-balance:hover{border-color:rgba(245,166,35,.15);}
 
-/* delivered */
 .stat.is-delivered .stat-dot{background:var(--g);opacity:.9;}
-.stat.is-delivered:hover::before{opacity:1;}
+.stat.is-delivered::before{background:linear-gradient(90deg,var(--g),transparent);}
 .stat.is-delivered .s-val{color:var(--g);}
 .stat.is-delivered .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.2);}
+body.light .stat.is-delivered .s-val{color:#4F8B00;}
 
-/* grid */
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-@media(max-width:600px){.grid3{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:380px){.grid3{grid-template-columns:1fr;}}
+.stat.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
+.stat.is-lost .stat-dot{background:var(--lost);opacity:.7;}
+.stat.is-lost .s-val{color:var(--lost);}
+.stat.is-lost:hover{border-color:rgba(255,107,53,.18);}
+.stat.is-lost .s-tag{background:rgba(255,107,53,.1);color:var(--lost);border-color:rgba(255,107,53,.2);}
+
+/* grids */
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+@media(max-width:1000px){.grid5{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:500px){.grid5{grid-template-columns:repeat(2,1fr);}}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:700px){.grid4{grid-template-columns:repeat(2,1fr);}}
 
 .sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:14px 0 8px;}
 body.light .sec-lbl{color:rgba(0,0,0,0.43);}
@@ -63,7 +87,6 @@ body.light .sec-lbl{color:rgba(0,0,0,0.43);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 
-/* ── Icon buttons (consistent UI) ── */
 .h-left{display:flex;flex-direction:column;gap:2px;}
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
@@ -73,9 +96,6 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,0.46);}
 body.light .icon-btn:hover{background:rgba(79,139,0,.1);border-color:rgba(79,139,0,.22);color:var(--g);}
 
-/* Light mode text overrides */
-body.light .h-title{color:#111;}
-body.light .s-tag{color:rgba(0,0,0,.7);}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
@@ -89,53 +109,74 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
   </div>
 </div>
 
-<div class="sec-lbl">Early Stage</div>
-<div class="grid3">
+<div class="sec-lbl">Pre-Close</div>
+<div class="grid5">
   <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Incoming</div>
     <div class="s-val" id="v-incoming">—</div>
-    <div class="s-sub">New leads not yet contacted</div>
+    <div class="s-sub">New deals</div>
     <div class="s-tag">New</div>
   </div>
   <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Discovery Done</div>
     <div class="s-val" id="v-discovery">—</div>
-    <div class="s-sub">Call done, proposal in progress</div>
+    <div class="s-sub">Call done</div>
     <div class="s-tag">Scoped</div>
   </div>
-  <div class="card stat">
+  <div class="card stat is-proposal">
+    <div class="stat-dot"></div>
+    <div class="s-lbl">Proposal Sent</div>
+    <div class="s-val" id="v-proposal">—</div>
+    <div class="s-sub">Awaiting feedback</div>
+    <div class="s-tag">Sent</div>
+  </div>
+  <div class="card stat is-quotation">
+    <div class="stat-dot"></div>
+    <div class="s-lbl">Quotation Issued</div>
+    <div class="s-val" id="v-quotation">—</div>
+    <div class="s-sub">Quote out</div>
+    <div class="s-tag">Quoted</div>
+  </div>
+  <div class="card stat is-awaiting">
     <div class="stat-dot"></div>
     <div class="s-lbl">Awaiting Deposit</div>
     <div class="s-val" id="v-awaiting">—</div>
-    <div class="s-sub">Proposal approved, deposit pending</div>
+    <div class="s-sub">Quote approved</div>
     <div class="s-tag">Pending</div>
   </div>
 </div>
 
-<div class="sec-lbl">Active</div>
-<div class="grid3">
+<div class="sec-lbl">Active & Closed</div>
+<div class="grid4">
   <div class="card stat is-active">
     <div class="stat-dot"></div>
     <div class="s-lbl">Building</div>
     <div class="s-val" id="v-building">—</div>
-    <div class="s-sub">Active installs in progress</div>
+    <div class="s-sub">Active installs</div>
     <div class="s-tag">In Build</div>
   </div>
   <div class="card stat is-balance">
     <div class="stat-dot"></div>
     <div class="s-lbl">Balance Due</div>
     <div class="s-val" id="v-balance">—</div>
-    <div class="s-sub">Build done, final payment pending</div>
+    <div class="s-sub">Build done, payment pending</div>
     <div class="s-tag">Awaiting Payment</div>
   </div>
   <div class="card stat is-delivered">
     <div class="stat-dot"></div>
     <div class="s-lbl">Delivered</div>
     <div class="s-val" id="v-delivered">—</div>
-    <div class="s-sub">Fully paid and handed over</div>
+    <div class="s-sub">Fully paid & handed over</div>
     <div class="s-tag">Complete</div>
+  </div>
+  <div class="card stat is-lost">
+    <div class="stat-dot"></div>
+    <div class="s-lbl">Lost</div>
+    <div class="s-val" id="v-lost">—</div>
+    <div class="s-sub">Did not proceed</div>
+    <div class="s-tag">Closed</div>
   </div>
 </div>
 
@@ -143,7 +184,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
 let light = false;
-function toggleMode(){ light=!light; document.body.classList.toggle('light',light); document.getElementById('mb').textContent=light?'🌙 Dark':'☀ Light'; }
+function toggleMode(){ light=!light; document.body.classList.toggle('light',light); }
 function setTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
 async function loadData(){
   try {
@@ -152,10 +193,13 @@ async function loadData(){
     const s = j.stages || {};
     document.getElementById('v-incoming').textContent  = s['Incoming']         ?? 0;
     document.getElementById('v-discovery').textContent = s['Discovery Done']   ?? 0;
+    document.getElementById('v-proposal').textContent  = s['Proposal Sent']    ?? 0;
+    document.getElementById('v-quotation').textContent = s['Quotation Issued'] ?? 0;
     document.getElementById('v-awaiting').textContent  = s['Awaiting Deposit'] ?? 0;
     document.getElementById('v-building').textContent  = s['Building']         ?? 0;
     document.getElementById('v-balance').textContent   = s['Balance Due']      ?? 0;
     document.getElementById('v-delivered').textContent = s['Delivered']        ?? 0;
+    document.getElementById('v-lost').textContent      = s['Lost']             ?? 0;
     setTs();
   } catch(e) { console.error('deals widget:', e); }
 }
@@ -164,17 +208,4 @@ function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add(
 setInterval(loadData, 5*60*1000);
 </script>
 <div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  const el = document.getElementById('_eyebrow');
-  if(!el) return;
-  el.textContent = el.dataset.os.toUpperCase(); // default until API responds
-  const tok = new URLSearchParams(location.search).get('token');
-  if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
-    .then(r => r.ok ? r.json() : null)
-    .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · ' + el.dataset.os.toUpperCase(); })
-    .catch(() => {});
-})();
-</script>
 </body></html>

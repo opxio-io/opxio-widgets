@@ -190,6 +190,8 @@ body.light .kol-detail{color:rgba(0,0,0,.45);}
 body.light .wl-name{color:#111;}
 body.light .wl-tab{color:rgba(0,0,0,.55);}
 body.light .wl-val{color:rgba(0,0,0,.55);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style>
 </head>
 <body>
@@ -930,6 +932,6 @@ const SUN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;}
 </script>
 
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 </body>
 </html>

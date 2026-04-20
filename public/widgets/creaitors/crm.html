@@ -169,6 +169,8 @@ body.light .s-sub{color:rgba(0,0,0,.42);}
 /* Light mode — SVG fills */
 body.light .d-val{fill:#111;}
 body.light .d-lbl{fill:rgba(0,0,0,.4);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head>
 <body>
 
@@ -514,7 +516,7 @@ function drawChart() {
 window.addEventListener('load',()=>setTimeout(drawChart,80));
 window.addEventListener('resize',drawChart);
 </script>
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el=document.getElementById('_eyebrow');if(!el)return;

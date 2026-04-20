@@ -517,7 +517,7 @@ export default async function handler(req, res) {
           status: b.status,
           startDate: b.startDate,
           targetDate: b.targetDate,
-          phases: (b.phases || []).map(ph => ({ name: ph.name, no: ph.no })),
+          phases: (b.phases || []).map(ph => ({ name: ph.name, no: ph.no, status: ph.status, tasks: ph.tasks })),
           tasks: ganttTasks,
         }
       })

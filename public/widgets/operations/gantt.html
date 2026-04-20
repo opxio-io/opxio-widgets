@@ -36,12 +36,23 @@ body.light .sel-btn.active{background:var(--g);border-color:var(--g);color:#111;
 
 /* ── Phase tabs — pill style ── */
 .phase-tabs{display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap;align-items:center;}
-.ph-tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all .2s;}
+.ph-tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:6px 14px;border-radius:999px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
 .ph-tab:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
 .ph-tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
 body.light .ph-tab{border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.3);}
 body.light .ph-tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
-.ph-tab .ph-cnt{font-size:9px;opacity:.5;margin-left:3px;}
+.ph-tab .ph-cnt{font-size:9px;opacity:.5;margin-left:1px;}
+/* Phase done — green tick */
+.ph-tab.ph-done{border-color:rgba(170,255,0,.2);color:rgba(170,255,0,.5);}
+.ph-tab.ph-done:hover{border-color:rgba(170,255,0,.35);color:rgba(170,255,0,.75);}
+.ph-tab.ph-done.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.ph-tick{font-size:10px;line-height:1;}
+/* Phase current (in progress) — amber pulse dot */
+.ph-tab.ph-current{border-color:rgba(251,191,36,.25);color:rgba(251,191,36,.7);}
+.ph-tab.ph-current:hover{border-color:rgba(251,191,36,.4);color:var(--amber);}
+.ph-tab.ph-current.active{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.3);color:var(--amber);}
+.ph-pulse{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;animation:pulse-dot 1.8s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
 
 /* ── Legend ── */
 .legend{display:flex;gap:14px;margin-bottom:10px;}
@@ -238,7 +249,15 @@ function buildPhaseTabs(proj){
   el.innerHTML=`<button class="ph-tab active" data-ph="all" onclick="selectPhase('all')">All<span class="ph-cnt">${proj.tasks.length}</span></button>`+
     proj.phases.map(p=>{
       const c=phaseCounts[p.name]||0;
-      return`<button class="ph-tab" data-ph="${esc(p.name)}" onclick="selectPhase('${esc(p.name)}')">${esc(p.name)}<span class="ph-cnt">${c}</span></button>`;
+      const isDone = p.status==='Done' || (p.tasks&&p.tasks.total>0&&p.tasks.done===p.tasks.total);
+      const isCurrent = !isDone && p.status==='In Progress';
+      const stateCls = isDone?'ph-done':isCurrent?'ph-current':'';
+      const prefix = isDone
+        ? `<span class="ph-tick">✓</span>`
+        : isCurrent
+        ? `<span class="ph-pulse"></span>`
+        : '';
+      return`<button class="ph-tab ${stateCls}" data-ph="${esc(p.name)}" onclick="selectPhase('${esc(p.name)}')">${prefix}${esc(p.name)}<span class="ph-cnt">${c}</span></button>`;
     }).join('');
 }
 

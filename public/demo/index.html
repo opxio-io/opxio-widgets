@@ -4,346 +4,304 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Opxio — Live Demo</title>
-  <link rel="preconnect" href="https://api.fontshare.com">
-  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *{margin:0;padding:0;box-sizing:border-box;}
+    html,body{height:100%;background:#0D0D0D;color:#fff;font-family:'Satoshi',-apple-system,sans-serif;overflow-x:hidden;}
+    :root{--g:#AAFF00;--gm:rgba(170,255,0,.08);--gb:rgba(170,255,0,.2);}
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-track{background:transparent;}
+    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px;}
 
-    :root {
-      --bg: #0D0D0D;
-      --surface: #161616;
-      --border: rgba(255,255,255,.07);
-      --lime: #AAFF00;
-      --text: #fff;
-      --muted: rgba(255,255,255,.38);
+    /* ── Top bar (matches catalogue) ── */
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:14px 24px;border-bottom:1px solid rgba(255,255,255,.07);
+      position:sticky;top:0;z-index:100;
+      background:rgba(13,13,13,.97);backdrop-filter:blur(12px);
+      gap:12px;flex-wrap:wrap;
     }
+    .brand{display:flex;align-items:center;gap:10px;}
+    .brand-dot{width:8px;height:8px;border-radius:50%;background:var(--g);}
+    .brand-name{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+    .topbar-right{display:flex;align-items:center;gap:8px;}
+    .ts{font-size:10px;color:rgba(255,255,255,.15);}
+    .btn-book{
+      background:var(--g);color:#000;font-family:'Satoshi',sans-serif;
+      font-size:11px;font-weight:900;padding:6px 14px;border-radius:7px;
+      border:none;cursor:pointer;text-decoration:none;transition:opacity .15s;
+      letter-spacing:.02em;
+    }
+    .btn-book:hover{opacity:.82;}
 
-    html, body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Satoshi', -apple-system, sans-serif;
-      min-height: 100vh;
-    }
+    /* ── Layout ── */
+    .layout{display:flex;min-height:calc(100vh - 53px);}
 
-    /* ── Header ── */
-    .hdr {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0 36px;
-      height: 56px;
-      border-bottom: 1px solid var(--border);
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(13,13,13,.96);
-      backdrop-filter: blur(12px);
+    /* ── Sidebar ── */
+    .sidebar{
+      width:240px;flex-shrink:0;border-right:1px solid rgba(255,255,255,.07);
+      position:sticky;top:53px;height:calc(100vh - 53px);
+      display:flex;flex-direction:column;overflow:hidden;
     }
-    .logo {
-      font-size: 16px;
-      font-weight: 700;
-      letter-spacing: -.2px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .logo-sq {
-      width: 22px;
-      height: 22px;
-      background: var(--lime);
-      border-radius: 5px;
-    }
-    .hdr-right {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-    .demo-label {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      letter-spacing: .8px;
-      text-transform: uppercase;
-    }
-    .btn-book {
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 700;
-      background: var(--lime);
-      color: #0D0D0D;
-      border: none;
-      border-radius: 7px;
-      padding: 7px 14px;
-      cursor: pointer;
-      text-decoration: none;
-      transition: opacity .15s;
-    }
-    .btn-book:hover { opacity: .82; }
+    .sidebar-scroll{flex:1;overflow-y:auto;padding:16px 12px 0;}
+    .sidebar-scroll::-webkit-scrollbar{width:0;}
 
-    /* ── OS tabs ── */
-    .os-nav {
-      display: flex;
-      align-items: stretch;
-      gap: 0;
-      padding: 0 36px;
-      border-bottom: 1px solid var(--border);
-      background: var(--bg);
-      position: sticky;
-      top: 56px;
-      z-index: 90;
-      overflow-x: auto;
-      scrollbar-width: none;
+    /* OS group */
+    .os-group{margin-bottom:2px;}
+    .os-btn{
+      width:100%;display:flex;align-items:center;gap:8px;
+      background:transparent;border:1px solid rgba(255,255,255,.07);
+      color:rgba(255,255,255,.3);font-family:'Satoshi',sans-serif;
+      font-size:11px;font-weight:700;padding:7px 11px;border-radius:8px;
+      cursor:pointer;transition:all .18s;white-space:nowrap;
+      margin-bottom:3px;text-align:left;letter-spacing:.02em;
     }
-    .os-nav::-webkit-scrollbar { display: none; }
-    .os-tab {
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 500;
-      color: var(--muted);
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      padding: 0 18px;
-      height: 44px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color .15s, border-color .15s;
-      position: relative;
-      top: 1px;
+    .os-btn:hover:not(.active){color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.12);}
+    .os-btn.active{background:#1A1A1A;color:var(--g);border-color:var(--gb);}
+    .os-btn-dot{width:5px;height:5px;border-radius:50%;background:currentColor;opacity:.6;flex-shrink:0;}
+    .os-btn-chevron{margin-left:auto;opacity:.4;transition:transform .2s;font-style:normal;font-size:10px;}
+    .os-btn.active .os-btn-chevron{transform:rotate(90deg);opacity:1;}
+
+    /* Widget links */
+    .w-links{display:none;padding:0 0 4px 6px;}
+    .os-group.open .w-links{display:block;}
+    .w-link{
+      display:flex;align-items:center;gap:8px;width:100%;
+      background:none;border:none;font-family:'Satoshi',sans-serif;
+      font-size:11.5px;font-weight:500;color:rgba(255,255,255,.28);
+      padding:6px 10px;border-radius:7px;cursor:pointer;
+      transition:color .12s,background .12s;text-align:left;
     }
-    .os-tab:hover { color: rgba(255,255,255,.7); }
-    .os-tab.active {
-      color: var(--text);
-      border-bottom-color: var(--lime);
+    .w-link:hover{color:rgba(255,255,255,.6);background:rgba(255,255,255,.03);}
+    .w-link.active{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05);}
+    .w-link-dot{width:3px;height:3px;border-radius:50%;background:currentColor;opacity:.5;flex-shrink:0;}
+    .w-link.active .w-link-dot{background:var(--g);opacity:1;}
+
+    /* Sidebar CTA */
+    .sidebar-cta{padding:12px;border-top:1px solid rgba(255,255,255,.07);flex-shrink:0;}
+    .sidebar-cta a{
+      display:block;background:var(--g);color:#000;font-family:'Satoshi',sans-serif;
+      font-size:11px;font-weight:900;border-radius:8px;padding:9px 14px;
+      text-align:center;text-decoration:none;transition:opacity .15s;letter-spacing:.03em;
+    }
+    .sidebar-cta a:hover{opacity:.82;}
+    .sidebar-cta-sub{font-size:10px;color:rgba(255,255,255,.18);text-align:center;margin-top:7px;font-weight:600;}
+
+    /* ── Main panel ── */
+    .main{flex:1;min-width:0;display:flex;flex-direction:column;}
+
+    /* Viewer header */
+    .viewer-hdr{
+      display:flex;align-items:flex-start;justify-content:space-between;
+      gap:16px;padding:20px 24px 16px;border-bottom:1px solid rgba(255,255,255,.07);
+      flex-wrap:wrap;
+    }
+    .viewer-eyebrow{
+      font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+      color:rgba(170,255,0,.5);margin-bottom:5px;
+    }
+    .viewer-title{font-size:18px;font-weight:900;letter-spacing:-.02em;color:#fff;line-height:1.2;}
+    .viewer-desc{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.3);margin-top:4px;line-height:1.5;}
+    .viewer-badge{
+      font-size:10px;font-weight:700;color:rgba(255,255,255,.3);
+      background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);
+      border-radius:6px;padding:4px 10px;white-space:nowrap;flex-shrink:0;margin-top:3px;
+      letter-spacing:.03em;
     }
 
-    /* ── Widget sub-tabs ── */
-    .w-nav {
-      display: flex;
-      gap: 6px;
-      padding: 14px 36px;
-      border-bottom: 1px solid var(--border);
-      overflow-x: auto;
-      scrollbar-width: none;
-      flex-wrap: nowrap;
-    }
-    .w-nav::-webkit-scrollbar { display: none; }
-    .w-tab {
-      font-family: inherit;
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--muted);
-      background: rgba(255,255,255,.04);
-      border: 1px solid transparent;
-      border-radius: 7px;
-      padding: 6px 13px;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: color .12s, background .12s, border-color .12s;
-    }
-    .w-tab:hover {
-      color: rgba(255,255,255,.7);
-      background: rgba(255,255,255,.07);
-    }
-    .w-tab.active {
-      color: var(--lime);
-      background: rgba(170,255,0,.08);
-      border-color: rgba(170,255,0,.18);
-    }
+    /* Frame area */
+    .viewer-body{padding:20px 24px 40px;flex:1;}
+    .frame-wrap{background:#111;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;}
+    .frame-wrap iframe{width:100%;border:none;display:block;}
 
-    /* ── Viewer ── */
-    .viewer {
-      padding: 28px 36px 60px;
+    /* Footer */
+    .footer{
+      border-top:1px solid rgba(255,255,255,.07);padding:14px 24px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+      flex-wrap:wrap;flex-shrink:0;
     }
-    .viewer-meta {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      margin-bottom: 20px;
-    }
-    .viewer-title {
-      font-size: 18px;
-      font-weight: 700;
-      letter-spacing: -.3px;
-    }
-    .viewer-desc {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 3px;
-      line-height: 1.5;
-    }
-    .viewer-badge {
-      font-size: 11px;
-      font-weight: 600;
-      color: var(--muted);
-      border: 1px solid var(--border);
-      border-radius: 5px;
-      padding: 4px 9px;
-      white-space: nowrap;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
+    .footer-l{font-size:10px;font-weight:600;color:rgba(255,255,255,.18);letter-spacing:.04em;}
+    .footer-l strong{color:rgba(255,255,255,.35);}
+    .footer-r{display:flex;gap:14px;}
+    .footer-r a{font-size:10px;font-weight:600;color:rgba(255,255,255,.18);text-decoration:none;transition:color .12s;letter-spacing:.03em;}
+    .footer-r a:hover{color:rgba(255,255,255,.5);}
 
-    .frame-wrap {
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      overflow: hidden;
-      background: #191919;
+    @media(max-width:800px){
+      .sidebar{display:none;}
     }
-    .frame-wrap iframe {
-      width: 100%;
-      border: none;
-      display: block;
-    }
-
-    /* ── Footer ── */
-    .ftr {
-      border-top: 1px solid var(--border);
-      padding: 18px 36px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-    .ftr-l { font-size: 12px; color: var(--muted); }
-    .ftr-l strong { color: var(--text); }
-    .ftr-r { display: flex; gap: 16px; }
-    .ftr-r a {
-      font-size: 12px;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color .12s;
-    }
-    .ftr-r a:hover { color: var(--text); }
   </style>
 </head>
 <body>
 
-<header class="hdr">
-  <div class="logo">
-    <div class="logo-sq"></div>
-    Opxio
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-dot"></div>
+    <span class="brand-name">Opxio &mdash; Live Demo</span>
   </div>
-  <div class="hdr-right">
-    <span class="demo-label">Live demo</span>
+  <div class="topbar-right">
+    <span class="ts">Interactive widget showcase</span>
     <a href="https://opxio.io/book" class="btn-book">Book Free Call</a>
-  </div>
-</header>
-
-<nav class="os-nav" id="osNav">
-  <button class="os-tab active" data-os="revenue">Revenue OS</button>
-  <button class="os-tab" data-os="operations">Operations OS</button>
-  <button class="os-tab" data-os="marketing">Marketing OS</button>
-  <button class="os-tab" data-os="finance">Finance OS</button>
-</nav>
-
-<div class="w-nav" id="wNav"></div>
-
-<div class="viewer">
-  <div class="viewer-meta">
-    <div>
-      <div class="viewer-title" id="vTitle"></div>
-      <div class="viewer-desc" id="vDesc"></div>
-    </div>
-    <div class="viewer-badge" id="vBadge"></div>
-  </div>
-  <div class="frame-wrap">
-    <iframe id="vFrame" scrolling="no"></iframe>
   </div>
 </div>
 
-<footer class="ftr">
-  <div class="ftr-l"><strong>Opxio</strong> &mdash; Business Operating Systems, built in Notion</div>
-  <div class="ftr-r">
-    <a href="https://opxio.io">opxio.io</a>
-    <a href="https://opxio.io/book">Book a call</a>
-    <a href="mailto:hello@opxio.io">hello@opxio.io</a>
+<div class="layout">
+
+  <aside class="sidebar">
+    <div class="sidebar-scroll" id="sidebarScroll">
+
+      <div class="os-group open" id="og-revenue">
+        <button class="os-btn active" onclick="toggleOS('revenue',this)">
+          <span class="os-btn-dot"></span>Revenue OS<i class="os-btn-chevron">&#8250;</i>
+        </button>
+        <div class="w-links">
+          <button class="w-link active" onclick="pick(this,'revenue','leads',620,'?token=T')" data-title="Lead Pipeline" data-desc="Every lead from first touch to converted — funnel view, outcomes, follow-up tracking." data-module="CRM & Pipeline">
+            <span class="w-link-dot"></span>Lead Pipeline
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','deals',640,'?token=T')" data-title="Deals Pipeline" data-desc="Deal stages from incoming to delivered. Won/lost tracking and deal values." data-module="CRM & Pipeline">
+            <span class="w-link-dot"></span>Deals Pipeline
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','overview',500,'?token=T')" data-title="Revenue Overview" data-desc="Monthly revenue, deal stats, and top-line KPIs in a single view." data-module="Billing & Payment Tracker">
+            <span class="w-link-dot"></span>Revenue Overview
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','billing',540,'?token=T')" data-title="Billing Tracker" data-desc="Deposit pending, balance due, and collected payments across all invoices." data-module="Billing & Payment Tracker">
+            <span class="w-link-dot"></span>Billing Tracker
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','topproducts',460,'?token=T')" data-title="Top Products" data-desc="Best-selling packages ranked by units. See which OS installs are winning." data-module="Product & Pricing Catalogue">
+            <span class="w-link-dot"></span>Top Products
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','schedule',480,'?token=T')" data-title="Upcoming Meetings" data-desc="Calls, check-ins, and follow-ups scheduled for the week ahead." data-module="Meetings & Calls Log">
+            <span class="w-link-dot"></span>Upcoming Meetings
+          </button>
+        </div>
+      </div>
+
+      <div class="os-group" id="og-operations">
+        <button class="os-btn" onclick="toggleOS('operations',this)">
+          <span class="os-btn-dot"></span>Operations OS<i class="os-btn-chevron">&#8250;</i>
+        </button>
+        <div class="w-links">
+          <button class="w-link" onclick="pick(this,'operations','projects',600,'?token=T')" data-title="Active Projects" data-desc="All active builds with phase progress, completion rates, and team assignments." data-module="Project & Task Management">
+            <span class="w-link-dot"></span>Active Projects
+          </button>
+          <button class="w-link" onclick="pick(this,'operations','kanban',560,'?token=T')" data-title="Task Board" data-desc="Kanban across all projects. Filter by project, status, or assignee." data-module="Project & Task Management">
+            <span class="w-link-dot"></span>Task Board
+          </button>
+          <button class="w-link" onclick="pick(this,'operations','gantt',540,'?token=T')" data-title="Project Timeline" data-desc="Gantt view across all active projects. Phase-by-phase delivery timeline." data-module="Project & Task Management">
+            <span class="w-link-dot"></span>Project Timeline
+          </button>
+          <button class="w-link" onclick="pick(this,'operations','team',460,'?token=T')" data-title="Team Workload" data-desc="Tasks per team member, completion rate, and capacity at a glance." data-module="Resource & Capacity Planner">
+            <span class="w-link-dot"></span>Team Workload
+          </button>
+          <button class="w-link" onclick="pick(this,'operations','progress',520,'?project=demo')" data-title="Project Progress" data-desc="Phase-by-phase breakdown for a single project. Active and upcoming tasks." data-module="Client Delivery Tracker">
+            <span class="w-link-dot"></span>Project Progress
+          </button>
+        </div>
+      </div>
+
+      <div class="os-group" id="og-marketing">
+        <button class="os-btn" onclick="toggleOS('marketing',this)">
+          <span class="os-btn-dot"></span>Marketing OS<i class="os-btn-chevron">&#8250;</i>
+        </button>
+        <div class="w-links">
+          <button class="w-link" onclick="pick(this,'marketing','marketing-command',560,'?token=T')" data-title="Marketing Command" data-desc="KPIs across all marketing — campaigns, content, and lead gen in one view." data-module="Marketing Performance Tracker">
+            <span class="w-link-dot"></span>Marketing Command
+          </button>
+          <button class="w-link" onclick="pick(this,'marketing','campaigns',500,'?token=T')" data-title="Campaign Tracker" data-desc="Active campaigns with status, budget, and performance overview." data-module="Campaign Tracker">
+            <span class="w-link-dot"></span>Campaign Tracker
+          </button>
+          <button class="w-link" onclick="pick(this,'marketing','content-pipeline',520,'?token=T')" data-title="Content Pipeline" data-desc="Content pieces by stage — briefed, in production, review, published." data-module="Content Production Tracker">
+            <span class="w-link-dot"></span>Content Pipeline
+          </button>
+        </div>
+      </div>
+
+      <div class="os-group" id="og-finance">
+        <button class="os-btn" onclick="toggleOS('finance',this)">
+          <span class="os-btn-dot"></span>Finance OS<i class="os-btn-chevron">&#8250;</i>
+        </button>
+        <div class="w-links">
+          <button class="w-link" onclick="pick(this,'revenue','finance',560,'?token=T')" data-title="Finance Snapshot" data-desc="Income, expenses, and P&L — monthly trend and expense category breakdown." data-module="Finance Ledger">
+            <span class="w-link-dot"></span>Finance Snapshot
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','billing',540,'?token=T')" data-title="Invoice Tracker" data-desc="Pending deposits, balance due, and collected payments. Full invoice pipeline." data-module="Invoice & Payment Tracker">
+            <span class="w-link-dot"></span>Invoice Tracker
+          </button>
+          <button class="w-link" onclick="pick(this,'revenue','topproducts',460,'?token=T')" data-title="Top Products" data-desc="Best-selling packages ranked by units sold and revenue contribution." data-module="Product & Pricing Catalogue">
+            <span class="w-link-dot"></span>Top Products
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="sidebar-cta">
+      <a href="https://opxio.io/book">Book a Discovery Call</a>
+      <div class="sidebar-cta-sub">Free &middot; 30 min &middot; No commitment</div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="viewer-hdr">
+      <div>
+        <div class="viewer-eyebrow" id="vEye">Revenue OS</div>
+        <div class="viewer-title" id="vTitle">Lead Pipeline</div>
+        <div class="viewer-desc" id="vDesc">Every lead from first touch to converted — funnel view, outcomes, follow-up tracking.</div>
+      </div>
+      <div class="viewer-badge" id="vBadge">CRM &amp; Pipeline</div>
+    </div>
+    <div class="viewer-body">
+      <div class="frame-wrap">
+        <iframe id="vFrame" scrolling="no"></iframe>
+      </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-l"><strong>OPXIO</strong> &mdash; Business Operating Systems, built in Notion</div>
+      <div class="footer-r">
+        <a href="https://opxio.io">opxio.io</a>
+        <a href="https://opxio.io/book">Book a call</a>
+        <a href="mailto:hello@opxio.io">hello@opxio.io</a>
+      </div>
+    </footer>
   </div>
-</footer>
+
+</div>
 
 <script>
 const T = 'opxio_demo_showcase_2026'
+const OS_LABELS = { revenue:'Revenue OS', operations:'Operations OS', marketing:'Marketing OS', finance:'Finance OS' }
+let currentOS = 'revenue'
 
-const OS = {
-  revenue: {
-    widgets: [
-      { name: 'Lead Pipeline',     desc: 'Every lead tracked from first touch to converted — funnel, outcomes, follow-ups.',  module: 'CRM & Pipeline',            path: 'revenue/leads',            height: 620, params: '?token='+T },
-      { name: 'Deals Pipeline',    desc: 'Deal stages from incoming to delivered. Board view, won/lost, and values.',         module: 'CRM & Pipeline',            path: 'revenue/deals',            height: 640, params: '?token='+T },
-      { name: 'Revenue Overview',  desc: 'Monthly revenue, deal stats, and top-line numbers in a single view.',               module: 'Billing & Payment Tracker', path: 'revenue/overview',         height: 500, params: '?token='+T },
-      { name: 'Billing Tracker',   desc: 'Deposit pending, balance due, and collected payments across all invoices.',         module: 'Billing & Payment Tracker', path: 'revenue/billing',          height: 540, params: '?token='+T },
-      { name: 'Top Products',      desc: 'Best-selling packages ranked by units. See which OS installs are winning.',         module: 'Product & Pricing Catalogue', path: 'revenue/topproducts',   height: 460, params: '?token='+T },
-      { name: 'Upcoming Meetings', desc: 'Discovery calls, check-ins, and follow-ups scheduled for the week ahead.',         module: 'Meetings & Calls Log',      path: 'revenue/schedule',         height: 480, params: '?token='+T },
-    ]
-  },
-  operations: {
-    widgets: [
-      { name: 'Active Projects',   desc: 'All active builds with phase progress, completion rates, and team assignments.',    module: 'Project & Task Management', path: 'operations/projects',      height: 600, params: '?token='+T },
-      { name: 'Task Board',        desc: 'Kanban across all projects. Filter by project, status, or assignee.',              module: 'Project & Task Management', path: 'operations/kanban',        height: 560, params: '?token='+T },
-      { name: 'Project Timeline',  desc: 'Gantt view across all active projects. Phase-by-phase delivery timeline.',         module: 'Project & Task Management', path: 'operations/gantt',         height: 540, params: '?token='+T },
-      { name: 'Team Workload',     desc: 'Tasks per team member, completion rate, and capacity at a glance.',                module: 'Resource & Capacity Planner', path: 'operations/team',        height: 460, params: '?token='+T },
-      { name: 'Project Progress',  desc: 'Phase-by-phase progress for a single project. Active and upcoming tasks.',         module: 'Client Delivery Tracker',   path: 'operations/progress',      height: 520, params: '?project=demo' },
-    ]
-  },
-  marketing: {
-    widgets: [
-      { name: 'Marketing Command', desc: 'KPIs across all marketing — campaigns, content, and lead gen in one view.',        module: 'Marketing Performance Tracker', path: 'marketing/marketing-command', height: 560, params: '?token='+T },
-      { name: 'Campaign Tracker',  desc: 'Active campaigns with status, budget, and performance overview.',                  module: 'Campaign Tracker',          path: 'marketing/campaigns',      height: 500, params: '?token='+T },
-      { name: 'Content Pipeline',  desc: 'Content pieces by stage — briefed, in production, review, published.',            module: 'Content Production Tracker', path: 'marketing/content-pipeline', height: 520, params: '?token='+T },
-    ]
-  },
-  finance: {
-    widgets: [
-      { name: 'Finance Snapshot',  desc: 'Income, expenses, and P&L — monthly trend and expense category breakdown.',        module: 'Finance Ledger',            path: 'revenue/finance',          height: 560, params: '?token='+T },
-      { name: 'Invoice Tracker',   desc: 'Pending deposits, balance due, and collected payments. Full invoice pipeline.',   module: 'Invoice & Payment Tracker', path: 'revenue/billing',          height: 540, params: '?token='+T },
-      { name: 'Top Products',      desc: 'Best-selling packages ranked by units sold and revenue contribution.',             module: 'Product & Pricing Catalogue', path: 'revenue/topproducts',   height: 460, params: '?token='+T },
-    ]
+function pick(btn, os, widget, height, params) {
+  document.querySelectorAll('.w-link').forEach(b => b.classList.remove('active'))
+  btn.classList.add('active')
+
+  const p = params.replace('T', T)
+  const folder = (os === 'finance') ? 'revenue' : os
+  document.getElementById('vFrame').src    = '/widgets/' + folder + '/' + widget + '.html' + p
+  document.getElementById('vFrame').height = height
+  document.getElementById('vEye').textContent   = OS_LABELS[os] || os
+  document.getElementById('vTitle').textContent = btn.dataset.title
+  document.getElementById('vDesc').textContent  = btn.dataset.desc
+  document.getElementById('vBadge').textContent = btn.dataset.module
+  currentOS = os
+}
+
+function toggleOS(os, btn) {
+  const allGroups = document.querySelectorAll('.os-group')
+  const allBtns   = document.querySelectorAll('.os-btn')
+  const isOpen    = document.getElementById('og-' + os).classList.contains('open')
+
+  allGroups.forEach(g => g.classList.remove('open'))
+  allBtns.forEach(b => b.classList.remove('active'))
+
+  if (!isOpen) {
+    document.getElementById('og-' + os).classList.add('open')
+    btn.classList.add('active')
   }
 }
 
-let currentOS = 'revenue'
-let currentW  = 0
-
-function renderWidgetTabs(os) {
-  const nav = document.getElementById('wNav')
-  nav.innerHTML = ''
-  OS[os].widgets.forEach((w, i) => {
-    const btn = document.createElement('button')
-    btn.className = 'w-tab' + (i === 0 ? ' active' : '')
-    btn.textContent = w.name
-    btn.onclick = () => selectWidget(os, i)
-    nav.appendChild(btn)
-  })
-}
-
-function selectWidget(os, idx) {
-  currentW = idx
-  document.querySelectorAll('.w-tab').forEach((b, i) => b.classList.toggle('active', i === idx))
-
-  const w = OS[os].widgets[idx]
-  document.getElementById('vTitle').textContent  = w.name
-  document.getElementById('vDesc').textContent   = w.desc
-  document.getElementById('vBadge').textContent  = w.module
-
-  const frame = document.getElementById('vFrame')
-  frame.height = w.height
-  frame.src    = '/widgets/' + w.path + '.html' + w.params
-}
-
-function selectOS(os) {
-  currentOS = os
-  document.querySelectorAll('.os-tab').forEach(b => b.classList.toggle('active', b.dataset.os === os))
-  renderWidgetTabs(os)
-  selectWidget(os, 0)
-}
-
-document.querySelectorAll('.os-tab').forEach(btn => {
-  btn.addEventListener('click', () => selectOS(btn.dataset.os))
-})
-
-// Init
-selectOS('revenue')
+// Init: load first widget
+const firstLink = document.querySelector('.w-link')
+if (firstLink) firstLink.click()
 </script>
 </body>
 </html>

@@ -28,6 +28,13 @@ body.light .h-title{color:#111;}
 .pill-green{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 .pill-muted{background:rgba(255,255,255,.04);color:var(--muted);border:1px solid rgba(255,255,255,.07);}
 body.light .pill-muted{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
+.refresh-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.refresh-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.refresh-btn svg{width:14px;height:14px;transition:transform .4s;}
+.refresh-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .refresh-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
+body.light .refresh-btn:hover{background:rgba(92,153,0,.08);border-color:rgba(92,153,0,.2);color:var(--g);}
 
 /* ── Current Phase Banner ── */
 .phase-banner{padding:18px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px;background:linear-gradient(135deg, rgba(170,255,0,.06) 0%, rgba(170,255,0,.02) 100%);border:1px solid rgba(170,255,0,.12);}
@@ -346,6 +353,12 @@ function renderMainView(data) {
       </div>
       <div class="h-right">
         ${p.package ? `<span class="pill pill-green">${esc(p.package)}</span>` : ''}
+        <button class="refresh-btn" id="refresh-btn" onclick="manualRefresh()" title="Refresh">
+          <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M13.5 2.5A6.5 6.5 0 1 1 8 1.5"/>
+            <polyline points="13.5 1 13.5 4 10.5 4"/>
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -401,6 +414,15 @@ function renderMainView(data) {
 
     <div class="ts">Updated ${new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}</div>
   `;
+}
+
+function manualRefresh() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) btn.classList.add('spinning');
+  loadData().finally(() => {
+    const b = document.getElementById('refresh-btn');
+    if (b) b.classList.remove('spinning');
+  });
 }
 
 async function loadData() {

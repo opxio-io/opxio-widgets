@@ -648,7 +648,7 @@ function renderDeals(){
   const lostLabel=dealsData.lostLabel||'Lost';
   const lostCount=ds[lostLabel]||dealsData.totalLostDeals||0;
   const lostVal=dealsData.lostValue||0;
-  document.getElementById('dd-lost').textContent=lostCount||0;
+  if(document.getElementById('dd-lost')) document.getElementById('dd-lost').textContent=lostCount||0;
   showSub('dd-lost-val',lostVal,fmtRM);
 
   // Deals funnel (uses dm color, no lead-specific lostLabels)
@@ -988,8 +988,8 @@ async function loadData(){
 
     // Lost (this month)
     const lostLeadsN=jp.thisMonthLost??0, lostDealsN=jd.lostThisMonth??0;
-    document.getElementById('d-lost').textContent=lostLeadsN+lostDealsN;
-    document.getElementById('d-lost-sub').textContent=lostLeadsN+' lead'+(lostLeadsN!==1?'s':'')+' · '+lostDealsN+' deal'+(lostDealsN!==1?'s':'');
+    if(document.getElementById('d-lost')) document.getElementById('d-lost').textContent=lostLeadsN+lostDealsN;
+    if(document.getElementById('d-lost-sub')) document.getElementById('d-lost-sub').textContent=lostLeadsN+' lead'+(lostLeadsN!==1?'s':'')+' · '+lostDealsN+' deal'+(lostDealsN!==1?'s':'');
     showSub('d-lost-val',(jp.lostLeadsValueThisMonth||0)+(jd.lostValueThisMonth||0),fmtRM);
 
     // Conv. Rate

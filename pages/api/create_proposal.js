@@ -514,17 +514,23 @@ async function processProposal(sourceId) {
   if (osName) packagesList.push({ name: osName })
   addonNames.forEach(n => packagesList.push({ name: n }))
 
+  const VALID_OS_TYPES = new Set([
+    "Revenue OS", "Operations OS", "Marketing OS", "Finance OS",
+    "Team OS", "Retention OS", "Sales OS"
+  ])
+
   await patchPage(propId, {
     "Status":        { select: { name: "Draft" } },
     "Date":          { date: { start: today } },
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },
-    ...(packagesList.length     ? { "Packages":        { multi_select: packagesList } } : {}),
-    ...(mainProduct?.quote_type ? { "Quote Type":      { select:   { name: mainProduct.quote_type } } } : {}),
-    ...(companyIds.length       ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
-    ...(picIds.length           ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
-    ...(dealId                  ? { "Deal Source":     { relation: [{ id: dealId }] } } : {}),
-    ...(situation               ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
+    ...(packagesList.length                   ? { "Packages":        { multi_select: packagesList } } : {}),
+    ...(mainProduct?.quote_type               ? { "Quote Type":      { select:   { name: mainProduct.quote_type } } } : {}),
+    ...(VALID_OS_TYPES.has(osName)            ? { "OS Type":         { select:   { name: osName } } } : {}),
+    ...(companyIds.length                     ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
+    ...(picIds.length                         ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
+    ...(dealId                                ? { "Deal Source":     { relation: [{ id: dealId }] } } : {}),
+    ...(situation                             ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
   }, token)
 
   // ── 4. Line Items DB ───────────────────────────────────────────────────────

@@ -11,15 +11,15 @@ html,body{height:100%;overflow:hidden;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:16px;transition:background .3s,color .3s;-webkit-font-smoothing:antialiased;display:flex;flex-direction:column;background:#191919;color:#fff;}
 body.light{background:#F5F5F5;color:#111;}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);}
-body.light{--g:#111;--gm:rgba(0,0,0,.05);--gb:rgba(0,0,0,.14);}
+body.light{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);}
 #root{flex:1;overflow-y:auto;padding-right:4px;}
 #root::-webkit-scrollbar{width:4px;}#root::-webkit-scrollbar-track{background:transparent;}
 #root::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:3px;}
 body.light #root::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.1);}
-body.light .card{background:#fff;border-color:rgba(0,0,0,.06);}
-body.light .card:hover{border-color:rgba(0,0,0,.08);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
+body.light .card:hover{background:#252525;border-color:rgba(255,255,255,.1);}
 .top-bar{display:flex;align-items:center;margin-bottom:16px;gap:8px;flex-wrap:wrap;}
 .top-right{display:flex;align-items:center;gap:6px;margin-left:auto;}
 .eyebrow{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}

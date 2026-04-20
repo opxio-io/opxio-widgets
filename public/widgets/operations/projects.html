@@ -7,7 +7,7 @@
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
 body.light{background:#F5F5F5;color:#111;}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);}
-body.light{--g:#111;--gm:rgba(0,0,0,.05);--gb:rgba(0,0,0,.14);}
+body.light{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);}
 ::-webkit-scrollbar{width:5px;}
 ::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
@@ -17,7 +17,7 @@ body.light ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.18);}
 
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.1);}
-body.light .card{background:#fff;border-color:rgba(0,0,0,.06);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 
 .btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s;}
 .btn:hover{border-color:var(--gb);color:var(--g);}
@@ -41,11 +41,11 @@ body.light .sec-lbl{color:rgba(0,0,0,.28);}
 .stat{padding:16px 18px;position:relative;}
 .s-dot{position:absolute;top:13px;right:13px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.6;}
 .s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:10px;display:block;}
-body.light .s-lbl{color:rgba(0,0,0,.4);}
+body.light .s-lbl{color:rgba(255,255,255,.85);}
 .s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
-body.light .s-val{color:#111;}
+body.light .s-val{color:var(--g);}
 .s-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);margin-top:6px;}
-body.light .s-sub{color:rgba(0,0,0,.28);}
+body.light .s-sub{color:rgba(255,255,255,.22);}
 
 /* ── BUILD LIST ── */
 .list-panel{padding:20px 22px;}

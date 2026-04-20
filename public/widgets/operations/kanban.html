@@ -5,16 +5,16 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow:hidden;transition:background .3s,color .3s;}
-body.light{background:#FFFFFF;color:#111;}
+body.light{background:#F0F0F0;color:#111;}
 :root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--blue:#60A5FA;--purple:#A78BFA;}
-body.light{--muted:rgba(0,0,0,.4);--g:#111;--gm:rgba(0,0,0,.05);--gb:rgba(0,0,0,.14);}
+body.light{--muted:rgba(0,0,0,.4);--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);}
 ::-webkit-scrollbar{width:4px;height:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);}
 
 .btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
 .btn:hover{border-color:var(--gb);color:var(--g);}
-body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(0,0,0,0.62);}
+body.light .btn{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.55);}
 
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
 .h-right{display:flex;align-items:center;gap:6px;}
@@ -44,7 +44,7 @@ body.light .col-count{color:rgba(0,0,0,0.25);}
 /* ── CARD ── */
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.05);border-radius:16px;padding:14px 16px;cursor:default;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.12);}
-body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 body.light .card:hover{border-color:rgba(0,0,0,.09);}
 
 /* Top row: type + client */

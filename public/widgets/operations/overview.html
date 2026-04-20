@@ -5,16 +5,16 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;transition:background .3s,color .3s;}
-body.light{background:#FFFFFF;color:#111;}
+body.light{background:#F0F0F0;color:#111;}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--muted:rgba(255,255,255,.4);}
-body.light{--g:#111;--gm:rgba(0,0,0,.05);--gb:rgba(0,0,0,.14);--muted:rgba(0,0,0,.5);}
+body.light{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--muted:rgba(0,0,0,.5);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.08);}
-body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 
 /* Icon buttons — matches progress widget */
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
@@ -44,7 +44,7 @@ body.light .sec-lbl{color:rgba(0,0,0,0.46);}
 .s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px;display:block;}
 .s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 .s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);margin-top:6px;}
-body.light .s-sub{color:rgba(0,0,0,0.43);}
+body.light .s-sub{color:rgba(255,255,255,.22);}
 .s-spark{position:absolute;bottom:0;left:0;right:0;height:28px;opacity:.15;}
 
 /* ── MID ROW ── */

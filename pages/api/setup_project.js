@@ -353,6 +353,9 @@ async function advanceTask(payload) {
       const phStatus = phase.properties.Status?.status?.name || "Not Started"
       const projectId = (phase.properties.Project?.relation || [])[0]?.id?.replace(/-/g, "")
 
+      const phaseName  = plain(phase.properties["Phase Name"]?.title || [])
+      const phaseNo    = phase.properties["Phase No."]?.number ?? null
+
       if (nextStatus === "In Progress" && phStatus === "Not Started") {
         await patchPage(phaseId, {
           "Status":     { status: { name: "In Progress" } },
@@ -361,17 +364,16 @@ async function advanceTask(payload) {
         phaseUpdate = "In Progress"
 
         // Update project's Current Phase
-        const phaseName = plain(phase.properties["Phase Name"]?.title || [])
         if (projectId && phaseName) {
           await patchPage(projectId, {
             "Current Phase": { select: { name: phaseName } },
-          }, token).catch(() => {})
+          }, token).catch(e => console.warn("[advanceTask] set Current Phase:", e.message))
         }
       }
 
       if (nextStatus === "Done") {
-        // Check if all sibling tasks are Done
-        const projectTasks = await fetch(
+        // Check if all sibling tasks in this phase are Done
+        const siblingTasks = await fetch(
           `https://api.notion.com/v1/databases/${DB.TASKS}/query`,
           {
             method: "POST",
@@ -386,7 +388,8 @@ async function advanceTask(payload) {
           }
         ).then(r => r.json()).catch(() => ({ results: [] }))
 
-        const allDone = (projectTasks.results || []).every(t =>
+        const allDone = (siblingTasks.results || []).every(t =>
+          t.id === taskId + "-" || // exclude current task (already marked Done above)
           t.properties?.Status?.status?.name === "Done"
         )
         if (allDone) {
@@ -395,6 +398,46 @@ async function advanceTask(payload) {
             "Completed Date": { date: { start: today } },
           }, token)
           phaseUpdate = "Done (all tasks complete)"
+
+          // Find the next phase on the project and set it as Current Phase
+          if (projectId && phaseNo !== null) {
+            try {
+              const proj = await getPage(projectId, token)
+              const allPhaseIds = (proj.properties.Phases?.relation || []).map(r => r.id.replace(/-/g, ""))
+
+              // Fetch all phase records to find the next one by phase_no
+              const allPhases = await Promise.all(allPhaseIds.map(pid => getPage(pid, token).catch(() => null)))
+              const nextPhase = allPhases
+                .filter(Boolean)
+                .sort((a, b) => (a.properties["Phase No."]?.number ?? 0) - (b.properties["Phase No."]?.number ?? 0))
+                .find(p => (p.properties["Phase No."]?.number ?? 0) > phaseNo)
+
+              if (nextPhase) {
+                const nextPhaseName = plain(nextPhase.properties["Phase Name"]?.title || [])
+                const nextPhaseId   = nextPhase.id.replace(/-/g, "")
+                // Advance next phase to In Progress
+                await patchPage(nextPhaseId, {
+                  "Status":     { status: { name: "In Progress" } },
+                  "Start Date": { date: { start: today } },
+                }, token)
+                // Update project Current Phase to next phase
+                if (nextPhaseName) {
+                  await patchPage(projectId, {
+                    "Current Phase": { select: { name: nextPhaseName } },
+                  }, token).catch(e => console.warn("[advanceTask] advance Current Phase:", e.message))
+                }
+                phaseUpdate = `Done → next phase: ${nextPhaseName}`
+              } else {
+                // No next phase — project is complete
+                await patchPage(projectId, {
+                  "Status": { status: { name: "Completed" } },
+                }, token).catch(() => {})
+                phaseUpdate = "Done (final phase — project complete)"
+              }
+            } catch (e) {
+              console.warn("[advanceTask] next phase advance:", e.message)
+            }
+          }
         }
       }
     } catch (e) {

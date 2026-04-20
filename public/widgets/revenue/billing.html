@@ -308,7 +308,6 @@ async function loadData(){
 }
 
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-}
 
 loadData();
 setInterval(loadData, 5*60*1000);

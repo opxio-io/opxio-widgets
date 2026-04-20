@@ -476,12 +476,46 @@ async function run(payload) {
     token,
   })
 
+  // ── Map formPackage + formAddons → OS Scope multi_select ──────────────────
+  // setup_project reads OS Scope from the Project record to determine which
+  // phases and tasks to generate. Must be written before triggerSetupProject fires.
+  const PACKAGE_TO_SCOPE = {
+    "Revenue OS":    ["Revenue OS"],
+    "Operations OS": ["Operations OS"],
+    "Marketing OS":  ["Marketing OS"],
+    "Finance OS":    ["Finance OS"],
+    "Team OS":       ["Team OS"],
+    "Retention OS":  ["Retention OS"],
+    "Business OS":   ["Revenue OS", "Operations OS"],
+    "Dual":          ["Revenue OS", "Operations OS"],
+    "Pro":           ["Revenue OS", "Operations OS", "Finance OS"],
+    "Full Stack":    ["Revenue OS", "Operations OS", "Marketing OS", "Finance OS"],
+    "Starter":       ["Revenue OS"],
+    "Micro Install — 1 Module": ["Revenue OS"],
+    "Micro Install — 2 Modules": ["Revenue OS"],
+    "Micro Install — 3 Modules": ["Revenue OS"],
+  }
+  const ADDON_TO_SCOPE = {
+    "Enhanced Dashboard": "Enhanced Dashboard",
+    "Custom Widget":      "Custom Widget",
+    "Automations":        "Automations",
+    "API & Webhook Automations": "Automations",
+    "Team OS":            "Team OS",
+    "Retention OS":       "Retention OS",
+    "Sales OS":           "Revenue OS",
+  }
+
+  const osScopeSet = new Set(PACKAGE_TO_SCOPE[formPackage] || ["Revenue OS"])
+  formAddons.forEach(a => { if (ADDON_TO_SCOPE[a]) osScopeSet.add(ADDON_TO_SCOPE[a]) })
+  const osScope = [...osScopeSet].map(s => ({ name: s }))
+
   // ── Project setup ──────────────────────────────────────────────────────────
   if (projectId) {
     await patchPage(projectId, {
       "Status":          { status: { name: "Build Started" } },
       "Start Date":      { date: { start: today } },
       "Onboarding Form": { url: formUrl },
+      "OS Scope":        { multi_select: osScope },
       ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
     }, token)
     ;[phasesCount, tasksCount] = await triggerSetupProject(projectId, packages)

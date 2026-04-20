@@ -336,12 +336,9 @@ async function advanceTask(payload) {
     }
   }
 
-  // ── Update task status ─────────────────────────────────────────────────────
-  const today   = new Date().toISOString().split("T")[0]
-  const updates = { "Status": { status: { name: nextStatus } } }
-  if (nextStatus === "In Progress") updates["Start Date"]      = { date: { start: today } }
-  if (nextStatus === "Done")        updates["Completed Date"]  = { date: { start: today } }
-  await patchPage(taskId, updates, token)
+  // ── Update task status only (dates tracked at phase level, not task level) ──
+  const today = new Date().toISOString().split("T")[0]
+  await patchPage(taskId, { "Status": { status: { name: nextStatus } } }, token)
 
   // ── Auto-advance parent phase status ──────────────────────────────────────
   const phaseId = (props["Phase"]?.relation || [])[0]?.id?.replace(/-/g, "")

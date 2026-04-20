@@ -548,7 +548,7 @@ function showSub(id,val,fmt){
 
 // ── State ─────────────────────────────────────────────────────────────────────
 let currentView='pipeline', wlTab='won', light=false;
-let pipeData=null, dealsData=null, chartData=[];
+let pipeData=null, dealsData=null, chartData=[], sourcesData=null;
 
 // ── View switch ───────────────────────────────────────────────────────────────
 function switchView(v){
@@ -570,6 +570,8 @@ function toggleLight(){
   light=!light; document.body.classList.toggle('light',light);
   const lb=document.getElementById('lb');if(lb)lb.innerHTML=light?MOON_ICON:SUN_ICON;
   drawChart();
+  if(sourcesData) renderDonut(sourcesData);
+  if(currentView==='sources') renderSources();
 }
 function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 function setWlTab(t){
@@ -1000,7 +1002,8 @@ async function loadData(){
     document.getElementById('d-conv-sub').textContent=convLeads>0?`${convWon}/${convLeads} leads · ${fmtMonthLbl(filterMonth)}`:fmtMonthLbl(filterMonth)+' · no leads yet';
 
     // ── Render all panels ───────────────────────────────────────────────────
-    renderDonut(jp.sources);
+    sourcesData=jp.sources||[];
+    renderDonut(sourcesData);
     renderLeadsFunnel();
 
     if(currentView==='deals') renderDeals();

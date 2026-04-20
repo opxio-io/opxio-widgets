@@ -403,6 +403,7 @@ async function run(payload) {
   let projectId = null
   let phasesCount = 0, tasksCount = 0
 
+  // Try Quotation → Project
   if (quotationId) {
     try {
       const rows = await queryDB(DB.PROJECTS, {
@@ -411,6 +412,25 @@ async function run(payload) {
       if (rows.length) projectId = rows[0].id.replace(/-/g, "")
     } catch {}
   }
+  // Try Invoice → Project (Projects DB has an "Invoice" relation field)
+  if (!projectId) {
+    try {
+      const rows = await queryDB(DB.PROJECTS, {
+        property: "Invoice", relation: { contains: pageId }
+      }, token)
+      if (rows.length) projectId = rows[0].id.replace(/-/g, "")
+    } catch {}
+  }
+  // Try Deal → Project
+  if (!projectId && dealId) {
+    try {
+      const rows = await queryDB(DB.PROJECTS, {
+        property: "Deals", relation: { contains: dealId }
+      }, token)
+      if (rows.length) projectId = rows[0].id.replace(/-/g, "")
+    } catch {}
+  }
+  // Last resort: Company → Project (picks most recent)
   if (!projectId && companyId) {
     try {
       const rows = await queryDB(DB.PROJECTS, {
@@ -419,6 +439,7 @@ async function run(payload) {
       if (rows.length) projectId = rows[0].id.replace(/-/g, "")
     } catch {}
   }
+  console.log("[deposit_paid] projectId resolved:", projectId || "NOT FOUND")
 
   // ── Create Client Account record FIRST ────────────────────────────────────
   // Must happen before triggerSetupProject so setup_project can read OS Installed

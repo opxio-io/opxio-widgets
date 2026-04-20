@@ -4,10 +4,14 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 16px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
 body.light{background:#F5F5F5;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);--lostb:rgba(255,107,53,.22);}
-body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#D94F1E;}
+:root{
+  --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);
+  --lost:#E05A3A;--lostm:rgba(224,90,58,.1);--lostb:rgba(224,90,58,.22);
+  --ghosted:#D4A820;--ghostedm:rgba(212,168,32,.1);--ghostedb:rgba(212,168,32,.2);
+}
+body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#C44428;--ghosted:#9A7A00;}
 
 /* cards */
 .card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s,background .2s;overflow:hidden;position:relative;}
@@ -19,8 +23,15 @@ body.light .card:hover{border-color:rgba(0,0,0,.14);}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .22s;}
 .card:hover::before{opacity:1;}
 .card.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.card.is-ghosted::before{background:linear-gradient(90deg,var(--lost),transparent);}
+.card.is-ghosted::before{background:linear-gradient(90deg,var(--ghosted),transparent);}
 .card.is-disq::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
+
+/* zero state — dimmed but structure preserved */
+.card.is-zero{border-color:rgba(255,255,255,.03);}
+.card.is-zero .s-val{opacity:.2!important;}
+.card.is-zero .s-lbl{opacity:.45!important;}
+.card.is-zero .s-sub{opacity:.45!important;}
+body.light .card.is-zero{border-color:rgba(0,0,0,.04);}
 
 /* eyebrow / title */
 .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
@@ -32,25 +43,22 @@ body.light .ts{color:rgba(0,0,0,.3);}
 
 /* stat card internals */
 .stat{padding:16px 16px 14px;}
-.s-dot{position:absolute;top:13px;right:13px;width:5px;height:5px;border-radius:50%;background:var(--g);opacity:.6;}
-.s-dot.is-lost{background:var(--lost);opacity:.7;}
-.s-dot.is-ghosted{background:var(--lost);opacity:.35;}
-.s-dot.is-disq{background:rgba(255,255,255,.2);opacity:1;}
 .s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px;line-height:1.4;}
 body.light .s-lbl{color:rgba(0,0,0,.55);}
 .s-val{font-size:34px;font-weight:900;letter-spacing:-1.8px;line-height:1;color:var(--g);}
 .s-val.is-lost{color:var(--lost);}
-.s-val.is-ghosted{color:var(--lost);opacity:.55;}
+.s-val.is-ghosted{color:var(--ghosted);}
 .s-val.is-disq{color:rgba(255,255,255,.22);}
 body.light .s-val{color:var(--g);}
 body.light .s-val.is-lost{color:var(--lost);}
+body.light .s-val.is-ghosted{color:var(--ghosted);}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;line-height:1.4;}
 body.light .s-sub{color:rgba(0,0,0,.4);}
 
 /* section label */
 .sec-lbl{display:flex;align-items:center;gap:8px;margin:16px 0 8px;}
 .sec-lbl-bar{width:3px;height:12px;border-radius:99px;background:rgba(170,255,0,.45);flex-shrink:0;}
-.sec-lbl-bar.is-lost{background:rgba(255,107,53,.4);}
+.sec-lbl-bar.is-muted{background:rgba(255,255,255,.18);}
 .sec-lbl span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);}
 body.light .sec-lbl span{color:rgba(0,0,0,.4);}
 .sec-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
@@ -63,7 +71,7 @@ body.light .sec-lbl span{color:rgba(0,0,0,.4);}
 @media(max-width:700px){.grid4{grid-template-columns:repeat(2,1fr);}}
 
 /* summary bar */
-.summary{display:grid;grid-template-columns:repeat(4,1fr);margin-top:12px;background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;}
+.summary{display:grid;grid-template-columns:repeat(4,1fr);background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;}
 body.light .summary{background:#fff;border-color:rgba(0,0,0,.07);}
 .sum-item{padding:11px 14px;border-right:1px solid rgba(255,255,255,.05);}
 .sum-item:last-child{border-right:none;}
@@ -72,6 +80,8 @@ body.light .sum-item{border-color:rgba(0,0,0,.05);}
 body.light .sum-lbl{color:rgba(0,0,0,.45);}
 .sum-val{font-size:16px;font-weight:900;letter-spacing:-.5px;color:var(--g);}
 body.light .sum-val{color:var(--g);}
+.sum-val.is-neutral{color:rgba(255,255,255,.75);}
+body.light .sum-val.is-neutral{color:rgba(0,0,0,.65);}
 
 /* icon buttons */
 .h-left{display:flex;flex-direction:column;gap:2px;}
@@ -82,7 +92,7 @@ body.light .sum-val{color:var(--g);}
 @keyframes spin{to{transform:rotate(360deg);}}
 body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.4);}
 
-.wgt-footer{text-align:center;padding:18px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.wgt-footer{text-align:center;padding:10px 0 2px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 body.light .wgt-footer{color:rgba(0,0,0,.22);}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px;}
 </style></head><body>
@@ -105,36 +115,36 @@ body.light .wgt-footer{color:rgba(0,0,0,.22);}
 
 <div class="sec-lbl"><div class="sec-lbl-bar"></div><span>Active Pipeline</span></div>
 <div class="grid5">
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-incoming">
+    <div class="stat">
       <div class="s-lbl">Incoming</div>
       <div class="s-val" id="v-incoming">—</div>
       <div class="s-sub">New enquiries</div>
     </div>
   </div>
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-contacted">
+    <div class="stat">
       <div class="s-lbl">Contacted</div>
       <div class="s-val" id="v-contacted">—</div>
       <div class="s-sub">First touch done</div>
     </div>
   </div>
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-qualified">
+    <div class="stat">
       <div class="s-lbl">Qualified</div>
       <div class="s-val" id="v-qualified">—</div>
       <div class="s-sub">Fit confirmed</div>
     </div>
   </div>
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-booked">
+    <div class="stat">
       <div class="s-lbl">Discovery Booked</div>
       <div class="s-val" id="v-booked">—</div>
       <div class="s-sub">Call scheduled</div>
     </div>
   </div>
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-discovery">
+    <div class="stat">
       <div class="s-lbl">Discovery Done</div>
       <div class="s-val" id="v-discovery">—</div>
       <div class="s-sub">Call completed</div>
@@ -142,31 +152,31 @@ body.light .wgt-footer{color:rgba(0,0,0,.22);}
   </div>
 </div>
 
-<div class="sec-lbl"><div class="sec-lbl-bar is-lost"></div><span>Outcomes</span></div>
+<div class="sec-lbl"><div class="sec-lbl-bar is-muted"></div><span>Outcomes</span></div>
 <div class="grid4">
-  <div class="card">
-    <div class="stat"><div class="s-dot"></div>
+  <div class="card" id="c-converted">
+    <div class="stat">
       <div class="s-lbl">Converted</div>
       <div class="s-val" id="v-converted">—</div>
       <div class="s-sub">Moved to deal</div>
     </div>
   </div>
-  <div class="card is-lost">
-    <div class="stat"><div class="s-dot is-lost"></div>
+  <div class="card is-lost" id="c-lost">
+    <div class="stat">
       <div class="s-lbl">Lost</div>
       <div class="s-val is-lost" id="v-lost">—</div>
       <div class="s-sub">Did not proceed</div>
     </div>
   </div>
-  <div class="card is-ghosted">
-    <div class="stat"><div class="s-dot is-ghosted"></div>
+  <div class="card is-ghosted" id="c-ghosted">
+    <div class="stat">
       <div class="s-lbl">Ghosted</div>
       <div class="s-val is-ghosted" id="v-ghosted">—</div>
       <div class="s-sub">No response</div>
     </div>
   </div>
-  <div class="card is-disq">
-    <div class="stat"><div class="s-dot is-disq"></div>
+  <div class="card is-disq" id="c-disqualified">
+    <div class="stat">
       <div class="s-lbl">Disqualified</div>
       <div class="s-val is-disq" id="v-disqualified">—</div>
       <div class="s-sub">Wrong fit</div>
@@ -174,11 +184,12 @@ body.light .wgt-footer{color:rgba(0,0,0,.22);}
   </div>
 </div>
 
+<div class="sec-lbl" style="margin-top:14px;"><div class="sec-lbl-bar is-muted"></div><span>Monthly Snapshot</span></div>
 <div class="summary">
   <div class="sum-item"><div class="sum-lbl">Active Leads</div><div class="sum-val" id="f-active">—</div></div>
   <div class="sum-item"><div class="sum-lbl">New This Month</div><div class="sum-val" id="f-monthly">—</div></div>
   <div class="sum-item"><div class="sum-lbl">Converted This Month</div><div class="sum-val" id="f-converted">—</div></div>
-  <div class="sum-item"><div class="sum-lbl">Top Source</div><div class="sum-val" id="f-src" style="font-size:13px;font-weight:700;letter-spacing:-.2px;">—</div></div>
+  <div class="sum-item"><div class="sum-lbl">Top Source</div><div class="sum-val is-neutral" id="f-src" style="font-size:13px;font-weight:700;letter-spacing:-.2px;">—</div></div>
 </div>
 
 <script>
@@ -187,20 +198,30 @@ function apiUrl(p){return _tok?p+'?token='+encodeURIComponent(_tok):p;}
 let light=false;
 function toggleMode(){light=!light;document.body.classList.toggle('light',light);}
 function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+
+const STAGE_MAP=[
+  ['v-incoming','c-incoming','Incoming'],
+  ['v-contacted','c-contacted','Contacted'],
+  ['v-qualified','c-qualified','Qualified'],
+  ['v-booked','c-booked','Discovery Booked'],
+  ['v-discovery','c-discovery','Discovery Done'],
+  ['v-converted','c-converted','Converted'],
+  ['v-lost','c-lost','Lost'],
+  ['v-ghosted','c-ghosted','Ghosted'],
+  ['v-disqualified','c-disqualified','Disqualified'],
+];
+
 async function loadData(){
   try{
     const r=await fetch(apiUrl('/api/data/pipeline'));
     const j=await r.json();
     const s=j.stages||{};
-    document.getElementById('v-incoming').textContent    = s['Incoming']         ??0;
-    document.getElementById('v-contacted').textContent   = s['Contacted']        ??0;
-    document.getElementById('v-qualified').textContent   = s['Qualified']        ??0;
-    document.getElementById('v-booked').textContent      = s['Discovery Booked'] ??0;
-    document.getElementById('v-discovery').textContent   = s['Discovery Done']   ??0;
-    document.getElementById('v-converted').textContent   = s['Converted']        ??0;
-    document.getElementById('v-lost').textContent        = s['Lost']             ??0;
-    document.getElementById('v-ghosted').textContent     = s['Ghosted']          ??0;
-    document.getElementById('v-disqualified').textContent= s['Disqualified']     ??0;
+    STAGE_MAP.forEach(([valId,cardId,key])=>{
+      const n=s[key]??0;
+      document.getElementById(valId).textContent=n;
+      const card=document.getElementById(cardId);
+      if(card) card.classList.toggle('is-zero',n===0);
+    });
     document.getElementById('f-active').textContent    = j.totalActive        ??0;
     document.getElementById('f-monthly').textContent   = j.thisMonthLeads     ??0;
     document.getElementById('f-converted').textContent = j.thisMonthConverted ??0;

@@ -2,7 +2,8 @@
 // GET: Returns project counts, active builds with per-phase task breakdowns
 // POST: Task actions (start_task, complete_task)
 import { queryDB, plain, hdrs, patchPage, DB } from "../../../lib/notion"
-import { getClientByToken, getNotionToken, resolveDB, resolveField } from "../../../lib/supabase"
+import { getClientByToken, getNotionToken, resolveDB, resolveField, checkOrigin } from "../../../lib/supabase"
+import { PROJECTS, PROJECTS_GANTT, PROJECTS_TEAM } from "../../../lib/demo-fixtures"
 
 function actionHTML(title, msg, ok) {
   const bg = ok ? "#0a0a0a" : "#1a0a0a"
@@ -169,6 +170,12 @@ export default async function handler(req, res) {
 
     const client = await getClientByToken(accessToken)
     if (!client) return res.status(403).json({ error: "Invalid token" })
+    if (!checkOrigin(client, req)) return res.status(403).json({ error: "Origin not allowed" })
+    if (client.slug === "demo") {
+      if (req.query.view === "gantt") return res.status(200).json(PROJECTS_GANTT)
+      if (req.query.view === "team") return res.status(200).json(PROJECTS_TEAM)
+      return res.status(200).json(PROJECTS)
+    }
 
     const notionToken  = getNotionToken(client)
     const PROJECTS_DB  = resolveDB(client, "PROJECTS", DB.PROJECTS)

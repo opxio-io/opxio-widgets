@@ -3,7 +3,8 @@
 // Called by widgets: revenue.html, earnings.html, monthly.html, topproducts.html
 
 import { queryDB, plain, getProp, DB } from "../../../lib/notion"
-import { getClientByToken, getNotionToken, resolveDB, resolveField } from "../../../lib/supabase"
+import { getClientByToken, getNotionToken, resolveDB, resolveField, checkOrigin } from "../../../lib/supabase"
+import { FINANCE } from "../../../lib/demo-fixtures"
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end()
@@ -17,6 +18,8 @@ export default async function handler(req, res) {
 
     const client = await getClientByToken(accessToken)
     if (!client) return res.status(403).json({ error: "Invalid token" })
+    if (!checkOrigin(client, req)) return res.status(403).json({ error: "Origin not allowed" })
+    if (client.slug === "demo") return res.status(200).json(FINANCE)
 
     const notionToken  = getNotionToken(client)
     const QUOTATIONS_DB    = resolveDB(client, "QUOTATIONS", DB.QUOTATIONS)

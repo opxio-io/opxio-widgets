@@ -1,6 +1,7 @@
 // /api/data/meetings — token-authenticated
 import { queryDB, plain, DB } from "../../../lib/notion"
-import { getClientByToken, getNotionToken, resolveDB, resolveField } from "../../../lib/supabase"
+import { getClientByToken, getNotionToken, resolveDB, resolveField, checkOrigin } from "../../../lib/supabase"
+import { MEETINGS } from "../../../lib/demo-fixtures"
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end()
@@ -13,6 +14,8 @@ export default async function handler(req, res) {
 
     const client = await getClientByToken(accessToken)
     if (!client) return res.status(403).json({ error: "Invalid token" })
+    if (!checkOrigin(client, req)) return res.status(403).json({ error: "Origin not allowed" })
+    if (client.slug === "demo") return res.status(200).json(MEETINGS)
 
     const notionToken = getNotionToken(client)
     const MEETINGS_DB  = resolveDB(client, "MEETINGS", DB.MEETINGS)

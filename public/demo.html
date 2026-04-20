@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Opxio — Widget Showcase</title>
+  <link rel="preconnect" href="https://api.fontshare.com">
+  <link href="https://api.fontshare.com/v2/css?f[]=satoshi@700,500,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0D0D0D;
+      --surface: #191919;
+      --border: rgba(255,255,255,.07);
+      --lime: #AAFF00;
+      --text: #FFFFFF;
+      --muted: rgba(255,255,255,.45);
+      --tab-h: 52px;
+    }
+
+    html, body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Satoshi', -apple-system, sans-serif;
+      min-height: 100vh;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      height: 64px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13,13,13,.92);
+      backdrop-filter: blur(12px);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 18px;
+      letter-spacing: -.3px;
+    }
+    .logo-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--lime);
+    }
+    .header-badge {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--lime);
+      background: rgba(170,255,0,.1);
+      border: 1px solid rgba(170,255,0,.2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .header-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-cta {
+      background: var(--lime);
+      color: #0D0D0D;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 13px;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity .15s;
+    }
+    .btn-cta:hover { opacity: .85; }
+
+    /* ── Hero ── */
+    .hero {
+      text-align: center;
+      padding: 72px 40px 56px;
+      border-bottom: 1px solid var(--border);
+    }
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--lime);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--lime);
+    }
+    .hero-eyebrow::after {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1px;
+      background: var(--lime);
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 60px);
+      font-weight: 700;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      max-width: 720px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .hero h1 span { color: var(--lime); }
+    .hero p {
+      font-size: 17px;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── Tabs ── */
+    .tabs-wrap {
+      position: sticky;
+      top: 64px;
+      z-index: 90;
+      background: rgba(13,13,13,.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 40px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 20px;
+      height: var(--tab-h);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      border: none;
+      background: none;
+      border-bottom: 2px solid transparent;
+      white-space: nowrap;
+      transition: color .15s, border-color .15s;
+      font-family: inherit;
+      position: relative;
+      top: 1px;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active {
+      color: var(--lime);
+      border-bottom-color: var(--lime);
+    }
+    .tab-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      opacity: .5;
+    }
+    .tab.active .tab-dot { opacity: 1; }
+
+    /* ── Main content ── */
+    .content {
+      padding: 0 40px 80px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* OS section */
+    .os-section { display: none; }
+    .os-section.active { display: block; }
+
+    .os-header {
+      padding: 40px 0 28px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 36px;
+    }
+    .os-header h2 {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -.5px;
+      margin-bottom: 6px;
+    }
+    .os-header p {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .os-header-meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+    .os-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--muted);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 10px;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .os-price {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--lime);
+    }
+
+    /* ── Widget grid ── */
+    .widget-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .widget-grid.single { grid-template-columns: 1fr; }
+    .widget-grid.two { grid-template-columns: 1fr 1fr; }
+
+    /* ── Widget card ── */
+    .widget-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .widget-card:hover { border-color: rgba(170,255,0,.2); }
+
+    .widget-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .widget-card-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--muted);
+      letter-spacing: .5px;
+      text-transform: uppercase;
+    }
+    .widget-card-badge {
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(170,255,0,.7);
+      background: rgba(170,255,0,.08);
+      border-radius: 4px;
+      padding: 2px 7px;
+      letter-spacing: .3px;
+    }
+
+    /* ── iFrame ── */
+    .widget-frame {
+      width: 100%;
+      border: none;
+      display: block;
+      background: var(--surface);
+    }
+
+    /* ── Coming soon ── */
+    .coming-soon {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 80px 40px;
+      text-align: center;
+    }
+    .coming-soon-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: rgba(170,255,0,.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+    .coming-soon h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .coming-soon p {
+      font-size: 14px;
+      color: var(--muted);
+      max-width: 360px;
+      line-height: 1.5;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .footer-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .footer-logo { font-weight: 700; color: var(--text); }
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+    .footer-links a {
+      font-size: 13px;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color .15s;
+    }
+    .footer-links a:hover { color: var(--text); }
+
+    @media (max-width: 768px) {
+      .header { padding: 0 20px; }
+      .hero { padding: 48px 20px 40px; }
+      .tabs { padding: 0 20px; }
+      .content { padding: 0 20px 60px; }
+      .widget-grid, .widget-grid.two { grid-template-columns: 1fr; }
+      .footer { padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="logo">
+    <div class="logo-dot"></div>
+    Opxio
+  </div>
+  <span class="header-badge">Live Demo</span>
+  <div class="header-cta">
+    <a href="https://opxio.io/book" class="btn-cta">Book Free Call</a>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-eyebrow">Business Operating System</div>
+  <h1>Your business,<br>running on <span>one system.</span></h1>
+  <p>See exactly what your team gets — real widgets, live data structure, built inside Notion.</p>
+</section>
+
+<!-- Tabs -->
+<div class="tabs-wrap">
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="revenue" role="tab">
+      <span class="tab-dot"></span> Revenue OS
+    </button>
+    <button class="tab" data-tab="operations" role="tab">
+      <span class="tab-dot"></span> Operations OS
+    </button>
+    <button class="tab" data-tab="marketing" role="tab">
+      <span class="tab-dot"></span> Marketing OS
+    </button>
+    <button class="tab" data-tab="finance" role="tab">
+      <span class="tab-dot"></span> Finance OS
+    </button>
+  </nav>
+</div>
+
+<!-- Content -->
+<main class="content">
+
+  <!-- Revenue OS -->
+  <section id="tab-revenue" class="os-section active">
+    <div class="os-header">
+      <h2>Revenue OS</h2>
+      <p>Pipeline, deals, billing, and meetings — your full revenue engine in one place.</p>
+      <div class="os-header-meta">
+        <span class="os-tag">5 core modules</span>
+        <span class="os-price">From RM 3,250</span>
+      </div>
+    </div>
+
+    <!-- Row 1: Leads + Deals -->
+    <div class="widget-grid two">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Lead Pipeline</span>
+          <span class="widget-card-badge">CRM & Pipeline</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/leads.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Deals Pipeline</span>
+          <span class="widget-card-badge">CRM & Pipeline</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/deals.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 2: Overview (full width) -->
+    <div class="widget-grid single">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Revenue Overview</span>
+          <span class="widget-card-badge">Billing & Payment Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/overview.html?token=opxio_demo_showcase_2026" height="420" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 3: Billing + Meetings -->
+    <div class="widget-grid two">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Billing Tracker</span>
+          <span class="widget-card-badge">Billing & Payment Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/billing.html?token=opxio_demo_showcase_2026" height="400" scrolling="no" loading="lazy"></iframe>
+      </div>
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Upcoming Meetings</span>
+          <span class="widget-card-badge">Meetings & Calls Log</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/schedule.html?token=opxio_demo_showcase_2026" height="400" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Operations OS -->
+  <section id="tab-operations" class="os-section">
+    <div class="os-header">
+      <h2>Operations OS</h2>
+      <p>Project delivery, task management, and team capacity — full operational visibility.</p>
+      <div class="os-header-meta">
+        <span class="os-tag">5 core modules</span>
+        <span class="os-price">From RM 3,250</span>
+      </div>
+    </div>
+
+    <!-- Row 1: Projects + Kanban -->
+    <div class="widget-grid two">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Active Projects</span>
+          <span class="widget-card-badge">Project & Task Management</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/operations/projects.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Task Board</span>
+          <span class="widget-card-badge">Project & Task Management</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/operations/kanban.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 2: Gantt (full width) -->
+    <div class="widget-grid single">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Project Timeline</span>
+          <span class="widget-card-badge">Project & Task Management</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/operations/gantt.html?token=opxio_demo_showcase_2026" height="420" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 3: Team + Tracker -->
+    <div class="widget-grid two">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Team Workload</span>
+          <span class="widget-card-badge">Resource & Capacity Planner</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/operations/team.html?token=opxio_demo_showcase_2026" height="380" scrolling="no" loading="lazy"></iframe>
+      </div>
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Project Progress</span>
+          <span class="widget-card-badge">Client Delivery Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/operations/progress.html?project=demo" height="380" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marketing OS -->
+  <section id="tab-marketing" class="os-section">
+    <div class="os-header">
+      <h2>Marketing OS</h2>
+      <p>Campaign performance, content production, and lead generation — all tracked in one place.</p>
+      <div class="os-header-meta">
+        <span class="os-tag">5 core modules</span>
+        <span class="os-price">From RM 3,250</span>
+      </div>
+    </div>
+
+    <!-- Row 1: Marketing command + campaigns -->
+    <div class="widget-grid two">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Marketing Command</span>
+          <span class="widget-card-badge">Marketing Performance Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/marketing/marketing-command.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Campaigns</span>
+          <span class="widget-card-badge">Campaign Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/marketing/campaigns.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 2: Content pipeline -->
+    <div class="widget-grid single">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Content Pipeline</span>
+          <span class="widget-card-badge">Content Production Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/marketing/content-pipeline.html?token=opxio_demo_showcase_2026" height="420" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <!-- Finance OS -->
+  <section id="tab-finance" class="os-section">
+    <div class="os-header">
+      <h2>Finance OS</h2>
+      <p>Cash flow, payroll, invoices, and P&amp;L — financial clarity without the spreadsheet chaos.</p>
+      <div class="os-header-meta">
+        <span class="os-tag">5 core modules</span>
+        <span class="os-price">From RM 3,250</span>
+      </div>
+    </div>
+
+    <!-- Row 1: Finance snapshot (full width) -->
+    <div class="widget-grid single">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Finance Snapshot</span>
+          <span class="widget-card-badge">Finance Ledger</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/finance.html?token=opxio_demo_showcase_2026" height="460" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <!-- Row 2: Top Products -->
+    <div class="widget-grid single">
+      <div class="widget-card">
+        <div class="widget-card-header">
+          <span class="widget-card-title">Top Products</span>
+          <span class="widget-card-badge">Invoice & Payment Tracker</span>
+        </div>
+        <iframe class="widget-frame" src="/widgets/revenue/topproducts.html?token=opxio_demo_showcase_2026" height="380" scrolling="no" loading="lazy"></iframe>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-left">
+    <span class="footer-logo">Opxio</span>
+    <span>—</span>
+    <span>Business Operating Systems for agencies &amp; service businesses</span>
+  </div>
+  <div class="footer-links">
+    <a href="https://opxio.io">Website</a>
+    <a href="https://opxio.io/book">Book a Call</a>
+    <a href="mailto:hello@opxio.io">hello@opxio.io</a>
+  </div>
+</footer>
+
+<script>
+  const tabs = document.querySelectorAll('.tab')
+  const sections = document.querySelectorAll('.os-section')
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const target = tab.dataset.tab
+
+      tabs.forEach(t => t.classList.remove('active'))
+      sections.forEach(s => s.classList.remove('active'))
+
+      tab.classList.add('active')
+      document.getElementById('tab-' + target).classList.add('active')
+    })
+  })
+
+  // Lazy-load iframes only when tab becomes visible
+  // iframes with loading="lazy" handle this natively for most cases
+  // but we force a src re-set if the frame hasn't loaded yet when switching tabs
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const section = document.getElementById('tab-' + tab.dataset.tab)
+      section.querySelectorAll('iframe').forEach(iframe => {
+        if (!iframe.dataset.loaded) {
+          const src = iframe.src
+          if (src) {
+            iframe.src = src // triggers load if not already
+            iframe.dataset.loaded = 'true'
+          }
+        }
+      })
+    })
+  })
+
+  // Mark initially visible iframes as loaded
+  document.querySelectorAll('.os-section.active iframe').forEach(f => {
+    f.dataset.loaded = 'true'
+  })
+</script>
+</body>
+</html>

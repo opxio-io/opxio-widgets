@@ -3,6 +3,7 @@
 // Called by widgets on load to set the eyebrow without needing ?client= in the URL.
 
 import { getClientByToken } from '../../../lib/supabase'
+import { CLIENT_INFO } from '../../../lib/demo-fixtures'
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -16,6 +17,8 @@ export default async function handler(req, res) {
 
   const client = await getClientByToken(token)
   if (!client) return res.status(403).json({ error: 'Invalid token' })
+
+  if (client.slug === 'demo') return res.status(200).json(CLIENT_INFO)
 
   return res.status(200).json({
     client: client.client_name || client.slug || '',

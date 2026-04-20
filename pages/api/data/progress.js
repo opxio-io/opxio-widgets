@@ -2,11 +2,15 @@
 // GET ?project=<project_page_id>
 // Returns phase & task completion data + active tasks with assignees
 import { getPage, queryDB, plain, DB } from "../../../lib/notion"
+import { PROGRESS } from "../../../lib/demo-fixtures"
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end()
   res.setHeader("Access-Control-Allow-Origin", "*")
   res.setHeader("Cache-Control", "s-maxage=30, stale-while-revalidate=60")
+
+  // Demo mode — return fixture data when ?project=demo
+  if (req.query.project === "demo") return res.status(200).json(PROGRESS)
 
   const projectId = (req.query.project || "").replace(/[^a-f0-9]/gi, "")
   if (!projectId || projectId.length < 32) return res.status(400).json({ error: "Missing or invalid ?project= parameter" })

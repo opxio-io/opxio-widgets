@@ -4,7 +4,8 @@
 // Charts: expense breakdown by category (donut), 6-month net P&L trend (single line)
 
 import { queryDB, DB } from "../../../lib/notion"
-import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
+import { getClientByToken, getNotionToken, resolveDB, checkOrigin } from "../../../lib/supabase"
+import { FINANCE_SNAPSHOT } from "../../../lib/demo-fixtures"
 
 export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end()
@@ -17,6 +18,8 @@ export default async function handler(req, res) {
 
     const client = await getClientByToken(accessToken)
     if (!client) return res.status(403).json({ error: "Invalid token" })
+    if (!checkOrigin(client, req)) return res.status(403).json({ error: "Origin not allowed" })
+    if (client.slug === "demo") return res.status(200).json(FINANCE_SNAPSHOT)
 
     const notionToken = getNotionToken(client)
     const FINANCE_DB  = resolveDB(client, "FINANCE", DB.FINANCE)

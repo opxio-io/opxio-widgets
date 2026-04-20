@@ -25,7 +25,6 @@ async function createPortalClient({ companyName, projectId, contactEmail, packag
       status:        "active",
       portal_token:  portalToken,
       project_id:    projectId,
-      portal_email:  contactEmail || null,
       portal_active: true,
       os_type:       packages || [],
       notion_token:  process.env.NOTION_API_KEY,

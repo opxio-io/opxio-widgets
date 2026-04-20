@@ -1,214 +1,216 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Opxio — Lead Pipeline</title><link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<title>Opxio — Lead Pipeline</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
-body.light{background:#FFFFFF;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--blue:#4FAEFF;--purple:#B17BFF;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#0D0D0D;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
+body.light{background:#F5F5F5;color:#111;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);--lostb:rgba(255,107,53,.22);}
 body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#D94F1E;}
 
-.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;overflow:hidden;}
-body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+/* cards */
+.card{background:#141414;border:1px solid rgba(255,255,255,.07);border-radius:14px;transition:border-color .2s,background .2s;overflow:hidden;position:relative;}
+.card:hover{background:#181818;border-color:rgba(255,255,255,.12);}
+body.light .card{background:#fff;border-color:rgba(0,0,0,.08);box-shadow:0 1px 4px rgba(0,0,0,.05);}
+body.light .card:hover{border-color:rgba(0,0,0,.14);}
 
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,0.46);}
+/* top accent line on hover */
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .22s;}
+.card:hover::before{opacity:1;}
+.card.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
+.card.is-ghosted::before{background:linear-gradient(90deg,var(--lost),transparent);opacity:.5;}
+.card.is-disq::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
+
+/* eyebrow / title */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.4);}
 .h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
 body.light .h-title{color:#111;}
-.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
-body.light .ts{color:rgba(0,0,0,0.34);}
+.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.15);}
+body.light .ts{color:rgba(0,0,0,.3);}
 
-/* stat cards */
-.stat{padding:16px 18px;position:relative;}
-.stat-dot{position:absolute;top:13px;right:13px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.5;}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
-.stat:hover::before{opacity:1;}
-.stat:hover{border-color:rgba(170,255,0,.15);}
-.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.5);margin-bottom:10px;}
-body.light .s-lbl{color:rgba(0,0,0,0.59);}
-.s-val{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+/* stat card internals */
+.stat{padding:16px 16px 14px;}
+.s-dot{position:absolute;top:13px;right:13px;width:5px;height:5px;border-radius:50%;background:var(--g);opacity:.6;}
+.s-dot.is-lost{background:var(--lost);opacity:.7;}
+.s-dot.is-ghosted{background:var(--lost);opacity:.35;}
+.s-dot.is-disq{background:rgba(255,255,255,.2);opacity:1;}
+.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:10px;line-height:1.4;}
+body.light .s-lbl{color:rgba(0,0,0,.55);}
+.s-val{font-size:34px;font-weight:900;letter-spacing:-1.8px;line-height:1;color:var(--g);}
+.s-val.is-lost{color:var(--lost);}
+.s-val.is-ghosted{color:var(--lost);opacity:.55;}
+.s-val.is-disq{color:rgba(255,255,255,.22);}
 body.light .s-val{color:var(--g);}
-.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:7px;}
-body.light .s-sub{color:rgba(0,0,0,0.43);}
-
-/* qualified — purple */
-.stat.is-qualified::before{background:linear-gradient(90deg,var(--purple),transparent);}
-.stat.is-qualified .stat-dot{background:var(--purple);}
-.stat.is-qualified .s-val{color:var(--purple);}
-.stat.is-qualified:hover{border-color:rgba(177,123,255,.18);}
-
-/* discovery booked — blue */
-.stat.is-booked::before{background:linear-gradient(90deg,var(--blue),transparent);}
-.stat.is-booked .stat-dot{background:var(--blue);}
-.stat.is-booked .s-val{color:var(--blue);}
-.stat.is-booked:hover{border-color:rgba(79,174,255,.18);}
-
-/* lost */
-.stat.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.stat.is-lost .stat-dot{background:var(--lost);opacity:.7;}
-.stat.is-lost .s-val{color:var(--lost);}
-.stat.is-lost:hover{border-color:rgba(255,107,53,.2);}
-
-/* ghosted — dimmer orange */
-.stat.is-ghosted::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.stat.is-ghosted .stat-dot{background:var(--lost);opacity:.35;}
-.stat.is-ghosted .s-val{color:var(--lost);opacity:.6;}
-.stat.is-ghosted:hover{border-color:rgba(255,107,53,.12);}
-
-/* disqualified — muted */
-.stat.is-disqualified .stat-dot{background:rgba(255,255,255,.2);opacity:1;}
-.stat.is-disqualified .s-val{color:rgba(255,255,255,.25);}
-.stat.is-disqualified::before{background:linear-gradient(90deg,rgba(255,255,255,.12),transparent);}
-.stat.is-disqualified:hover{border-color:rgba(255,255,255,.1);}
-body.light .stat.is-disqualified .stat-dot{background:rgba(0,0,0,.15);}
-body.light .stat.is-disqualified .s-val{color:rgba(0,0,0,.2);}
-
-/* footer bar */
-.foot{display:flex;align-items:center;gap:0;margin-top:10px;background:#1E1E1E;border:1px solid rgba(255,255,255,.04);border-radius:10px;overflow:hidden;}
-body.light .foot{background:#fff;border-color:rgba(0,0,0,.06);}
-.foot-item{flex:1;padding:9px 14px;font-size:10px;font-weight:700;color:rgba(255,255,255,.3);border-right:1px solid rgba(255,255,255,.05);}
-body.light .foot-item{color:rgba(0,0,0,0.5);border-color:rgba(0,0,0,.05);}
-.foot-item:last-child{border-right:none;}
-.foot-item span{display:block;font-size:15px;font-weight:900;color:var(--g);letter-spacing:-.5px;margin-top:1px;}
+body.light .s-val.is-lost{color:var(--lost);}
+.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;line-height:1.4;}
+body.light .s-sub{color:rgba(0,0,0,.4);}
 
 /* section label */
-.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:14px 0 8px;}
-body.light .sec-lbl{color:rgba(0,0,0,0.43);}
+.sec-lbl{display:flex;align-items:center;gap:8px;margin:16px 0 8px;}
+.sec-lbl-bar{width:3px;height:12px;border-radius:99px;background:rgba(170,255,0,.45);flex-shrink:0;}
+.sec-lbl-bar.is-lost{background:rgba(255,107,53,.4);}
+.sec-lbl span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);}
+body.light .sec-lbl span{color:rgba(0,0,0,.4);}
+.sec-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
 
 /* grids */
-.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
 @media(max-width:900px){.grid5{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:500px){.grid5{grid-template-columns:repeat(2,1fr);}}
-.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 @media(max-width:700px){.grid4{grid-template-columns:repeat(2,1fr);}}
 
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
+/* summary bar */
+.summary{display:grid;grid-template-columns:repeat(4,1fr);margin-top:12px;background:#141414;border:1px solid rgba(255,255,255,.06);border-radius:12px;overflow:hidden;}
+body.light .summary{background:#fff;border-color:rgba(0,0,0,.07);}
+.sum-item{padding:11px 14px;border-right:1px solid rgba(255,255,255,.05);}
+.sum-item:last-child{border-right:none;}
+body.light .sum-item{border-color:rgba(0,0,0,.05);}
+.sum-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.28);margin-bottom:4px;}
+body.light .sum-lbl{color:rgba(0,0,0,.45);}
+.sum-val{font-size:16px;font-weight:900;letter-spacing:-.5px;color:var(--g);}
+body.light .sum-val{color:var(--g);}
 
+/* icon buttons */
 .h-left{display:flex;flex-direction:column;gap:2px;}
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
-.icon-btn svg{width:14px;height:14px;}
+.icon-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,0.46);}
-body.light .icon-btn:hover{background:rgba(79,139,0,.1);border-color:rgba(79,139,0,.22);color:var(--g);}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.4);}
 
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
-body.light .wgt-footer{color:rgba(0,0,0,.25);}
+.wgt-footer{text-align:center;padding:18px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+body.light .wgt-footer{color:rgba(0,0,0,.22);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px;}
 </style></head><body>
 
-<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-  <div class="h-left"><div class="eyebrow">Revenue OS · Opxio</div><h1 class="h-title">Leads</h1></div>
+<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+  <div class="h-left">
+    <div class="eyebrow">Revenue OS · Opxio</div>
+    <h1 class="h-title">Lead Pipeline</h1>
+  </div>
   <div style="display:flex;align-items:center;gap:6px;">
     <span class="ts" id="ts"></span>
-    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
-    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+    <button class="icon-btn" onclick="toggleMode()" title="Toggle light/dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
   </div>
 </div>
 
-<div class="sec-lbl">Active Pipeline</div>
+<div class="sec-lbl"><div class="sec-lbl-bar"></div><span>Active Pipeline</span></div>
 <div class="grid5">
-  <div class="card stat">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Incoming</div>
-    <div class="s-val" id="v-incoming">—</div>
-    <div class="s-sub">New enquiries</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Incoming</div>
+      <div class="s-val" id="v-incoming">—</div>
+      <div class="s-sub">New enquiries</div>
+    </div>
   </div>
-  <div class="card stat">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Contacted</div>
-    <div class="s-val" id="v-contacted">—</div>
-    <div class="s-sub">First touch done</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Contacted</div>
+      <div class="s-val" id="v-contacted">—</div>
+      <div class="s-sub">First touch done</div>
+    </div>
   </div>
-  <div class="card stat is-qualified">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Qualified</div>
-    <div class="s-val" id="v-qualified">—</div>
-    <div class="s-sub">Fit confirmed</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Qualified</div>
+      <div class="s-val" id="v-qualified">—</div>
+      <div class="s-sub">Fit confirmed</div>
+    </div>
   </div>
-  <div class="card stat is-booked">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Discovery Booked</div>
-    <div class="s-val" id="v-booked">—</div>
-    <div class="s-sub">Call scheduled</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Discovery Booked</div>
+      <div class="s-val" id="v-booked">—</div>
+      <div class="s-sub">Call scheduled</div>
+    </div>
   </div>
-  <div class="card stat">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Discovery Done</div>
-    <div class="s-val" id="v-discovery">—</div>
-    <div class="s-sub">Call completed</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Discovery Done</div>
+      <div class="s-val" id="v-discovery">—</div>
+      <div class="s-sub">Call completed</div>
+    </div>
   </div>
 </div>
 
-<div class="sec-lbl">Outcomes</div>
+<div class="sec-lbl"><div class="sec-lbl-bar is-lost"></div><span>Outcomes</span></div>
 <div class="grid4">
-  <div class="card stat">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Converted</div>
-    <div class="s-val" id="v-converted">—</div>
-    <div class="s-sub">Moved to deal</div>
+  <div class="card">
+    <div class="stat"><div class="s-dot"></div>
+      <div class="s-lbl">Converted</div>
+      <div class="s-val" id="v-converted">—</div>
+      <div class="s-sub">Moved to deal</div>
+    </div>
   </div>
-  <div class="card stat is-lost">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Lost</div>
-    <div class="s-val" id="v-lost">—</div>
-    <div class="s-sub">Did not proceed</div>
+  <div class="card is-lost">
+    <div class="stat"><div class="s-dot is-lost"></div>
+      <div class="s-lbl">Lost</div>
+      <div class="s-val is-lost" id="v-lost">—</div>
+      <div class="s-sub">Did not proceed</div>
+    </div>
   </div>
-  <div class="card stat is-ghosted">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Ghosted</div>
-    <div class="s-val" id="v-ghosted">—</div>
-    <div class="s-sub">No response</div>
+  <div class="card is-ghosted">
+    <div class="stat"><div class="s-dot is-ghosted"></div>
+      <div class="s-lbl">Ghosted</div>
+      <div class="s-val is-ghosted" id="v-ghosted">—</div>
+      <div class="s-sub">No response</div>
+    </div>
   </div>
-  <div class="card stat is-disqualified">
-    <div class="stat-dot"></div>
-    <div class="s-lbl">Disqualified</div>
-    <div class="s-val" id="v-disqualified">—</div>
-    <div class="s-sub">Wrong fit</div>
+  <div class="card is-disq">
+    <div class="stat"><div class="s-dot is-disq"></div>
+      <div class="s-lbl">Disqualified</div>
+      <div class="s-val is-disq" id="v-disqualified">—</div>
+      <div class="s-sub">Wrong fit</div>
+    </div>
   </div>
 </div>
 
-<div class="foot">
-  <div class="foot-item">Active Leads<span id="f-active">—</span></div>
-  <div class="foot-item">New This Month<span id="f-monthly">—</span></div>
-  <div class="foot-item">Converted This Month<span id="f-converted">—</span></div>
-  <div class="foot-item">Top Source<span id="f-src">—</span></div>
+<div class="summary">
+  <div class="sum-item"><div class="sum-lbl">Active Leads</div><div class="sum-val" id="f-active">—</div></div>
+  <div class="sum-item"><div class="sum-lbl">New This Month</div><div class="sum-val" id="f-monthly">—</div></div>
+  <div class="sum-item"><div class="sum-lbl">Converted This Month</div><div class="sum-val" id="f-converted">—</div></div>
+  <div class="sum-item"><div class="sum-lbl">Top Source</div><div class="sum-val" id="f-src" style="font-size:13px;font-weight:700;letter-spacing:-.2px;">—</div></div>
 </div>
 
 <script>
-const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
-let light = false;
-function toggleMode(){ light=!light; document.body.classList.toggle('light',light); }
-function setTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+const _tok=new URLSearchParams(location.search).get('token')||'';
+function apiUrl(p){return _tok?p+'?token='+encodeURIComponent(_tok):p;}
+let light=false;
+function toggleMode(){light=!light;document.body.classList.toggle('light',light);}
+function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
 async function loadData(){
-  try {
-    const r = await fetch(apiUrl('/api/data/pipeline'));
-    const j = await r.json();
-    const s = j.stages || {};
-    document.getElementById('v-incoming').textContent    = s['Incoming']          ?? 0;
-    document.getElementById('v-contacted').textContent   = s['Contacted']         ?? 0;
-    document.getElementById('v-qualified').textContent   = s['Qualified']         ?? 0;
-    document.getElementById('v-booked').textContent      = s['Discovery Booked']  ?? 0;
-    document.getElementById('v-discovery').textContent   = s['Discovery Done']    ?? 0;
-    document.getElementById('v-converted').textContent   = s['Converted']         ?? 0;
-    document.getElementById('v-lost').textContent        = s['Lost']              ?? 0;
-    document.getElementById('v-ghosted').textContent     = s['Ghosted']           ?? 0;
-    document.getElementById('v-disqualified').textContent= s['Disqualified']      ?? 0;
-    document.getElementById('f-active').textContent      = j.totalActive          ?? 0;
-    document.getElementById('f-monthly').textContent     = j.thisMonthLeads       ?? 0;
-    document.getElementById('f-converted').textContent   = j.thisMonthConverted   ?? 0;
-    if (j.sources && j.sources.length) {
-      document.getElementById('f-src').textContent = j.sources[0].label;
-    }
+  try{
+    const r=await fetch(apiUrl('/api/data/pipeline'));
+    const j=await r.json();
+    const s=j.stages||{};
+    document.getElementById('v-incoming').textContent    = s['Incoming']         ??0;
+    document.getElementById('v-contacted').textContent   = s['Contacted']        ??0;
+    document.getElementById('v-qualified').textContent   = s['Qualified']        ??0;
+    document.getElementById('v-booked').textContent      = s['Discovery Booked'] ??0;
+    document.getElementById('v-discovery').textContent   = s['Discovery Done']   ??0;
+    document.getElementById('v-converted').textContent   = s['Converted']        ??0;
+    document.getElementById('v-lost').textContent        = s['Lost']             ??0;
+    document.getElementById('v-ghosted').textContent     = s['Ghosted']          ??0;
+    document.getElementById('v-disqualified').textContent= s['Disqualified']     ??0;
+    document.getElementById('f-active').textContent    = j.totalActive        ??0;
+    document.getElementById('f-monthly').textContent   = j.thisMonthLeads     ??0;
+    document.getElementById('f-converted').textContent = j.thisMonthConverted ??0;
+    if(j.sources&&j.sources.length) document.getElementById('f-src').textContent=j.sources[0].label;
     setTs();
-  } catch(e) { console.error('leads widget:', e); }
+  }catch(e){console.error('leads:',e);}
 }
 loadData();
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-setInterval(loadData, 5*60*1000);
+setInterval(loadData,5*60*1000);
 </script>
 <div class="wgt-footer">Widgets by Opxio.io</div>
 </body></html>

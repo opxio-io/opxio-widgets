@@ -448,7 +448,7 @@ function renderGantt(){
   for(const row of flatRows){
     if(row.type==='phase'){
       const toggleBtn=row.isPhDone
-        ?`<button class="gl-phase-toggle" onclick="togglePhaseCollapse('${esc(row.name)}')">${row.isCollapsed?'▶ Expand':'▼ Hide'}</button>`
+        ?`<button class="gl-phase-toggle" onclick="togglePhaseCollapse('${esc(row.name)}')">${row.isCollapsed?'▾ Expand':'▴ Hide'}</button>`
         :'';
       leftHTML+=`<div class="gl-phase${row.isCollapsed?' collapsed':''}"><span class="gl-phase-name">${esc(row.name)}</span><span class="gl-phase-cnt">${row.done}/${row.count}</span>${toggleBtn}</div>`;
     } else {

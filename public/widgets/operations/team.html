@@ -17,18 +17,18 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 .btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
 .btn:hover{border-color:var(--gb);color:var(--g);}
-body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.4);}
+body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(255,255,255,.5);}
 
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
 .h-right{display:flex;align-items:center;gap:6px;}
 .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.28);}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
 .h-title{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.03em;}
 body.light .h-title{color:#111;}
 .ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
-body.light .ts{color:rgba(0,0,0,.22);}
+body.light .ts{color:rgba(0,0,0,.32);}
 .sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:18px 0 10px;}
-body.light .sec-lbl{color:rgba(0,0,0,.28);}
+body.light .sec-lbl{color:rgba(255,255,255,.4);}
 
 /* ── STAT CARDS ── */
 .g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
@@ -45,7 +45,7 @@ body.light .s-sub{color:rgba(255,255,255,.22);}
 .panel{padding:22px 24px;}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
 .panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;opacity:.85;}
-body.light .panel-title{color:#111;opacity:1;}
+body.light .panel-title{color:rgba(255,255,255,.9);opacity:1;}
 
 /* ── 2-col grid ── */
 .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
@@ -57,14 +57,14 @@ body.light .panel-title{color:#111;opacity:1;}
 body.light .m-row{border-bottom-color:rgba(0,0,0,.04);}
 .m-row:last-child{border-bottom:none;}
 .m-rank{font-size:10px;font-weight:800;color:rgba(255,255,255,.2);width:16px;text-align:center;flex-shrink:0;}
-body.light .m-rank{color:rgba(0,0,0,.15);}
+body.light .m-rank{color:rgba(255,255,255,.3);}
 .m-avatar{width:32px;height:32px;border-radius:50%;flex-shrink:0;object-fit:cover;border:2px solid rgba(255,255,255,.08);}
 body.light .m-avatar{border-color:rgba(0,0,0,.06);}
 .m-initials{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);text-transform:uppercase;}
-body.light .m-initials{background:rgba(0,0,0,.04);color:rgba(0,0,0,.3);}
+body.light .m-initials{background:rgba(0,0,0,.04);color:rgba(255,255,255,.4);}
 .m-info{flex:1;min-width:0;}
 .m-name{font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;}
-body.light .m-name{color:#111;}
+body.light .m-name{color:rgba(255,255,255,.9);}
 .m-stats{display:flex;gap:10px;flex-wrap:wrap;}
 .m-tag{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;display:inline-flex;align-items:center;gap:3px;}
 .m-tag .t-val{font-weight:900;}
@@ -77,37 +77,37 @@ body.light .m-bar{background:rgba(0,0,0,.04);}
 .m-seg{height:100%;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .m-bar-legend{display:flex;gap:6px;justify-content:flex-end;}
 .m-bl{font-size:8px;font-weight:700;color:rgba(255,255,255,.2);}
-body.light .m-bl{color:rgba(0,0,0,.18);}
+body.light .m-bl{color:rgba(255,255,255,.3);}
 
 /* ── COMPLETION RATE ── */
 .m-rate{width:52px;text-align:right;flex-shrink:0;}
 .m-rate-val{font-size:16px;font-weight:900;color:var(--g);line-height:1;}
 .m-rate-lbl{font-size:7px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.06em;}
-body.light .m-rate-lbl{color:rgba(0,0,0,.15);}
+body.light .m-rate-lbl{color:rgba(255,255,255,.3);}
 
 /* ── AVG DURATION CHART ── */
 .dur-list{display:flex;flex-direction:column;gap:8px;}
 .dur-row{display:flex;align-items:center;gap:10px;}
 .dur-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);width:90px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .dur-name{color:rgba(0,0,0,.5);}
+body.light .dur-name{color:rgba(255,255,255,.65);}
 .dur-track{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.04);overflow:hidden;}
 body.light .dur-track{background:rgba(0,0,0,.04);}
 .dur-fill{height:10px;border-radius:999px;background:var(--g);transition:width .8s cubic-bezier(.4,0,.2,1);}
 .dur-val{font-size:11px;font-weight:800;color:var(--g);width:50px;text-align:right;flex-shrink:0;}
 .dur-none{font-size:10px;color:rgba(255,255,255,.15);text-align:center;padding:16px 0;}
-body.light .dur-none{color:rgba(0,0,0,.12);}
+body.light .dur-none{color:rgba(255,255,255,.2);}
 
 /* ── WORKLOAD HEATMAP ── */
 .heat-grid{display:grid;gap:6px;}
 .heat-cell{border-radius:8px;padding:10px;text-align:center;transition:all .3s;}
 .heat-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.6);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .heat-name{color:rgba(0,0,0,.5);}
+body.light .heat-name{color:rgba(255,255,255,.65);}
 .heat-val{font-size:18px;font-weight:900;line-height:1;}
 .heat-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.25);margin-top:2px;}
-body.light .heat-lbl{color:rgba(0,0,0,.2);}
+body.light .heat-lbl{color:rgba(255,255,255,.3);}
 
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
-body.light .empty{color:rgba(0,0,0,.18);}
+body.light .empty{color:rgba(255,255,255,.3);}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>

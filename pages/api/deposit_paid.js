@@ -80,7 +80,7 @@ function buildWaUrl(phone, companyName, formUrl) {
 // ── Create a Client Account record in the Client Accounts DB ─────────────
 // Called when a deposit is marked as received. Creates the post-install client record
 // and links it back to the Invoice's "Client Account" relation field.
-async function createClientAccount({ invoiceId, companyId, companyName, dealId, leadId, picId, projectId, packages, formUrl, clientOrigin, today, token }) {
+async function createClientAccount({ invoiceId, companyId, companyName, dealId, leadId, picId, projectId, packages, addonCatalogueIds, formUrl, clientOrigin, today, token }) {
   try {
     const osInstalled = (packages || []).map(n => ({ name: n }))
 
@@ -97,6 +97,7 @@ async function createClientAccount({ invoiceId, companyId, companyName, dealId, 
       ...(picId      ? { "Primary Contact": { relation: [{ id: picId      }] } } : {}),
       ...(projectId  ? { "Project Tracker": { relation: [{ id: projectId  }] } } : {}),
       ...(osInstalled.length ? { "OS Installed": { multi_select: osInstalled } } : {}),
+      ...(addonCatalogueIds?.length ? { "Add-ons Installed": { relation: addonCatalogueIds.map(id => ({ id })) } } : {}),
     }
 
     const caPage = await createPage({ parent: { database_id: DB.CLIENT_ACCOUNTS }, properties: caProps }, token)
@@ -216,10 +217,11 @@ async function run(payload) {
   // OR from: Quotation.Deal Source → Deals DB (existing Deal)
   // • Lead  → mark Lead "Converted", spin up a new Deal at "Building"
   // • Deal  → advance Deal to "Building" directly
-  let dealId        = null  // will be set if we create or find a Deal
-  let formPackage   = ""    // OS package name for onboarding form URL
-  let formAddons    = []    // add-on names for onboarding form URL
-  let clientOrigin  = null  // mapped from Lead Entry Point
+  let dealId             = null  // will be set if we create or find a Deal
+  let formPackage        = ""    // OS package name for onboarding form URL
+  let formAddons         = []    // add-on names for onboarding form URL
+  let clientOrigin       = null  // mapped from Lead Entry Point
+  let addonCatalogueIds  = []    // Catalogue page IDs for add-ons (from Deal.Add-ons relation)
 
   if (leadId) {
     try {
@@ -273,6 +275,8 @@ async function run(payload) {
               if (!formPackage) formPackage = pkg
               if (!formAddons.length) formAddons = addons
             }
+            // Capture add-on Catalogue IDs from Deal.Add-ons relation
+            addonCatalogueIds = (existingDeal.properties["Add-ons"]?.relation || []).map(r => r.id.replace(/-/g, ""))
           } catch (e) {
             console.warn("[deposit_paid] existing deal advance:", e.message)
           }
@@ -405,10 +409,19 @@ async function run(payload) {
   }
 
   if (projectId) {
+    // Build OS Scope for setup_project — maps package + scoped add-ons to multi_select values
+    const SCOPED_ADDONS = new Set(["Enhanced Dashboard", "Automations", "Custom Widget"])
+    const osScopeItems = []
+    if (formPackage) osScopeItems.push({ name: formPackage })
+    formAddons.forEach(a => {
+      if (SCOPED_ADDONS.has(a)) osScopeItems.push({ name: a })
+    })
+
     await patchPage(projectId, {
       "Status":          { status: { name: "Build Started" } },
       "Start Date":      { date: { start: today } },
       "Onboarding Form": { url: formUrl },
+      ...(osScopeItems.length ? { "OS Scope": { multi_select: osScopeItems } } : {}),
       ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
     }, token)
     ;[phasesCount, tasksCount] = await triggerSetupProject(projectId)
@@ -429,6 +442,7 @@ async function run(payload) {
     picId,
     projectId,
     packages,
+    addonCatalogueIds,
     formUrl,
     clientOrigin,
     today,

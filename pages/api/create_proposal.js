@@ -552,12 +552,23 @@ async function processProposal(sourceId) {
   if (mainProduct?.id)         lineItems.push(mainProduct)
   lineItems.push(...addonProducts.filter(Boolean))
 
+  // Archive any existing template placeholder rows so we can create fresh rows
+  // in the correct order (Base OS → Main OS → Add-ons). Filling in-place risks
+  // wrong sort order because template rows may be numbered differently.
   const existingRows = await getExistingRows(dbId)
-  console.log(`[create_proposal] ${existingRows.length} existing rows, ${lineItems.length} products`)
+  if (existingRows.length > 0) {
+    await Promise.all(existingRows.map(row =>
+      fetch(`https://api.notion.com/v1/pages/${row.id}`, {
+        method: "PATCH", headers: hdrs(),
+        body: JSON.stringify({ archived: true }),
+      }).catch(() => {})
+    ))
+  }
+  console.log(`[create_proposal] archived ${existingRows.length} template rows, creating ${lineItems.length} fresh`)
 
-  for (let i = 0; i < lineItems.length; i++) {
-    if (i < existingRows.length) await fillRow(existingRows[i].id, lineItems[i])
-    else                          await createLineItem(dbId, lineItems[i])
+  // Create line items in order: Base OS → Main OS → Add-ons
+  for (const product of lineItems) {
+    await createLineItem(dbId, product)
   }
 
   console.log(`[create_proposal] ✓ prop ${propId} — ${lineItems.length} line items, source: ${isFromDeal ? "deal" : "lead"}`)

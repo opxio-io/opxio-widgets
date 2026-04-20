@@ -9,13 +9,13 @@
 *{margin:0;padding:0;box-sizing:border-box;}
 html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
-body.light{background:#F5F5F5;color:#111;}
+body.light{background:#FFFFFF;color:#111;}
 :root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);--lostb:rgba(255,107,53,.2);}
 
 /* cards */
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.12);}
-body.light .card{background:#fff;border-color:rgba(0,0,0,.06);}
+body.light .card{background:#F5F5F5;border-color:rgba(0,0,0,.07);}
 body.light .card:hover{border-color:rgba(0,0,0,.1);}
 
 /* buttons + selects */
@@ -31,21 +31,21 @@ body.light .btn:hover{border-color:rgba(92,153,0,.3);color:#5C9900;}
 body.light .eyebrow{color:rgba(0,0,0,.3);}
 .h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
 body.light .h-title{color:#111;}
-.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
+.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.18);}
 body.light .ts{color:rgba(0,0,0,.22);}
 
 /* section label */
-.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:10px 0 6px;}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:10px 0 6px;}
 body.light .sec-lbl{color:rgba(0,0,0,.28);}
 
 /* ── STAT CARDS ── */
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 @media(max-width:680px){.grid-4{grid-template-columns:repeat(2,1fr);}}
-.stat{padding:10px 14px;position:relative;}
+.stat{padding:18px 20px;position:relative;}
 .s-dot{position:absolute;top:10px;right:12px;width:5px;height:5px;border-radius:50%;background:var(--g);}
-.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.45);margin-bottom:6px;display:block;}
+.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.45);margin-bottom:6px;display:block;}
 body.light .s-lbl{color:rgba(0,0,0,.4);}
-.s-val{font-size:22px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 body.light .s-val{color:#5C9900;}
 .s-delta-row{display:flex;align-items:center;gap:4px;margin-top:4px;}
 .s-delta{font-size:10.5px;font-weight:700;color:var(--g);}
@@ -60,7 +60,7 @@ body.light .s-delta-lbl{color:rgba(0,0,0,.3);}
 /* ── TOP PRODUCTS ── */
 .panel{padding:14px 16px;}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
-.panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;opacity:.85;}
+.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;opacity:.85;}
 body.light .panel-title{color:#111;opacity:1;}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 /* category filter tabs */
@@ -103,7 +103,7 @@ body.light .prod-bar-track{background:rgba(0,0,0,.08);}
 /* ── EARNINGS ── */
 .earn-inner{display:flex;flex-direction:column;height:100%;}
 .earn-top{flex:1;}
-.earn-eyebrow{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);margin-bottom:8px;}
+.earn-eyebrow{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);margin-bottom:8px;}
 body.light .earn-eyebrow{color:rgba(0,0,0,.3);}
 .earn-amt{font-size:28px;font-weight:900;letter-spacing:-2px;color:var(--g);line-height:1;}
 body.light .earn-amt{color:#5C9900;}
@@ -113,16 +113,16 @@ body.light .earn-diff-lbl{color:rgba(0,0,0,.35);}
 /* month bars */
 .earn-bars{margin-top:10px;display:flex;flex-direction:column;gap:5px;}
 .ebar-row{display:flex;align-items:center;gap:10px;}
-.ebar-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.4);width:28px;flex-shrink:0;}
+.ebar-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);width:28px;flex-shrink:0;}
 body.light .ebar-lbl{color:rgba(0,0,0,.35);}
 .ebar-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.07);}
 body.light .ebar-track{background:rgba(0,0,0,.08);}
 .ebar-fill{height:6px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.ebar-val{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);width:54px;text-align:right;flex-shrink:0;}
+.ebar-val{font-size:11px;font-weight:700;color:rgba(255,255,255,.55);width:54px;text-align:right;flex-shrink:0;}
 body.light .ebar-val{color:rgba(0,0,0,.5);}
 /* circular ring */
 .ring-wrap{display:flex;flex-direction:column;align-items:center;margin-top:10px;}
-.ring-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-bottom:4px;}
+.ring-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-bottom:4px;}
 body.light .ring-lbl{color:rgba(0,0,0,.3);}
 .ring-svg{overflow:visible;}
 .ring-track{fill:none;stroke:rgba(255,255,255,.06);}
@@ -151,14 +151,14 @@ body.light .target-inp{background:#F3F4F6;border-color:rgba(0,0,0,.12);color:#11
 /* ── REVENUE CHART ── */
 .chart-outer{padding:14px 16px;}
 .chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
-.chart-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;opacity:.85;}
+.chart-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#fff;opacity:.85;}
 body.light .chart-title{color:#111;opacity:1;}
 .legend-row{display:flex;align-items:center;gap:16px;}
 .leg-item{display:flex;align-items:center;gap:6px;}
 .leg-dot{width:8px;height:8px;border-radius:50%;}
 .leg-g{background:var(--g);}
 .leg-l{background:var(--lost);}
-.leg-txt{font-size:10px;font-weight:600;color:rgba(255,255,255,.45);}
+.leg-txt{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);}
 body.light .leg-txt{color:rgba(0,0,0,.4);}
 .chart-wrap{position:relative;width:100%;height:160px;}
 .ctip{position:absolute;background:#252525;border:1px solid var(--gb);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:#fff;pointer-events:none;display:none;white-space:nowrap;z-index:10;}
@@ -307,7 +307,7 @@ body.light .icon-btn:hover{background:rgba(92,153,0,.08);border-color:rgba(92,15
     <!-- Ring -->
     <div class="ring-wrap">
       <div class="ring-lbl">Monthly Target</div>
-      <svg class="ring-svg" width="90" height="90" viewBox="0 0 120 120">
+      <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120">
         <circle class="ring-track" cx="60" cy="60" r="50" stroke-width="11"/>
         <circle class="ring-fill" id="ring-fill" cx="60" cy="60" r="50"
           stroke-width="11"
@@ -360,11 +360,6 @@ function toggleMode() {
 function setTs() {
   document.getElementById('ts').textContent =
     'Updated ' + new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-}
-function doRefresh() {
-  const b = document.getElementById('rb');
-  b.textContent = '↻'; b.style.opacity = '.4';
-  setTimeout(() => { b.textContent = '↻ Refresh'; b.style.opacity = '1'; setTs(); }, 800);
 }
 setTs();
 
@@ -713,11 +708,7 @@ async function loadData() {
   } catch(e) { console.error('combined widget:', e); }
 }
 
-function doRefresh() {
-  const b = document.getElementById('rb');
-  b.textContent = '↻'; b.style.opacity = '.4';
-  loadData().then(() => { b.textContent = '↻ Refresh'; b.style.opacity = '1'; });
-}
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 
 // ── Init ──
 window.addEventListener('load', () => {

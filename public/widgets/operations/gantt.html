@@ -5,7 +5,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow:hidden;height:100%;transition:background .3s,color .3s;}
-body.light{background:#F5F5F5;color:#111;}
+body.light{background:#FFFFFF;color:#111;}
 :root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--row:42px;--phRow:32px;--dayW:48px;}
 body.light{--muted:rgba(0,0,0,.4);--g:#5C9900;--gm:rgba(92,153,0,.1);--gb:rgba(92,153,0,.2);}
 ::-webkit-scrollbar{width:6px;height:6px;}::-webkit-scrollbar-track{background:transparent;}
@@ -637,7 +637,7 @@ function render(data){
 async function loadData(){
   try{const r=await fetch(apiUrl('/api/data/projects?view=gantt'));const j=await r.json();if(j.error){console.error('API:',j.error);return;}render(j);setTs();}catch(e){console.error('gantt:',e);}
 }
-function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});});}
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 setTs();loadData();setInterval(loadData,5*60*1000);
 </script>
 <div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>

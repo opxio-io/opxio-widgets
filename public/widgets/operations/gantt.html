@@ -55,11 +55,16 @@ body.light .ph-tab.active{background:var(--gm);border-color:var(--gb);color:var(
 @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.4;transform:scale(.7);}}
 
 /* ── Legend ── */
-.legend{display:flex;gap:14px;margin-bottom:10px;}
-.leg-i{display:flex;align-items:center;gap:5px;}
-.leg-bar{width:18px;height:10px;border-radius:999px;}
-.leg-l{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.06em;}
-body.light .leg-l{color:rgba(0,0,0,.2);}
+.legend{display:flex;align-items:center;gap:0;margin-bottom:10px;flex-wrap:wrap;background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:6px 12px;}
+body.light .legend{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.05);}
+.leg-i{display:flex;align-items:center;gap:5px;padding:0 10px;}
+.leg-i+.leg-i{border-left:1px solid rgba(255,255,255,.06);}
+body.light .leg-i+.leg-i{border-left-color:rgba(0,0,0,.06);}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.leg-l{font-size:9px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+body.light .leg-l{color:rgba(0,0,0,.28);}
+.leg-pin{width:14px;height:14px;border-radius:50%;background:rgba(255,107,107,.12);border:1.5px solid rgba(255,107,107,.5);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:var(--red);flex-shrink:0;}
+.leg-ms{width:10px;height:10px;transform:rotate(45deg);border-radius:2px;background:var(--g);flex-shrink:0;}
 
 /* ── GANTT CONTAINER ── */
 .gantt-outer{display:flex;flex-direction:column;height:calc(100vh - 160px);padding-bottom:16px;}
@@ -73,10 +78,15 @@ body.light .g-left{border-right-color:rgba(0,0,0,.06);}
 body.light .gl-hdr{color:rgba(0,0,0,.3);background:#fff;border-bottom-color:rgba(0,0,0,.06);}
 
 /* Phase group header */
-.gl-phase{height:var(--phRow);display:flex;align-items:center;gap:8px;padding:0 16px;background:rgba(170,255,0,.04);border-bottom:1px solid rgba(170,255,0,.06);border-top:1px solid rgba(170,255,0,.04);}
+.gl-phase{height:var(--phRow);display:flex;align-items:center;gap:8px;padding:0 12px 0 16px;background:rgba(170,255,0,.04);border-bottom:1px solid rgba(170,255,0,.06);border-top:1px solid rgba(170,255,0,.04);}
 body.light .gl-phase{background:rgba(92,153,0,.04);border-bottom-color:rgba(92,153,0,.08);}
-.gl-phase-name{font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.06em;}
-.gl-phase-cnt{font-size:9px;font-weight:700;color:rgba(170,255,0,.4);margin-left:auto;}
+.gl-phase-name{font-size:11px;font-weight:800;color:var(--g);text-transform:uppercase;letter-spacing:.06em;flex:1;}
+.gl-phase-cnt{font-size:9px;font-weight:700;color:rgba(170,255,0,.4);}
+.gl-phase.collapsed{background:rgba(170,255,0,.02);opacity:.6;}
+.gl-phase-toggle{background:none;border:1px solid rgba(170,255,0,.15);color:rgba(170,255,0,.5);font-size:9px;font-weight:800;padding:2px 7px;border-radius:4px;cursor:pointer;font-family:'Satoshi',sans-serif;transition:all .15s;white-space:nowrap;}
+.gl-phase-toggle:hover{background:rgba(170,255,0,.08);color:var(--g);border-color:var(--gb);}
+body.light .gl-phase-toggle{border-color:rgba(92,153,0,.2);color:rgba(92,153,0,.5);}
+body.light .gl-phase-toggle:hover{background:rgba(92,153,0,.08);color:var(--g);}
 
 /* Task row */
 .gl-task{height:var(--row);display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid rgba(255,255,255,.03);transition:background .15s;}
@@ -157,10 +167,13 @@ body.light .gr-cell.wknd-col{background:rgba(0,0,0,.01);}
 .b-Done{background:var(--g);opacity:.85;}
 .b-InProgress{background:var(--amber);}
 .b-Blocked{background:var(--red);opacity:.85;}
-.b-NotStarted{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.06);}
-body.light .b-NotStarted{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.04);}
 /* Overdue — task past due date and not done */
 .b-Overdue{background:linear-gradient(90deg,var(--amber),var(--red));}
+/* Due date pin for Not Started tasks */
+.g-due-mark{position:absolute;top:10px;width:20px;height:20px;border-radius:50%;background:rgba(255,107,107,.12);border:1.5px solid rgba(255,107,107,.5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--red);z-index:2;cursor:default;transition:background .15s;}
+.g-due-mark:hover{background:rgba(255,107,107,.22);}
+.g-due-mark.overdue{background:rgba(255,107,107,.2);border-color:var(--red);animation:pin-pulse 2s ease-in-out infinite;}
+@keyframes pin-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.3);}50%{box-shadow:0 0 0 5px rgba(255,107,107,0);}}
 
 /* ── Milestone diamond ── */
 .g-ms{position:absolute;top:11px;width:20px;height:20px;z-index:3;cursor:default;}
@@ -201,13 +214,12 @@ body.light .toast{background:#fff;border-color:rgba(92,153,0,.3);color:#5C9900;}
 <div class="phase-tabs" id="phase-tabs"></div>
 
 <div class="legend">
-  <div class="leg-i"><div class="leg-bar b-Done" style="opacity:1"></div><span class="leg-l">Done</span></div>
-  <div class="leg-i"><div class="leg-bar b-InProgress"></div><span class="leg-l">In Progress</span></div>
-  <div class="leg-i"><div class="leg-bar b-Blocked"></div><span class="leg-l">Blocked</span></div>
-  <div class="leg-i"><div class="leg-bar b-NotStarted" style="border:1px solid rgba(255,255,255,.06)"></div><span class="leg-l">Not Started</span></div>
-  <div class="leg-i"><div class="leg-bar b-Overdue"></div><span class="leg-l">Overdue</span></div>
-  <div class="leg-i"><div style="width:12px;height:12px;transform:rotate(45deg);border-radius:2px;background:var(--g);"></div><span class="leg-l">Milestone</span></div>
-  <div class="leg-i"><svg width="18" height="10"><path d="M0 5 L14 5" stroke="rgba(255,255,255,.25)" stroke-width="1.5" fill="none"/><polygon points="14,2 18,5 14,8" fill="rgba(255,255,255,.25)"/></svg><span class="leg-l">Dependency</span></div>
+  <div class="leg-i"><div class="leg-dot" style="background:var(--g)"></div><span class="leg-l">Done</span></div>
+  <div class="leg-i"><div class="leg-dot" style="background:var(--amber)"></div><span class="leg-l">In Progress</span></div>
+  <div class="leg-i"><div class="leg-dot" style="background:var(--red)"></div><span class="leg-l">Blocked</span></div>
+  <div class="leg-i"><div class="leg-dot" style="background:linear-gradient(90deg,var(--amber),var(--red))"></div><span class="leg-l">Overdue</span></div>
+  <div class="leg-i"><div class="leg-pin">!</div><span class="leg-l">Due Date</span></div>
+  <div class="leg-i"><div class="leg-ms"></div><span class="leg-l">Milestone</span></div>
 </div>
 
 <div class="gantt-outer">
@@ -226,12 +238,19 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 function fmtNice(iso){if(!iso)return'';const d=new Date(iso);if(isNaN(d))return iso;return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})+', '+d.toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit',hour12:true,timeZone:'Asia/Kuala_Lumpur'});}
 
 let allProjects=[], activeIdx=0, activePhase='all';
+let expandedDonePhases=new Set(); // done phases the user has manually expanded
+function togglePhaseCollapse(ph){
+  if(expandedDonePhases.has(ph)) expandedDonePhases.delete(ph);
+  else expandedDonePhases.add(ph);
+  renderGantt();
+}
+window.togglePhaseCollapse=togglePhaseCollapse;
 const DAY_W=48;
 const DAY_NAMES=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 const MON_NAMES=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 function selectProject(idx){
-  activeIdx=idx;activePhase='all';
+  activeIdx=idx;activePhase='all';expandedDonePhases=new Set();
   document.querySelectorAll('#proj-sel .sel-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
   buildPhaseTabs(allProjects[idx]);
   renderGantt();
@@ -416,8 +435,11 @@ function renderGantt(){
   const flatRows=[];
   for(const ph of phaseNames){
     const phTasks=sortTasks(phaseGroups[ph]);
-    if(showPhaseHeaders){const phDone=phTasks.filter(t=>t.status==='Done').length;flatRows.push({type:'phase',name:ph,count:phTasks.length,done:phDone});}
-    for(const t of phTasks) flatRows.push({type:'task',data:t});
+    const phDone=phTasks.filter(t=>t.status==='Done').length;
+    const isPhDone=phTasks.length>0&&phDone===phTasks.length;
+    const isCollapsed=showPhaseHeaders&&isPhDone&&!expandedDonePhases.has(ph);
+    if(showPhaseHeaders) flatRows.push({type:'phase',name:ph,count:phTasks.length,done:phDone,isPhDone,isCollapsed});
+    if(!isCollapsed) for(const t of phTasks) flatRows.push({type:'task',data:t});
   }
 
   // LEFT PANEL
@@ -425,7 +447,10 @@ function renderGantt(){
   let leftHTML=`<div class="gl-hdr">Tasks · ${doneCount}/${tasks.length} done</div>`;
   for(const row of flatRows){
     if(row.type==='phase'){
-      leftHTML+=`<div class="gl-phase"><span class="gl-phase-name">${esc(row.name)}</span><span class="gl-phase-cnt">${row.done}/${row.count} done</span></div>`;
+      const toggleBtn=row.isPhDone
+        ?`<button class="gl-phase-toggle" onclick="togglePhaseCollapse('${esc(row.name)}')">${row.isCollapsed?'▶ Expand':'▼ Hide'}</button>`
+        :'';
+      leftHTML+=`<div class="gl-phase${row.isCollapsed?' collapsed':''}"><span class="gl-phase-name">${esc(row.name)}</span><span class="gl-phase-cnt">${row.done}/${row.count}</span>${toggleBtn}</div>`;
     } else {
       const t=row.data;
       const isDone=t.status==='Done';
@@ -465,7 +490,7 @@ function renderGantt(){
   const taskRowMap={}; // taskId → {row, barMidX, barEndX}
   for(const row of flatRows){
     if(row.type==='phase'){
-      rowsHTML+=`<div class="gr-phase-row">${makeCells()}</div>`;
+      rowsHTML+=`<div class="gr-phase-row${row.isCollapsed?' collapsed':''}">${makeCells()}</div>`;
       rowIdx++;
     } else {
       const t=row.data;
@@ -481,6 +506,19 @@ function renderGantt(){
           <div class="g-ms" style="left:${msX}px;" title="${tooltip}"><div class="g-ms-inner ms-${t._overdue?'Overdue':t.status.replace(/\s/g,'')}"></div></div>
         </div>`;
         taskRowMap[t.id]={row:rowIdx,x:msX+10};
+      } else if(t.status==='Not Started'){
+        // No bar — red ! pin at due date position
+        const dueI=t.due?(dayIdx[t.due]??ei):null;
+        if(dueI!=null){
+          const pinX=dueI*DAY_W+DAY_W/2-10;
+          rowsHTML+=`<div class="gr-row">${makeCells()}
+            <div class="g-due-mark${t._overdue?' overdue':''}" style="left:${pinX}px;" title="${tooltip}">!</div>
+          </div>`;
+          taskRowMap[t.id]={row:rowIdx,x:pinX+10};
+        } else {
+          rowsHTML+=`<div class="gr-row">${makeCells()}</div>`;
+          taskRowMap[t.id]={row:rowIdx,x:0};
+        }
       } else {
         const barLeft=si*DAY_W+3;
         const barWidth=Math.max((ei-si+1)*DAY_W-6,18);

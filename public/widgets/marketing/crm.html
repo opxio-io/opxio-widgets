@@ -81,7 +81,9 @@
         #lbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:9999;pointer-events:none;background:transparent;}
         #lbar.on{background:linear-gradient(90deg,#60A5FA,#2DD4BF,#A78BFA);animation:lbar-anim 1.2s ease-in-out infinite;}
         @keyframes lbar-anim{0%{opacity:1;transform:scaleX(0);transform-origin:left}60%{opacity:1;transform:scaleX(0.85);transform-origin:left}100%{opacity:0;transform:scaleX(1);transform-origin:left}}
-    </style>
+    .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
+</style>
 </head>
 <body>
     <div id="lbar"></div>
@@ -109,6 +111,6 @@
         loadData();
         setInterval(loadData,600000);    </script>
 
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 </body>
 </html>

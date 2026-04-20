@@ -27,6 +27,8 @@ body.light .ts{color:rgba(0,0,0,.22);}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 body.light ::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,.18);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style>
 <style>
 .panel{padding:22px 24px;}
@@ -46,6 +48,8 @@ body.light .ctip{background:#fff;border-color:rgba(0,0,0,.1);}
 .leg-dot{width:8px;height:8px;border-radius:50%;background:var(--g);}
 .leg-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.5);}
 body.light .leg-lbl{color:rgba(0,0,0,.4);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
 <div class="topbar">
   <div><p class="eyebrow" id="_eyebrow" data-os="Revenue OS">REVENUE OS</p><h1 class="h-title">Visitor Insights</h1></div>
@@ -259,7 +263,7 @@ function drawChart(){
 window.addEventListener('load',()=>setTimeout(drawChart,80));
 window.addEventListener('resize',drawChart);
 </script>
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

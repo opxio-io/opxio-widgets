@@ -108,6 +108,8 @@ body.light .heat-lbl{color:rgba(0,0,0,.2);}
 
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
 body.light .empty{color:rgba(0,0,0,.18);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
 
 <div class="header">
@@ -271,7 +273,7 @@ async function loadData(){
 function doRefresh(){const b=document.getElementById('rb');b.textContent='↻';b.style.opacity='.4';loadData().then(()=>{b.textContent='↻ Refresh';b.style.opacity='1';});}
 setTs();loadData();setInterval(loadData,5*60*1000);
 </script>
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

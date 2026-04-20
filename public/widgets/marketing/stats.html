@@ -125,6 +125,30 @@
     transition: all 0.2s;
   }
   .refresh-btn:hover { border-color: #AAFF00; color: #AAFF00; }
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
+
+/* Light mode */
+body.light { background: #FFFFFF; }
+body.light .card { background: #FFFFFF; border-color: rgba(0,0,0,.09); box-shadow: 0 1px 3px rgba(0,0,0,.04); }
+body.light .card:hover { border-color: rgba(0,0,0,.15); }
+body.light .card::before { background: #4F8B00; }
+body.light .card.alert:hover { border-color: rgba(220,38,38,.25); }
+body.light .card.alert:hover::before { background: #DC2626; }
+body.light .card.alert .val { color: #DC2626; }
+body.light .card.alert .dot { background: #DC2626; }
+body.light .card.ok .val { color: #4F8B00; }
+body.light .label { color: rgba(0,0,0,.42); }
+body.light .val { color: #4F8B00; }
+body.light .sub { color: rgba(0,0,0,.42); }
+body.light .dot { background: #4F8B00; }
+body.light .card.alert .dot { background: #DC2626; }
+body.light .eyebrow { color: rgba(0,0,0,.45); }
+body.light .h-title { color: #111; }
+body.light .refresh-btn { background: #EFEFEF; border-color: rgba(0,0,0,.09); color: rgba(0,0,0,.45); }
+body.light .refresh-btn:hover { border-color: #4F8B00; color: #4F8B00; }
+body.light .loading-text { color: rgba(0,0,0,.35); }
+body.light .spinner { border-color: rgba(0,0,0,.08); border-top-color: #4F8B00; }
 </style>
 </head>
 <body>
@@ -273,7 +297,7 @@ load();
 setInterval(load, 600000);
 </script>
 
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

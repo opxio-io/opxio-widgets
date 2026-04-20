@@ -76,6 +76,43 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .spinner{width:16px;height:16px;border:2px solid rgba(170,255,0,.1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
+
+/* Light mode */
+body.light{background:#FFFFFF;color:#111;}
+body.light{--g:#4F8B00;--gm:rgba(79,139,0,.1);--gb:rgba(79,139,0,.22);}
+body.light .eyebrow{color:rgba(0,0,0,.42);}
+body.light .h-title{color:#111;}
+body.light .ts{color:rgba(0,0,0,.35);}
+body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.42);}
+body.light .btn:hover{border-color:var(--gb);color:var(--g);}
+body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.08);}
+body.light .card-hdr{border-bottom-color:rgba(0,0,0,.06);}
+body.light .card-title{color:rgba(0,0,0,.52);}
+body.light .period-lbl{color:rgba(0,0,0,.35);}
+body.light .tabs{background:rgba(0,0,0,.06);}
+body.light .tab{color:rgba(0,0,0,.35);}
+body.light .tab.active{background:rgba(79,139,0,.1);color:var(--g);border-color:rgba(79,139,0,.22);}
+body.light .col-hdr{border-bottom-color:rgba(0,0,0,.06);}
+body.light .ch{color:rgba(0,0,0,.42);}
+body.light .ch.accent{color:rgba(0,0,0,.52);}
+body.light .staff-row{border-bottom-color:rgba(0,0,0,.06);}
+body.light .staff-row:hover{background:rgba(79,139,0,.02);}
+body.light .s-dot-on{background:var(--g);box-shadow:0 0 5px rgba(79,139,0,.4);}
+body.light .s-dot-off{background:#DC2626;}
+body.light .s-dot-lv{background:#B45309;}
+body.light .s-label{color:#111;}
+body.light .s-role{color:rgba(0,0,0,.42);}
+body.light .type-num{color:#111;}
+body.light .type-dur{color:rgba(0,0,0,.35);}
+body.light .total-num{color:var(--g);}
+body.light .total-dur-val{color:#111;}
+body.light .zero-num{color:rgba(0,0,0,.12);}
+body.light .empty-row{color:rgba(0,0,0,.35);}
+body.light .loading-text{color:rgba(0,0,0,.35);}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.08);}
+body.light .spinner{border-color:rgba(0,0,0,.08);border-top-color:var(--g);}
 </style>
 </head>
 <body>
@@ -214,7 +251,7 @@ loadData();
 setInterval(loadData,600000);
 </script>
 
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

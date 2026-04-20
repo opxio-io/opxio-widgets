@@ -85,6 +85,41 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 28px;backg
 .spinner{width:18px;height:18px;border:2px solid rgba(170,255,0,.15);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 .loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
+
+/* Light mode */
+body.light{background:#FFFFFF;color:#111;}
+body.light{--g:#4F8B00;--gm:rgba(79,139,0,.1);--gb:rgba(79,139,0,.22);--amber:#B45309;--red:#DC2626;--blue:#2563EB;--purple:#7C3AED;}
+body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+body.light .card:hover{border-color:rgba(0,0,0,.15);}
+body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.45);}
+body.light .btn:hover{border-color:var(--gb);color:var(--g);}
+body.light .eyebrow{color:rgba(0,0,0,.45);}
+body.light .h-title{color:#111;}
+body.light .ts{color:rgba(0,0,0,.35);}
+body.light .sec-lbl{color:rgba(0,0,0,.42);}
+body.light .s-lbl{color:rgba(0,0,0,.42);}
+body.light .s-val{color:var(--g);}
+body.light .s-val.red{color:var(--red);}
+body.light .s-val.amber{color:var(--amber);}
+body.light .s-sub{color:rgba(0,0,0,.35);}
+body.light .panel-title{color:rgba(0,0,0,.62);}
+body.light .panel-badge{background:rgba(79,139,0,.1);color:var(--g);border-color:rgba(79,139,0,.2);}
+body.light .hbar-lbl{color:rgba(0,0,0,.52);}
+body.light .hbar-track{background:rgba(0,0,0,.05);}
+body.light .hbar-val{color:#111;}
+body.light .hbar-pct{color:rgba(0,0,0,.35);}
+body.light .pl-lbl{color:rgba(0,0,0,.52);}
+body.light .pl-count{color:#111;}
+body.light .td-lbl{color:rgba(0,0,0,.52);}
+body.light .td-count{color:#111;}
+body.light .task-mini{background:#EFEFEF;border-color:rgba(0,0,0,.08);}
+body.light .task-mini-val{color:#111;}
+body.light .task-mini-lbl{color:rgba(0,0,0,.35);}
+body.light .loading-text{color:rgba(0,0,0,.35);}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
+body.light .spinner{border-color:rgba(0,0,0,.08);border-top-color:var(--g);}
 </style>
 </head>
 <body>
@@ -330,7 +365,7 @@ function render(){
 render();
 </script>
 
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

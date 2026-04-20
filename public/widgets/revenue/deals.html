@@ -60,7 +60,8 @@ body.light .s-sub{color:rgba(0,0,0,0.54);}
 .sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:14px 0 8px;}
 body.light .sec-lbl{color:rgba(0,0,0,0.43);}
 
-body.light body.light body.light body.light ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 
 /* ── Icon buttons (consistent UI) ── */
 .h-left{display:flex;flex-direction:column;gap:2px;}
@@ -75,6 +76,8 @@ body.light .icon-btn:hover{background:rgba(79,139,0,.1);border-color:rgba(79,139
 /* Light mode text overrides */
 body.light .h-title{color:#111;}
 body.light .s-tag{color:rgba(0,0,0,.7);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
@@ -160,7 +163,7 @@ loadData();
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 setInterval(loadData, 5*60*1000);
 </script>
-<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
   const el = document.getElementById('_eyebrow');

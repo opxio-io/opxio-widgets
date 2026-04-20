@@ -53,7 +53,8 @@ body.light .overview-title{color:rgba(0,0,0,.28);}
 @media(max-width:600px){.top-row{grid-template-columns:1fr;}}
 
 /* Ring Card */
-.ring-card{padding:28px;display:flex;align-items:center;gap:24px;}
+.ring-card{padding:20px 28px 28px;display:flex;flex-direction:column;gap:0;}
+.ring-card-body{display:flex;align-items:center;gap:24px;margin-top:14px;}
 .ring-wrap{position:relative;flex-shrink:0;}
 .ring-svg{transform:rotate(-90deg);overflow:visible;}
 .ring-bg{fill:none;stroke:rgba(255,255,255,.06);stroke-width:8;}
@@ -361,23 +362,25 @@ function renderMainView(data) {
 
     <div class="top-row">
       <div class="card ring-card">
-        <div class="ring-wrap">
-          <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120">
-            <circle class="ring-bg" cx="60" cy="60" r="${r}"/>
-            <circle class="ring-fill" cx="60" cy="60" r="${r}"
-              stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
-          </svg>
-          <div class="ring-center">
-            <div class="ring-pct">${o.pct}%</div>
-            <div class="ring-sub">Complete</div>
+        <div class="overview-title">Build Overview</div>
+        <div class="ring-card-body">
+          <div class="ring-wrap">
+            <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120">
+              <circle class="ring-bg" cx="60" cy="60" r="${r}"/>
+              <circle class="ring-fill" cx="60" cy="60" r="${r}"
+                stroke-dasharray="${circ}" stroke-dashoffset="${offset}"/>
+            </svg>
+            <div class="ring-center">
+              <div class="ring-pct">${o.pct}%</div>
+              <div class="ring-sub">Complete</div>
+            </div>
           </div>
-        </div>
-        <div class="ring-stats">
-          <div class="overview-title" style="margin:0 0 10px;">Build Overview</div>
-          <div class="rs-row"><div class="rs-dot" style="background:var(--g)"></div><span class="rs-lbl">Done</span><span class="rs-val">${o.done}</span></div>
-          <div class="rs-row"><div class="rs-dot" style="background:var(--amber)"></div><span class="rs-lbl">In Progress</span><span class="rs-val">${o.inProgress}</span></div>
-          <div class="rs-row"><div class="rs-dot" style="background:rgba(255,255,255,.1)"></div><span class="rs-lbl">Total</span><span class="rs-val">${o.total}</span></div>
-          ${datesHTML}
+          <div class="ring-stats">
+            <div class="rs-row"><div class="rs-dot" style="background:var(--g)"></div><span class="rs-lbl">Done</span><span class="rs-val">${o.done}</span></div>
+            <div class="rs-row"><div class="rs-dot" style="background:var(--amber)"></div><span class="rs-lbl">In Progress</span><span class="rs-val">${o.inProgress}</span></div>
+            <div class="rs-row"><div class="rs-dot" style="background:rgba(255,255,255,.1)"></div><span class="rs-lbl">Total</span><span class="rs-val">${o.total}</span></div>
+            ${datesHTML}
+          </div>
         </div>
       </div>
 

@@ -17,7 +17,7 @@ const OS_TO_DB_GROUPS = {
   operations:   ["Operations OS"],
   business:     ["Revenue OS", "Operations OS"],
   marketing:    ["Marketing OS"],
-  agency:       ["Marketing OS", "Agency Pack"],
+  agency:       ["Marketing OS"],
   custom:       ["Revenue OS", "Operations OS", "Marketing OS", "Agency Pack"],
   team:         ["Operations OS"],
   retention:    ["Revenue OS", "Operations OS"],

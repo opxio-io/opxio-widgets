@@ -217,22 +217,31 @@ async function setup(payload) {
     }
   }
 
-  // Create tasks in parallel batches of 8
+  // Create tasks in parallel batches of 8, collect created task IDs
   const BATCH = 8
   let tasksCreated = 0
+  const createdTaskIds = []
   for (let i = 0; i < allTaskBodies.length; i += BATCH) {
     const batch = allTaskBodies.slice(i, i + BATCH)
-    await Promise.all(batch.map(body => createPage(body, token)))
+    const pages = await Promise.all(batch.map(body => createPage(body, token)))
+    pages.forEach(p => createdTaskIds.push(p.id.replace(/-/g, "")))
     tasksCreated += batch.length
   }
 
-  // ── Link phases to project ────────────────────────────────────────────────
+  // ── Link phases + tasks to project ───────────────────────────────────────
+  // Tasks relation is patched in chunks of 25 (Notion API PATCH limit per call)
   const phaseIds = createdPhases.map(p => p.phaseId)
 
   await patchPage(projectId, {
     "Phases":               { relation: phaseIds.map(id => ({ id })) },
     "Target Handover Date": { date: { start: targetDate } },
   }, token)
+
+  // Link all tasks to Project.Tasks relation in one patch
+  // (Notion truncates the response to 25 but stores all IDs — has_more: true)
+  await patchPage(projectId, {
+    "Tasks": { relation: createdTaskIds.map(id => ({ id })) },
+  }, token).catch(e => console.warn("[setup_project] link tasks to project:", e.message))
 
   // ── Embed progress widget on project page ─────────────────────────────────
   const widgetUrl = `https://widgets.opxio.io/operations/progress?project=${projectId}`

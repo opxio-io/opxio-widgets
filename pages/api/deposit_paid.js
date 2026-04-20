@@ -415,8 +415,8 @@ async function run(payload) {
   }
 
   // ── Create Client Account record ───────────────────────────────────────────
-  // Build OS Installed list from package + add-ons
-  const packages = []
+  // Build OS Installed list — always start with Base OS, then purchased OS + add-ons
+  const packages = ["Base OS"]
   if (formPackage) packages.push(formPackage)
   formAddons.forEach(a => packages.push(a))
 

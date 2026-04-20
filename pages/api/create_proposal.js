@@ -382,6 +382,25 @@ async function processProposal(sourceId) {
     if (picIds.length) break
   }
 
+  // ── Check if client already has Base OS installed ─────────────────────────
+  // Look up Client Accounts linked to this company — if "Base OS" is in OS Installed,
+  // skip adding it as a line item (already installed, no need to charge again)
+  let baseOsAlreadyInstalled = false
+  if (companyIds.length) {
+    try {
+      const caRows = await queryDB(DB.CLIENT_ACCOUNTS, {
+        property: "Company", relation: { contains: companyIds[0] }
+      }, token)
+      for (const ca of caRows) {
+        const osInstalled = (ca.properties["OS Installed"]?.multi_select || []).map(x => x.name)
+        if (osInstalled.includes("Base OS")) { baseOsAlreadyInstalled = true; break }
+      }
+      console.log("[create_proposal] baseOsAlreadyInstalled:", baseOsAlreadyInstalled)
+    } catch (e) {
+      console.warn("[create_proposal] client account lookup:", e.message)
+    }
+  }
+
   // Resolve OS type:
   // - Lead: "OS Interest" multi_select (use first value) or select
   // - Deal: "OS Type" relation to Catalogue (fetch the page) or "Packages" multi_select (first value)
@@ -526,7 +545,8 @@ async function processProposal(sourceId) {
 
   // ── 5. Fill line items ─────────────────────────────────────────────────────
   const lineItems = []
-  if (isOS && baseProduct?.id) lineItems.push(baseProduct)
+  // Only include Base OS if client doesn't already have it installed
+  if (isOS && baseProduct?.id && !baseOsAlreadyInstalled) lineItems.push(baseProduct)
   if (mainProduct?.id)         lineItems.push(mainProduct)
   lineItems.push(...addonProducts.filter(Boolean))
 

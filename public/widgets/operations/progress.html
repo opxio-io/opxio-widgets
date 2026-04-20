@@ -33,12 +33,20 @@ body.light .pill-muted{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
 .phase-banner{padding:18px 24px;margin-bottom:16px;display:flex;align-items:center;gap:16px;background:linear-gradient(135deg, rgba(170,255,0,.06) 0%, rgba(170,255,0,.02) 100%);border:1px solid rgba(170,255,0,.12);}
 body.light .phase-banner{background:linear-gradient(135deg, rgba(92,153,0,.06) 0%, rgba(92,153,0,.02) 100%);border-color:rgba(92,153,0,.15);}
 .pb-icon{width:44px;height:44px;border-radius:12px;background:var(--gm);border:2px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--g);flex-shrink:0;}
-.pb-text{flex:1;}
+.pb-text{flex:1;min-width:0;}
 .pb-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:2px;}
 body.light .pb-label{color:rgba(0,0,0,.3);}
 .pb-name{font-size:20px;font-weight:900;color:var(--g);letter-spacing:-.02em;}
 .pb-meta{font-size:12px;font-weight:600;color:rgba(255,255,255,.3);margin-top:2px;}
 body.light .pb-meta{color:rgba(0,0,0,.3);}
+.pb-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden;margin-top:10px;}
+body.light .pb-bar-track{background:rgba(0,0,0,.07);}
+.pb-bar-fill{height:5px;border-radius:999px;background:var(--g);transition:width .9s cubic-bezier(.4,0,.2,1);}
+.pb-pct{font-size:14px;font-weight:900;color:var(--g);flex-shrink:0;min-width:36px;text-align:right;letter-spacing:-.3px;}
+
+/* ── Section title ── */
+.overview-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.28);margin:4px 0 10px;padding:0 4px;}
+body.light .overview-title{color:rgba(0,0,0,.28);}
 
 /* ── Top Row: Ring + Active Tasks ── */
 .top-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
@@ -346,9 +354,12 @@ function renderMainView(data) {
         <div class="pb-label">Current Phase</div>
         <div class="pb-name">${esc(activePhaseShort || 'Not started')}</div>
         <div class="pb-meta">${activePhaseTasks.done || 0} of ${activePhaseTasks.total || 0} tasks complete${activePhaseRel ? ` · <span style="color:${activePhaseRel.cls === 'overdue' ? 'var(--red)' : activePhaseRel.cls === 'soon' ? 'var(--amber)' : 'inherit'}">${activePhaseRel.text}</span>` : ''}</div>
+        <div class="pb-bar-track"><div class="pb-bar-fill" style="width:${activePhaseTasks.total > 0 ? Math.round((activePhaseTasks.done / activePhaseTasks.total) * 100) : 0}%"></div></div>
       </div>
+      <div class="pb-pct">${activePhaseTasks.total > 0 ? Math.round((activePhaseTasks.done / activePhaseTasks.total) * 100) : 0}%</div>
     </div>
 
+    <div class="overview-title">Build Overview</div>
     <div class="top-row">
       <div class="card ring-card">
         <div class="ring-wrap">

@@ -3,18 +3,18 @@
 <title>Opxio — Lead Pipeline</title><link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
 body.light{background:#F5F5F5;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);}
-body.light{--g:#5C9900;--gb:rgba(92,153,0,.22);--lost:#D94F1E;}
-.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
+:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);}
+body.light{--muted:rgba(0,0,0,.4);--g:#5C9900;--gb:rgba(92,153,0,.22);--lost:#D94F1E;}
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 body.light .card{background:#fff;border-color:rgba(0,0,0,.07);}
 .btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s;}
 .btn:hover{border-color:var(--gb);color:var(--g);}
 body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.4);}
-.eyebrow{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.28);}
-.h-title{font-size:18px;font-weight:900;letter-spacing:-.03em;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.3);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
 .ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
 body.light .ts{color:rgba(0,0,0,.22);}
 
@@ -36,7 +36,7 @@ body.light .s-sub{color:rgba(0,0,0,.28);}
 .stat.is-lost:hover{border-color:rgba(255,107,53,.18);}
 
 /* awaiting deposit — amber accent */
-:root{--amber:#FFB800;--amberm:rgba(255,184,0,.12);}
+:root{--muted:rgba(255,255,255,.4);--amber:#FFB800;--amberm:rgba(255,184,0,.12);}
 .stat.is-awaiting::before{background:linear-gradient(90deg,var(--amber),transparent);}
 .stat.is-awaiting .stat-dot{background:var(--amber);}
 .stat.is-awaiting .s-val{color:var(--amber);}
@@ -58,14 +58,24 @@ body.light .foot-item{color:rgba(0,0,0,.32);border-color:rgba(0,0,0,.05);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 ::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
+
+/* ── Icon buttons (consistent UI) ── */
+.h-left{display:flex;flex-direction:column;gap:2px;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
+body.light .icon-btn:hover{background:rgba(92,153,0,.08);border-color:rgba(92,153,0,.2);color:var(--g);}
 </style></head><body>
 
 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-  <div><p class="eyebrow" id="_eyebrow" data-os="Revenue OS">REVENUE OS</p><h1 class="h-title">Leads</h1></div>
+  <div class="h-left"><div class="eyebrow">Revenue OS · Opxio</div><h1 class="h-title">Leads</h1></div>
   <div style="display:flex;align-items:center;gap:6px;">
     <span class="ts" id="ts"></span>
-    <button class="btn" onclick="doRefresh()" id="rb">↻ Refresh</button>
-    <button class="btn" onclick="toggleMode()" id="mb">☀ Light</button>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
   </div>
 </div>
 
@@ -142,7 +152,7 @@ async function loadData(){
   } catch(e) { console.error('leads widget:', e); }
 }
 loadData();
-function doRefresh(){ const b=document.getElementById('rb'); b.textContent='↻'; b.style.opacity='.4'; loadData().then(()=>{ b.textContent='↻ Refresh'; b.style.opacity='1'; }); }
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}); }
 setInterval(loadData, 5*60*1000);
 </script>
 <div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>

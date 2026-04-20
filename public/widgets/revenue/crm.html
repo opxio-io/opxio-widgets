@@ -6,11 +6,11 @@
 <script src="https://cdn.jsdelivr.net/npm/topojson-client@3/dist/topojson-client.min.js"></script>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:16px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
 body.light{background:#F5F5F5;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;}
-body.light{--g:#5C9900;--gm:rgba(92,153,0,.1);--gb:rgba(92,153,0,.2);}
-.card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
+:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;}
+body.light{--muted:rgba(0,0,0,.4);--g:#5C9900;--gm:rgba(92,153,0,.1);--gb:rgba(92,153,0,.2);}
+.card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.08);}
 body.light .card{background:#fff;border-color:rgba(0,0,0,.06);}
 .btn{background:#2d2d2d;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:7px;cursor:pointer;transition:all .2s;}
@@ -26,9 +26,9 @@ body.light .mn-lbl{color:rgba(0,0,0,.5);}
 /* Top bar */
 .top-bar{display:flex;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap;}
 .top-right{display:flex;align-items:center;gap:6px;margin-left:auto;}
-.eyebrow{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.28);}
-.h-title{font-size:18px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.3);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
 body.light .h-title{color:#111;}
 .ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
 /* View tabs */
@@ -214,6 +214,16 @@ body.light .log-val{color:rgba(0,0,0,.4);}
 @media(max-width:700px){.stat-row-6,.stat-row-4{grid-template-columns:repeat(2,1fr);}.panel{padding:16px;}.f-lbl{width:76px;}.donut-wrap{flex-direction:column;gap:14px;}.chart-card{padding:14px 16px;}}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+
+/* ── Icon buttons (consistent UI) ── */
+.h-left{display:flex;flex-direction:column;gap:2px;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
+body.light .icon-btn:hover{background:rgba(92,153,0,.08);border-color:rgba(92,153,0,.2);color:var(--g);}
 </style></head><body>
 
 <div class="top-bar">
@@ -228,8 +238,8 @@ body.light .log-val{color:rgba(0,0,0,.4);}
       <span class="mn-lbl" id="mn-lbl">This Month</span>
       <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>›</button>
     </div>
-    <button class="btn" onclick="doRefresh()" id="rb">↻ Refresh</button>
-    <button class="btn" onclick="toggleLight()" id="lb">☀ Light</button>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="icon-btn" onclick="toggleLight()" id="lb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
   </div>
 </div>
 
@@ -558,9 +568,11 @@ function switchView(v){
   setTimeout(drawChart,50);
 }
 
+const SUN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 function toggleLight(){
   light=!light; document.body.classList.toggle('light',light);
-  document.getElementById('lb').textContent=light?'🌙 Dark':'☀ Light';
+  const lb=document.getElementById('lb');if(lb)lb.innerHTML=light?MOON_ICON:SUN_ICON;
   drawChart();
 }
 function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
@@ -1004,10 +1016,7 @@ async function loadData(){
   } catch(e){console.error('CRM widget:',e);}
 }
 
-function doRefresh(){
-  const b=document.getElementById('rb');
-  b.textContent='↻'; b.style.opacity='.4';
-  loadData().then(()=>{b.textContent='↻ Refresh';b.style.opacity='1';});
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});});
 }
 
 updateMonthNav();

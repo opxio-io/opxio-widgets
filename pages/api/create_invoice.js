@@ -12,23 +12,6 @@
 import { waitUntil } from "@vercel/functions"
 import { getPage, patchPage, createPage, queryDB, plain, DB, hdrs } from "../../lib/notion"
 
-// ── Default phases per package tier ─────────────────────────────────────────
-// Full OS installs get 5 phases; micro installs get 3.
-const PHASES_FULL = [
-  { no: 1, name: "Phase 1 — Discovery & Setup",         deliverables: "Kickoff meeting, scope confirmation, access & workspace setup" },
-  { no: 2, name: "Phase 2 — Core Build",                deliverables: "Database architecture, core modules, relations & automations" },
-  { no: 3, name: "Phase 3 — Advanced Build & Expansion", deliverables: "Dashboards, advanced automations, integrations, add-on modules" },
-  { no: 4, name: "Phase 4 — Client Review & Revisions",  deliverables: "Walkthrough session, client feedback, revisions & refinements" },
-  { no: 5, name: "Phase 5 — QA & Handover",              deliverables: "Final QA, documentation, training session, handover" },
-]
-
-const PHASES_MICRO = [
-  { no: 1, name: "Phase 1 — Discovery & Setup",          deliverables: "Kickoff, scope confirmation, workspace access" },
-  { no: 2, name: "Phase 2 — Build & Configure",          deliverables: "Module build, relations, automations" },
-  { no: 3, name: "Phase 3 — Review & Handover",          deliverables: "Client walkthrough, revisions, handover" },
-]
-
-const MICRO_PACKAGES = new Set(["Micro Install — 1 Module", "Micro Install — 2 Modules", "Micro Install — 3 Modules"])
 
 // ── Find inline Products & Services DB on a page (checks callouts too) ──
 async function findLineItemsDB(pageId, token) {
@@ -318,110 +301,22 @@ async function run(payload) {
   // Must be awaited — if fire-and-forget, Vercel cuts it off when run() returns.
   await copyLineItems(quotId, invId, token)
 
-  // ── 2. Create or Link Project ──────────────────────────────────────────────
-  let projectId = existingProjectId
+  // ── 2. Link Invoice → existing Project (add-ons only) ────────────────────
+  // For new installs, the Project is created at deposit_paid time — not here.
+  // For add-ons, the Quotation already has an existing Project linked.
+  const projectId = existingProjectId
 
-  if (!projectId) {
-    // Fallback: pull Company from Lead if Quotation doesn't have one
-    if (!companyId && leadId) {
-      try {
-        const lead = await getPage(leadId, token)
-        companyId = lead.properties.Company?.relation?.[0]?.id?.replace(/-/g, "") || null
-      } catch {}
-    }
-    // Also try pulling Company from Lead Name (format: "CompanyName — ...")
-    let companyName = ""
-    if (companyId) {
-      try {
-        const co = await getPage(companyId, token)
-        for (const v of Object.values(co.properties || {})) {
-          if (v.type === "title") { companyName = plain(v.title); break }
-        }
-      } catch {}
-    }
-    // Last resort: extract company name from Lead Name if it has " — " separator
-    if (!companyName && leadId) {
-      try {
-        const lead = await getPage(leadId, token)
-        for (const v of Object.values(lead.properties || {})) {
-          if (v.type === "title") {
-            const leadTitle = plain(v.title)
-            if (leadTitle.includes(" — ")) companyName = leadTitle.split(" — ")[0].trim()
-            else if (leadTitle.includes(" - ")) companyName = leadTitle.split(" - ")[0].trim()
-            break
-          }
-        }
-      } catch {}
-    }
-    // If package isn't resolved from Quotation, try Proposal's OS Type via Related Proposal
-    let resolvedPackage = packageName
-    if (!resolvedPackage && props["Related Proposal"]?.relation?.length) {
-      try {
-        const propPage = await getPage(props["Related Proposal"].relation[0].id.replace(/-/g, ""), token)
-        const propOsType = propPage.properties["OS Type"]?.select?.name
-        if (propOsType) resolvedPackage = propOsType
-      } catch {}
-    }
-    const projectName = companyName
-      ? `${companyName} — ${resolvedPackage || quoteType} Build`
-      : `${resolvedPackage || quoteType} Build`
-
-    const projProps = {
-      "Project Name": { title: [{ text: { content: projectName } }] },
-      "Status":       { status: { name: "Awaiting Build" } },
-      "Quotation":    { relation: [{ id: quotId }] },
-      "Invoice":      { relation: [{ id: invId }] },
-      ...(companyId ? { "Company": { relation: [{ id: companyId }] } } : {}),
-      ...(dealId    ? { "Deals":   { relation: [{ id: dealId }] } } : {}),
-    }
-
-    const projPage = await createPage({ parent: { database_id: DB.PROJECTS }, properties: projProps }, token)
-    projectId = projPage.id.replace(/-/g, "")
-    console.log("[create_invoice] Project created:", projectId)
-
-    // Note: Quotations DB has no "Project" field — no back-link needed here.
-    // Invoice → Client Account is linked later in deposit_paid.
-
-    // ── 2b. Create default Phases for the new project ──────────────────────
-    const phaseList = MICRO_PACKAGES.has(packageName) ? PHASES_MICRO : PHASES_FULL
-    const phaseIds  = []
-
-    for (const ph of phaseList) {
-      try {
-        const phPage = await createPage({
-          parent: { database_id: DB.PHASES },
-          properties: {
-            "Phase Name":   { title: [{ text: { content: ph.name } }] },
-            "Phase No.":    { number: ph.no },
-            "Status":       { select: { name: "Not Started" } },
-            "Project":      { relation: [{ id: projectId }] },
-            "Deliverables": { rich_text: [{ text: { content: ph.deliverables } }] },
-          },
-        }, token)
-        phaseIds.push(phPage.id.replace(/-/g, ""))
-      } catch (e) {
-        console.warn(`[create_invoice] phase ${ph.no} creation failed:`, e.message)
-      }
-    }
-
-    // Link all phases back to the project's Phases relation
-    if (phaseIds.length) {
-      await patchPage(projectId, {
-        "Phases": { relation: phaseIds.map(id => ({ id })) },
-      }, token).catch(e => console.warn("[create_invoice] link phases:", e.message))
-    }
-    console.log(`[create_invoice] Created ${phaseIds.length} phases for project:`, projectId)
-  } else {
-    // Add-on: append supplementary invoice to existing project
+  if (existingProjectId) {
     try {
-      const proj    = await getPage(projectId, token)
+      const proj    = await getPage(existingProjectId, token)
       const existing = proj.properties.Invoice?.relation || []
       const merged   = [...existing.map(r => ({ id: r.id })), { id: invId }]
-      await patchPage(projectId, { "Invoice": { relation: merged } }, token)
+      await patchPage(existingProjectId, { "Invoice": { relation: merged } }, token)
+      await patchPage(invId, { "Project": { relation: [{ id: existingProjectId }] } }, token).catch(() => {})
     } catch (e) {
       console.warn("[create_invoice] link add-on invoice:", e.message)
     }
-    console.log("[create_invoice] Linked supplementary invoice to existing project:", projectId)
+    console.log("[create_invoice] Linked supplementary invoice to existing project:", existingProjectId)
   }
 
   // Add-on quotations use Quote Type "Expansion" (not "Add-on" — invalid option)

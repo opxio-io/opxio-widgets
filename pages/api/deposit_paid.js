@@ -397,49 +397,61 @@ async function run(payload) {
     }, token).catch(e => console.warn("[deposit_paid] deal form link:", e.message))
   }
 
-  // ── Project setup (heavy — may take multiple seconds) ─────────────────────
-  // Note: Invoice "Client Account" field points to Client Accounts DB — not Projects.
-  // Find project by querying Projects DB via Quotation or Company relation.
-  let projectId = null
+  // ── Find or create Project ────────────────────────────────────────────────
+  // Project is created HERE at deposit paid — not at invoice creation.
+  // Primary: Invoice.Project direct link (set if this is an add-on flow).
+  // Otherwise create fresh.
+  let projectId = props.Project?.relation?.[0]?.id?.replace(/-/g, "") || null
   let phasesCount = 0, tasksCount = 0
 
-  // Try Quotation → Project
-  if (quotationId) {
+  // Fallback queries for edge cases (e.g. manually created invoices)
+  if (!projectId && quotationId) {
     try {
-      const rows = await queryDB(DB.PROJECTS, {
-        property: "Quotation", relation: { contains: quotationId }
-      }, token)
+      const rows = await queryDB(DB.PROJECTS, { property: "Quotation", relation: { contains: quotationId } }, token)
       if (rows.length) projectId = rows[0].id.replace(/-/g, "")
     } catch {}
   }
-  // Try Invoice → Project (Projects DB has an "Invoice" relation field)
-  if (!projectId) {
-    try {
-      const rows = await queryDB(DB.PROJECTS, {
-        property: "Invoice", relation: { contains: pageId }
-      }, token)
-      if (rows.length) projectId = rows[0].id.replace(/-/g, "")
-    } catch {}
-  }
-  // Try Deal → Project
   if (!projectId && dealId) {
     try {
-      const rows = await queryDB(DB.PROJECTS, {
-        property: "Deals", relation: { contains: dealId }
-      }, token)
+      const rows = await queryDB(DB.PROJECTS, { property: "Deals", relation: { contains: dealId } }, token)
       if (rows.length) projectId = rows[0].id.replace(/-/g, "")
     } catch {}
   }
-  // Last resort: Company → Project (picks most recent)
   if (!projectId && companyId) {
     try {
-      const rows = await queryDB(DB.PROJECTS, {
-        property: "Company", relation: { contains: companyId }
-      }, token)
+      const rows = await queryDB(DB.PROJECTS, { property: "Company", relation: { contains: companyId } }, token)
       if (rows.length) projectId = rows[0].id.replace(/-/g, "")
     } catch {}
   }
-  console.log("[deposit_paid] projectId resolved:", projectId || "NOT FOUND")
+
+  // Create the project if still not found
+  if (!projectId) {
+    try {
+      const projectName = companyName
+        ? `${companyName} — ${formPackage || "OS"} Build`
+        : `${formPackage || "OS"} Build`
+      const projPage = await createPage({
+        parent: { database_id: DB.PROJECTS },
+        properties: {
+          "Project Name": { title: [{ text: { content: projectName } }] },
+          "Status":       { status: { name: "Awaiting Build" } },
+          ...(quotationId ? { "Quotation": { relation: [{ id: quotationId }] } } : {}),
+          ...(pageId      ? { "Invoice":   { relation: [{ id: pageId }] } } : {}),
+          ...(companyId   ? { "Company":   { relation: [{ id: companyId }] } } : {}),
+          ...(dealId      ? { "Deals":     { relation: [{ id: dealId }] } } : {}),
+          ...(picId       ? { "Primary Contact": { relation: [{ id: picId }] } } : {}),
+        },
+      }, token)
+      projectId = projPage.id.replace(/-/g, "")
+      // Link Invoice → Project for future lookups
+      await patchPage(pageId, { "Project": { relation: [{ id: projectId }] } }, token).catch(() => {})
+      console.log("[deposit_paid] Created project:", projectId)
+    } catch (e) {
+      console.warn("[deposit_paid] project creation failed:", e.message)
+    }
+  }
+
+  console.log("[deposit_paid] projectId:", projectId || "NOT FOUND")
 
   // ── Create Client Account record FIRST ────────────────────────────────────
   // Must happen before triggerSetupProject so setup_project can read OS Installed

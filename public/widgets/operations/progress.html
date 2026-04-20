@@ -359,7 +359,6 @@ function renderMainView(data) {
       <div class="pb-pct">${activePhaseTasks.total > 0 ? Math.round((activePhaseTasks.done / activePhaseTasks.total) * 100) : 0}%</div>
     </div>
 
-    <div class="overview-title">Build Overview</div>
     <div class="top-row">
       <div class="card ring-card">
         <div class="ring-wrap">
@@ -374,6 +373,7 @@ function renderMainView(data) {
           </div>
         </div>
         <div class="ring-stats">
+          <div class="overview-title" style="margin:0 0 10px;">Build Overview</div>
           <div class="rs-row"><div class="rs-dot" style="background:var(--g)"></div><span class="rs-lbl">Done</span><span class="rs-val">${o.done}</span></div>
           <div class="rs-row"><div class="rs-dot" style="background:var(--amber)"></div><span class="rs-lbl">In Progress</span><span class="rs-val">${o.inProgress}</span></div>
           <div class="rs-row"><div class="rs-dot" style="background:rgba(255,255,255,.1)"></div><span class="rs-lbl">Total</span><span class="rs-val">${o.total}</span></div>

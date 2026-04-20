@@ -123,10 +123,8 @@ async function createClientAccount({ invoiceId, companyId, companyName, dealId, 
 
 async function triggerSetupProject(projectId, packages) {
   try {
-    const apiUrl = process.env.VERCEL_URL
-      ? `https://${process.env.VERCEL_URL}`
-      : "https://api.opxio.io"
-    const r = await fetch(`${apiUrl}/api/setup_project`, {
+    // Always use canonical URL — VERCEL_URL points to preview deployments, not production
+    const r = await fetch("https://api.opxio.io/api/setup_project", {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ page_id: projectId, packages }),
@@ -135,6 +133,8 @@ async function triggerSetupProject(projectId, packages) {
       const d = await r.json()
       return [d.phases_created || 0, d.tasks_created || 0]
     }
+    const errText = await r.text().catch(() => "")
+    console.warn("[deposit_paid] setup_project non-ok:", r.status, errText)
   } catch (e) {
     console.warn("[deposit_paid] setup_project:", e.message)
   }
@@ -517,6 +517,7 @@ async function run(payload) {
       "Onboarding Form": { url: formUrl },
       "OS Scope":        { multi_select: osScope },
       ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
+      ...(addonCatalogueIds.length ? { "Add-Ons": { relation: addonCatalogueIds.map(id => ({ id })) } } : {}),
     }, token)
     ;[phasesCount, tasksCount] = await triggerSetupProject(projectId, packages)
   }

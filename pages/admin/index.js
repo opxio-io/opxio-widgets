@@ -6,7 +6,9 @@ const BASE_URL = "https://api.opxio.io"
 const DB_GROUPS = {
   "Revenue OS":    ["LEADS","DEALS","QUOTATIONS","PROPOSALS","INVOICE","FINANCE"],
   "Operations OS": ["PROJECTS","PHASES","TASKS","MEETINGS","RETAINERS","SOPS"],
-  "Marketing OS":  ["CONTENT_DB","TASKS_DB","EMPLOYEE_DB","CAMPAIGNS_DB","CRM_DB","ADS_DB","KOL_DIRECTORY","INFLUENCER_CAMPAIGN","LIVE_SESSIONS","CLIENT_PAYMENTS"],
+  "Marketing OS":  ["CONTENT_DB","TASKS_DB","CAMPAIGNS_DB"],
+  // Agency Pack — only shown for agency/custom OS types (KOL, influencer, live sessions, ads, etc.)
+  "Agency Pack":   ["EMPLOYEE_DB","CRM_DB","ADS_DB","KOL_DIRECTORY","INFLUENCER_CAMPAIGN","LIVE_SESSIONS","CLIENT_PAYMENTS","WEEKLY_LIVE_SESSIONS","CLIENTS","CONTACTS"],
 }
 
 // Which DB groups are relevant for each OS type
@@ -15,7 +17,8 @@ const OS_TO_DB_GROUPS = {
   operations:   ["Operations OS"],
   business:     ["Revenue OS", "Operations OS"],
   marketing:    ["Marketing OS"],
-  custom:       ["Revenue OS", "Operations OS", "Marketing OS"], // show all — custom clients have flexible setups
+  agency:       ["Marketing OS", "Agency Pack"],
+  custom:       ["Revenue OS", "Operations OS", "Marketing OS", "Agency Pack"],
   team:         ["Operations OS"],
   retention:    ["Revenue OS", "Operations OS"],
   intelligence: ["Revenue OS"],
@@ -51,7 +54,8 @@ const OS_OPTIONS = [
   { value: "operations",   label: "Operations OS",   color: "#60a5fa" },
   { value: "business",     label: "Business OS",     color: "#a78bfa" },
   { value: "marketing",    label: "Marketing OS",    color: "#f472b6" },
-  { value: "custom",        label: "Custom",          color: "#e879f9" },
+  { value: "agency",       label: "Agency",          color: "#fb923c" },
+  { value: "custom",       label: "Custom",          color: "#e879f9" },
   { value: "team",         label: "Team OS",         color: "#fbbf24" },
   { value: "retention",    label: "Retention OS",    color: "#a16207" },
   { value: "intelligence", label: "Intelligence OS", color: "#f87171" },

@@ -216,6 +216,10 @@ export default async function handler(req, res) {
           avatar: u.avatar_url || null,
         }))
         .filter(a => a.name)
+      const assignedTo = assignees.length
+        ? null
+        : p["Assigned To"]?.select?.name || p.Owner?.select?.name || null
+
       taskMap[id] = {
         name:       plain(p["Task Name"]?.title || []) || "",
         status:     p.Status?.status?.name || p.Status?.select?.name || "Not Started",
@@ -229,6 +233,7 @@ export default async function handler(req, res) {
         milestone:  p["Milestone"]?.checkbox || false,
         blockedBy:  (p["Blocked by"]?.relation || []).map(r => strip(r.id)),
         assignees,
+        assignedTo,
       }
       // Build reverse project → tasks map from task's Project relation
       for (const rel of (p.Project?.relation || [])) {
@@ -486,9 +491,10 @@ export default async function handler(req, res) {
             plannedStart: t.plannedStart || null,
             startDate: t.startDate || null,
             completedDate: t.completedDate || null,
-            milestone: t.milestone || false,
-            blockedBy: t.blockedBy || [],
-            assignees: t.assignees || [],
+            milestone:  t.milestone || false,
+            blockedBy:  t.blockedBy || [],
+            assignees:  t.assignees || [],
+            assignedTo: t.assignedTo || null,
             created: null, // filled below
           })
         }

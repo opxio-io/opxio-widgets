@@ -298,15 +298,22 @@ function fmtDateTime(iso){if(!iso)return'';if(!iso.includes('T'))return fmtShort
 function dotCls(s){return s==='Done'?'d-Done':s==='In Progress'?'d-InProgress':s==='Blocked'?'d-Blocked':'d-NotStarted';}
 function barCls(s,overdue){if(overdue)return'b-Overdue';return s==='Done'?'b-Done':s==='In Progress'?'b-InProgress':s==='Blocked'?'b-Blocked':'b-NotStarted';}
 
-function avatarHTML(assignees){
-  if(!assignees||!assignees.length) return '';
-  const a=assignees[0];
-  const tooltip=`<div class="gl-tooltip">${esc(a.name)}</div>`;
-  if(a.avatar){
-    return`<div class="gl-avatar-wrap"><img class="gl-avatar" src="${esc(a.avatar)}" alt="${esc(a.name)}"/>${tooltip}</div>`;
+function avatarHTML(assignees, assignedTo){
+  if(assignees&&assignees.length){
+    const a=assignees[0];
+    const tooltip=`<div class="gl-tooltip">${esc(a.name)}</div>`;
+    if(a.avatar){
+      return`<div class="gl-avatar-wrap"><img class="gl-avatar" src="${esc(a.avatar)}" alt="${esc(a.name)}"/>${tooltip}</div>`;
+    }
+    const initials=a.name.split(' ').map(w=>w[0]).join('').slice(0,2);
+    return`<div class="gl-avatar-wrap"><div class="gl-initials">${esc(initials)}</div>${tooltip}</div>`;
   }
-  const initials=a.name.split(' ').map(w=>w[0]).join('').slice(0,2);
-  return`<div class="gl-avatar-wrap"><div class="gl-initials">${esc(initials)}</div>${tooltip}</div>`;
+  if(assignedTo){
+    const initials=assignedTo.split(' ').map(w=>w[0]).join('').slice(0,2);
+    const tooltip=`<div class="gl-tooltip">${esc(assignedTo)}</div>`;
+    return`<div class="gl-avatar-wrap"><div class="gl-initials">${esc(initials)}</div>${tooltip}</div>`;
+  }
+  return'';
 }
 
 // ── Advance Task — single button: Not Started→In Progress→Done ──
@@ -480,7 +487,7 @@ function renderGantt(){
         ${msIcon}
         <div class="gl-name${isDone?' s-Done':''}" title="${esc(t.name)}">${esc(t.name)}</div>
         ${actionHTML}
-        ${avatarHTML(t.assignees)}
+        ${avatarHTML(t.assignees, t.assignedTo)}
         <div class="gl-dot ${dotCls(t.status)}"></div>
       </div>`;
     }

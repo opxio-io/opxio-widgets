@@ -612,7 +612,7 @@ function renderFunnelInto(elId, badgeId, stages, stageOrder, lostLabels, label, 
       <span class="f-lbl">${esc(key)}</span>
       <div class="f-bg"><div class="f-fill ${cls}" style="width:${pct}%;"></div></div>
       <span class="f-n">${n||''}</span>
-      ${valStr?`<span class="f-val">${valStr}</span>`:''}
+      <span class="f-val">${valStr}</span>
     </div>`;
   }).join('');
 }

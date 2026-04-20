@@ -182,6 +182,8 @@ export default function PortalToken() {
         .a3{animation:fadeUp .4s .16s both}.a4{animation:fadeUp .4s .22s both}
         .a5{animation:fadeUp .4s .28s both}
         .phase-card:hover{border-color:rgba(255,255,255,.12)!important}
+        .two-col{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:28px;align-items:start}
+        @media(max-width:720px){.two-col{grid-template-columns:1fr!important}}
       `}</style>
 
       {/* HEADER */}
@@ -198,7 +200,7 @@ export default function PortalToken() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 620, margin: '0 auto', padding: '40px 20px 88px' }}>
+      <div style={{ maxWidth: 1080, margin: '0 auto', padding: '40px 24px 88px' }}>
 
         {/* HERO */}
         <div className="a1" style={{ marginBottom: 40 }}>
@@ -236,175 +238,183 @@ export default function PortalToken() {
           )}
         </div>
 
-        {/* TIMELINE */}
-        <div className="a2" style={{ marginBottom: 44 }}>
-          <SectionLabel>Build Timeline</SectionLabel>
-          <div style={{ position: 'relative', paddingLeft: 28 }}>
-            {/* Vertical connector line */}
-            <div style={{ position: 'absolute', left: 7, top: 12, bottom: 12, width: 1, background: 'rgba(255,255,255,.07)', zIndex: 0 }} />
+        {/* TWO COLUMN LAYOUT */}
+        <div className="two-col">
 
-            {phases.map((phase, i) => {
-              const s        = PHASE_STATUS[phase.status] || PHASE_STATUS['Not Started']
-              const isDone   = ['Done','Complete','Completed'].includes(phase.status)
-              const isActive = phase.status === 'In Progress'
-              const isLocked = phase.status === 'Not Started'
-              const phaseTasks = tasks.filter(t => t.phase_id === phase.id)
-              const doneTasks  = phaseTasks.filter(t => ['Done','Complete','Completed'].includes(t.status)).length
-              const displayName = cleanPhaseName(phase.name)
+          {/* LEFT — TIMELINE */}
+          <div className="a2">
+            <SectionLabel>Build Timeline</SectionLabel>
+            <div style={{ position: 'relative', paddingLeft: 28 }}>
+              {/* Vertical connector line */}
+              <div style={{ position: 'absolute', left: 7, top: 12, bottom: 12, width: 1, background: 'rgba(255,255,255,.07)', zIndex: 0 }} />
 
-              return (
-                <div key={phase.id} style={{ display: 'flex', gap: 16, marginBottom: 8, position: 'relative', zIndex: 1 }}>
-                  {/* Node dot */}
-                  <div style={{ position: 'absolute', left: -28, top: 18, width: 16, display: 'flex', justifyContent: 'center' }}>
-                    <div style={{
-                      width: isDone ? 12 : isActive ? 12 : 8,
-                      height: isDone ? 12 : isActive ? 12 : 8,
-                      borderRadius: '50%', flexShrink: 0,
-                      background: isDone ? '#AAFF00' : isActive ? '#fff' : '#222',
-                      border: isDone ? '2px solid rgba(170,255,0,.3)' : isActive ? '2px solid rgba(255,255,255,.3)' : '1.5px solid rgba(255,255,255,.15)',
-                      boxShadow: isActive ? '0 0 0 4px rgba(255,255,255,.05)' : isDone ? '0 0 0 3px rgba(170,255,0,.08)' : 'none',
-                      marginTop: isDone || isActive ? 1 : 3,
-                    }} />
-                  </div>
+              {phases.map((phase, i) => {
+                const isDone   = ['Done','Complete','Completed'].includes(phase.status)
+                const isActive = phase.status === 'In Progress'
+                const isLocked = phase.status === 'Not Started'
+                const phaseTasks = tasks.filter(t => t.phase_id === phase.id)
+                const doneTasks  = phaseTasks.filter(t => ['Done','Complete','Completed'].includes(t.status)).length
+                const displayName = cleanPhaseName(phase.name)
 
-                  {/* Card */}
-                  <div
-                    className={isLocked ? '' : 'phase-card'}
-                    style={{
-                      flex: 1,
-                      background: isActive ? '#151515' : '#111',
-                      border: `1px solid ${isActive ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,.06)'}`,
-                      borderRadius: 12, padding: '16px 18px',
-                      opacity: isLocked ? 0.5 : 1,
-                      transition: 'border-color .2s',
-                    }}
-                  >
-                    {/* Phase header */}
-                    <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', color: 'rgba(255,255,255,.25)', marginBottom: 5 }}>Phase {i + 1}</div>
-                        <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-.01em', color: isLocked ? 'rgba(255,255,255,.4)' : '#fff', lineHeight: 1.3 }}>{displayName}</div>
-                        {phase.target_date && !isLocked && (
-                          <div style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.3)', marginTop: 5 }}>{fmtDate(phase.target_date)}</div>
-                        )}
-                      </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
-                        <Pill status={phase.status} map={PHASE_STATUS} />
-                        {phaseTasks.length > 0 && !isLocked && (
-                          <span style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.2)', letterSpacing: '.04em' }}>{doneTasks}/{phaseTasks.length} tasks</span>
-                        )}
-                      </div>
+                return (
+                  <div key={phase.id} style={{ display: 'flex', gap: 16, marginBottom: 8, position: 'relative', zIndex: 1 }}>
+                    {/* Node dot */}
+                    <div style={{ position: 'absolute', left: -28, top: 18, width: 16, display: 'flex', justifyContent: 'center' }}>
+                      <div style={{
+                        width: isDone ? 12 : isActive ? 12 : 8,
+                        height: isDone ? 12 : isActive ? 12 : 8,
+                        borderRadius: '50%', flexShrink: 0,
+                        background: isDone ? '#AAFF00' : isActive ? '#fff' : '#222',
+                        border: isDone ? '2px solid rgba(170,255,0,.3)' : isActive ? '2px solid rgba(255,255,255,.3)' : '1.5px solid rgba(255,255,255,.15)',
+                        boxShadow: isActive ? '0 0 0 4px rgba(255,255,255,.05)' : isDone ? '0 0 0 3px rgba(170,255,0,.08)' : 'none',
+                        marginTop: isDone || isActive ? 1 : 3,
+                      }} />
                     </div>
 
-                    {/* Tasks */}
-                    {!isLocked && phaseTasks.length > 0 && (
-                      <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.05)' }}>
-                        {phaseTasks.map(t => {
-                          const tDone = ['Done','Complete','Completed'].includes(t.status)
-                          const tWip  = t.status === 'In Progress'
-                          return (
-                            <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,.03)' }}>
-                              <div style={{
-                                width: 15, height: 15, borderRadius: 4, flexShrink: 0,
-                                background: tDone ? '#AAFF00' : 'transparent',
-                                border: `1.5px solid ${tDone ? '#AAFF00' : tWip ? 'rgba(255,184,77,.6)' : 'rgba(255,255,255,.12)'}`,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              }}>
-                                {tDone && <svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M1 2.5L2.8 4.2L6 1" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
-                                {tWip && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#FFB84D' }} />}
+                    {/* Card */}
+                    <div
+                      className={isLocked ? '' : 'phase-card'}
+                      style={{
+                        flex: 1,
+                        background: isActive ? '#151515' : '#111',
+                        border: `1px solid ${isActive ? 'rgba(255,255,255,.12)' : 'rgba(255,255,255,.06)'}`,
+                        borderRadius: 12, padding: '16px 18px',
+                        opacity: isLocked ? 0.5 : 1,
+                        transition: 'border-color .2s',
+                      }}
+                    >
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 12 }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: '.06em', color: 'rgba(255,255,255,.25)', marginBottom: 5 }}>Phase {i + 1}</div>
+                          <div style={{ fontSize: 15, fontWeight: 700, letterSpacing: '-.01em', color: isLocked ? 'rgba(255,255,255,.4)' : '#fff', lineHeight: 1.3 }}>{displayName}</div>
+                          {phase.target_date && !isLocked && (
+                            <div style={{ fontSize: 11, fontWeight: 500, color: 'rgba(255,255,255,.3)', marginTop: 5 }}>{fmtDate(phase.target_date)}</div>
+                          )}
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 6, flexShrink: 0 }}>
+                          <Pill status={phase.status} map={PHASE_STATUS} />
+                          {phaseTasks.length > 0 && !isLocked && (
+                            <span style={{ fontSize: 9, fontWeight: 700, color: 'rgba(255,255,255,.2)', letterSpacing: '.04em' }}>{doneTasks}/{phaseTasks.length} tasks</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {!isLocked && phaseTasks.length > 0 && (
+                        <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,.05)' }}>
+                          {phaseTasks.map(t => {
+                            const tDone = ['Done','Complete','Completed'].includes(t.status)
+                            const tWip  = t.status === 'In Progress'
+                            return (
+                              <div key={t.id} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '6px 0', borderBottom: '1px solid rgba(255,255,255,.03)' }}>
+                                <div style={{
+                                  width: 15, height: 15, borderRadius: 4, flexShrink: 0,
+                                  background: tDone ? '#AAFF00' : 'transparent',
+                                  border: `1.5px solid ${tDone ? '#AAFF00' : tWip ? 'rgba(255,184,77,.6)' : 'rgba(255,255,255,.12)'}`,
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                }}>
+                                  {tDone && <svg width="7" height="5" viewBox="0 0 7 5" fill="none"><path d="M1 2.5L2.8 4.2L6 1" stroke="#000" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>}
+                                  {tWip && <div style={{ width: 4, height: 4, borderRadius: '50%', background: '#FFB84D' }} />}
+                                </div>
+                                <span style={{
+                                  fontSize: 12, fontWeight: 500, flex: 1, lineHeight: 1.4,
+                                  color: tDone ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.7)',
+                                  textDecoration: tDone ? 'line-through' : 'none',
+                                }}>{t.name}</span>
                               </div>
-                              <span style={{
-                                fontSize: 12, fontWeight: 500, flex: 1, lineHeight: 1.4,
-                                color: tDone ? 'rgba(255,255,255,.25)' : 'rgba(255,255,255,.7)',
-                                textDecoration: tDone ? 'line-through' : 'none',
-                              }}>{t.name}</span>
-                            </div>
-                          )
-                        })}
-                        {(isActive || isDone) && (
-                          <button
-                            onClick={() => openModal('feedback', phase)}
-                            style={{ marginTop: 12, fontSize: 10, fontWeight: 700, color: 'rgba(170,255,0,.65)', background: 'rgba(170,255,0,.06)', border: '1px solid rgba(170,255,0,.15)', padding: '5px 13px', borderRadius: 7, cursor: 'pointer', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.03em' }}
-                          >Leave feedback →</button>
-                        )}
+                            )
+                          })}
+                          {(isActive || isDone) && (
+                            <button
+                              onClick={() => openModal('feedback', phase)}
+                              style={{ marginTop: 12, fontSize: 10, fontWeight: 700, color: 'rgba(170,255,0,.65)', background: 'rgba(170,255,0,.06)', border: '1px solid rgba(170,255,0,.15)', padding: '5px 13px', borderRadius: 7, cursor: 'pointer', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.03em' }}
+                            >Leave feedback →</button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+
+          {/* RIGHT COLUMN — INVOICES + EXPANSIONS */}
+          <div>
+
+            {/* INVOICES */}
+            {invoices.length > 0 && (
+              <div className="a3" style={{ marginBottom: 28 }}>
+                <SectionLabel>Invoices</SectionLabel>
+                {(totalPaid > 0 || totalDue > 0) && (
+                  <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+                    {totalPaid > 0 && (
+                      <div style={{ background: 'rgba(170,255,0,.06)', border: '1px solid rgba(170,255,0,.15)', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'rgba(170,255,0,.45)', marginBottom: 5 }}>Paid</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-.03em', color: '#AAFF00' }}>MYR {totalPaid.toLocaleString()}</div>
+                      </div>
+                    )}
+                    {totalDue > 0 && (
+                      <div style={{ background: 'rgba(255,184,77,.06)', border: '1px solid rgba(255,184,77,.15)', borderRadius: 10, padding: '12px 14px', flex: 1 }}>
+                        <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'rgba(255,184,77,.5)', marginBottom: 5 }}>Due</div>
+                        <div style={{ fontSize: 18, fontWeight: 900, letterSpacing: '-.03em', color: '#FFB84D' }}>MYR {totalDue.toLocaleString()}</div>
                       </div>
                     )}
                   </div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {invoices.map(inv => (
+                    <div key={inv.id} style={{ background: '#111', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: 10 }}>
+                        <div>
+                          <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.07em', color: 'rgba(255,255,255,.22)', marginBottom: 4 }}>{inv.number}</div>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,.85)' }}>{inv.type}</div>
+                        </div>
+                        <Pill status={inv.status} map={INV_STATUS} />
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                        <span style={{ fontSize: 16, fontWeight: 900, letterSpacing: '-.02em', color: '#fff' }}>MYR {(inv.amount||0).toLocaleString()}</span>
+                        <a href={`/api/portal/download?type=${['Paid','Deposit Received'].includes(inv.status)?'receipt':'invoice'}&id=${inv.id}`} target="_blank"
+                          style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)', background: '#1A1A1A', border: '1px solid rgba(255,255,255,.1)', padding: '5px 11px', borderRadius: 7, textDecoration: 'none', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.03em' }}>
+                          ↓ {['Paid','Deposit Received'].includes(inv.status)?'Receipt':'Invoice'}
+                        </a>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              )
-            })}
-          </div>
-        </div>
-
-        {/* INVOICES */}
-        {invoices.length > 0 && (
-          <div className="a3" style={{ marginBottom: 44 }}>
-            <SectionLabel>Invoices</SectionLabel>
-            {(totalPaid > 0 || totalDue > 0) && (
-              <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
-                {totalPaid > 0 && (
-                  <div style={{ background: 'rgba(170,255,0,.06)', border: '1px solid rgba(170,255,0,.15)', borderRadius: 10, padding: '12px 16px', flex: 1 }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'rgba(170,255,0,.45)', marginBottom: 5 }}>Paid</div>
-                    <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-.03em', color: '#AAFF00' }}>MYR {totalPaid.toLocaleString()}</div>
-                  </div>
-                )}
-                {totalDue > 0 && (
-                  <div style={{ background: 'rgba(255,184,77,.06)', border: '1px solid rgba(255,184,77,.15)', borderRadius: 10, padding: '12px 16px', flex: 1 }}>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', color: 'rgba(255,184,77,.5)', marginBottom: 5 }}>Due</div>
-                    <div style={{ fontSize: 20, fontWeight: 900, letterSpacing: '-.03em', color: '#FFB84D' }}>MYR {totalDue.toLocaleString()}</div>
-                  </div>
-                )}
               </div>
             )}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {invoices.map(inv => (
-                <div key={inv.id} style={{ background: '#111', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap' }}>
-                  <div>
-                    <div style={{ fontSize: 9, fontWeight: 700, letterSpacing: '.07em', color: 'rgba(255,255,255,.22)', marginBottom: 5 }}>{inv.number}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,.85)' }}>{inv.type}</div>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    <Pill status={inv.status} map={INV_STATUS} />
-                    <span style={{ fontSize: 15, fontWeight: 900, letterSpacing: '-.02em', color: '#fff' }}>MYR {(inv.amount||0).toLocaleString()}</span>
-                    <a href={`/api/portal/download?type=${['Paid','Deposit Received'].includes(inv.status)?'receipt':'invoice'}&id=${inv.id}`} target="_blank"
-                      style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.4)', background: '#1A1A1A', border: '1px solid rgba(255,255,255,.1)', padding: '5px 12px', borderRadius: 7, textDecoration: 'none', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.03em' }}>
-                      ↓ {['Paid','Deposit Received'].includes(inv.status)?'Receipt':'Invoice'}
-                    </a>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
 
-        {/* EXPANSIONS */}
-        <div className="a4" style={{ marginBottom: 44 }}>
-          <SectionLabel>Expansions</SectionLabel>
-          {expansions.length > 0 && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
-              {expansions.map(exp => (
-                <div key={exp.id} style={{ background: '#111', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '14px 18px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                  <div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,.85)', marginBottom: 4 }}>{exp.name}</div>
-                    {exp.target_date && <div style={{ fontSize: 11, color: 'rgba(255,255,255,.3)', fontWeight: 500 }}>Est. {fmtDate(exp.target_date)}</div>}
-                  </div>
-                  <Pill status={exp.status||'In Scope'} map={{ 'In Scope': { label: 'In Scope', color: 'rgba(170,255,0,.7)', dim: 'rgba(170,255,0,.07)', border: 'rgba(170,255,0,.18)' }, 'Requested': { label: 'Requested', color: 'rgba(255,255,255,.4)', dim: 'rgba(255,255,255,.04)', border: 'rgba(255,255,255,.09)' } }} />
+            {/* EXPANSIONS */}
+            <div className="a4">
+              <SectionLabel>Expansions</SectionLabel>
+              {expansions.length > 0 && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 10 }}>
+                  {expansions.map(exp => (
+                    <div key={exp.id} style={{ background: '#111', border: '1px solid rgba(255,255,255,.07)', borderRadius: 12, padding: '14px 16px' }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 8, marginBottom: exp.target_date ? 6 : 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: 'rgba(255,255,255,.85)', flex: 1 }}>{exp.name}</div>
+                        <Pill status={exp.status||'In Scope'} map={{ 'In Scope': { label: 'In Scope', color: 'rgba(170,255,0,.7)', dim: 'rgba(170,255,0,.07)', border: 'rgba(170,255,0,.18)' }, 'Requested': { label: 'Requested', color: 'rgba(255,255,255,.4)', dim: 'rgba(255,255,255,.04)', border: 'rgba(255,255,255,.09)' } }} />
+                      </div>
+                      {exp.target_date && <div style={{ fontSize: 11, color: 'rgba(255,255,255,.3)', fontWeight: 500 }}>Est. {fmtDate(exp.target_date)}</div>}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              )}
+              {expansions.length === 0 && (
+                <div style={{ background: '#111', border: '1px solid rgba(255,255,255,.06)', borderRadius: 12, padding: '14px 16px', marginBottom: 10 }}>
+                  <div style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,.3)', lineHeight: 1.65 }}>No expansions yet. Once your build is complete, you can add more modules here.</div>
+                </div>
+              )}
+              <button onClick={() => openModal('expansion')} style={{ width: '100%', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.3)', background: 'transparent', border: '1px dashed rgba(255,255,255,.12)', padding: 13, borderRadius: 12, cursor: 'pointer', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.07em', textTransform: 'uppercase' }}>
+                + Request an Expansion
+              </button>
             </div>
-          )}
-          {expansions.length === 0 && (
-            <div style={{ background: '#111', border: '1px solid rgba(255,255,255,.06)', borderRadius: 12, padding: '16px 18px', marginBottom: 10 }}>
-              <div style={{ fontSize: 13, fontWeight: 500, color: 'rgba(255,255,255,.35)', lineHeight: 1.65 }}>No expansions yet. Once your build is complete, you can request additional modules or features here.</div>
-            </div>
-          )}
-          <button onClick={() => openModal('expansion')} style={{ width: '100%', fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.3)', background: 'transparent', border: '1px dashed rgba(255,255,255,.12)', padding: 14, borderRadius: 12, cursor: 'pointer', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.07em', textTransform: 'uppercase', transition: 'all .2s' }}>
-            + Request an Expansion
-          </button>
-        </div>
+
+          </div>{/* end right column */}
+        </div>{/* end two column grid */}
 
         {/* FOOTER */}
-        <div className="a5" style={{ borderTop: '1px solid rgba(255,255,255,.06)', paddingTop: 22, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
+        <div className="a5" style={{ borderTop: '1px solid rgba(255,255,255,.06)', paddingTop: 22, marginTop: 36, display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
           <span style={{ fontSize: 10, fontWeight: 600, color: 'rgba(255,255,255,.18)' }}>Built by <span style={{ color: 'rgba(170,255,0,.45)' }}>Opxio</span></span>
           <button onClick={() => openModal('message')} style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,.35)', background: '#181818', border: '1px solid rgba(255,255,255,.1)', padding: '7px 16px', borderRadius: 99, cursor: 'pointer', fontFamily: "'Satoshi',sans-serif", letterSpacing: '.04em' }}>
             Message the team

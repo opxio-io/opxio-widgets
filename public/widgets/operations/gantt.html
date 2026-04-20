@@ -176,10 +176,11 @@ body.light .gr-cell.wknd-col{background:rgba(0,0,0,.01);}
 .g-deadline{position:absolute;top:6px;bottom:6px;width:2px;background:var(--red);opacity:.75;z-index:3;border-radius:1px;pointer-events:none;}
 .g-deadline::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);opacity:.9;}
 .g-deadline::after{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);opacity:.9;}
-/* Due date pin for Not Started tasks */
-.g-due-mark{position:absolute;top:10px;width:20px;height:20px;border-radius:50%;background:rgba(255,107,107,.12);border:1.5px solid rgba(255,107,107,.5);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--red);z-index:2;cursor:default;transition:background .15s;}
-.g-due-mark:hover{background:rgba(255,107,107,.22);}
-.g-due-mark.overdue{background:rgba(255,107,107,.2);border-color:var(--red);animation:pin-pulse 2s ease-in-out infinite;}
+/* Due date line for Not Started tasks — same style as deadline tick */
+.g-due-mark{position:absolute;top:6px;bottom:6px;width:2px;background:var(--red);opacity:.6;z-index:2;border-radius:1px;pointer-events:none;}
+.g-due-mark::before{content:'';position:absolute;top:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);}
+.g-due-mark::after{content:'';position:absolute;bottom:-3px;left:50%;transform:translateX(-50%);width:6px;height:6px;border-radius:50%;background:var(--red);}
+.g-due-mark.overdue{opacity:.9;animation:pin-pulse 2s ease-in-out infinite;}
 @keyframes pin-pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,107,.3);}50%{box-shadow:0 0 0 5px rgba(255,107,107,0);}}
 
 /* ── Milestone diamond ── */
@@ -225,8 +226,7 @@ body.light .toast{background:#fff;border-color:rgba(92,153,0,.3);color:#5C9900;}
   <div class="leg-i"><div class="leg-dot" style="background:var(--amber)"></div><span class="leg-l">In Progress</span></div>
   <div class="leg-i"><div class="leg-dot" style="background:var(--red)"></div><span class="leg-l">Blocked</span></div>
   <div class="leg-i"><div class="leg-dot" style="background:linear-gradient(90deg,var(--amber),var(--red))"></div><span class="leg-l">Overdue</span></div>
-  <div class="leg-i"><div class="leg-pin">!</div><span class="leg-l">Due Date</span></div>
-  <div class="leg-i"><div class="leg-deadline"></div><span class="leg-l">Deadline</span></div>
+  <div class="leg-i"><div class="leg-deadline"></div><span class="leg-l">Due / Deadline</span></div>
   <div class="leg-i"><div class="leg-ms"></div><span class="leg-l">Milestone</span></div>
 </div>
 
@@ -531,7 +531,7 @@ function renderGantt(){
         if(dueI!=null){
           const pinX=dueI*DAY_W+DAY_W/2-10;
           rowsHTML+=`<div class="gr-row">${makeCells()}
-            <div class="g-due-mark${t._overdue?' overdue':''}" style="left:${pinX}px;" title="${tooltip}">!</div>
+            <div class="g-due-mark${t._overdue?' overdue':''}" style="left:${pinX}px;" title="${tooltip}"></div>
           </div>`;
           taskRowMap[t.id]={row:rowIdx,x:pinX+10};
         } else {

@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Staff Breakdown</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;background:#191919;color:#fff;overflow-y:auto;}
+body.light{background:#FFFFFF;color:#111;}
+body.light{--g:#4F8B00;--gm:rgba(79,139,0,.1);--gb:rgba(79,139,0,.22);--muted:rgba(0,0,0,.5);}
+body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+body.light .eyebrow{color:rgba(0,0,0,.45);}
+body.light .h-title{color:#111;}
+body.light .ts{color:rgba(0,0,0,.35);}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--muted:rgba(255,255,255,.5);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:2px;}
+.h-title{font-size:20px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+.h-right{display:flex;align-items:center;gap:6px;}
+.ts{font-size:10px;color:rgba(255,255,255,.15);}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
+body.light .icon-btn:hover{background:rgba(79,139,0,.08);border-color:rgba(79,139,0,.2);color:var(--g);}
+
+/* Main card */
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;transition:border-color .2s;}
+
+/* Card header */
+.card-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 14px;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;gap:10px;}
+body.light .card-hdr{border-bottom-color:rgba(0,0,0,.06);}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);}
+body.light .card-title{color:rgba(0,0,0,.45);}
+.card-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.period-lbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);}
+body.light .period-lbl{color:rgba(0,0,0,.4);}
+
+/* Tabs */
+.tabs{display:flex;gap:3px;background:rgba(255,255,255,.06);border-radius:8px;padding:3px;}
+body.light .tabs{background:rgba(0,0,0,.06);}
+.tab{font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,.3);cursor:pointer;transition:all .18s;}
+body.light .tab{color:rgba(0,0,0,.45);}
+.tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
+body.light .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
+
+/* Column headers */
+.col-hdr{display:grid;grid-template-columns:180px repeat(5,1fr) 88px;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
+body.light .col-hdr{border-bottom-color:rgba(0,0,0,.06);}
+.ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
+body.light .ch{color:rgba(0,0,0,.4);}
+.ch:first-child{text-align:left;}
+
+/* Staff row */
+.staff-row{display:grid;grid-template-columns:180px repeat(5,1fr) 88px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);gap:8px;transition:background .15s;}
+.staff-row:last-child{border-bottom:none;}
+.staff-row:hover{background:rgba(255,255,255,.02);}
+body.light .staff-row{border-bottom-color:rgba(0,0,0,.05);}
+body.light .staff-row:hover{background:rgba(0,0,0,.015);}
+
+/* Name cell */
+.s-name{display:flex;align-items:center;gap:8px;min-width:0;}
+.s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.s-dot-on{background:#AAFF00;box-shadow:0 0 5px rgba(170,255,0,.5);}
+.s-dot-off{background:#FF6B35;}
+.s-dot-lv{background:#FBBF24;}
+.s-label{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .s-label{color:#111;}
+.s-role{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .s-role{color:rgba(0,0,0,.45);}
+
+/* Stat cell */
+.stat-cell{text-align:center;}
+.stat-num{font-size:20px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.stat-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.2);margin-top:3px;}
+body.light .stat-lbl{color:rgba(0,0,0,.3);}
+.num-zero{color:rgba(255,255,255,.12);}
+body.light .num-zero{color:rgba(0,0,0,.12);}
+.num-done{color:var(--g);}
+.num-active{color:rgba(255,255,255,.7);}
+body.light .num-active{color:rgba(0,0,0,.7);}
+.num-qc{color:#60A5FA;}
+.num-over{color:#FF6B35;}
+
+/* Time cell */
+.time-cell{text-align:center;}
+.time-val{font-size:16px;font-weight:800;letter-spacing:-.3px;line-height:1;}
+.time-unit{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-top:3px;}
+body.light .time-unit{color:rgba(0,0,0,.3);}
+
+/* Empty / loading */
+.empty-row{padding:36px 20px;text-align:center;font-size:13px;color:rgba(255,255,255,.2);font-weight:600;}
+body.light .empty-row{color:rgba(0,0,0,.3);}
+.loading{display:flex;align-items:center;justify-content:center;min-height:160px;flex-direction:column;gap:8px;}
+.spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+body.light .spinner{border-color:rgba(0,0,0,.07);border-top-color:var(--g);}
+.loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
+body.light .loading-text{color:rgba(0,0,0,.35);}
+
+@media(max-width:780px){
+  .col-hdr,.staff-row{grid-template-columns:140px repeat(5,1fr) 72px;padding-left:14px;padding-right:14px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <p class="eyebrow" id="_eyebrow" data-os="Custom OS">CUSTOM OS</p>
+    <h1 class="h-title">Staff Breakdown</h1>
+  </div>
+  <div class="h-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
+  </div>
+</div>
+
+<div id="dash">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
+</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+let _tab = 'week', _data = null;
+
+// Roles to exclude from staff view
+const EXCLUDE_ROLES = ['part time', 'live host', 'part-time', 'freelance'];
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function fmtRange(label){
+  if(!label) return '';
+  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return label.replace(/(\d{4})-(\d{2})-(\d{2})/g,(_,y,m,d)=>`${parseInt(d)} ${M[parseInt(m)-1]} ${y}`);
+}
+function fmtHrs(h){
+  if(!h) return '—';
+  if(h<1) return Math.round(h*60)+'m';
+  const whole=Math.floor(h),frac=Math.round((h-whole)*60);
+  return frac>0?`${whole}h ${frac}m`:`${whole}h`;
+}
+function sdot(s){return s==='Active'?'s-dot-on':s==='Inactive'?'s-dot-off':'s-dot-lv';}
+
+const SUN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+const MOON_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+
+function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;}
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
+
+function render(data){
+  if(!data?.employees) return;
+
+  // Filter out part-time / live-host roles
+  const emps = data.employees.filter(e => {
+    const r = (e.role||'').toLowerCase();
+    return !EXCLUDE_ROLES.some(x => r.includes(x));
+  });
+
+  const periodText = _tab==='week' ? fmtRange(data.weekLabel||'') :
+                     _tab==='month' ? (data.monthLabel||'') : 'All Time';
+
+  const switchBtn=(tab,lbl)=>`<button class="tab${_tab===tab?' active':''}" onclick="switchTab('${tab}')">${lbl}</button>`;
+
+  let html = `<div class="card">
+    <div class="card-hdr">
+      <span class="card-title">Task Completion by Staff</span>
+      <div class="card-right">
+        ${periodText?`<span class="period-lbl">${esc(periodText)}</span>`:''}
+        <div class="tabs">
+          ${switchBtn('week','This Week')}
+          ${switchBtn('month','This Month')}
+          ${switchBtn('all','All Time')}
+        </div>
+      </div>
+    </div>
+    <div class="col-hdr">
+      <div class="ch">Staff</div>
+      <div class="ch">Done</div>
+      <div class="ch">Active</div>
+      <div class="ch">Pending QC</div>
+      <div class="ch">Overdue</div>
+      <div class="ch">Total</div>
+      <div class="ch">Time</div>
+    </div>`;
+
+  if(!emps.length){
+    html += `<div class="empty-row">No staff data found</div>`;
+  } else {
+    // Sort: most done in period first
+    const sorted = [...emps].sort((a,b)=>{
+      const av = _tab==='all' ? (a.stats?.done||0) : (a[_tab]?.done||0);
+      const bv = _tab==='all' ? (b.stats?.done||0) : (b[_tab]?.done||0);
+      return bv-av;
+    });
+
+    for(const emp of sorted){
+      const isAll = _tab==='all';
+      const done    = isAll ? (emp.stats?.done||0)       : (emp[_tab]?.done||0);
+      const active  = isAll ? (emp.stats?.inProgress||0) : 0; // only in all-time view
+      const qc      = isAll ? (emp.stats?.pendingQC||0)  : 0;
+      const overdue = isAll ? (emp.stats?.overdue||0)    : 0;
+      const total   = isAll ? (emp.stats?.total||0)      : (emp[_tab]?.due||0);
+      const hrs     = isAll ? (emp.stats?.totalHrs||0)   : (emp[_tab]?.hrs||0);
+
+      html += `<div class="staff-row">
+        <div class="s-name">
+          <div class="s-dot ${sdot(emp.status)}"></div>
+          <div style="min-width:0;">
+            <div class="s-label">${esc(emp.name)}</div>
+            ${emp.role?`<div class="s-role">${esc(emp.role)}</div>`:''}
+          </div>
+        </div>
+        <div class="stat-cell"><div class="stat-num ${done?'num-done':'num-zero'}">${done}</div></div>
+        <div class="stat-cell"><div class="stat-num ${active?'num-active':'num-zero'}">${active||'—'}</div></div>
+        <div class="stat-cell"><div class="stat-num ${qc?'num-qc':'num-zero'}">${qc||'—'}</div></div>
+        <div class="stat-cell"><div class="stat-num ${overdue?'num-over':'num-zero'}">${overdue||'—'}</div></div>
+        <div class="stat-cell"><div class="stat-num ${total?'num-active':'num-zero'}">${total||'—'}</div></div>
+        <div class="time-cell">
+          <div class="time-val" style="color:${hrs?'rgba(255,255,255,.6)':'rgba(255,255,255,.12)'};">${fmtHrs(hrs)}</div>
+        </div>
+      </div>`;
+    }
+  }
+
+  html += `</div>`;
+  document.getElementById('dash').innerHTML = html;
+  document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+window.switchTab = function(tab){ _tab=tab; if(_data) render(_data); };
+
+async function loadData(){
+  try{
+    const r = await fetch('/api/creaitors/employee-stats?token='+_tok);
+    if(!r.ok) throw new Error('API '+r.status);
+    _data = await r.json();
+    render(_data);
+  }catch(e){
+    document.getElementById('dash').innerHTML = `<div class="loading">
+      <div style="font-size:11px;color:#FF6B35;font-weight:700;">Failed to load</div>
+      <div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">${esc(e.message)}</div>
+    </div>`;
+  }
+}
+
+loadData();
+setInterval(loadData, 5*60*1000);
+</script>
+
+<div style="text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);">Widgets by Opxio.io</div>
+<script>
+(function(){
+  const el=document.getElementById('_eyebrow');
+  if(!el) return;
+  el.textContent=el.dataset.os.toUpperCase();
+  const tok=new URLSearchParams(location.search).get('token');
+  if(!tok) return;
+  fetch('/api/client/info?token='+tok)
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · '+el.dataset.os.toUpperCase();})
+    .catch(()=>{});
+})();
+</script>
+</body>
+</html>

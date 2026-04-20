@@ -5,10 +5,12 @@
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
 body.light{background:#FFFFFF;color:#111;}
-:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--bal:#F5A623;--balm:rgba(245,166,35,.1);--lost:#FF6B35;--blue:#4FAEFF;--purple:#B17BFF;--amber:#FFB800;}
-body.light{--muted:rgba(0,0,0,.4);--g:#4F8B00;--gb:rgba(92,153,0,.22);--bal:#C47D00;--lost:#D94F1E;}
-.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--bal:#F5A623;--lost:#FF6B35;--amber:#FFB800;}
+body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--bal:#C47D00;--lost:#D94F1E;}
+
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;overflow:hidden;}
 body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
 body.light .eyebrow{color:rgba(0,0,0,0.46);}
 .h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
@@ -18,61 +20,58 @@ body.light .ts{color:rgba(0,0,0,0.34);}
 
 /* stat cards */
 .stat{padding:18px 18px 16px;position:relative;}
-.stat-dot{position:absolute;top:13px;right:13px;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);opacity:1;}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,rgba(170,255,0,.35),transparent);opacity:0;transition:opacity .25s;border-radius:14px 14px 0 0;}
+.stat-dot{position:absolute;top:13px;right:13px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.5;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
 .stat:hover::before{opacity:1;}
+.stat:hover{border-color:rgba(170,255,0,.15);}
 .s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);margin-bottom:10px;}
 body.light .s-lbl{color:rgba(0,0,0,0.62);}
 .s-val{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;color:var(--g);}
-body.light .s-val{color:#4F8B00;}
+body.light .s-val{color:var(--g);}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.35);margin-top:7px;}
 body.light .s-sub{color:rgba(0,0,0,0.54);}
 .s-tag{display:inline-block;margin-top:8px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.1);}
 body.light .s-tag{color:rgba(0,0,0,.7);background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.09);}
 
-/* stage accents */
-.stat.is-proposal::before{background:linear-gradient(90deg,var(--purple),transparent);}
-.stat.is-proposal .stat-dot{background:var(--purple);opacity:.6;}
-.stat.is-proposal .s-val{color:var(--purple);}
-.stat.is-proposal:hover{border-color:rgba(177,123,255,.18);}
-.stat.is-proposal .s-tag{background:rgba(177,123,255,.1);color:var(--purple);border-color:rgba(177,123,255,.2);}
+/* green-accent pre-close cards (default) */
+.stat.is-green .stat-dot{background:var(--g);opacity:.6;}
+.stat.is-green .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.2);}
 
-.stat.is-quotation::before{background:linear-gradient(90deg,var(--blue),transparent);}
-.stat.is-quotation .stat-dot{background:var(--blue);opacity:.6;}
-.stat.is-quotation .s-val{color:var(--blue);}
-.stat.is-quotation:hover{border-color:rgba(79,174,255,.18);}
-.stat.is-quotation .s-tag{background:rgba(79,174,255,.1);color:var(--blue);border-color:rgba(79,174,255,.2);}
-
+/* awaiting deposit — amber */
 .stat.is-awaiting::before{background:linear-gradient(90deg,var(--amber),transparent);}
 .stat.is-awaiting .stat-dot{background:var(--amber);opacity:.7;}
 .stat.is-awaiting .s-val{color:var(--amber);}
 .stat.is-awaiting:hover{border-color:rgba(255,184,0,.18);}
 .stat.is-awaiting .s-tag{background:rgba(255,184,0,.1);color:var(--amber);border-color:rgba(255,184,0,.2);}
+body.light .stat.is-awaiting .s-val{color:var(--amber);}
 
+/* building — lime */
 .stat.is-active::before{background:linear-gradient(90deg,var(--g),transparent);}
-.stat.is-active .stat-dot{background:var(--g);opacity:.6;}
+.stat.is-active .stat-dot{background:var(--g);opacity:.7;}
 .stat.is-active .s-val{color:var(--g);}
-.stat.is-active .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.15);}
-.stat.is-active:hover{border-color:rgba(170,255,0,.12);}
-body.light .stat.is-active .s-val{color:#4F8B00;}
+.stat.is-active:hover{border-color:rgba(170,255,0,.18);}
+.stat.is-active .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.2);}
 
+/* balance due */
 .stat.is-balance::before{background:linear-gradient(90deg,var(--bal),transparent);}
 .stat.is-balance .stat-dot{background:var(--bal);opacity:.7;}
 .stat.is-balance .s-val{color:var(--bal);}
+.stat.is-balance:hover{border-color:rgba(245,166,35,.18);}
 .stat.is-balance .s-tag{background:rgba(245,166,35,.1);color:var(--bal);border-color:rgba(245,166,35,.2);}
-.stat.is-balance:hover{border-color:rgba(245,166,35,.15);}
+body.light .stat.is-balance .s-val{color:var(--bal);}
 
+/* delivered */
 .stat.is-delivered .stat-dot{background:var(--g);opacity:.9;}
-.stat.is-delivered::before{background:linear-gradient(90deg,var(--g),transparent);}
 .stat.is-delivered .s-val{color:var(--g);}
 .stat.is-delivered .s-tag{background:var(--gm);color:var(--g);border-color:rgba(170,255,0,.2);}
-body.light .stat.is-delivered .s-val{color:#4F8B00;}
 
+/* lost */
 .stat.is-lost::before{background:linear-gradient(90deg,var(--lost),transparent);}
 .stat.is-lost .stat-dot{background:var(--lost);opacity:.7;}
 .stat.is-lost .s-val{color:var(--lost);}
-.stat.is-lost:hover{border-color:rgba(255,107,53,.18);}
+.stat.is-lost:hover{border-color:rgba(255,107,53,.2);}
 .stat.is-lost .s-tag{background:rgba(255,107,53,.1);color:var(--lost);border-color:rgba(255,107,53,.2);}
+body.light .stat.is-lost .s-val{color:var(--lost);}
 
 /* grids */
 .grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
@@ -125,14 +124,14 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     <div class="s-sub">Call done</div>
     <div class="s-tag">Scoped</div>
   </div>
-  <div class="card stat is-proposal">
+  <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Proposal Sent</div>
     <div class="s-val" id="v-proposal">—</div>
     <div class="s-sub">Awaiting feedback</div>
     <div class="s-tag">Sent</div>
   </div>
-  <div class="card stat is-quotation">
+  <div class="card stat">
     <div class="stat-dot"></div>
     <div class="s-lbl">Quotation Issued</div>
     <div class="s-val" id="v-quotation">—</div>

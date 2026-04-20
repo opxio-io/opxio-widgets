@@ -265,7 +265,10 @@ export default async function handler(req, res) {
       const name     = plain(p["Project Name"]?.title || p.Name?.title || []) || "Untitled"
       const compRel  = strip(p.Company?.relation?.[0]?.id || "")
       const company  = compRel ? (companyNames[compRel] || "") : ""
-      const pkg      = p.Package?.select?.name || p[packageField]?.select?.name || ""
+      const pkg      = p.Package?.select?.name || p[packageField]?.select?.name
+                    || p["OS Scope"]?.multi_select?.map(s => s.name).join(" + ")
+                    || p["OS Installed"]?.multi_select?.map(s => s.name).join(" + ")
+                    || ""
       const projId   = strip(proj.id)
       const curPhase = p["Current Phase"]?.select?.name || p.Phase?.select?.name || ""
       const startDate = p["Start Date"]?.date?.start || null

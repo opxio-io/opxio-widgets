@@ -176,12 +176,12 @@ export default function PortalProject() {
   const [msgBody, setMsgBody] = useState('')
 
   useEffect(() => {
-    if (!project_id) return
+    if (!portalToken) return
     fetch(`/api/portal/data?token=${portalToken}`)
       .then(r => r.json())
       .then(d => { setData(d); setLoading(false) })
       .catch(() => setLoading(false))
-  }, [project_id])
+  }, [portalToken])
 
   function resetForms() {
     setFeedbackPhase(null); setExpansionOpen(false); setMessageOpen(false)

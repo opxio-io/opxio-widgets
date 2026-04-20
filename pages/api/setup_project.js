@@ -96,35 +96,26 @@ async function setup(payload) {
   const project = await getPage(projectId, token)
   const props   = project.properties
 
-  // ── Read OS scope from linked Client Account (OS Installed multi_select) ───
-  // deposit_paid creates the Client Account and links it to the Project before
-  // calling setup_project, so the relation is already set when we get here.
+  // ── Resolve OS scope ──────────────────────────────────────────────────────
+  // Priority 1: packages array passed directly from deposit_paid (most reliable)
+  // Priority 2: OS Scope multi_select on the Project page (manual override)
+  // Priority 3: infer from Package select (legacy fallback)
   let rawScope = []
 
-  const caIds = (props["Client Account"]?.relation || []).map(r => r.id.replace(/-/g, ""))
-  if (caIds.length) {
-    try {
-      const ca = await getPage(caIds[0], token)
-      rawScope = (ca.properties["OS Installed"]?.multi_select || [])
-        .map(s => s.name)
-        .filter(s => s !== "Base OS") // Base OS is not a scope key
-      console.log(`[setup_project] OS scope from Client Account: ${rawScope.join(", ")}`)
-    } catch (e) {
-      console.warn("[setup_project] client account lookup:", e.message)
-    }
+  const payloadPackages = (payload.packages || []).filter(p => p !== "Base OS")
+  if (payloadPackages.length) {
+    rawScope = payloadPackages
+    console.log(`[setup_project] OS scope from payload: ${rawScope.join(", ")}`)
   }
 
-  // Fallback: OS Scope multi_select on Project (legacy / manual override)
   if (!rawScope.length) {
     rawScope = (props["OS Scope"]?.multi_select || []).map(s => s.name)
     if (rawScope.length) console.log(`[setup_project] OS scope from Project.OS Scope: ${rawScope.join(", ")}`)
   }
 
-  // Fallback: infer from Package select
   if (!rawScope.length) {
     const pkg = props.Package?.select?.name || ""
     if (pkg) {
-      console.warn(`[setup_project] OS Scope empty — falling back to Package: "${pkg}"`)
       if (pkg.includes("Revenue"))    rawScope.push("Revenue OS")
       if (pkg.includes("Operations")) rawScope.push("Operations OS")
       if (pkg.includes("Marketing"))  rawScope.push("Marketing OS")

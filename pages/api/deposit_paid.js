@@ -121,7 +121,7 @@ async function createClientAccount({ invoiceId, companyId, companyName, dealId, 
   }
 }
 
-async function triggerSetupProject(projectId) {
+async function triggerSetupProject(projectId, packages) {
   try {
     const apiUrl = process.env.VERCEL_URL
       ? `https://${process.env.VERCEL_URL}`
@@ -129,7 +129,7 @@ async function triggerSetupProject(projectId) {
     const r = await fetch(`${apiUrl}/api/setup_project`, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ page_id: projectId }),
+      body:    JSON.stringify({ page_id: projectId, packages }),
     })
     if (r.ok) {
       const d = await r.json()
@@ -451,7 +451,7 @@ async function run(payload) {
       "Onboarding Form": { url: formUrl },
       ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
     }, token)
-    ;[phasesCount, tasksCount] = await triggerSetupProject(projectId)
+    ;[phasesCount, tasksCount] = await triggerSetupProject(projectId, packages)
   }
 
   // ── Finance Ledger — auto-create Deposit entry ───────────────────────────

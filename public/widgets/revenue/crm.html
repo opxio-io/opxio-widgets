@@ -174,8 +174,8 @@ body.light .utm-name{color:rgba(0,0,0,0.62);}
 .utm-seg-track{width:56px;height:8px;border-radius:2px;background:rgba(255,255,255,.05);overflow:hidden;flex-shrink:0;}
 body.light .utm-seg-track{background:rgba(0,0,0,.06);}
 .utm-seg-fill{height:100%;background:repeating-linear-gradient(90deg,rgba(170,255,0,.7) 0,rgba(170,255,0,.7) 3px,rgba(0,0,0,.35) 3px,rgba(0,0,0,.35) 5px);}
+body.light .utm-seg-fill{background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0,rgba(255,255,255,.7) 3px,rgba(255,255,255,.1) 3px,rgba(255,255,255,.1) 5px);}
 .utm-n{font-size:12px;font-weight:900;color:#fff;width:22px;text-align:right;flex-shrink:0;}
-body.light .utm-n{color:#111;}
 .utm-empty{padding:16px 0;text-align:center;font-size:11px;color:rgba(255,255,255,.18);font-weight:600;line-height:1.7;}
 body.light .utm-empty{color:rgba(0,0,0,0.31);}
 .utm-setup-pill{display:inline-block;margin-top:5px;font-size:9px;font-weight:700;letter-spacing:.06em;padding:3px 9px;border-radius:5px;background:rgba(170,255,0,.07);color:var(--g);border:1px solid rgba(170,255,0,.15);}
@@ -190,7 +190,7 @@ body.light .wl-tabs{background:rgba(0,0,0,.06);}
 .wl-tab{background:transparent;border:none;color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:10px;font-weight:700;padding:5px 14px;border-radius:6px;cursor:pointer;transition:all .18s;}
 body.light .wl-tab{color:rgba(0,0,0,0.54);}
 .wl-tab.won{background:rgba(170,255,0,.14);color:#AAFF00;}
-body.light .wl-tab.won{background:rgba(0,0,0,.05);color:#111;}
+body.light .wl-tab.won{background:rgba(255,255,255,.12);color:#fff;}
 .wl-tab.lost-active{background:rgba(255,107,53,.14);color:#FF6B35;}
 .log-row{display:flex;align-items:flex-start;gap:12px;padding:11px 6px;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;border-radius:6px;margin:0 -6px;}
 body.light .log-row{border-bottom-color:rgba(0,0,0,.05);}
@@ -581,11 +581,13 @@ function setWlTab(t){
 }
 
 // ── Donut ─────────────────────────────────────────────────────────────────────
-const DC=['#AAFF00','rgba(170,255,0,.72)','rgba(170,255,0,.48)','rgba(170,255,0,.30)','rgba(170,255,0,.18)','rgba(170,255,0,.09)'];
+function accent(){return document.body.classList.contains('light')?'rgba(255,255,255,.9)':'#AAFF00';}
+function accentA(a){return document.body.classList.contains('light')?`rgba(255,255,255,${a})`:`rgba(170,255,0,${a})`;}
+function getDC(){const l=document.body.classList.contains('light');return l?['rgba(255,255,255,.9)','rgba(255,255,255,.65)','rgba(255,255,255,.42)','rgba(255,255,255,.26)','rgba(255,255,255,.14)','rgba(255,255,255,.07)']:['#AAFF00','rgba(170,255,0,.72)','rgba(170,255,0,.48)','rgba(170,255,0,.30)','rgba(170,255,0,.18)','rgba(170,255,0,.09)'];}
 function renderDonut(sources){
   const src=(sources||[]).slice(0,6);
   if(!src.length){document.getElementById('donut').innerHTML=`<text x="80" y="88" text-anchor="middle" font-size="11" fill="rgba(255,255,255,.2)" font-family="Satoshi,-apple-system,sans-serif">No data</text>`;document.getElementById('legend').innerHTML='';return;}
-  const colored=src.map((s,i)=>({...s,c:DC[i]||DC[DC.length-1]}));
+  const DC=getDC();const colored=src.map((s,i)=>({...s,c:DC[i]||DC[DC.length-1]}));
   const tot=colored.reduce((s,x)=>s+x.count,0);
   const R=55,SW=18,C=2*Math.PI*R;
   let off=0,p=`<circle cx="80" cy="80" r="${R}" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="${SW}"/>`;
@@ -778,7 +780,7 @@ async function drawSvgMap(){
   const FILL   = isDark?'#2e2e2e':'#d8d8d8';
   const STROKE = isDark?'#424242':'#bbb';
   const BG     = isDark?'#191919':'#ececec';  // darker than card so land lifts above ocean
-  const ACCENT = isDark?'#AAFF00':'#333';
+  const ACCENT = isDark?'#AAFF00':'rgba(255,255,255,.85)';
 
   // offsetWidth/Height works even when the element is about to paint
   const W=wrap.offsetWidth||wrap.parentElement?.offsetWidth||600;
@@ -1038,18 +1040,19 @@ function drawChart(){
     gl.setAttribute('stroke',grid);gl.setAttribute('stroke-dasharray','3,5');svg.appendChild(gl);
     if(i<4){const t=document.createElementNS(ns,'text');t.setAttribute('x',PAD.l-5);t.setAttribute('y',y+4);t.setAttribute('text-anchor','end');t.setAttribute('fill',dim);t.setAttribute('font-size','10');t.setAttribute('font-weight','500');t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=Math.round(maxV-(i/4)*maxV);svg.appendChild(t);}
   }
-  chartData.forEach((d,i)=>{const isCur=i===chartData.length-1,t=document.createElementNS(ns,'text');t.setAttribute('x',xP(i));t.setAttribute('y',H-PAD.b+16);t.setAttribute('text-anchor','middle');t.setAttribute('fill',isCur?'#AAFF00':dim);t.setAttribute('font-size','10');t.setAttribute('font-weight',isCur?'700':'500');t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=d.m;svg.appendChild(t);});
+  const AC=accent(),ACA=accentA;
+  chartData.forEach((d,i)=>{const isCur=i===chartData.length-1,t=document.createElementNS(ns,'text');t.setAttribute('x',xP(i));t.setAttribute('y',H-PAD.b+16);t.setAttribute('text-anchor','middle');t.setAttribute('fill',isCur?AC:dim);t.setAttribute('font-size','10');t.setAttribute('font-weight',isCur?'700':'500');t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=d.m;svg.appendChild(t);});
   function smooth(pts){if(pts.length<2)return`M ${pts[0][0]} ${pts[0][1]}`;let d=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const[x1,y1]=pts[i-1],[x2,y2]=pts[i],cx=(x1+x2)/2;d+=` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;}return d;}
   const pts=chartData.map((d,i)=>[xP(i),yP(d.v)]),pathD=smooth(pts),last=pts[pts.length-1],first=pts[0];
   const defs=document.createElementNS(ns,'defs'),grad=document.createElementNS(ns,'linearGradient');
   grad.setAttribute('id','gF');grad.setAttribute('x1','0');grad.setAttribute('y1','0');grad.setAttribute('x2','0');grad.setAttribute('y2','1');
-  const s1=document.createElementNS(ns,'stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','#AAFF00');s1.setAttribute('stop-opacity','0.22');
-  const s2=document.createElementNS(ns,'stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','#AAFF00');s2.setAttribute('stop-opacity','0.01');
+  const s1=document.createElementNS(ns,'stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color',AC);s1.setAttribute('stop-opacity','0.22');
+  const s2=document.createElementNS(ns,'stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color',AC);s2.setAttribute('stop-opacity','0.01');
   grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);svg.insertBefore(defs,svg.firstChild);
   const area=document.createElementNS(ns,'path');area.setAttribute('d',pathD+` L ${last[0]} ${H-PAD.b} L ${first[0]} ${H-PAD.b} Z`);area.setAttribute('fill','url(#gF)');svg.appendChild(area);
-  const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');line.setAttribute('stroke','#AAFF00');line.setAttribute('stroke-width','2');line.setAttribute('stroke-linecap','round');svg.appendChild(line);
-  chartData.forEach((d,i)=>{const isCur=i===chartData.length-1,dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));dot.setAttribute('r',isCur?'5':'3.5');dot.setAttribute('fill',isCur?'#AAFF00':'#1E1E1E');dot.setAttribute('stroke','#AAFF00');dot.setAttribute('stroke-width','2');if(isCur)dot.setAttribute('filter','drop-shadow(0 0 5px rgba(170,255,0,.8))');svg.appendChild(dot);});
-  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(170,255,0,.1)');hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svg.appendChild(hL);
+  const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');line.setAttribute('stroke',AC);line.setAttribute('stroke-width','2');line.setAttribute('stroke-linecap','round');svg.appendChild(line);
+  chartData.forEach((d,i)=>{const isCur=i===chartData.length-1,dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));dot.setAttribute('r',isCur?'5':'3.5');dot.setAttribute('fill',isCur?AC:'#1E1E1E');dot.setAttribute('stroke',AC);dot.setAttribute('stroke-width','2');if(isCur)dot.setAttribute('filter',`drop-shadow(0 0 5px ${ACA(.6)})`);svg.appendChild(dot);});
+  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke',ACA(.1));hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svg.appendChild(hL);
   const tip=document.getElementById('ctip');
   wrap.onmousemove=function(e){const rect=wrap.getBoundingClientRect(),mx=e.clientX-rect.left;let bi=null,bd=Infinity;chartData.forEach((d,i)=>{const dist=Math.abs(xP(i)-mx);if(dist<bd){bd=dist;bi=i;}});if(bi===null||bd>50){hide();return;}const d=chartData[bi],px=xP(bi);hL.setAttribute('x1',px);hL.setAttribute('x2',px);hL.style.opacity='1';tip.style.display='block';tip.style.left=Math.min(e.clientX-rect.left+14,rect.width-110)+'px';tip.style.top=(e.clientY-rect.top-46)+'px';tip.innerHTML=`<span style="color:rgba(255,255,255,.4);font-size:9px;">${d.m}</span>&nbsp;&nbsp;${d.v} leads`;};
   wrap.onmouseleave=hide;

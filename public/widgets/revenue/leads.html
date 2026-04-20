@@ -9,9 +9,8 @@ body.light{background:#F5F5F5;color:#111;}
 :root{
   --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);
   --lost:#E05A3A;--lostm:rgba(224,90,58,.1);--lostb:rgba(224,90,58,.22);
-  --ghosted:#D4A820;--ghostedm:rgba(212,168,32,.1);--ghostedb:rgba(212,168,32,.2);
 }
-body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#C44428;--ghosted:#9A7A00;}
+body.light{--g:#4F8B00;--gb:rgba(92,153,0,.22);--lost:#C44428;}
 
 /* cards */
 .card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s,background .2s;overflow:hidden;position:relative;}
@@ -33,21 +32,21 @@ body.light .ts{color:rgba(0,0,0,.3);}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
 .stat:hover::before{opacity:1;}
 .card.is-lost .stat::before{background:linear-gradient(90deg,var(--lost),transparent);}
-.card.is-ghosted .stat::before{background:linear-gradient(90deg,var(--ghosted),transparent);}
+.card.is-ghosted .stat::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
 .card.is-disq .stat::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
 .s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.55;}
 .s-dot.is-lost{background:var(--lost);opacity:.6;}
-.s-dot.is-ghosted{background:var(--ghosted);opacity:.6;}
+.s-dot.is-ghosted{background:rgba(255,255,255,.25);opacity:1;}
 .s-dot.is-disq{background:rgba(255,255,255,.25);opacity:1;}
 .s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.85);margin-bottom:10px;line-height:1.4;display:block;}
 body.light .s-lbl{color:rgba(0,0,0,.62);}
 .s-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 .s-val.is-lost{color:var(--lost);}
-.s-val.is-ghosted{color:var(--ghosted);}
+.s-val.is-ghosted{color:rgba(255,255,255,.22);}
 .s-val.is-disq{color:rgba(255,255,255,.22);}
 body.light .s-val{color:var(--g);}
 body.light .s-val.is-lost{color:var(--lost);}
-body.light .s-val.is-ghosted{color:var(--ghosted);}
+body.light .s-val.is-ghosted{color:rgba(0,0,0,.22);}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:7px;}
 body.light .s-sub{color:rgba(0,0,0,.46);}
 

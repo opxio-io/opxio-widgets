@@ -35,10 +35,10 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 .mn-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);min-width:78px;text-align:center;background:#252525;border:1px solid rgba(255,255,255,.09);border-radius:6px;padding:4px 6px;white-space:nowrap;}
 
 /* View tabs */
-.view-bar{display:flex;gap:3px;background:rgba(255,255,255,.05);border-radius:10px;padding:4px;width:fit-content;margin-bottom:16px;}
-.view-btn{background:transparent;border:1px solid transparent;color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:6px 18px;border-radius:7px;cursor:pointer;transition:all .18s;}
-.view-btn.active{background:#252525;color:#fff;border-color:rgba(255,255,255,.09);}
-.view-btn:hover:not(.active){color:rgba(255,255,255,.65);}
+.view-bar{display:flex;gap:3px;background:rgba(255,255,255,.07);border-radius:10px;padding:4px;width:fit-content;margin-bottom:16px;}
+.view-btn{background:transparent;border:1px solid transparent;color:rgba(255,255,255,.38);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:6px 18px;border-radius:7px;cursor:pointer;transition:all .18s;}
+.view-btn.active{background:#2e2e2e;color:#fff;border-color:rgba(255,255,255,.13);box-shadow:0 1px 4px rgba(0,0,0,.35);}
+.view-btn:hover:not(.active){color:rgba(255,255,255,.7);}
 .view-pane{display:none;}
 .view-pane.active{display:block;}
 
@@ -137,26 +137,38 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
 body.light .icon-btn:hover{background:rgba(79,139,0,.08);border-color:rgba(79,139,0,.2);color:var(--g);}
 
-/* Light mode text overrides */
-body.light .active{color:#111;}
+/* Light mode — structure overrides */
+body.light .view-bar{background:rgba(0,0,0,.06);}
+body.light .view-btn{color:rgba(0,0,0,.5);}
+body.light .view-btn.active{background:#fff;color:#111;border-color:rgba(0,0,0,.12);box-shadow:0 1px 3px rgba(0,0,0,.07);}
+body.light .view-btn:hover:not(.active){color:rgba(0,0,0,.75);}
+body.light .mode-wrap{background:rgba(0,0,0,.05);}
+body.light .wl-tabs{background:rgba(0,0,0,.05);}
+body.light .wl-tab{color:rgba(0,0,0,.5);}
+body.light .mn-btn{background:#fff;border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.5);}
+body.light .mn-lbl{background:#fff;border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.7);}
+body.light .f-bg{background:rgba(0,0,0,.05);}
+body.light .log-row{border-bottom-color:rgba(0,0,0,.06);}
+body.light .log-row:hover{background:rgba(0,0,0,.02);}
+body.light .spinner{border-color:rgba(0,0,0,.07);border-top-color:var(--g);}
+/* Light mode — text overrides */
 body.light .chart-title{color:#111;}
 body.light .empty{color:rgba(0,0,0,.42);}
-body.light .f-lbl{color:rgba(0,0,0,.7);}
-body.light .f-n{color:rgba(0,0,0,.7);}
-body.light .l-name{color:rgba(0,0,0,.7);}
+body.light .f-lbl{color:rgba(0,0,0,.65);}
+body.light .f-n{color:rgba(0,0,0,.65);}
+body.light .l-name{color:rgba(0,0,0,.65);}
 body.light .l-val{color:#111;}
 body.light .loading-text{color:rgba(0,0,0,.42);}
 body.light .log-meta{color:rgba(0,0,0,.42);}
 body.light .log-name{color:#111;}
-body.light .log-val{color:rgba(0,0,0,.7);}
+body.light .log-val{color:rgba(0,0,0,.65);}
 body.light .mbn{color:rgba(0,0,0,.55);}
-body.light .mn-btn{color:rgba(0,0,0,.55);}
-body.light .mn-lbl{color:rgba(0,0,0,.7);}
 body.light .panel-title{color:#111;}
-body.light .s-lbl{color:#111;}
+body.light .s-lbl{color:rgba(0,0,0,.65);}
 body.light .s-sub{color:rgba(0,0,0,.42);}
-body.light .view-btn{color:rgba(0,0,0,.55);}
-body.light .wl-tab{color:rgba(0,0,0,.55);}
+/* Light mode — SVG fills */
+body.light .d-val{fill:#111;}
+body.light .d-lbl{fill:rgba(0,0,0,.4);}
 </style></head>
 <body>
 
@@ -325,7 +337,8 @@ function renderDonut(sources) {
   const colored = src.map((s,i)=>({...s,c:DONUT_COLORS[i]||DONUT_COLORS[DONUT_COLORS.length-1]}));
   const tot = colored.reduce((s,x)=>s+x.count,0);
   const R=55,SW=18,C=2*Math.PI*R; let off=0,p='';
-  p+=`<circle cx="80" cy="80" r="${R}" fill="none" stroke="rgba(255,255,255,.04)" stroke-width="${SW}"/>`;
+  const isLightD=document.body.classList.contains('light');
+  p+=`<circle cx="80" cy="80" r="${R}" fill="none" stroke="${isLightD?'rgba(0,0,0,.07)':'rgba(255,255,255,.05)'}" stroke-width="${SW}"/>`;
   colored.forEach(s=>{const d=(s.count/tot)*C,g=C-d;p+=`<circle cx="80" cy="80" r="${R}" fill="none" stroke="${s.c}" stroke-width="${SW}" stroke-dasharray="${d.toFixed(2)} ${g.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 80 80)"/>`;off+=d;});
   p+=`<text x="80" y="74" text-anchor="middle" font-family="Satoshi,-apple-system,sans-serif" font-size="26" class="d-val">${tot}</text>`;
   p+=`<text x="80" y="94" text-anchor="middle" font-family="Satoshi,-apple-system,sans-serif" font-size="8" class="d-lbl">LEADS</text>`;
@@ -464,7 +477,9 @@ function drawChart() {
   if (!chartData.length) return;
   const PAD={t:14,r:20,b:30,l:28},cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
   const maxV=Math.max(...chartData.map(d=>d.v),1);
-  const dimCol='rgba(255,255,255,0.5)',gridCol='rgba(255,255,255,0.04)';
+  const isLightC=document.body.classList.contains('light');
+  const dimCol=isLightC?'rgba(0,0,0,0.4)':'rgba(255,255,255,0.5)';
+  const gridCol=isLightC?'rgba(0,0,0,0.05)':'rgba(255,255,255,0.04)';
   function xP(i){return PAD.l+(i/(chartData.length-1||1))*cW;}
   function yP(v){return PAD.t+cH-(v/maxV)*cH;}
   for(let i=0;i<=4;i++){
@@ -488,7 +503,7 @@ function drawChart() {
   const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');line.setAttribute('stroke','#AAFF00');line.setAttribute('stroke-width','2');line.setAttribute('stroke-linecap','round');svg.appendChild(line);
   chartData.forEach((d,i)=>{
     const isCur=i===chartData.length-1;
-    const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));dot.setAttribute('r',isCur?'5':'3.5');dot.setAttribute('fill',isCur?'#AAFF00':'#1E1E1E');dot.setAttribute('stroke','#AAFF00');dot.setAttribute('stroke-width','2');if(isCur)dot.setAttribute('filter','drop-shadow(0 0 5px rgba(170,255,0,0.8))');svg.appendChild(dot);
+    const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));dot.setAttribute('r',isCur?'5':'3.5');dot.setAttribute('fill',isCur?'#AAFF00':(isLightC?'#fff':'#1E1E1E'));dot.setAttribute('stroke','#AAFF00');dot.setAttribute('stroke-width','2');if(isCur)dot.setAttribute('filter','drop-shadow(0 0 5px rgba(170,255,0,0.8))');svg.appendChild(dot);
   });
   const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(170,255,0,0.1)');hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svg.appendChild(hL);
   const tip=document.getElementById('ctip');
@@ -508,6 +523,6 @@ window.addEventListener('resize',drawChart);
   fetch('/api/client/info?token='+tok).then(r=>r.ok?r.json():null).then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · '+el.dataset.os.toUpperCase();}).catch(()=>{});
 })();
 const SUN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';const MOON_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
-function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;}
+function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;renderPipelineStats();}
 </script>
 </body></html>

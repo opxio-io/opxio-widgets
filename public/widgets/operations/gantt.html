@@ -64,6 +64,9 @@ body.light .leg-i+.leg-i{border-left-color:rgba(0,0,0,.06);}
 .leg-l{font-size:9px;font-weight:700;color:rgba(255,255,255,.28);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
 body.light .leg-l{color:rgba(0,0,0,.28);}
 .leg-pin{width:14px;height:14px;border-radius:50%;background:rgba(255,107,107,.12);border:1.5px solid rgba(255,107,107,.5);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;color:var(--red);flex-shrink:0;}
+.leg-deadline{width:2px;height:14px;background:var(--red);border-radius:1px;opacity:.75;flex-shrink:0;position:relative;}
+.leg-deadline::before{content:'';position:absolute;top:-2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--red);opacity:.9;}
+.leg-deadline::after{content:'';position:absolute;bottom:-2px;left:50%;transform:translateX(-50%);width:5px;height:5px;border-radius:50%;background:var(--red);opacity:.9;}
 .leg-ms{width:10px;height:10px;transform:rotate(45deg);border-radius:2px;background:var(--g);flex-shrink:0;}
 
 /* ── GANTT CONTAINER ── */
@@ -223,6 +226,7 @@ body.light .toast{background:#fff;border-color:rgba(92,153,0,.3);color:#5C9900;}
   <div class="leg-i"><div class="leg-dot" style="background:var(--red)"></div><span class="leg-l">Blocked</span></div>
   <div class="leg-i"><div class="leg-dot" style="background:linear-gradient(90deg,var(--amber),var(--red))"></div><span class="leg-l">Overdue</span></div>
   <div class="leg-i"><div class="leg-pin">!</div><span class="leg-l">Due Date</span></div>
+  <div class="leg-i"><div class="leg-deadline"></div><span class="leg-l">Deadline</span></div>
   <div class="leg-i"><div class="leg-ms"></div><span class="leg-l">Milestone</span></div>
 </div>
 

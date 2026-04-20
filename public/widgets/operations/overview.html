@@ -60,9 +60,9 @@ body.light .panel-title{color:rgba(0,0,0,.55);}
 .donut-wrap{display:flex;align-items:center;gap:24px;}
 @media(max-width:500px){.donut-wrap{flex-direction:column;align-items:flex-start;gap:14px;}}
 .donut-svg{flex-shrink:0;overflow:visible;}
-.donut-center{font-size:22px;font-weight:900;fill:var(--g);letter-spacing:-1px;}
-.donut-center-sub{font-size:8px;font-weight:700;fill:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.1em;}
-body.light .donut-center-sub{fill:rgba(0,0,0,.3);}
+.donut-center{font-size:32px;font-weight:900;fill:var(--g);letter-spacing:-1.5px;}
+.donut-center-sub{font-size:10px;font-weight:700;fill:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;}
+body.light .donut-center-sub{fill:rgba(0,0,0,.25);}
 .donut-legend{display:flex;flex-direction:column;gap:10px;flex:1;}
 .dl-item{display:flex;align-items:center;gap:10px;}
 .dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
@@ -178,8 +178,8 @@ body.light .empty{color:rgba(0,0,0,.18);}
     <div class="donut-wrap">
       <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120" id="donut-svg">
         <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="56" text-anchor="middle" class="donut-center" id="donut-val">0</text>
-        <text x="60" y="70" text-anchor="middle" class="donut-center-sub">Projects</text>
+        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="donut-center" id="donut-val">0</text>
+        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="donut-center-sub">Projects</text>
       </svg>
       <div class="donut-legend" id="donut-legend"></div>
     </div>
@@ -205,8 +205,8 @@ body.light .empty{color:rgba(0,0,0,.18);}
     <div class="task-wrap">
       <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="task-ring-svg">
         <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="57" text-anchor="middle" class="ring-center" id="ring-pct">0%</text>
-        <text x="60" y="72" text-anchor="middle" class="ring-center-sub">Complete</text>
+        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="ring-center" id="ring-pct">0%</text>
+        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="ring-center-sub">Complete</text>
       </svg>
       <div class="task-bars" id="task-bars"></div>
     </div>
@@ -219,8 +219,8 @@ body.light .empty{color:rgba(0,0,0,.18);}
     <div class="task-wrap">
       <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="pri-ring-svg">
         <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="57" text-anchor="middle" class="ring-center" id="pri-ring-val">—</text>
-        <text x="60" y="72" text-anchor="middle" class="ring-center-sub">High Pri</text>
+        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="ring-center" id="pri-ring-val">—</text>
+        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="ring-center-sub">High Pri</text>
       </svg>
       <div class="task-bars" id="pri-bars"></div>
     </div>

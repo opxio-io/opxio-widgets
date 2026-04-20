@@ -350,6 +350,18 @@ async function run(payload) {
     }
   }
 
+  // ── Fetch Add-ons Catalogue IDs from Deal (all paths) ────────────────────
+  // addonCatalogueIds may already be set if we went through the existingDeal path.
+  // For all other paths, read Deal.Add-ons relation now that dealId is resolved.
+  if (!addonCatalogueIds.length && dealId) {
+    try {
+      const dp = await getPage(dealId, token)
+      addonCatalogueIds = (dp.properties["Add-ons"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+    } catch (e) {
+      console.warn("[deposit_paid] fetch deal add-ons:", e.message)
+    }
+  }
+
   // ── Resolve company name EARLY (needed for onboarding form URL) ─────────
   let companyName = ""
   if (companyId) {

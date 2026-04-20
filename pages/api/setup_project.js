@@ -226,19 +226,13 @@ async function setup(payload) {
     tasksCreated += batch.length
   }
 
-  // ── Link phases to project + set first phase In Progress ─────────────────
-  const phaseIds    = createdPhases.map(p => p.phaseId)
-  const firstPhase  = createdPhases[0]
+  // ── Link phases to project ────────────────────────────────────────────────
+  const phaseIds = createdPhases.map(p => p.phaseId)
 
-  await Promise.all([
-    patchPage(projectId, {
-      "Phases":              { relation: phaseIds.map(id => ({ id })) },
-      "Target Handover Date": { date: { start: targetDate } },
-    }, token),
-    firstPhase
-      ? patchPage(firstPhase.phaseId, { "Status": { status: { name: "In Progress" } } }, token)
-      : Promise.resolve(),
-  ])
+  await patchPage(projectId, {
+    "Phases":               { relation: phaseIds.map(id => ({ id })) },
+    "Target Handover Date": { date: { start: targetDate } },
+  }, token)
 
   // ── Embed progress widget on project page ─────────────────────────────────
   const widgetUrl = `https://widgets.opxio.io/operations/progress?project=${projectId}`

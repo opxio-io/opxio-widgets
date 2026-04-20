@@ -13,8 +13,8 @@ body.light{background:#FFFFFF;color:#111;}
 :root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--lostm:rgba(255,107,53,.1);--lostb:rgba(255,107,53,.2);}
 
 /* cards */
-.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.12);}
+.card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
 body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.09);box-shadow:0 1px 3px rgba(0,0,0,.04);}
 body.light .card:hover{border-color:rgba(0,0,0,.15);}
 
@@ -41,16 +41,18 @@ body.light .sec-lbl{color:rgba(0,0,0,0.43);}
 /* ── STAT CARDS ── */
 .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
 @media(max-width:680px){.grid-4{grid-template-columns:repeat(2,1fr);}}
-.stat{padding:18px 20px;position:relative;}
-.s-dot{position:absolute;top:10px;right:12px;width:5px;height:5px;border-radius:50%;background:var(--g);}
-.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.45);margin-bottom:6px;display:block;}
+.stat{padding:18px 18px 16px;position:relative;overflow:hidden;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
+.stat:hover::before{opacity:1;}
+.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.55;}
+.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.85);margin-bottom:10px;line-height:1.4;display:block;}
 body.light .s-lbl{color:rgba(0,0,0,0.62);}
-.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.s-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 body.light .s-val{color:#4F8B00;}
-.s-delta-row{display:flex;align-items:center;gap:4px;margin-top:4px;}
+.s-delta-row{display:flex;align-items:center;gap:4px;margin-top:7px;}
 .s-delta{font-size:10.5px;font-weight:700;color:var(--g);}
 .s-delta.neg{color:#FF6B6B;}
-.s-delta-lbl{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.3);}
+.s-delta-lbl{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);}
 body.light .s-delta-lbl{color:rgba(0,0,0,0.46);}
 
 /* ── MID ROW ── */

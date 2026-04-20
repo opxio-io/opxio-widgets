@@ -74,7 +74,7 @@ export default async function handler(req, res) {
       const stage = p[stageField]?.status?.name || p[stageField]?.select?.name || "Unknown"
       const name  = plain(p["Lead Name"]?.title || p.Name?.title || []) || "Untitled"
       const pkg        = p["OS Interest"]?.select?.name || p["Interested In"]?.multi_select?.map(x => x.name).join(", ") || ""
-      const leadVal    = p["Potential Value"]?.number || p["Estimated Value"]?.number || p["Value"]?.number || p["Deal Value"]?.number || 0
+      const leadVal    = p["Potential Value"]?.number || p["Estimated Value"]?.number || p["Deal Value (MYR)"]?.number || p["Value"]?.number || p["Deal Value"]?.number || 0
       const _lrField = p["Lost Reason"] || p["Why Not Closing?"] || null
       const lostReason = _lrField?.multi_select?.map(x => x.name).join(", ") || _lrField?.select?.name || _lrField?.rich_text?.[0]?.plain_text || null
       const pageUrl    = `https://www.notion.so/${lead.id.replace(/-/g, "")}`

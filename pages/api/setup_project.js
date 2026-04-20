@@ -96,25 +96,49 @@ async function setup(payload) {
   const project = await getPage(projectId, token)
   const props   = project.properties
 
-  // ── Read OS Scope from project ─────────────────────────────────────────────
-  const rawScope  = (props["OS Scope"]?.multi_select || []).map(s => s.name)
-  const scope     = rawScope.map(s => SCOPE_MAP[s]).filter(Boolean)
+  // ── Read OS scope from linked Client Account (OS Installed multi_select) ───
+  // deposit_paid creates the Client Account and links it to the Project before
+  // calling setup_project, so the relation is already set when we get here.
+  let rawScope = []
 
-  // Fallback: if OS Scope not set, try to infer from legacy Package field
-  if (!scope.length) {
+  const caIds = (props["Client Account"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+  if (caIds.length) {
+    try {
+      const ca = await getPage(caIds[0], token)
+      rawScope = (ca.properties["OS Installed"]?.multi_select || [])
+        .map(s => s.name)
+        .filter(s => s !== "Base OS") // Base OS is not a scope key
+      console.log(`[setup_project] OS scope from Client Account: ${rawScope.join(", ")}`)
+    } catch (e) {
+      console.warn("[setup_project] client account lookup:", e.message)
+    }
+  }
+
+  // Fallback: OS Scope multi_select on Project (legacy / manual override)
+  if (!rawScope.length) {
+    rawScope = (props["OS Scope"]?.multi_select || []).map(s => s.name)
+    if (rawScope.length) console.log(`[setup_project] OS scope from Project.OS Scope: ${rawScope.join(", ")}`)
+  }
+
+  // Fallback: infer from Package select
+  if (!rawScope.length) {
     const pkg = props.Package?.select?.name || ""
-    console.warn(`[setup_project] OS Scope empty — falling back to Package: "${pkg}"`)
-    if (pkg.includes("Revenue")) scope.push("revenue_os")
-    if (pkg.includes("Operations")) scope.push("operations_os")
-    if (pkg.includes("Marketing")) scope.push("marketing_os")
-    if (pkg.includes("Finance")) scope.push("finance_os")
-    if (pkg.includes("Business")) { scope.push("revenue_os"); scope.push("operations_os") }
+    if (pkg) {
+      console.warn(`[setup_project] OS Scope empty — falling back to Package: "${pkg}"`)
+      if (pkg.includes("Revenue"))    rawScope.push("Revenue OS")
+      if (pkg.includes("Operations")) rawScope.push("Operations OS")
+      if (pkg.includes("Marketing"))  rawScope.push("Marketing OS")
+      if (pkg.includes("Finance"))    rawScope.push("Finance OS")
+      if (pkg.includes("Business"))   { rawScope.push("Revenue OS"); rawScope.push("Operations OS") }
+    }
   }
 
-  if (!scope.length) {
-    console.warn(`[setup_project] No scope detected — using revenue_os as default fallback`)
-    scope.push("revenue_os")
+  if (!rawScope.length) {
+    console.warn(`[setup_project] No scope detected — using Revenue OS as default`)
+    rawScope.push("Revenue OS")
   }
+
+  const scope = rawScope.map(s => SCOPE_MAP[s]).filter(Boolean)
 
   console.log(`[setup_project] Project ${projectId} | Scope: ${scope.join(", ")}`)
 

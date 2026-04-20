@@ -408,27 +408,9 @@ async function run(payload) {
     } catch {}
   }
 
-  if (projectId) {
-    // Build OS Scope for setup_project — maps package + scoped add-ons to multi_select values
-    const SCOPED_ADDONS = new Set(["Enhanced Dashboard", "Automations", "Custom Widget"])
-    const osScopeItems = []
-    if (formPackage) osScopeItems.push({ name: formPackage })
-    formAddons.forEach(a => {
-      if (SCOPED_ADDONS.has(a)) osScopeItems.push({ name: a })
-    })
-
-    await patchPage(projectId, {
-      "Status":          { status: { name: "Build Started" } },
-      "Start Date":      { date: { start: today } },
-      "Onboarding Form": { url: formUrl },
-      ...(osScopeItems.length ? { "OS Scope": { multi_select: osScopeItems } } : {}),
-      ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
-    }, token)
-    ;[phasesCount, tasksCount] = await triggerSetupProject(projectId)
-  }
-
-  // ── Create Client Account record ───────────────────────────────────────────
-  // Build OS Installed list — always start with Base OS, then purchased OS + add-ons
+  // ── Create Client Account record FIRST ────────────────────────────────────
+  // Must happen before triggerSetupProject so setup_project can read OS Installed
+  // from the linked Client Account to determine which phases/tasks to generate.
   const packages = ["Base OS"]
   if (formPackage) packages.push(formPackage)
   formAddons.forEach(a => packages.push(a))
@@ -448,6 +430,17 @@ async function run(payload) {
     today,
     token,
   })
+
+  // ── Project setup ──────────────────────────────────────────────────────────
+  if (projectId) {
+    await patchPage(projectId, {
+      "Status":          { status: { name: "Build Started" } },
+      "Start Date":      { date: { start: today } },
+      "Onboarding Form": { url: formUrl },
+      ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
+    }, token)
+    ;[phasesCount, tasksCount] = await triggerSetupProject(projectId)
+  }
 
   // ── Finance Ledger — auto-create Deposit entry ───────────────────────────
   const depositAmt = props["Deposit (50%)"]?.number || props["Amount (MYR)"]?.number || props["Amount"]?.number || 0

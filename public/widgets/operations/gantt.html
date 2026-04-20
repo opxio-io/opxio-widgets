@@ -422,7 +422,11 @@ function renderGantt(){
         t._barEnd=t.due||estEnd;
       }
       if(t._barStart>t._barEnd) t._barEnd=t._barStart;
-      t._overdue=t.status!=='Done'&&t.due&&t.due<today;
+      // Overdue: active task past due date, OR done task completed after its due date
+      t._overdue=t.due&&(
+        (t.status!=='Done'&&t.due<today)||
+        (t.status==='Done'&&t.completedDate&&t.completedDate>t.due)
+      );
     });
   });
 

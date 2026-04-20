@@ -44,7 +44,9 @@ body.light .view-btn.active{background:#E5E5E5;color:#111;border-color:rgba(0,0,
 /* Stat rows */
 .stat-row{display:grid;gap:10px;margin-bottom:12px;}
 .stat-row-6{grid-template-columns:repeat(6,1fr);}
+.stat-row-5{grid-template-columns:repeat(5,1fr);}
 .stat-row-4{grid-template-columns:repeat(4,1fr);}
+.stat-row-3{grid-template-columns:repeat(3,1fr);}
 .stat{padding:18px 18px 16px;position:relative;overflow:hidden;}
 .stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
 .stat:hover::before{opacity:1;}
@@ -210,8 +212,8 @@ body.light .log-val{color:rgba(0,0,0,0.62);}
 .log-val.won-val{color:var(--g);opacity:.9;}
 .empty{padding:36px 0;text-align:center;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
 /* Responsive */
-@media(max-width:1200px){.stat-row-6{grid-template-columns:repeat(3,1fr);}.stat-row-4{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:700px){.stat-row-6,.stat-row-4{grid-template-columns:repeat(2,1fr);}.panel{padding:16px;}.f-lbl{width:76px;}.donut-wrap{flex-direction:column;gap:14px;}.chart-card{padding:14px 16px;}}
+@media(max-width:1200px){.stat-row-6{grid-template-columns:repeat(3,1fr);}.stat-row-5{grid-template-columns:repeat(3,1fr);}.stat-row-4{grid-template-columns:repeat(2,1fr);}.stat-row-3{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:700px){.stat-row-6,.stat-row-5,.stat-row-4,.stat-row-3{grid-template-columns:repeat(2,1fr);}.panel{padding:16px;}.f-lbl{width:76px;}.donut-wrap{flex-direction:column;gap:14px;}.chart-card{padding:14px 16px;}}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 
@@ -262,7 +264,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 <!-- ══ PIPELINE TAB ══════════════════════════════════════════════════════════ -->
 <div class="view-pane active" id="pane-pipeline">
 
-  <div class="stat-row stat-row-6">
+  <div class="stat-row stat-row-5">
     <div class="card stat">
       <div class="s-dot"></div>
       <span class="s-lbl">Incoming Leads</span>
@@ -288,13 +290,6 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
       <div class="s-val" id="d-deals">—</div>
       <div class="s-sub" id="d-deals-sub">In deal pipeline</div>
       <div class="s-sub val-g" id="d-deals-val" style="display:none;"></div>
-    </div>
-    <div class="card stat">
-      <div class="s-dot" style="background:var(--lost);opacity:.55;"></div>
-      <span class="s-lbl">Lost</span>
-      <div class="s-val orange" id="d-lost">—</div>
-      <div class="s-sub" id="d-lost-sub">Leads + deals · this month</div>
-      <div class="s-sub val-o" id="d-lost-val" style="display:none;"></div>
     </div>
     <div class="card stat">
       <div class="s-dot"></div>
@@ -337,7 +332,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 <!-- ══ DEALS TAB ═════════════════════════════════════════════════════════════ -->
 <div class="view-pane" id="pane-deals">
 
-  <div class="stat-row stat-row-4">
+  <div class="stat-row stat-row-3">
     <div class="card stat">
       <div class="s-dot"></div>
       <span class="s-lbl">Pre-win Deals</span>
@@ -358,13 +353,6 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
       <div class="s-val" id="dd-balance">—</div>
       <div class="s-sub">Awaiting final payment</div>
       <div class="s-sub val-g" id="dd-balance-val" style="display:none;"></div>
-    </div>
-    <div class="card stat">
-      <div class="s-dot" style="background:var(--lost);opacity:.55;"></div>
-      <span class="s-lbl">Lost Deals</span>
-      <div class="s-val orange" id="dd-lost">—</div>
-      <div class="s-sub">Fell through</div>
-      <div class="s-sub val-o" id="dd-lost-val" style="display:none;"></div>
     </div>
   </div>
 
@@ -397,7 +385,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     </div>
     <div class="card stat">
       <div class="s-dot" style="background:var(--lost);opacity:.55;"></div>
-      <span class="s-lbl">Lost Leads</span>
+      <span class="s-lbl">Unconverted Leads</span>
       <div class="s-val orange" id="s-lost-leads">—</div>
       <div class="s-sub">Didn't convert</div>
       <div class="s-sub val-o" id="s-lost-leads-val" style="display:none;"></div>

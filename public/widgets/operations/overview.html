@@ -60,9 +60,6 @@ body.light .panel-title{color:rgba(0,0,0,.55);}
 .donut-wrap{display:flex;align-items:center;gap:24px;}
 @media(max-width:500px){.donut-wrap{flex-direction:column;align-items:flex-start;gap:14px;}}
 .donut-svg{flex-shrink:0;overflow:visible;}
-.donut-center{font-size:32px;font-weight:900;fill:var(--g);letter-spacing:-1.5px;}
-.donut-center-sub{font-size:10px;font-weight:700;fill:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;}
-body.light .donut-center-sub{fill:rgba(0,0,0,.25);}
 .donut-legend{display:flex;flex-direction:column;gap:10px;flex:1;}
 .dl-item{display:flex;align-items:center;gap:10px;}
 .dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
@@ -77,10 +74,13 @@ body.light .dl-bar-track{background:rgba(0,0,0,.05);}
 /* ── TASK COMPLETION RING + BREAKDOWN ── */
 .task-wrap{display:flex;align-items:center;gap:20px;}
 @media(max-width:500px){.task-wrap{flex-direction:column;}}
-.ring-svg{flex-shrink:0;overflow:visible;}
-.ring-center{font-size:32px;font-weight:900;fill:var(--g);letter-spacing:-1.5px;}
-.ring-center-sub{font-size:10px;font-weight:700;fill:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.1em;}
-body.light .ring-center-sub{fill:rgba(0,0,0,.25);}
+/* Ring HTML overlay — same pattern as implementation tracker */
+.ov-ring-wrap{position:relative;flex-shrink:0;width:120px;height:120px;}
+.ring-svg{width:120px;height:120px;overflow:visible;}
+.ov-ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.ov-ring-pct{font-size:32px;font-weight:900;color:var(--g);letter-spacing:-1.5px;line-height:1;}
+.ov-ring-sub{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:4px;}
+body.light .ov-ring-sub{color:rgba(0,0,0,.25);}
 .task-bars{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;}
 .tb-row{display:flex;align-items:center;gap:8px;}
 .tb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
@@ -176,11 +176,15 @@ body.light .empty{color:rgba(0,0,0,.18);}
       <span class="panel-badge" id="type-badge">0 projects</span>
     </div>
     <div class="donut-wrap">
-      <svg class="donut-svg" width="120" height="120" viewBox="0 0 120 120" id="donut-svg">
-        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="donut-center" id="donut-val">0</text>
-        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="donut-center-sub">Projects</text>
-      </svg>
+      <div class="ov-ring-wrap">
+        <svg class="donut-svg ring-svg" width="120" height="120" viewBox="0 0 120 120" id="donut-svg">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        </svg>
+        <div class="ov-ring-center">
+          <div class="ov-ring-pct" id="donut-val">0</div>
+          <div class="ov-ring-sub">Projects</div>
+        </div>
+      </div>
       <div class="donut-legend" id="donut-legend"></div>
     </div>
   </div>
@@ -203,11 +207,15 @@ body.light .empty{color:rgba(0,0,0,.18);}
       <span class="panel-title">Task Status</span>
     </div>
     <div class="task-wrap">
-      <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="task-ring-svg">
-        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="ring-center" id="ring-pct">0%</text>
-        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="ring-center-sub">Complete</text>
-      </svg>
+      <div class="ov-ring-wrap">
+        <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="task-ring-svg">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        </svg>
+        <div class="ov-ring-center">
+          <div class="ov-ring-pct" id="ring-pct">0%</div>
+          <div class="ov-ring-sub">Complete</div>
+        </div>
+      </div>
       <div class="task-bars" id="task-bars"></div>
     </div>
   </div>
@@ -217,11 +225,15 @@ body.light .empty{color:rgba(0,0,0,.18);}
       <span class="panel-title">Task Priority</span>
     </div>
     <div class="task-wrap">
-      <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="pri-ring-svg">
-        <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
-        <text x="60" y="53" text-anchor="middle" dominant-baseline="central" class="ring-center" id="pri-ring-val">—</text>
-        <text x="60" y="70" text-anchor="middle" dominant-baseline="central" class="ring-center-sub">High Pri</text>
-      </svg>
+      <div class="ov-ring-wrap">
+        <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="pri-ring-svg">
+          <circle cx="60" cy="60" r="50" fill="none" stroke="rgba(255,255,255,.06)" stroke-width="8"/>
+        </svg>
+        <div class="ov-ring-center">
+          <div class="ov-ring-pct" id="pri-ring-val">—</div>
+          <div class="ov-ring-sub">High Pri</div>
+        </div>
+      </div>
       <div class="task-bars" id="pri-bars"></div>
     </div>
   </div>
@@ -287,7 +299,7 @@ function renderDonut(types, total){
     arc.setAttribute('stroke-dasharray',`${Math.max(len-gap,1)} ${DONUT_CIRC}`);
     arc.setAttribute('transform',`rotate(${-90+offset*360} 60 60)`);
     arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
-    svg.insertBefore(arc,svg.querySelector('text'));
+    svg.appendChild(arc);
     offset+=frac;
   });
 
@@ -343,7 +355,7 @@ function renderTaskRing(ts){
     arc.setAttribute('stroke-dasharray',`${Math.max(len-2,1)} ${CIRC}`);
     arc.setAttribute('transform',`rotate(${-90+offset*360} 60 60)`);
     arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
-    svg.insertBefore(arc,svg.querySelector('text'));
+    svg.appendChild(arc);
     offset+=frac;
   });
 
@@ -397,7 +409,7 @@ function renderPriorities(pri){
     arc.setAttribute('stroke-dasharray',`${Math.max(len-2,1)} ${CIRC}`);
     arc.setAttribute('transform',`rotate(${-90+offset*360} 60 60)`);
     arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
-    svg.insertBefore(arc,svg.querySelector('text'));
+    svg.appendChild(arc);
     offset+=frac;
   });
 

@@ -348,7 +348,7 @@ function renderMainView(data) {
   document.getElementById('app').innerHTML = `
     <div class="header">
       <div class="h-left">
-        <div class="eyebrow">Implementation Tracker</div>
+        <div class="eyebrow">Implementation Tracker${p.name ? ' · ' + esc(p.name.split(/\s*[—–-]\s*/)[0].trim()) : ''}</div>
         <div class="h-title">${esc(p.name || 'Project')}</div>
       </div>
       <div class="h-right">

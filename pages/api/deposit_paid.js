@@ -14,7 +14,8 @@ async function createPortalClient({ companyName, projectId, contactEmail, packag
       process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_SERVICE_KEY
     )
 
-    const portalToken = crypto.randomBytes(48).toString("hex")
+    const portalToken  = crypto.randomBytes(48).toString("hex")
+    const accessToken  = crypto.randomBytes(32).toString("hex")
     const slug = (companyName || "client")
       .toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")
       + "-" + Date.now().toString(36)
@@ -23,6 +24,7 @@ async function createPortalClient({ companyName, projectId, contactEmail, packag
       client_name:   companyName || "New Client",
       slug,
       status:        "active",
+      access_token:  accessToken,
       portal_token:  portalToken,
       project_id:    projectId,
       portal_active: true,

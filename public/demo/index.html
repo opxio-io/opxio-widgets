@@ -154,7 +154,7 @@
           <span class="os-btn-dot"></span>Revenue OS<i class="os-btn-chevron">&#8250;</i>
         </button>
         <div class="w-links">
-          <button class="w-link active" onclick="pick(this,'revenue','overview',900,'?token=T')" data-title="Revenue Overview" data-desc="Monthly revenue, deal stats, and top-line KPIs in a single view." data-module="Billing & Payment Tracker">
+          <button class="w-link active" onclick="pick(this,'revenue','overview',900,'?token=T')" data-title="Revenue Overview" data-desc="Monthly revenue, deal stats, and top-line KPIs in a single view." data-module="Billing & Payment Tracker" data-os="Revenue OS">
             <span class="w-link-dot"></span>Revenue Overview
           </button>
           <button class="w-link" onclick="pick(this,'revenue','leads',900,'?token=T')" data-title="Lead Pipeline" data-desc="Every lead from first touch to converted — funnel view, outcomes, follow-up tracking." data-module="CRM & Pipeline">
@@ -226,13 +226,13 @@
           <span class="os-btn-dot"></span>Finance OS<i class="os-btn-chevron">&#8250;</i>
         </button>
         <div class="w-links">
-          <button class="w-link" onclick="pick(this,'revenue','finance',900,'?token=T')" data-title="Finance Snapshot" data-desc="Income, expenses, and P&L — monthly trend and expense category breakdown." data-module="Finance Ledger">
+          <button class="w-link" onclick="pickSrc(this,'/widgets/finance/snapshot?token=T',900)" data-title="Finance Snapshot" data-desc="Income, expenses, and P&L — monthly trend and expense category breakdown." data-module="Finance Ledger" data-os="Finance OS">
             <span class="w-link-dot"></span>Finance Snapshot
           </button>
-          <button class="w-link" onclick="pick(this,'revenue','billing',900,'?token=T')" data-title="Invoice Tracker" data-desc="Pending deposits, balance due, and collected payments. Full invoice pipeline." data-module="Invoice & Payment Tracker">
+          <button class="w-link" onclick="pick(this,'revenue','billing',900,'?token=T')" data-title="Invoice Tracker" data-desc="Pending deposits, balance due, and collected payments. Full invoice pipeline." data-module="Invoice & Payment Tracker" data-os="Finance OS">
             <span class="w-link-dot"></span>Invoice Tracker
           </button>
-          <button class="w-link" onclick="pick(this,'revenue','topproducts',900,'?token=T')" data-title="Top Products" data-desc="Best-selling packages ranked by units sold and revenue contribution." data-module="Product & Pricing Catalogue">
+          <button class="w-link" onclick="pick(this,'revenue','topproducts',900,'?token=T')" data-title="Top Products" data-desc="Best-selling packages ranked by units sold and revenue contribution." data-module="Product & Pricing Catalogue" data-os="Finance OS">
             <span class="w-link-dot"></span>Top Products
           </button>
         </div>
@@ -276,19 +276,26 @@ const T = 'opxio_demo_showcase_2026'
 const OS_LABELS = { revenue:'Revenue OS', operations:'Operations OS', marketing:'Marketing OS', finance:'Finance OS' }
 let currentOS = 'revenue'
 
-function pick(btn, os, widget, height, params) {
+function setViewer(btn, src, height) {
   document.querySelectorAll('.w-link').forEach(b => b.classList.remove('active'))
   btn.classList.add('active')
-
-  const p = params.replace('T', T)
-  const folder = (os === 'finance') ? 'revenue' : os
-  document.getElementById('vFrame').src    = '/widgets/' + folder + '/' + widget + '.html' + p
+  document.getElementById('vFrame').src    = src
   document.getElementById('vFrame').height = height
-  document.getElementById('vEye').textContent   = OS_LABELS[os] || os
+  document.getElementById('vEye').textContent   = btn.dataset.os || OS_LABELS[currentOS] || ''
   document.getElementById('vTitle').textContent = btn.dataset.title
   document.getElementById('vDesc').textContent  = btn.dataset.desc
   document.getElementById('vBadge').textContent = btn.dataset.module
+}
+
+function pick(btn, os, widget, height, params) {
   currentOS = os
+  const p = params.replace('T', T)
+  const folder = (os === 'finance') ? 'revenue' : os
+  setViewer(btn, '/widgets/' + folder + '/' + widget + '.html' + p, height)
+}
+
+function pickSrc(btn, src, height) {
+  setViewer(btn, src.replace('T', T), height)
 }
 
 function toggleOS(os, btn) {

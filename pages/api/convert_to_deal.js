@@ -7,7 +7,7 @@
 // 2. Fetches Company name for Deal title
 // 3. Creates Deal in Deals DB  ── Deal Name: "Company Name — Product"
 // 4. Stitches: Deal["Origin Lead"] → Lead, Lead["Deal"] → Deal
-// 5. Updates Lead Stage → "Discovery Done"
+// 5. Updates Lead Stage → "Converted"
 
 import { getPage, patchPage, createPage, plain, DB, createTeamTask } from "../../lib/notion"
 
@@ -72,7 +72,7 @@ async function run(payload) {
     []
   )[0]?.id?.replace(/-/g, "") || null
 
-  const osInterest    = lp["OS Interest"]?.select?.name || null
+  const osInterest    = lp["OS Interest"]?.multi_select?.[0]?.name || null
   const situation     = plain(lp.Situation?.rich_text || [])
   const discoveryCall = lp["Discovery Call"]?.date?.start || null
   const potentialVal  = lp["Potential Value (MYR)"]?.number
@@ -112,7 +112,7 @@ async function run(payload) {
   // ── 4. Create Deal ────────────────────────────────────────────────────────
   const dealProps = {
     "Deal Name":   { title: [{ text: { content: dealName } }] },
-    "Stage":       { status: { name: "Discovery Done" } },
+    "Stage":       { status: { name: "Proposal" } },
     "Origin Lead": { relation: [{ id: leadId }] },
   }
 
@@ -144,9 +144,9 @@ async function run(payload) {
     console.warn("[convert_to_deal] stitch Lead→Deal:", e.message)
   }
 
-  // ── 6. Update Lead Stage → Discovery Done ─────────────────────────────────
+  // ── 6. Update Lead Stage → Converted ─────────────────────────────────────
   try {
-    await patchPage(leadId, { "Stage": { status: { name: "Discovery Done" } } }, token)
+    await patchPage(leadId, { "Stage": { status: { name: "Converted" } } }, token)
   } catch (e) {
     console.warn("[convert_to_deal] lead stage update:", e.message)
   }

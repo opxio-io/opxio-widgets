@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Task Hub</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px;background:#191919;color:#fff;overflow-x:hidden;overflow-y:hidden;display:flex;flex-direction:column;}
+body.light{background:#FFFFFF;color:#111;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--amberm:rgba(251,191,36,.1);--amberb:rgba(251,191,36,.2);--blue:#60A5FA;--bluem:rgba(96,165,250,.1);--blueb:rgba(96,165,250,.18);--red:#FF6B6B;--redm:rgba(255,107,107,.1);--redb:rgba(255,107,107,.2);--purple:#C084FC;--muted:rgba(255,255,255,.35);}
+body.light{--muted:rgba(0,0,0,.45);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
+
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
+
+/* ── HEADER ── */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;flex-shrink:0;}
+.h-left{display:flex;flex-direction:column;gap:2px;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
+.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
+body.light .ts{color:rgba(0,0,0,.3);}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:14px 0 10px;flex-shrink:0;}
+body.light .sec-lbl{color:rgba(255,255,255,.65);}
+
+/* ── ICON BUTTONS ── */
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── STAT CARDS ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;}
+@media(max-width:640px){.g4{grid-template-columns:repeat(2,1fr);}}
+.stat{padding:14px 16px;position:relative;}
+.s-dot{position:absolute;top:12px;right:12px;width:6px;height:6px;border-radius:50%;}
+.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.45);margin-bottom:8px;display:block;}
+body.light .s-lbl{color:rgba(0,0,0,.4);}
+.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
+
+/* ── TABS ── */
+.tab-row{display:flex;gap:4px;margin-bottom:10px;flex-shrink:0;}
+.tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 16px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.tab:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.55);}
+.tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+
+/* ── TASK LIST ── */
+.task-list{display:flex;flex-direction:column;gap:8px;overflow-y:auto;padding-right:2px;padding-bottom:8px;flex:1;min-height:0;}
+
+/* ── TASK CARD ── */
+.task-card{padding:14px 16px;position:relative;overflow:hidden;flex-shrink:0;}
+.task-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .2s;}
+.task-card:hover::before{opacity:1;}
+.tc-blocked::before{background:linear-gradient(90deg,var(--red),transparent);}
+.tc-inProgress::before{background:linear-gradient(90deg,var(--g),transparent);}
+.tc-todo::before{background:linear-gradient(90deg,rgba(255,255,255,.15),transparent);}
+.tc-done::before{background:linear-gradient(90deg,rgba(255,255,255,.08),transparent);}
+
+/* Row 1: badges + assignee + date */
+.tc-row1{display:flex;align-items:center;gap:6px;margin-bottom:8px;flex-wrap:wrap;}
+.tc-spacer{flex:1;}
+
+/* Status pill */
+.tc-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:999px;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;}
+.pill-todo    {background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);}
+.pill-inProgress{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.pill-blocked {background:var(--redm);color:var(--red);border:1px solid var(--redb);}
+.pill-done    {background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.07);}
+
+/* Category badge */
+.tc-cat{font-size:9px;font-weight:700;padding:2px 7px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase;flex-shrink:0;}
+
+/* Priority dot */
+.tc-pri{font-size:11px;flex-shrink:0;}
+
+/* Assignee chips */
+.tc-assignees{display:flex;gap:4px;align-items:center;flex-shrink:0;}
+.tc-avatar{width:20px;height:20px;border-radius:50%;background:rgba(170,255,0,.15);border:1px solid rgba(170,255,0,.25);font-size:9px;font-weight:800;color:var(--g);display:flex;align-items:center;justify-content:center;letter-spacing:0;flex-shrink:0;}
+.tc-avatar-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);}
+body.light .tc-avatar-name{color:rgba(0,0,0,.35);}
+
+/* Due date */
+.tc-due{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);flex-shrink:0;white-space:nowrap;}
+body.light .tc-due{color:rgba(0,0,0,.3);}
+.tc-due.overdue{color:var(--red);}
+
+/* Task name */
+.tc-name{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.02em;line-height:1.3;margin-bottom:6px;}
+body.light .tc-name{color:#111;}
+.tc-name a{color:inherit;text-decoration:none;}
+.tc-name a:hover{text-decoration:underline;text-decoration-color:var(--g);text-underline-offset:2px;}
+
+/* Context line */
+.tc-context{display:flex;align-items:center;gap:5px;}
+.tc-ctx-type{font-size:9px;font-weight:700;padding:1px 6px;border-radius:4px;letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;}
+.ctx-Lead    {background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.2);}
+.ctx-Deal    {background:rgba(251,191,36,.1);color:#FBBF24;border:1px solid rgba(251,191,36,.2);}
+.ctx-Build   {background:rgba(170,255,0,.1);color:#AAFF00;border:1px solid rgba(170,255,0,.2);}
+.ctx-Invoice {background:rgba(251,146,60,.1);color:#FB923C;border:1px solid rgba(251,146,60,.2);}
+.ctx-Account {background:rgba(192,132,252,.1);color:#C084FC;border:1px solid rgba(192,132,252,.2);}
+.ctx-Company {background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);}
+.tc-ctx-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+body.light .tc-ctx-label{color:rgba(0,0,0,.35);}
+
+.empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
+body.light .empty{color:rgba(0,0,0,.25);}
+.wgt-footer{text-align:center;padding:16px 0 2px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);flex-shrink:0;}
+body.light .wgt-footer{color:rgba(0,0,0,.2);}
+</style></head><body>
+
+<div class="header">
+  <div class="h-left">
+    <div class="eyebrow">Operations OS · Opxio</div>
+    <h1 class="h-title">Task Hub</h1>
+  </div>
+  <div class="h-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
+      <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- STAT CARDS -->
+<div class="sec-lbl">Overview</div>
+<div class="g4">
+  <div class="card stat"><div class="s-dot" style="background:rgba(255,255,255,.25);"></div><span class="s-lbl">To Do</span><div class="s-val" id="s-todo">—</div><div class="s-sub">Not started</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">In Progress</span><div class="s-val" id="s-inprogress">—</div><div class="s-sub">Active</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--red);"></div><span class="s-lbl">Blocked</span><div class="s-val" id="s-blocked">—</div><div class="s-sub">Needs attention</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);opacity:.35;"></div><span class="s-lbl">Done</span><div class="s-val" id="s-done">—</div><div class="s-sub">Completed</div></div>
+</div>
+
+<!-- TAB ROW + LIST -->
+<div class="sec-lbl" style="margin-top:16px;">Tasks</div>
+<div class="tab-row">
+  <button class="tab active" onclick="switchTab('active')" id="tab-active">Active</button>
+  <button class="tab" onclick="switchTab('done')" id="tab-done">Done</button>
+</div>
+<div class="task-list" id="task-list"><div class="card empty">Loading…</div></div>
+
+<div class="wgt-footer">Widgets by Opxio.io</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+function apiUrl(p) { return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
+
+let light = false, currentTab = 'active';
+let activeTasks = [], doneTasks = [];
+
+const SUN_ICON  = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON_ICON = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+
+function toggleMode() { light = !light; document.body.classList.toggle('light', light); document.getElementById('mb').innerHTML = light ? MOON_ICON : SUN_ICON; }
+function setTs() { document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+function isOverdue(iso) { if (!iso) return false; return new Date(iso + 'T23:59:59') < new Date(); }
+
+// ── Category colours ──────────────────────────────────────────────────────
+const CAT_STYLE = {
+  'Sales':     'background:rgba(74,222,128,.1);color:#4ADE80;border:1px solid rgba(74,222,128,.2)',
+  'Billing':   'background:rgba(251,191,36,.1);color:#FBBF24;border:1px solid rgba(251,191,36,.2)',
+  'Finance':   'background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.2)',
+  'Admin':     'background:rgba(255,255,255,.06);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1)',
+  'HR':        'background:rgba(192,132,252,.1);color:#C084FC;border:1px solid rgba(192,132,252,.2)',
+  'Marketing': 'background:rgba(251,113,133,.1);color:#FB7185;border:1px solid rgba(251,113,133,.2)',
+  'Client':    'background:rgba(251,146,60,.1);color:#FB923C;border:1px solid rgba(251,146,60,.2)',
+  'Internal':  'background:rgba(255,255,255,.04);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.08)',
+};
+const PRIORITY_ICON = { '🔴 Urgent': '🔴', '🟡 High': '🟡', '🟢 Normal': '🟢', '⚪ Low': '⚪' };
+
+// ── Pill label ────────────────────────────────────────────────────────────
+function pillLabel(s) {
+  if (s === 'todo')       return { cls: 'pill-todo',       lbl: 'To Do' };
+  if (s === 'inProgress') return { cls: 'pill-inProgress', lbl: 'In Progress' };
+  if (s === 'blocked')    return { cls: 'pill-blocked',    lbl: 'Blocked' };
+  return { cls: 'pill-done', lbl: 'Done' };
+}
+
+// ── Render one task card ──────────────────────────────────────────────────
+function renderTask(t) {
+  const pl   = pillLabel(t.status);
+  const due  = t.dueDate ? fmtDate(t.dueDate) : '';
+  const ov   = isOverdue(t.dueDate);
+  const pri  = PRIORITY_ICON[t.priority] || '';
+  const catStyle = CAT_STYLE[t.category] || CAT_STYLE['Admin'];
+
+  // Assignee chips (up to 3)
+  const assigneeHTML = (t.assignees || []).slice(0, 3).map(a =>
+    `<div class="tc-avatar" title="${esc(a.name)}">${esc(a.initials)}</div>`
+  ).join('');
+
+  // Category badge
+  const catBadge = t.category
+    ? `<span class="tc-cat" style="${catStyle}">${esc(t.category)}</span>`
+    : '';
+
+  // Context line
+  let ctxHTML = '';
+  if (t.context) {
+    ctxHTML = `<div class="tc-context">
+      <span class="tc-ctx-type ctx-${t.context.type}">${t.context.type}</span>
+      <span class="tc-ctx-label">${esc(t.context.label)}</span>
+    </div>`;
+  }
+
+  const nameHTML = t.notionUrl
+    ? `<a href="${t.notionUrl}" target="_blank" rel="noopener">${esc(t.name)}</a>`
+    : esc(t.name);
+
+  return `<div class="card task-card tc-${t.status}">
+    <div class="tc-row1">
+      <span class="tc-pill ${pl.cls}">${pl.lbl}</span>
+      ${catBadge}
+      ${pri ? `<span class="tc-pri">${pri}</span>` : ''}
+      <div class="tc-spacer"></div>
+      <div class="tc-assignees">${assigneeHTML}</div>
+      ${due ? `<span class="tc-due${ov ? ' overdue' : ''}">${ov ? '⚠ ' : ''}${due}</span>` : ''}
+    </div>
+    <div class="tc-name">${nameHTML}</div>
+    ${ctxHTML}
+  </div>`;
+}
+
+// ── Render list ───────────────────────────────────────────────────────────
+function renderList() {
+  const el   = document.getElementById('task-list');
+  const list = currentTab === 'active' ? activeTasks : doneTasks;
+  const msg  = currentTab === 'active' ? 'No active tasks' : 'No completed tasks';
+  el.innerHTML = list.length ? list.map(renderTask).join('') : `<div class="card empty">${msg}</div>`;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('tab-active').classList.toggle('active', tab === 'active');
+  document.getElementById('tab-done').classList.toggle('active', tab === 'done');
+  renderList();
+}
+
+// ── Load data ─────────────────────────────────────────────────────────────
+async function loadData() {
+  try {
+    const r = await fetch(apiUrl('/api/data/team-tasks'));
+    const j = await r.json();
+    if (j.error) { console.error('team-tasks API:', j.error); return; }
+
+    const c = j.counts || {};
+    document.getElementById('s-todo').textContent       = c.todo       ?? 0;
+    document.getElementById('s-inprogress').textContent = c.inProgress ?? 0;
+    document.getElementById('s-blocked').textContent    = c.blocked    ?? 0;
+    document.getElementById('s-done').textContent       = c.done       ?? 0;
+
+    activeTasks = j.tasks     || [];
+    doneTasks   = j.completed || [];
+
+    document.getElementById('tab-active').textContent = `Active (${activeTasks.length})`;
+    document.getElementById('tab-done').textContent   = `Done (${doneTasks.length})`;
+    renderList();
+    setTs();
+  } catch (e) { console.error('loadData:', e); }
+}
+
+function doRefresh() {
+  const b = document.getElementById('rb');
+  if (b) b.classList.add('spinning');
+  loadData().finally(() => { const b2 = document.getElementById('rb'); if (b2) b2.classList.remove('spinning'); });
+}
+
+loadData();
+setTs();
+setInterval(loadData, 3 * 60 * 1000);
+</script>
+</body></html>

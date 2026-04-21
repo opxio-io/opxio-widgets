@@ -66,15 +66,27 @@ body.light .panel-title{color:rgba(0,0,0,.55);}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);margin-left:auto;}
 
 /* ── Health numbers ── */
-.health-nums{display:grid;grid-template-columns:repeat(3,1fr);flex:1;align-items:center;margin-bottom:18px;}
+.health-nums{display:grid;grid-template-columns:repeat(3,1fr);flex:1;align-items:center;margin-bottom:20px;}
 .hn-col{padding:10px 12px;text-align:center;}
 .hn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:8px;}
 .hn-val{font-size:38px;font-weight:900;letter-spacing:-2px;line-height:1;}
 .hn-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.2);margin-top:5px;min-height:14px;}
 body.light .hn-sub{color:rgba(0,0,0,.28);}
-.health-bar-wrap{margin-top:4px;}
-.health-bar-track{width:100%;height:10px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;display:flex;}
-.hbar-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);}
+/* ── Gradient health bar ── */
+.gbar-wrap{position:relative;}
+.gbar-labels{display:flex;justify-content:space-between;margin-bottom:8px;}
+.gbar-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);}
+.gbar-score-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
+.gbar-outer{width:100%;height:14px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;position:relative;}
+.gbar-fill{height:100%;border-radius:999px;
+  background:linear-gradient(to right,#22C55E 0%,#84CC16 20%,#EAB308 45%,#F97316 70%,#FF6B6B 100%);
+  background-size:100% 100%;
+  transition:width 1.1s cubic-bezier(.4,0,.2,1);}
+.gbar-marker-wrap{position:absolute;top:0;height:100%;pointer-events:none;transition:left 1.1s cubic-bezier(.4,0,.2,1);}
+.gbar-marker{width:2px;height:100%;background:rgba(255,255,255,.95);border-radius:1px;box-shadow:0 0 8px rgba(255,255,255,.6);}
+.gbar-ticks{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;}
+.gbar-tick{font-size:8px;font-weight:600;color:rgba(255,255,255,.15);}
+body.light .gbar-lbl,.gbar-tick{color:rgba(0,0,0,.25);}
 
 /* ── Funnel bars (CRM pattern) ── */
 .f-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
@@ -160,9 +172,9 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
 <!-- Stat strip -->
 <div class="stat-row">
   <div class="card stat">
-    <div class="s-dot" style="background:rgba(255,255,255,.35);"></div>
+    <div class="s-dot"></div>
     <span class="s-lbl">Total Clients</span>
-    <div class="s-val white" id="s-total">—</div>
+    <div class="s-val" id="s-total">—</div>
     <div class="s-sub" id="s-total-sub">All accounts</div>
   </div>
   <div class="card stat">
@@ -207,13 +219,22 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
         <div class="hn-sub" id="h-critical-pct"></div>
       </div>
     </div>
-    <!-- Segmented bar -->
-    <div class="health-bar-wrap">
-      <div class="health-bar-track">
-        <div class="hbar-seg" id="bar-healthy" style="background:#22C55E;width:0%;border-radius:999px 0 0 999px;"></div>
-        <div class="hbar-seg" id="bar-risk"    style="background:#FBBF24;width:0%;"></div>
-        <div class="hbar-seg" id="bar-critical"style="background:#FF6B6B;width:0%;"></div>
-        <div class="hbar-seg" id="bar-unset"   style="background:rgba(255,255,255,.08);width:0%;border-radius:0 999px 999px 0;"></div>
+    <!-- Gradient health bar -->
+    <div class="gbar-wrap">
+      <div class="gbar-labels">
+        <span class="gbar-lbl">Health Score</span>
+        <span class="gbar-score-lbl" id="gbar-score-lbl" style="color:#22C55E;">—</span>
+      </div>
+      <div class="gbar-outer">
+        <div class="gbar-fill" id="gbar-fill" style="width:0%;"></div>
+        <div class="gbar-marker-wrap" id="gbar-marker-wrap" style="left:0%;">
+          <div class="gbar-marker"></div>
+        </div>
+      </div>
+      <div class="gbar-ticks">
+        <span class="gbar-tick">Healthy</span>
+        <span class="gbar-tick">At Risk</span>
+        <span class="gbar-tick">Critical</span>
       </div>
     </div>
   </div>
@@ -295,7 +316,7 @@ function statusPill(s){
   return s ? `<span class="sp sp-past">${esc(s)}</span>` : '';
 }
 
-// ── Health status (big numbers + segmented bar) ───────────────────────────────
+// ── Health status — gradient bar ─────────────────────────────────────────────
 function renderHealth(hc, total){
   const green = hc['🟢 Green']||0;
   const amber  = hc['🟡 Amber']||0;
@@ -304,25 +325,41 @@ function renderHealth(hc, total){
   const tot    = total || (green+amber+red+unset);
   const pct    = n => tot > 0 ? Math.round((n/tot)*100)+'%' : '—';
 
-  document.getElementById('h-healthy').textContent    = green;
-  document.getElementById('h-risk').textContent       = amber;
-  document.getElementById('h-critical').textContent   = red;
+  // Big numbers
+  document.getElementById('h-healthy').textContent     = green;
+  document.getElementById('h-risk').textContent        = amber;
+  document.getElementById('h-critical').textContent    = red;
   document.getElementById('h-healthy-pct').textContent = tot>0 ? pct(green)+' of total' : '';
   document.getElementById('h-risk-pct').textContent    = tot>0 ? pct(amber)+' of total' : '';
   document.getElementById('h-critical-pct').textContent= tot>0 ? pct(red)+' of total' : '';
 
-  const pctHealthy = tot > 0 ? Math.round((green/tot)*100) : 0;
-  document.getElementById('h-pct-badge').textContent = pctHealthy + '% Healthy';
+  // Health score: 0 = all healthy (green end), 100 = all critical (red end)
+  // score = (atRisk×0.5 + critical×1) / total × 100
+  const score = tot > 0 ? Math.min(100, Math.round(((amber*0.5 + red) / tot) * 100)) : 0;
 
-  // Segmented bar
-  if(tot > 0){
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      document.getElementById('bar-healthy').style.width  = ((green/tot)*100).toFixed(1)+'%';
-      document.getElementById('bar-risk').style.width     = ((amber/tot)*100).toFixed(1)+'%';
-      document.getElementById('bar-critical').style.width = ((red/tot)*100).toFixed(1)+'%';
-      document.getElementById('bar-unset').style.width    = ((unset/tot)*100).toFixed(1)+'%';
-    }));
-  }
+  // Badge label + colour
+  const badge = document.getElementById('h-pct-badge');
+  const scoreLbl = document.getElementById('gbar-score-lbl');
+  let status, statusColor;
+  if(score < 20)       { status='Healthy';  statusColor='#22C55E'; }
+  else if(score < 50)  { status='Moderate'; statusColor='#EAB308'; }
+  else if(score < 75)  { status='At Risk';  statusColor='#F97316'; }
+  else                 { status='Critical'; statusColor='#FF6B6B'; }
+
+  badge.textContent = status;
+  badge.style.background = statusColor+'22';
+  badge.style.color = statusColor;
+  badge.style.borderColor = statusColor+'44';
+  scoreLbl.textContent = score+'% risk · '+status;
+  scoreLbl.style.color = statusColor;
+
+  // Gradient bar fill + marker
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.getElementById('gbar-fill').style.width = score+'%';
+    // Marker sits at the score position
+    const markerEl = document.getElementById('gbar-marker-wrap');
+    if(markerEl) markerEl.style.left = Math.max(0, score-0.5)+'%';
+  }));
 }
 
 // ── Status Funnel (CRM funnel bars pattern) ───────────────────────────────────

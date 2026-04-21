@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Opxio — Project Tracker</title>
+<title>Opxio — Build Tracker</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html,body{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px;background:#191919;color:#fff;overflow-x:hidden;overflow-y:hidden;display:flex;flex-direction:column;}
 body.light{background:#FFFFFF;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--amberm:rgba(251,191,36,.1);--amberb:rgba(251,191,36,.2);--blue:#60A5FA;--bluem:rgba(96,165,250,.1);--blueb:rgba(96,165,250,.18);--red:#FF6B6B;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--amberm:rgba(251,191,36,.1);--amberb:rgba(251,191,36,.2);--blue:#60A5FA;--bluem:rgba(96,165,250,.1);--blueb:rgba(96,165,250,.18);--red:#FF6B6B;--purple:#C084FC;--purplem:rgba(192,132,252,.1);--purpleb:rgba(192,132,252,.2);}
 body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--muted:rgba(0,0,0,.5);}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
@@ -15,15 +15,9 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.1);}
 body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
-.btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 14px;border-radius:8px;cursor:pointer;transition:all .2s;}
-.btn:hover{border-color:var(--gb);color:var(--g);}
-body.light .btn{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.75);}
 
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;flex-shrink:0;}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;flex-shrink:0;}
 .h-left{display:flex;flex-direction:column;gap:2px;}
-.g5{flex-shrink:0;}
-.tab-row{flex-shrink:0;}
-.sec-lbl{flex-shrink:0;}
 .h-right{display:flex;align-items:center;gap:8px;}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
 body.light .eyebrow{color:rgba(0,0,0,.35);}
@@ -31,8 +25,9 @@ body.light .eyebrow{color:rgba(0,0,0,.35);}
 body.light .h-title{color:#111;}
 .ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
 body.light .ts{color:rgba(0,0,0,.32);}
-.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:16px 0 10px;}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:14px 0 10px;flex-shrink:0;}
 body.light .sec-lbl{color:rgba(255,255,255,.65);}
+
 /* Icon buttons */
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
@@ -42,10 +37,21 @@ body.light .sec-lbl{color:rgba(255,255,255,.65);}
 body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.65);}
 body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
 
+/* ── SOURCE TABS (top-level: Client Builds / Internal Builds) ── */
+.src-tabs{display:flex;gap:5px;margin-bottom:14px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,.06);padding-bottom:10px;}
+body.light .src-tabs{border-color:rgba(0,0,0,.07);}
+.src-tab{background:transparent;border:1px solid transparent;color:rgba(255,255,255,.3);font-family:'Satoshi',sans-serif;font-size:13px;font-weight:700;padding:7px 18px;border-radius:9px;cursor:pointer;transition:all .2s;letter-spacing:-.01em;}
+.src-tab:hover{background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.55);}
+.src-tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+body.light .src-tab{color:rgba(0,0,0,.35);}
+body.light .src-tab:hover{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.55);}
+body.light .src-tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+
 /* ── STAT CARDS ── */
-.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
-@media(max-width:700px){.g5{grid-template-columns:repeat(3,1fr);}}
-@media(max-width:440px){.g5{grid-template-columns:repeat(2,1fr);}}
+.g5{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;flex-shrink:0;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;flex-shrink:0;}
+@media(max-width:700px){.g5,.g4{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:440px){.g5,.g4{grid-template-columns:repeat(2,1fr);}}
 .stat{padding:14px 16px;position:relative;}
 .s-dot{position:absolute;top:12px;right:12px;width:6px;height:6px;border-radius:50%;}
 .s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.5);margin-bottom:8px;display:block;}
@@ -54,24 +60,38 @@ body.light .s-lbl{color:rgba(255,255,255,.85);}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:5px;}
 body.light .s-sub{color:rgba(255,255,255,.22);}
 
-/* ── PROJECT ROWS ── */
+/* ── STATUS TABS (Active / Completed) ── */
+.tab-row{display:flex;gap:4px;margin-bottom:10px;flex-shrink:0;}
+.tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 16px;border-radius:8px;cursor:pointer;transition:all .2s;}
+.tab:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
+.tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+body.light .tab{border-color:rgba(0,0,0,.08);color:rgba(255,255,255,.65);}
+body.light .tab:hover{border-color:rgba(0,0,0,.23);color:rgba(255,255,255,.75);}
+body.light .tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+
+/* ── PROJECT ROWS (client builds) ── */
 .proj-list{display:flex;flex-direction:column;gap:10px;overflow-y:auto;padding-right:2px;padding-bottom:8px;flex:1;min-height:0;}
 .proj-card{padding:18px 20px;position:relative;overflow:hidden;flex-shrink:0;}
 .proj-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .2s;}
 .proj-card:hover::before{opacity:1;}
-.proj-card.st-active::before,.proj-card.st-awaiting::before{background:linear-gradient(90deg,var(--g),transparent);}
+.proj-card.st-active::before,.proj-card.st-planning::before,.proj-card.st-awaiting::before{background:linear-gradient(90deg,var(--g),transparent);}
 .proj-card.st-review::before{background:linear-gradient(90deg,var(--amber),transparent);}
-.proj-card.st-hold::before{background:linear-gradient(90deg,rgba(255,255,255,.2),transparent);}
+.proj-card.st-inProgress::before{background:linear-gradient(90deg,var(--g),transparent);}
+.proj-card.st-hold::before,.proj-card.st-onHold::before{background:linear-gradient(90deg,rgba(255,255,255,.2),transparent);}
 
 /* Top row: pill + name + client/pkg + progress */
 .pc-top{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
 @media(max-width:600px){.pc-top{flex-wrap:wrap;gap:8px;}}
 .pc-pill{font-size:10px;font-weight:700;padding:4px 11px;border-radius:999px;letter-spacing:.04em;flex-shrink:0;white-space:nowrap;}
-.pill-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.pill-active,.pill-inProgress{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 .pill-review{background:var(--amberm);color:var(--amber);border:1px solid var(--amberb);}
-.pill-awaiting{background:var(--gm);color:var(--g);border:1px solid var(--gb);opacity:.6;}
-.pill-hold{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);}
-body.light .pill-hold{background:rgba(0,0,0,.04);color:rgba(255,255,255,.65);border-color:rgba(0,0,0,0.16);}
+.pill-awaiting,.pill-planning{background:var(--bluem);color:var(--blue);border:1px solid var(--blueb);}
+.pill-hold,.pill-onHold{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);}
+.pill-done{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.1);}
+body.light .pill-hold,.body.light .pill-onHold{background:rgba(0,0,0,.04);color:rgba(255,255,255,.65);border-color:rgba(0,0,0,.16);}
+
+/* Type badge (for internal builds) */
+.type-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(192,132,252,.1);color:var(--purple);border:1px solid rgba(192,132,252,.2);flex-shrink:0;}
 
 .pc-info{flex:1;min-width:0;}
 .pc-name{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.02em;text-decoration:none;display:inline-block;}
@@ -85,15 +105,6 @@ body.light .pc-date{color:rgba(255,255,255,.4);}
 .pc-date strong{font-weight:700;color:rgba(255,255,255,.45);}
 body.light .pc-date strong{color:rgba(255,255,255,.75);}
 
-/* ── TAB TOGGLE ── */
-.tab-row{display:flex;gap:4px;margin-bottom:10px;}
-.tab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;padding:6px 16px;border-radius:8px;cursor:pointer;transition:all .2s;}
-.tab:hover{border-color:rgba(255,255,255,.15);color:rgba(255,255,255,.5);}
-.tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
-body.light .tab{border-color:rgba(0,0,0,.08);color:rgba(255,255,255,.65);}
-body.light .tab:hover{border-color:rgba(0,0,0,0.23);color:rgba(255,255,255,.75);}
-body.light .tab.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
-
 .pc-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;gap:5px;width:180px;}
 @media(max-width:600px){.pc-right{width:100%;align-items:stretch;}}
 .pc-progress{display:flex;align-items:center;gap:8px;width:100%;}
@@ -106,7 +117,7 @@ body.light .pc-pct.zero{color:rgba(255,255,255,.3);}
 .pc-tasks-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);text-align:right;text-transform:uppercase;letter-spacing:.07em;}
 body.light .pc-tasks-lbl{color:rgba(255,255,255,.4);}
 
-/* ── MID: TASK SUMMARY ── */
+/* ── TASK SUMMARY ROW ── */
 .pc-tasks{display:flex;align-items:center;gap:14px;padding:10px 0;border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);margin-bottom:12px;flex-wrap:wrap;}
 body.light .pc-tasks{border-color:rgba(0,0,0,.06);}
 .tk{display:flex;align-items:center;gap:5px;}
@@ -122,16 +133,13 @@ body.light .pc-tasks{border-color:rgba(0,0,0,.06);}
 .tk-total{margin-left:auto;font-size:10px;font-weight:700;color:rgba(255,255,255,.18);letter-spacing:.04em;text-transform:uppercase;}
 body.light .tk-total{color:rgba(255,255,255,.4);}
 
-/* ── PHASE TIMELINE ── */
+/* ── PHASE TIMELINE (client builds only) ── */
 .ph-timeline{display:flex;align-items:stretch;gap:0;position:relative;}
 .ph-step{flex:1;display:flex;flex-direction:column;align-items:center;position:relative;min-width:0;padding:0 4px;}
-
-/* Connector line between steps — color set via inline style by JS based on task completion */
 .ph-step:not(:last-child)::after{content:'';position:absolute;top:11px;left:calc(50% + 14px);right:calc(-50% + 14px);height:2px;background:rgba(255,255,255,.06);}
 body.light .ph-step:not(:last-child)::after{background:rgba(0,0,0,.07);}
 .ph-step.conn-full:not(:last-child)::after{background:var(--g);}
 .ph-step.conn-partial:not(:last-child)::after{background:linear-gradient(90deg, var(--g) var(--conn-pct), rgba(255,255,255,.06) var(--conn-pct));}
-
 .ph-dot{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;z-index:1;flex-shrink:0;margin-bottom:6px;}
 .phd-done{background:var(--g);color:#111;}
 .phd-partial{background:#191919;border:2px solid var(--g);box-shadow:0 0 8px rgba(170,255,0,.35);color:var(--g);}
@@ -139,40 +147,32 @@ body.light .phd-partial{background:#fff;}
 .phd-ns{background:rgba(255,255,255,.04);border:2px solid rgba(255,255,255,.08);color:rgba(255,255,255,.2);}
 body.light .phd-ns{background:rgba(0,0,0,.02);border-color:rgba(0,0,0,.08);color:rgba(255,255,255,.4);}
 .phd-hold{background:rgba(255,255,255,.04);border:2px dashed rgba(255,255,255,.12);}
-
 .ph-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.2);text-align:center;line-height:1.25;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;}
 body.light .ph-label{color:rgba(255,255,255,.4);}
 .ph-step.active .ph-label{color:var(--g);}
 .ph-step.done .ph-label{color:rgba(255,255,255,.4);}
 body.light .ph-step.done .ph-label{color:rgba(255,255,255,.65);}
-
 .ph-count{font-size:10px;font-weight:700;color:rgba(255,255,255,.15);margin-top:2px;}
 body.light .ph-count{color:rgba(255,255,255,.3);}
 .ph-step.active .ph-count{color:var(--g);}
 .ph-step.done .ph-count{color:rgba(255,255,255,.3);}
 body.light .ph-step.done .ph-count{color:rgba(255,255,255,.5);}
-
 .ph-due{font-size:9px;font-weight:600;color:rgba(255,255,255,.18);margin-top:1px;}
 body.light .ph-due{color:rgba(255,255,255,.3);}
 .ph-due.overdue{color:var(--red);}
-
-/* No phases fallback */
 .no-phases{padding:8px 0;text-align:center;font-size:10px;color:rgba(255,255,255,.15);}
 body.light .no-phases{color:rgba(255,255,255,.3);}
 
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
 body.light .empty{color:rgba(255,255,255,.4);}
-
-/* Light mode text overrides */
-body.light .zero{color:rgba(255,255,255,.5);}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);flex-shrink:0;}
 body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
 
 <div class="header">
   <div class="h-left">
     <div class="eyebrow">Operations OS · Opxio</div>
-    <h1 class="h-title">Project Tracker</h1>
+    <h1 class="h-title">Build Tracker</h1>
   </div>
   <div class="h-right">
     <span class="ts" id="ts"></span>
@@ -190,222 +190,358 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
   </div>
 </div>
 
-<!-- STAT CARDS -->
-<div class="sec-lbl">Overview</div>
-<div class="g5">
-  <div class="card stat"><div class="s-dot" style="background:var(--blue);"></div><span class="s-lbl">Awaiting</span><div class="s-val" id="s-awaiting">0</div><div class="s-sub">Deposit or kickoff</div></div>
-  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Active Builds</span><div class="s-val" id="s-active">0</div><div class="s-sub">Currently building</div></div>
-  <div class="card stat"><div class="s-dot" style="background:var(--amber);"></div><span class="s-lbl">In Review</span><div class="s-val" id="s-review">0</div><div class="s-sub">Client sign-off</div></div>
-  <div class="card stat"><div class="s-dot" style="background:var(--g);opacity:.4;"></div><span class="s-lbl">Completed</span><div class="s-val" id="s-done">0</div><div class="s-sub">Delivered</div></div>
-  <div class="card stat"><div class="s-dot" style="background:rgba(255,255,255,.2);"></div><span class="s-lbl">On Hold</span><div class="s-val" id="s-hold">0</div><div class="s-sub">Paused</div></div>
+<!-- SOURCE TABS -->
+<div class="src-tabs">
+  <button class="src-tab active" onclick="switchSource('client')" id="src-client">Client Builds</button>
+  <button class="src-tab" onclick="switchSource('internal')" id="src-internal">Internal Builds</button>
 </div>
 
-<!-- PROJECT ROWS -->
-<div class="sec-lbl">Projects</div>
-<div class="tab-row">
-  <button class="tab active" onclick="switchTab('active')" id="tab-active">Active</button>
-  <button class="tab" onclick="switchTab('completed')" id="tab-completed">Completed</button>
+<!-- STAT CARDS — dynamically swapped by switchSource() -->
+<div class="sec-lbl">Overview</div>
+<div id="stat-grid-client" class="g5">
+  <div class="card stat"><div class="s-dot" style="background:var(--blue);"></div><span class="s-lbl">Awaiting</span><div class="s-val" id="s-awaiting">—</div><div class="s-sub">Deposit or kickoff</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Active Builds</span><div class="s-val" id="s-active">—</div><div class="s-sub">Currently building</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--amber);"></div><span class="s-lbl">In Review</span><div class="s-val" id="s-review">—</div><div class="s-sub">Client sign-off</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);opacity:.4;"></div><span class="s-lbl">Completed</span><div class="s-val" id="s-done">—</div><div class="s-sub">Delivered</div></div>
+  <div class="card stat"><div class="s-dot" style="background:rgba(255,255,255,.2);"></div><span class="s-lbl">On Hold</span><div class="s-val" id="s-hold">—</div><div class="s-sub">Paused</div></div>
 </div>
-<div class="proj-list" id="proj-list" style="padding-bottom:8px;"><div class="card empty">Loading…</div></div>
+<div id="stat-grid-internal" class="g4" style="display:none">
+  <div class="card stat"><div class="s-dot" style="background:var(--blue);"></div><span class="s-lbl">Planning</span><div class="s-val" id="si-planning">—</div><div class="s-sub">Scoped, not started</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">In Progress</span><div class="s-val" id="si-inProgress">—</div><div class="s-sub">Currently building</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);opacity:.4;"></div><span class="s-lbl">Done</span><div class="s-val" id="si-done">—</div><div class="s-sub">Shipped</div></div>
+  <div class="card stat"><div class="s-dot" style="background:rgba(255,255,255,.2);"></div><span class="s-lbl">On Hold</span><div class="s-val" id="si-onHold">—</div><div class="s-sub">Paused</div></div>
+</div>
+
+<!-- STATUS TABS + LIST -->
+<div class="sec-lbl" id="proj-sec-lbl">Builds</div>
+<div class="tab-row">
+  <button class="tab active" onclick="switchStatus('active')" id="tab-active">Active</button>
+  <button class="tab" onclick="switchStatus('completed')" id="tab-completed">Completed</button>
+</div>
+<div class="proj-list" id="proj-list"><div class="card empty">Loading…</div></div>
+
+<div class="wgt-footer">Widgets by Opxio.io</div>
 
 <script>
-const _tok=new URLSearchParams(location.search).get('token')||'';
-function apiUrl(p){return _tok?p+'?token='+encodeURIComponent(_tok):p;}
-let light=false;
-const SUN_ICON=`<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-const MOON_ICON=`<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-function toggleMode(){light=!light;document.body.classList.toggle('light',light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=light?MOON_ICON:SUN_ICON;}
-function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
-function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fmtDate(iso){if(!iso)return'';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short'});}
-function fmtDateFull(iso){if(!iso)return'';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});}
-function isOverdue(iso){if(!iso)return false;return new Date(iso+'T23:59:59')<new Date();}
+const _tok = new URLSearchParams(location.search).get('token') || '';
+function apiUrl(p) { return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
 
-function pillCfg(s){
-  if(s==='active')  return{cls:'pill-active',  label:'Building'};
-  if(s==='review')  return{cls:'pill-review',  label:'In Review'};
-  if(s==='awaiting')return{cls:'pill-awaiting', label:'Awaiting'};
-  if(s==='hold')    return{cls:'pill-hold',     label:'On Hold'};
-  return{cls:'pill-hold',label:s};
+let light = false;
+const SUN_ICON  = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON_ICON = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode() { light = !light; document.body.classList.toggle('light', light); const mb = document.getElementById('mb'); if (mb) mb.innerHTML = light ? MOON_ICON : SUN_ICON; }
+function setTs() { document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }); }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function fmtDate(iso) { if (!iso) return ''; const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); }
+function fmtDateFull(iso) { if (!iso) return ''; const d = new Date(iso + 'T00:00:00'); return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }); }
+function isOverdue(iso) { if (!iso) return false; return new Date(iso + 'T23:59:59') < new Date(); }
+
+// ── State ──────────────────────────────────────────────────────────────────
+let currentSource = 'client';
+let currentStatus = 'active';
+
+const state = {
+  client:   { counts: {}, active: [], completed: [], loaded: false },
+  internal: { counts: {}, active: [], completed: [], loaded: false },
+};
+
+// ── Source tab switch ──────────────────────────────────────────────────────
+function switchSource(src) {
+  currentSource = src;
+  document.getElementById('src-client').classList.toggle('active', src === 'client');
+  document.getElementById('src-internal').classList.toggle('active', src === 'internal');
+  document.getElementById('stat-grid-client').style.display   = src === 'client'   ? '' : 'none';
+  document.getElementById('stat-grid-internal').style.display = src === 'internal' ? '' : 'none';
+
+  const d = state[src];
+  const activeLen    = d.active.length;
+  const completedLen = d.completed.length;
+  document.getElementById('tab-active').textContent    = d.loaded ? `Active (${activeLen})` : 'Active';
+  document.getElementById('tab-completed').textContent = d.loaded ? `Completed (${completedLen})` : 'Completed';
+  renderList();
 }
 
-// Assign sequential phase states: done → active (first incomplete) → not started
-function assignPhaseStates(phases){
-  let foundActive=false;
-  for(const ph of phases){
-    const tc=ph.tasks||{};
-    const allDone=tc.total>0&&tc.done===tc.total;
-    if(allDone&&!foundActive){ph._state='done';}
-    else if(!foundActive){ph._state='active';foundActive=true;}
-    else{ph._state='ns';}
+// ── Status tab switch ──────────────────────────────────────────────────────
+function switchStatus(status) {
+  currentStatus = status;
+  document.getElementById('tab-active').classList.toggle('active', status === 'active');
+  document.getElementById('tab-completed').classList.toggle('active', status === 'completed');
+  renderList();
+}
+
+// ── Render list ────────────────────────────────────────────────────────────
+function renderList() {
+  const el   = document.getElementById('proj-list');
+  const d    = state[currentSource];
+  const list = currentStatus === 'active' ? d.active : d.completed;
+  const emptyMsg = !d.loaded ? 'Loading…' : currentStatus === 'active' ? 'No active builds' : 'No completed builds';
+  if (!list.length) { el.innerHTML = `<div class="card empty">${emptyMsg}</div>`; return; }
+  el.innerHTML = currentSource === 'client'
+    ? list.map(renderClientCard).join('')
+    : list.map(renderInternalCard).join('');
+}
+
+// ── CLIENT BUILDS ──────────────────────────────────────────────────────────
+function pillCfg(s) {
+  if (s === 'active')   return { cls: 'pill-active',   label: 'Building' };
+  if (s === 'review')   return { cls: 'pill-review',   label: 'In Review' };
+  if (s === 'awaiting') return { cls: 'pill-awaiting', label: 'Awaiting' };
+  if (s === 'hold')     return { cls: 'pill-hold',     label: 'On Hold' };
+  return { cls: 'pill-hold', label: s };
+}
+
+function assignPhaseStates(phases) {
+  let foundActive = false;
+  for (const ph of phases) {
+    const tc = ph.tasks || {};
+    const allDone = tc.total > 0 && tc.done === tc.total;
+    if (allDone && !foundActive) { ph._state = 'done'; }
+    else if (!foundActive) { ph._state = 'active'; foundActive = true; }
+    else { ph._state = 'ns'; }
   }
 }
-function phDotClass(state){
-  if(state==='done') return 'phd-done';
-  if(state==='active') return 'phd-partial';
-  return 'phd-ns';
-}
-function phStepClass(state){
-  if(state==='done') return 'done';
-  if(state==='active') return 'active';
-  return '';
+function phDotClass(s) { if (s === 'done') return 'phd-done'; if (s === 'active') return 'phd-partial'; return 'phd-ns'; }
+function phStepClass(s) { if (s === 'done') return 'done'; if (s === 'active') return 'active'; return ''; }
+
+function tkHTML(n, lbl, dotCls) {
+  const z = !n ? ' tk-zero' : '';
+  return `<div class="tk${z}"><div class="tk-dot ${dotCls}"></div><span class="tk-val">${n || 0}</span><span class="tk-lbl">${lbl}</span></div>`;
 }
 
-function renderCard(b){
-  const sp=pillCfg(b.status);
-  const pct=b.overallPct||0;
-  const ts=b.taskSummary||{};
+function renderClientCard(b) {
+  const sp  = pillCfg(b.status);
+  const pct = b.overallPct || 0;
+  const ts  = b.taskSummary || {};
 
-  let subParts=[];
-  if(b.client) subParts.push(esc(b.client));
-  if(b.type) subParts.push(esc(b.type));
+  let subParts = [];
+  if (b.client) subParts.push(esc(b.client));
+  if (b.type)   subParts.push(esc(b.type));
 
-  // Dates row
-  let datesHTML='';
-  const hasStart=b.startDate, hasTarget=b.targetDate, hasCompleted=b.completedDate;
-  if(hasStart||hasTarget||hasCompleted){
-    datesHTML='<div class="pc-dates">';
-    if(hasStart) datesHTML+=`<div class="pc-date"><strong>Started:</strong> ${fmtDateFull(b.startDate)}</div>`;
-    if(hasCompleted) datesHTML+=`<div class="pc-date"><strong>Completed:</strong> ${fmtDateFull(b.completedDate)}</div>`;
-    else if(hasTarget) datesHTML+=`<div class="pc-date"><strong>Targeted Completion:</strong> ${fmtDateFull(b.targetDate)}</div>`;
-    datesHTML+='</div>';
+  let datesHTML = '';
+  const hasStart = b.startDate, hasTarget = b.targetDate, hasCompleted = b.completedDate;
+  if (hasStart || hasTarget || hasCompleted) {
+    datesHTML = '<div class="pc-dates">';
+    if (hasStart)     datesHTML += `<div class="pc-date"><strong>Started:</strong> ${fmtDateFull(b.startDate)}</div>`;
+    if (hasCompleted) datesHTML += `<div class="pc-date"><strong>Completed:</strong> ${fmtDateFull(b.completedDate)}</div>`;
+    else if (hasTarget) datesHTML += `<div class="pc-date"><strong>Targeted Completion:</strong> ${fmtDateFull(b.targetDate)}</div>`;
+    datesHTML += '</div>';
   }
 
-  // Phase timeline
-  let phHTML='';
-  if(b.phases&&b.phases.length>0){
+  let phHTML = '';
+  if (b.phases && b.phases.length > 0) {
     assignPhaseStates(b.phases);
-    phHTML='<div class="ph-timeline">'+b.phases.map(ph=>{
-      const tc=ph.tasks||{};
-      const cls=phStepClass(ph._state);
-      const dotCls=phDotClass(ph._state);
-      const ov=isOverdue(ph.due)&&ph.status!=='Done';
-      const dueStr=ph.due?(ov?'Overdue':'Due '+fmtDate(ph.due)):'';
-      // Connector: only fill green based on actual task completion
-      let connCls='';
-      let connStyle='';
-      if(ph._state==='done'){connCls='conn-full';}
-      else if(tc.total>0&&tc.done>0){
-        const pct=Math.round((tc.done/tc.total)*100);
-        connCls='conn-partial';
-        connStyle=`--conn-pct:${pct}%`;
+    phHTML = '<div class="ph-timeline">' + b.phases.map(ph => {
+      const tc = ph.tasks || {};
+      const cls = phStepClass(ph._state);
+      const dotCls = phDotClass(ph._state);
+      const ov = isOverdue(ph.due) && ph.status !== 'Done';
+      const dueStr = ph.due ? (ov ? 'Overdue' : 'Due ' + fmtDate(ph.due)) : '';
+      let connCls = '', connStyle = '';
+      if (ph._state === 'done') { connCls = 'conn-full'; }
+      else if (tc.total > 0 && tc.done > 0) {
+        const p = Math.round((tc.done / tc.total) * 100);
+        connCls = 'conn-partial'; connStyle = `--conn-pct:${p}%`;
       }
-      // Short label: strip "Phase N — " prefix for cleaner display
-      const shortName=(ph.name||'').replace(/^Phase\s*\d+\s*[—–-]\s*/,'');
-      return`<div class="ph-step ${cls} ${connCls}" style="${connStyle}">
-        <div class="ph-dot ${dotCls}">${ph.no??'?'}</div>
-        <div class="ph-label">${esc(shortName||ph.name)}</div>
-        <div class="ph-count">${tc.done||0}/${tc.total||0}</div>
-        ${dueStr?`<div class="ph-due${ov?' overdue':''}">${dueStr}</div>`:''}
+      const shortName = (ph.name || '').replace(/^Phase\s*\d+\s*[—–-]\s*/, '');
+      return `<div class="ph-step ${cls} ${connCls}" style="${connStyle}">
+        <div class="ph-dot ${dotCls}">${ph.no ?? '?'}</div>
+        <div class="ph-label">${esc(shortName || ph.name)}</div>
+        <div class="ph-count">${tc.done || 0}/${tc.total || 0}</div>
+        ${dueStr ? `<div class="ph-due${ov ? ' overdue' : ''}">${dueStr}</div>` : ''}
       </div>`;
-    }).join('')+'</div>';
+    }).join('') + '</div>';
   } else {
-    phHTML='<div class="no-phases">No phases configured yet</div>';
+    phHTML = '<div class="no-phases">No phases configured yet</div>';
   }
 
-  // Progress bar width: only fill from tasks done
-  const tasksDone=ts.done||0;
-  const tasksTotal=ts.total||0;
-  const barPct=tasksTotal>0?Math.round((tasksDone/tasksTotal)*100):0;
+  const tasksDone  = ts.done  || 0;
+  const tasksTotal = ts.total || 0;
+  const barPct = tasksTotal > 0 ? Math.round((tasksDone / tasksTotal) * 100) : 0;
+  const stCls  = b.status === 'active' ? 'st-active' : b.status === 'review' ? 'st-review' : b.status === 'awaiting' ? 'st-awaiting' : 'st-hold';
 
-  // Status class for top accent
-  const stCls = b.status==='active'?'st-active':b.status==='review'?'st-review':b.status==='awaiting'?'st-awaiting':'st-hold';
-
-  function tk(n,lbl,dotCls){const z=!n?' tk-zero':'';return`<div class="tk${z}"><div class="tk-dot ${dotCls}"></div><span class="tk-val">${n||0}</span><span class="tk-lbl">${lbl}</span></div>`;}
-
-  return`<div class="card proj-card ${stCls}">
+  return `<div class="card proj-card ${stCls}">
     <div class="pc-top">
       <span class="pc-pill ${sp.cls}">${sp.label}</span>
       <div class="pc-info">
-        ${b.notionUrl?`<a class="pc-name" href="${b.notionUrl}" target="_blank" rel="noopener">${esc(b.name)}</a>`:`<div class="pc-name">${esc(b.name)}</div>`}
-        ${subParts.length?`<div class="pc-sub">${subParts.join(' · ')}</div>`:''}
+        ${b.notionUrl ? `<a class="pc-name" href="${b.notionUrl}" target="_blank" rel="noopener">${esc(b.name)}</a>` : `<div class="pc-name">${esc(b.name)}</div>`}
+        ${subParts.length ? `<div class="pc-sub">${subParts.join(' · ')}</div>` : ''}
         ${datesHTML}
       </div>
       <div class="pc-right">
         <div class="pc-progress">
           <div class="pc-track"><div class="pc-fill" style="width:${barPct}%"></div></div>
-          <span class="pc-pct${barPct===0?' zero':''}">${barPct}%</span>
+          <span class="pc-pct${barPct === 0 ? ' zero' : ''}">${barPct}%</span>
         </div>
-        <div class="pc-tasks-lbl">${tasksTotal} task${tasksTotal!==1?'s':''}</div>
+        <div class="pc-tasks-lbl">${tasksTotal} task${tasksTotal !== 1 ? 's' : ''}</div>
       </div>
     </div>
     <div class="pc-tasks">
-      ${tk(ts.done,'Done','tk-d')}
-      ${tk(ts.inProgress,'In Progress','tk-ip')}
-      ${tk(ts.blocked,'Blocked','tk-b')}
-      ${tk(ts.notStarted,'Not Started','tk-ns')}
+      ${tkHTML(ts.done, 'Done', 'tk-d')}
+      ${tkHTML(ts.inProgress, 'In Progress', 'tk-ip')}
+      ${tkHTML(ts.blocked, 'Blocked', 'tk-b')}
+      ${tkHTML(ts.notStarted, 'Not Started', 'tk-ns')}
       <span class="tk-total">${tasksTotal} total</span>
     </div>
     ${phHTML}
   </div>`;
 }
 
-let allBuilds=[], completedBuilds=[], currentTab='active';
-
-function switchTab(tab){
-  currentTab=tab;
-  document.getElementById('tab-active').classList.toggle('active',tab==='active');
-  document.getElementById('tab-completed').classList.toggle('active',tab==='completed');
-  renderList();
+function renderClientStats(counts) {
+  document.getElementById('s-awaiting').textContent = counts.awaiting || 0;
+  document.getElementById('s-active').textContent   = counts.active   || 0;
+  document.getElementById('s-review').textContent   = counts.review   || 0;
+  document.getElementById('s-done').textContent     = counts.done     || 0;
+  document.getElementById('s-hold').textContent     = counts.hold     || 0;
 }
 
-function renderList(){
-  const el=document.getElementById('proj-list');
-  const list=currentTab==='active'?allBuilds:completedBuilds;
-  const emptyMsg=currentTab==='active'?'No active projects':'No completed projects';
-  if(!list.length){el.innerHTML=`<div class="card empty">${emptyMsg}</div>`;return;}
-  el.innerHTML=list.map(renderCard).join('');
+// ── INTERNAL BUILDS ────────────────────────────────────────────────────────
+function internalPillCfg(s) {
+  if (s === 'inProgress') return { cls: 'pill-inProgress', label: 'In Progress' };
+  if (s === 'planning')   return { cls: 'pill-planning',   label: 'Planning' };
+  if (s === 'onHold')     return { cls: 'pill-onHold',     label: 'On Hold' };
+  if (s === 'done')       return { cls: 'pill-done',       label: 'Done' };
+  return { cls: 'pill-hold', label: s };
 }
 
-function sortByTarget(arr){
-  return arr.sort((a,b)=>{
-    // Sort by targetDate ascending (soonest first), nulls last
-    if(a.targetDate&&b.targetDate) return a.targetDate.localeCompare(b.targetDate);
-    if(a.targetDate) return -1;
-    if(b.targetDate) return 1;
+// Type → color mapping
+const TYPE_COLORS = {
+  'Widget':         'rgba(170,255,0,.12)',
+  'Dashboard':      'rgba(96,165,250,.1)',
+  'API / Endpoint': 'rgba(251,191,36,.1)',
+  'Internal Tool':  'rgba(192,132,252,.1)',
+  'Infrastructure': 'rgba(255,255,255,.06)',
+  'Design':         'rgba(251,113,133,.1)',
+  'Database':       'rgba(74,222,128,.1)',
+  'OS Build':       'rgba(251,191,36,.1)',
+};
+const TYPE_TEXT = {
+  'Widget':         '#AAFF00',
+  'Dashboard':      '#60A5FA',
+  'API / Endpoint': '#FBBF24',
+  'Internal Tool':  '#C084FC',
+  'Infrastructure': 'rgba(255,255,255,.5)',
+  'Design':         '#FB7185',
+  'Database':       '#4ADE80',
+  'OS Build':       '#FBBF24',
+};
+
+function renderInternalCard(b) {
+  const sp  = internalPillCfg(b.status);
+  const ts  = b.taskSummary || {};
+  const tasksTotal = ts.total || 0;
+  const barPct = tasksTotal > 0 ? Math.round(((ts.done || 0) / tasksTotal) * 100) : 0;
+  const stCls = `st-${b.status}`;
+
+  const typeBg   = TYPE_COLORS[b.type] || 'rgba(255,255,255,.06)';
+  const typeClr  = TYPE_TEXT[b.type]   || 'rgba(255,255,255,.4)';
+  const typeBadge = b.type
+    ? `<span style="font-size:9px;font-weight:700;padding:2px 8px;border-radius:5px;letter-spacing:.06em;text-transform:uppercase;background:${typeBg};color:${typeClr};border:1px solid ${typeClr}22;flex-shrink:0;">${esc(b.type)}</span>`
+    : '';
+
+  let datesHTML = '';
+  if (b.startDate || b.targetDate) {
+    datesHTML = '<div class="pc-dates">';
+    if (b.startDate)  datesHTML += `<div class="pc-date"><strong>Started:</strong> ${fmtDateFull(b.startDate)}</div>`;
+    if (b.targetDate) datesHTML += `<div class="pc-date"><strong>Target:</strong> ${fmtDateFull(b.targetDate)}</div>`;
+    datesHTML += '</div>';
+  }
+
+  return `<div class="card proj-card ${stCls}">
+    <div class="pc-top">
+      <span class="pc-pill ${sp.cls}">${sp.label}</span>
+      <div class="pc-info">
+        ${b.notionUrl ? `<a class="pc-name" href="${b.notionUrl}" target="_blank" rel="noopener">${esc(b.name)}</a>` : `<div class="pc-name">${esc(b.name)}</div>`}
+        ${datesHTML}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;">
+        ${typeBadge}
+        <div class="pc-progress" style="width:140px;">
+          <div class="pc-track"><div class="pc-fill" style="width:${barPct}%"></div></div>
+          <span class="pc-pct${barPct === 0 ? ' zero' : ''}">${barPct}%</span>
+        </div>
+        <div class="pc-tasks-lbl">${tasksTotal} task${tasksTotal !== 1 ? 's' : ''}</div>
+      </div>
+    </div>
+    <div class="pc-tasks">
+      ${tkHTML(ts.done, 'Done', 'tk-d')}
+      ${tkHTML(ts.inProgress, 'In Progress', 'tk-ip')}
+      ${tkHTML(ts.blocked, 'Blocked', 'tk-b')}
+      ${tkHTML(ts.notStarted, 'Not Started', 'tk-ns')}
+      <span class="tk-total">${tasksTotal} total</span>
+    </div>
+  </div>`;
+}
+
+function renderInternalStats(counts) {
+  document.getElementById('si-planning').textContent   = counts.planning   || 0;
+  document.getElementById('si-inProgress').textContent = counts.inProgress || 0;
+  document.getElementById('si-done').textContent       = counts.done       || 0;
+  document.getElementById('si-onHold').textContent     = counts.onHold     || 0;
+}
+
+// ── Data loading ───────────────────────────────────────────────────────────
+async function loadClient() {
+  try {
+    const r = await fetch(apiUrl('/api/data/projects'));
+    const j = await r.json();
+    if (j.error) { console.error('projects API:', j.error); return; }
+    state.client.counts    = j.counts || {};
+    state.client.active    = sortByTarget(j.builds || []);
+    state.client.completed = sortByTarget(j.completed || []);
+    state.client.loaded    = true;
+    if (currentSource === 'client') {
+      renderClientStats(state.client.counts);
+      document.getElementById('tab-active').textContent    = `Active (${state.client.active.length})`;
+      document.getElementById('tab-completed').textContent = `Completed (${state.client.completed.length})`;
+      renderList();
+    }
+  } catch (e) { console.error('loadClient:', e); }
+}
+
+async function loadInternal() {
+  try {
+    const r = await fetch(apiUrl('/api/data/internal-builds'));
+    const j = await r.json();
+    if (j.error) { console.error('internal-builds API:', j.error); return; }
+    state.internal.counts    = j.counts || {};
+    state.internal.active    = j.builds || [];
+    state.internal.completed = j.completed || [];
+    state.internal.loaded    = true;
+    if (currentSource === 'internal') {
+      renderInternalStats(state.internal.counts);
+      document.getElementById('tab-active').textContent    = `Active (${state.internal.active.length})`;
+      document.getElementById('tab-completed').textContent = `Completed (${state.internal.completed.length})`;
+      renderList();
+    }
+  } catch (e) { console.error('loadInternal:', e); }
+}
+
+function sortByTarget(arr) {
+  return arr.sort((a, b) => {
+    if (a.targetDate && b.targetDate) return a.targetDate.localeCompare(b.targetDate);
+    if (a.targetDate) return -1;
+    if (b.targetDate) return 1;
     return 0;
   });
 }
 
-function render(counts,builds,done){
-  document.getElementById('s-awaiting').textContent=counts.awaiting||0;
-  document.getElementById('s-active').textContent=counts.active||0;
-  document.getElementById('s-review').textContent=counts.review||0;
-  document.getElementById('s-done').textContent=counts.done||0;
-  document.getElementById('s-hold').textContent=counts.hold||0;
-
-  allBuilds=sortByTarget(builds);
-  completedBuilds=sortByTarget(done||[]);
-  document.getElementById('tab-active').textContent=`Active (${builds.length})`;
-  document.getElementById('tab-completed').textContent=`Completed (${completedBuilds.length})`;
-  renderList();
+async function loadAll() {
+  await Promise.all([loadClient(), loadInternal()]);
+  setTs();
 }
 
-async function loadData(){
-  try{
-    const r=await fetch(apiUrl('/api/data/projects'));
-    const j=await r.json();
-    if(j.error){console.error('API:',j.error);return;}
-    render(j.counts||{},j.builds||[],j.completed||[]);
-    setTs();
-  }catch(e){console.error('tracker:',e);}
+function doRefresh() {
+  const b = document.getElementById('rb');
+  if (b) b.classList.add('spinning');
+  // Reset loaded flags so switchSource shows fresh data
+  state.client.loaded   = false;
+  state.internal.loaded = false;
+  loadAll().finally(() => { const b2 = document.getElementById('rb'); if (b2) b2.classList.remove('spinning'); });
 }
 
-function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-setTs();loadData();setInterval(loadData,5*60*1000);
-</script>
-<div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  const el = document.getElementById('_eyebrow');
-  if(!el) return;
-  el.textContent = el.dataset.os.toUpperCase(); // default until API responds
-  const tok = new URLSearchParams(location.search).get('token');
-  if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
-    .then(r => r.ok ? r.json() : null)
-    .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · ' + el.dataset.os.toUpperCase(); })
-    .catch(() => {});
-})();
+// ── Init ───────────────────────────────────────────────────────────────────
+setTs();
+loadAll();
+setInterval(loadAll, 5 * 60 * 1000);
 </script>
 </body></html>

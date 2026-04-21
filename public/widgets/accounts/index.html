@@ -4,250 +4,261 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;transition:background .3s,color .3s;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
 body.light{background:#FFFFFF;color:#111;}
-:root{
-  --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.18);
-  --healthy:#22C55E;--healthym:rgba(34,197,94,.1);--healthyb:rgba(34,197,94,.2);
-  --risk:#FBBF24;--riskm:rgba(251,191,36,.1);--riskb:rgba(251,191,36,.2);
-  --critical:#FF6B6B;--criticalm:rgba(255,107,107,.1);--criticalb:rgba(255,107,107,.2);
-  --muted:rgba(255,255,255,.35);
-}
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:999px;}
+:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);}
+body.light{--muted:rgba(0,0,0,.4);}
 
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.07);}
+.card:hover{border-color:rgba(170,255,0,.1);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 
-/* ── Header ── */
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:8px;}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.35);}
-.h-title{font-size:22px;font-weight:900;letter-spacing:-.03em;}
-body.light .h-title{color:#111;}
-.h-right{display:flex;align-items:center;gap:8px;}
-.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
-body.light .ts{color:rgba(0,0,0,.3);}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
+
+/* ── Icon buttons ── */
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
 .icon-btn svg{width:14px;height:14px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
-body.light .icon-btn:hover{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.12);color:#111;}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.65);}
+body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
+
+/* ── Header ── */
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.h-right{display:flex;align-items:center;gap:6px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
+.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
+body.light .ts{color:rgba(0,0,0,.32);}
 
 /* ── Section label ── */
 .sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:16px 0 8px;}
 body.light .sec-lbl{color:rgba(0,0,0,.3);}
 
-/* ── Stat strip ── */
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-@media(max-width:580px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
-.m-card{padding:16px 18px;position:relative;overflow:hidden;}
-.m-dot{position:absolute;top:13px;right:14px;width:5px;height:5px;border-radius:50%;opacity:.55;}
-.m-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:9px;display:block;}
+/* ── Stat strip (3 cards — billing m-card pattern) ── */
+.money-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:500px){.money-strip{grid-template-columns:repeat(1,1fr);}}
+.m-card{padding:16px 18px;}
+.m-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.42);margin-bottom:9px;display:block;}
 body.light .m-lbl{color:rgba(0,0,0,.35);}
-.m-val{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
-.m-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;}
+.m-val{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;color:var(--accent,var(--g));}
+.m-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:7px;}
 body.light .m-sub{color:rgba(0,0,0,.28);}
 
-/* ── Health breakdown (billing inv-cols pattern) ── */
-.health-card{padding:18px 22px;}
-.health-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.health-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
-body.light .health-title{color:rgba(0,0,0,.45);}
-.health-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.025);}
-body.light .health-cols{background:rgba(0,0,0,.03);}
-.hcol{padding:14px 16px;border-right:1px solid rgba(255,255,255,.05);}
-.hcol:last-child{border-right:none;}
-body.light .hcol{border-right-color:rgba(0,0,0,.06);}
-.hcol-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.35);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
-body.light .hcol-lbl{color:rgba(0,0,0,.3);}
-.hcol-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
-.hcol-val{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1;}
-.hcol-sub{font-size:9px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
-body.light .hcol-sub{color:rgba(0,0,0,.25);}
-/* Health bar */
-.health-bar-wrap{margin-top:14px;}
-.health-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;display:flex;}
-body.light .health-bar-track{background:rgba(0,0,0,.07);}
-.hbar-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);border-radius:0;}
-.hbar-seg:first-child{border-radius:999px 0 0 999px;}
-.hbar-seg:last-child{border-radius:0 999px 999px 0;}
-.health-bar-legend{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
-.hleg-item{display:flex;align-items:center;gap:5px;}
-.hleg-dot{width:6px;height:6px;border-radius:50%;}
-.hleg-txt{font-size:9px;font-weight:600;color:rgba(255,255,255,.3);}
-body.light .hleg-txt{color:rgba(0,0,0,.3);}
+/* ── Health breakdown (billing inv-cols pattern exactly) ── */
+.inv-card{padding:18px 22px;}
+.inv-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.inv-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.8);}
+body.light .inv-title{color:rgba(0,0,0,.6);}
+.panel-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.inv-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.03);}
+body.light .inv-cols{background:rgba(0,0,0,.03);}
+.inv-col{padding:14px 16px;border-right:1px solid rgba(255,255,255,.05);}
+.inv-col:last-child{border-right:none;}
+body.light .inv-col{border-right-color:rgba(0,0,0,.06);}
+.inv-col-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.35);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+body.light .inv-col-lbl{color:rgba(0,0,0,.3);}
+.inv-col-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.inv-col-amt{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.inv-col-count{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);margin-top:5px;}
+body.light .inv-col-count{color:rgba(0,0,0,.3);}
+/* proportional bar */
+.inv-bar-wrap{margin-top:14px;}
+.inv-bar-track{width:100%;height:6px;border-radius:999px;background:rgba(255,255,255,.06);overflow:hidden;display:flex;}
+body.light .inv-bar-track{background:rgba(0,0,0,.07);}
+.inv-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);border-radius:0;}
+.inv-seg:first-child{border-radius:999px 0 0 999px;}
+.inv-seg:last-child{border-radius:0 999px 999px 0;}
+.inv-bar-legend{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
+.inv-leg-item{display:flex;align-items:center;gap:5px;}
+.inv-leg-dot{width:6px;height:6px;border-radius:50%;}
+.inv-leg-txt{font-size:9px;font-weight:600;color:rgba(255,255,255,.3);}
+body.light .inv-leg-txt{color:rgba(0,0,0,.3);}
 
-/* ── OS Coverage ── */
-.os-card{padding:18px 22px;}
-.os-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.os-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
-body.light .os-title{color:rgba(0,0,0,.45);}
-.os-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.os-rows{display:flex;flex-direction:column;gap:11px;}
-.os-row{display:flex;align-items:center;gap:10px;}
-.os-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);flex-shrink:0;width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .os-name{color:rgba(0,0,0,.45);}
-.os-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
-body.light .os-track{background:rgba(0,0,0,.06);}
-.os-fill{height:5px;border-radius:999px;background:var(--g);opacity:.65;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.os-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.7);min-width:18px;text-align:right;flex-shrink:0;}
-body.light .os-n{color:rgba(0,0,0,.55);}
+/* ── Status table (billing doc-table pattern) ── */
+.doc-card{padding:18px 22px;}
+.doc-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.doc-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.8);}
+body.light .doc-title{color:rgba(0,0,0,.6);}
+.doc-table{width:100%;border-collapse:collapse;}
+.doc-table th{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.22);padding-bottom:8px;text-align:center;}
+.doc-table th:first-child{text-align:left;}
+body.light .doc-table th{color:rgba(0,0,0,.3);}
+.doc-table td{padding:9px 4px;border-top:1px solid rgba(255,255,255,.05);vertical-align:middle;}
+body.light .doc-table td{border-top-color:rgba(0,0,0,.06);}
+.doc-table td:first-child{font-size:11px;font-weight:700;color:rgba(255,255,255,.45);padding-left:0;}
+body.light .doc-table td:first-child{color:rgba(0,0,0,.4);}
+.doc-table .center{text-align:center;}
+.pill{display:inline-block;font-size:12px;font-weight:900;letter-spacing:-.5px;padding:3px 10px;border-radius:6px;min-width:30px;text-align:center;}
+.pill-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.pill-onboarding{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
+.pill-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.22);}
 
 /* ── Client list ── */
-.list-card{padding:0;overflow:hidden;}
+.list-wrap{padding:0;overflow:hidden;}
 .list-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;}
-.list-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
-body.light .list-title{color:rgba(0,0,0,.45);}
-.list-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.list-scroll{max-height:400px;overflow-y:auto;}
+.list-scroll{max-height:420px;overflow-y:auto;}
 
-/* Row */
-.ci{display:flex;align-items:center;padding:0 20px;cursor:pointer;transition:background .15s;position:relative;}
+/* proj-item pattern from ops overview */
+.ci{display:flex;align-items:center;gap:0;cursor:pointer;transition:background .15s;position:relative;padding:0 20px;}
 .ci:hover{background:rgba(255,255,255,.02);}
-.ci-accent{width:3px;border-radius:99px;height:28px;flex-shrink:0;margin-right:14px;}
-.ci-inner{display:flex;align-items:center;gap:12px;flex:1;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.ci:last-child .ci-inner{border-bottom:none;}
-body.light .ci-inner{border-bottom-color:rgba(0,0,0,.05);}
+.ci-bar{width:3px;border-radius:99px;height:32px;flex-shrink:0;margin-right:14px;}
+.ci-body{flex:1;display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ci:last-child .ci-body{border-bottom:none;}
+body.light .ci-body{border-bottom-color:rgba(0,0,0,.05);}
 .ci-info{flex:1;min-width:0;}
 .ci-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 body.light .ci-name{color:#111;}
-.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 body.light .ci-meta{color:rgba(0,0,0,.3);}
-/* OS tags — full names, neutral */
 .os-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);white-space:nowrap;}
 body.light .os-tag{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
-.ci-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
+.ci-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
 /* Health badge */
 .hbadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
-.hb-healthy{background:var(--healthym);color:var(--healthy);border:1px solid var(--healthyb);}
-.hb-risk{background:var(--riskm);color:var(--risk);border:1px solid var(--riskb);}
-.hb-critical{background:var(--criticalm);color:var(--critical);border:1px solid var(--criticalb);}
+.hb-healthy{background:rgba(34,197,94,.1);color:#22C55E;border:1px solid rgba(34,197,94,.2);}
+.hb-risk{background:rgba(251,191,36,.1);color:#FBBF24;border:1px solid rgba(251,191,36,.2);}
+.hb-critical{background:rgba(255,107,107,.1);color:#FF6B6B;border:1px solid rgba(255,107,107,.2);}
 .hb-none{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
 /* Status pill */
 .sp{font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
 .sp-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.08);}
-.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
-body.light .sp-onboarding,.sp-past{color:rgba(0,0,0,.3);}
-/* Touch */
-.touch{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);white-space:nowrap;}
-body.light .touch{color:rgba(0,0,0,.28);}
-/* Expand */
-.exp-flag{font-size:9px;font-weight:700;color:var(--g);white-space:nowrap;}
+.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);}
+.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.05);}
+/* Expansion flag */
+.exp-flag{font-size:9px;font-weight:700;color:var(--g);opacity:.7;white-space:nowrap;}
 
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
-body.light .empty{color:rgba(0,0,0,.25);}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 body.light .wgt-footer{color:rgba(0,0,0,.2);}
 </style></head><body>
 
 <!-- Header -->
 <div class="header">
   <div>
-    <div class="eyebrow">Revenue OS · Opxio</div>
+    <p class="eyebrow">Revenue OS · Opxio</p>
     <h1 class="h-title">Client Accounts</h1>
   </div>
   <div class="h-right">
     <span class="ts" id="ts"></span>
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-      </svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     </button>
     <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
-      <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-      </svg>
+      <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
   </div>
 </div>
 
 <!-- Stat strip -->
-<div class="stat-strip">
+<div class="sec-lbl">Overview</div>
+<div class="money-strip">
+  <div class="card m-card" style="--accent:rgba(255,255,255,.85);">
+    <span class="m-lbl">Total Clients</span>
+    <div class="m-val" id="s-total">—</div>
+    <div class="m-sub" id="s-total-sub">All accounts</div>
+  </div>
   <div class="card m-card">
-    <div class="m-dot" style="background:var(--g);"></div>
     <span class="m-lbl">Active</span>
-    <div class="m-val" id="s-active" style="color:var(--g);">—</div>
-    <div class="m-sub">Live accounts</div>
+    <div class="m-val" id="s-active">—</div>
+    <div class="m-sub" id="s-active-sub">Live accounts</div>
   </div>
-  <div class="card m-card">
-    <div class="m-dot" style="background:var(--g);"></div>
-    <span class="m-lbl">Onboarding</span>
-    <div class="m-val" id="s-onboarding" style="color:var(--g);">—</div>
-    <div class="m-sub">Setting up</div>
-  </div>
-  <div class="card m-card">
-    <div class="m-dot" style="background:var(--healthy);"></div>
-    <span class="m-lbl">Healthy</span>
-    <div class="m-val" id="s-healthy" style="color:var(--healthy);">—</div>
-    <div class="m-sub">Green status</div>
-  </div>
-  <div class="card m-card">
-    <div class="m-dot" style="background:var(--g);opacity:.35;"></div>
+  <div class="card m-card" style="--accent:rgba(170,255,0,.6);">
     <span class="m-lbl">Expansion Ready</span>
-    <div class="m-val" id="s-expansion" style="color:var(--g);opacity:.7;">—</div>
+    <div class="m-val" id="s-expansion">—</div>
     <div class="m-sub">Flagged for growth</div>
   </div>
 </div>
 
 <!-- Health breakdown -->
 <div class="sec-lbl">Client Health</div>
-<div class="card health-card">
-  <div class="health-hdr">
-    <span class="health-title">Health Breakdown</span>
+<div class="card inv-card">
+  <div class="inv-hdr">
+    <span class="inv-title">Health Breakdown</span>
+    <span class="panel-badge" id="h-onboarding-lbl"></span>
   </div>
-  <div class="health-cols">
-    <div class="hcol">
-      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--healthy);"></span>Healthy</div>
-      <div class="hcol-val" id="h-healthy" style="color:var(--healthy);">—</div>
-      <div class="hcol-sub">Green status</div>
+  <div class="inv-cols">
+    <div class="inv-col">
+      <div class="inv-col-lbl"><span class="inv-col-dot" style="background:#22C55E;"></span>Healthy</div>
+      <div class="inv-col-amt" style="color:#22C55E;" id="h-healthy">—</div>
+      <div class="inv-col-count" id="h-healthy-sub">accounts</div>
     </div>
-    <div class="hcol">
-      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--risk);"></span>At Risk</div>
-      <div class="hcol-val" id="h-risk" style="color:var(--risk);">—</div>
-      <div class="hcol-sub">Amber status</div>
+    <div class="inv-col">
+      <div class="inv-col-lbl"><span class="inv-col-dot" style="background:#FBBF24;"></span>At Risk</div>
+      <div class="inv-col-amt" style="color:#FBBF24;" id="h-risk">—</div>
+      <div class="inv-col-count" id="h-risk-sub">accounts</div>
     </div>
-    <div class="hcol">
-      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--critical);"></span>Critical</div>
-      <div class="hcol-val" id="h-critical" style="color:var(--critical);">—</div>
-      <div class="hcol-sub">Red status</div>
+    <div class="inv-col">
+      <div class="inv-col-lbl"><span class="inv-col-dot" style="background:#FF6B6B;"></span>Critical</div>
+      <div class="inv-col-amt" style="color:#FF6B6B;" id="h-critical">—</div>
+      <div class="inv-col-count" id="h-critical-sub">accounts</div>
     </div>
   </div>
-  <div class="health-bar-wrap">
-    <div class="health-bar-track">
-      <div class="hbar-seg" id="bar-healthy" style="background:var(--healthy);width:0%;"></div>
-      <div class="hbar-seg" id="bar-risk"    style="background:var(--risk);width:0%;"></div>
-      <div class="hbar-seg" id="bar-critical"style="background:var(--critical);width:0%;"></div>
-      <div class="hbar-seg" id="bar-unset"   style="background:rgba(255,255,255,.12);width:0%;"></div>
+  <div class="inv-bar-wrap">
+    <div class="inv-bar-track">
+      <div class="inv-seg" id="bar-healthy" style="background:#22C55E;width:0%;"></div>
+      <div class="inv-seg" id="bar-risk"    style="background:#FBBF24;width:0%;"></div>
+      <div class="inv-seg" id="bar-critical"style="background:#FF6B6B;width:0%;"></div>
+      <div class="inv-seg" id="bar-unset"   style="background:rgba(255,255,255,.12);width:0%;"></div>
     </div>
-    <div class="health-bar-legend">
-      <div class="hleg-item"><div class="hleg-dot" style="background:var(--healthy);"></div><span class="hleg-txt">Healthy</span></div>
-      <div class="hleg-item"><div class="hleg-dot" style="background:var(--risk);"></div><span class="hleg-txt">At Risk</span></div>
-      <div class="hleg-item"><div class="hleg-dot" style="background:var(--critical);"></div><span class="hleg-txt">Critical</span></div>
-      <div class="hleg-item"><div class="hleg-dot" style="background:rgba(255,255,255,.2);"></div><span class="hleg-txt">No Status</span></div>
+    <div class="inv-bar-legend">
+      <div class="inv-leg-item"><div class="inv-leg-dot" style="background:#22C55E;"></div><span class="inv-leg-txt">Healthy</span></div>
+      <div class="inv-leg-item"><div class="inv-leg-dot" style="background:#FBBF24;"></div><span class="inv-leg-txt">At Risk</span></div>
+      <div class="inv-leg-item"><div class="inv-leg-dot" style="background:#FF6B6B;"></div><span class="inv-leg-txt">Critical</span></div>
+      <div class="inv-leg-item"><div class="inv-leg-dot" style="background:rgba(255,255,255,.18);"></div><span class="inv-leg-txt">No Status</span></div>
     </div>
   </div>
 </div>
 
-<!-- OS Coverage -->
-<div class="sec-lbl">OS Coverage</div>
-<div class="card os-card">
-  <div class="os-hdr">
-    <span class="os-title">Installed Systems</span>
-    <span class="os-badge" id="os-badge">—</span>
+<!-- Status breakdown -->
+<div class="sec-lbl">Account Status</div>
+<div class="card doc-card">
+  <div class="doc-hdr">
+    <span class="doc-title">Status by Health</span>
   </div>
-  <div class="os-rows" id="os-rows"></div>
+  <table class="doc-table">
+    <thead>
+      <tr>
+        <th style="width:90px;"></th>
+        <th>Active</th>
+        <th>Onboarding</th>
+        <th>Past Client</th>
+      </tr>
+    </thead>
+    <tbody id="status-tbody">
+      <tr>
+        <td>Healthy</td>
+        <td class="center"><span class="pill pill-active" id="t-h-active">0</span></td>
+        <td class="center"><span class="pill pill-onboarding" id="t-h-onboarding">0</span></td>
+        <td class="center"><span class="pill pill-past" id="t-h-past">0</span></td>
+      </tr>
+      <tr>
+        <td>At Risk</td>
+        <td class="center"><span class="pill pill-active" id="t-r-active">0</span></td>
+        <td class="center"><span class="pill pill-onboarding" id="t-r-onboarding">0</span></td>
+        <td class="center"><span class="pill pill-past" id="t-r-past">0</span></td>
+      </tr>
+      <tr>
+        <td>Critical</td>
+        <td class="center"><span class="pill pill-active" id="t-c-active">0</span></td>
+        <td class="center"><span class="pill pill-onboarding" id="t-c-onboarding">0</span></td>
+        <td class="center"><span class="pill pill-past" id="t-c-past">0</span></td>
+      </tr>
+    </tbody>
+  </table>
 </div>
 
 <!-- Client list -->
-<div class="sec-lbl">All Clients</div>
-<div class="card list-card">
+<div class="sec-lbl">All Accounts</div>
+<div class="card list-wrap">
   <div class="list-hdr">
-    <span class="list-title" id="list-title">Accounts</span>
-    <span class="list-badge" id="list-badge">—</span>
+    <span class="doc-title" id="list-title">Clients</span>
+    <span class="panel-badge" id="list-badge">—</span>
   </div>
   <div class="list-scroll" id="client-list"></div>
 </div>
@@ -274,35 +285,34 @@ function daysSince(iso){
   if(d<7)return d+'d ago'; if(d<30)return Math.floor(d/7)+'w ago';
   if(d<365)return Math.floor(d/30)+'mo ago'; return Math.floor(d/365)+'y ago';
 }
-
-function healthAccent(h){
+function healthBar(h){
   if(h==='🟢 Green')return'#22C55E';
   if(h==='🟡 Amber')return'#FBBF24';
   if(h==='🔴 Red')  return'#FF6B6B';
-  return'rgba(255,255,255,.1)';
+  return'rgba(255,255,255,.08)';
 }
 function healthBadge(h){
-  if(h==='🟢 Green') return`<span class="hbadge hb-healthy">Healthy</span>`;
-  if(h==='🟡 Amber') return`<span class="hbadge hb-risk">At Risk</span>`;
-  if(h==='🔴 Red')   return`<span class="hbadge hb-critical">Critical</span>`;
+  if(h==='🟢 Green')return`<span class="hbadge hb-healthy">Healthy</span>`;
+  if(h==='🟡 Amber')return`<span class="hbadge hb-risk">At Risk</span>`;
+  if(h==='🔴 Red')  return`<span class="hbadge hb-critical">Critical</span>`;
   return`<span class="hbadge hb-none">—</span>`;
 }
 function statusPill(s){
   if(s==='Active')     return`<span class="sp sp-active">Active</span>`;
-  if(s==='Onboarding') return`<span class="sp sp-onboarding">Setting Up</span>`;
+  if(s==='Onboarding') return`<span class="sp sp-onboarding">Onboarding</span>`;
   if(s==='Past Client')return`<span class="sp sp-past">Past</span>`;
   return s?`<span class="sp sp-past">${esc(s)}</span>`:'';
 }
 
 function renderHealth(hc, total){
-  const green = hc['🟢 Green']||0, amber = hc['🟡 Amber']||0, red = hc['🔴 Red']||0, unset = hc['Unset']||0;
-  document.getElementById('h-healthy').textContent  = green;
-  document.getElementById('h-risk').textContent     = amber;
-  document.getElementById('h-critical').textContent = red;
-  document.getElementById('s-healthy').textContent  = green;
-
-  // Proportional bar
-  if(total > 0){
+  const green=hc['🟢 Green']||0, amber=hc['🟡 Amber']||0, red=hc['🔴 Red']||0, unset=hc['Unset']||0;
+  document.getElementById('h-healthy').textContent    = green;
+  document.getElementById('h-risk').textContent       = amber;
+  document.getElementById('h-critical').textContent   = red;
+  document.getElementById('h-healthy-sub').textContent = green===1?'1 account':green+' accounts';
+  document.getElementById('h-risk-sub').textContent    = amber===1?'1 account':amber+' accounts';
+  document.getElementById('h-critical-sub').textContent= red===1?'1 account':red+' accounts';
+  if(total>0){
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       document.getElementById('bar-healthy').style.width  = ((green/total)*100).toFixed(1)+'%';
       document.getElementById('bar-risk').style.width     = ((amber/total)*100).toFixed(1)+'%';
@@ -310,68 +320,67 @@ function renderHealth(hc, total){
       document.getElementById('bar-unset').style.width    = ((unset/total)*100).toFixed(1)+'%';
     }));
   }
-
-  // Sub labels with count
-  document.querySelector('#h-healthy + .hcol-sub') && (document.querySelector('.hcol:nth-child(1) .hcol-sub').textContent = green===1?'1 account':green+' accounts');
-  document.querySelector('.hcol:nth-child(2) .hcol-sub').textContent = amber===1?'1 account':amber+' accounts';
-  document.querySelector('.hcol:nth-child(3) .hcol-sub').textContent = red===1?'1 account':red+' accounts';
+  // Onboarding badge in health header
+  const ob = document.getElementById('h-onboarding-lbl');
+  if(ob) ob.style.display = 'none'; // hide unless data needs it
 }
 
-function renderOS(clients){
-  const counts = {};
-  for(const c of clients) for(const os of (c.osInstalled||[])) if(os!=='Base OS') counts[os]=(counts[os]||0)+1;
-  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  const total = sorted.reduce((s,[,v])=>s+v,0);
-  document.getElementById('os-badge').textContent = total+' install'+(total!==1?'s':'');
-  if(!sorted.length){ document.getElementById('os-rows').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>'; return; }
-  const max = sorted[0][1];
-  document.getElementById('os-rows').innerHTML = sorted.map(([os,n])=>`
-    <div class="os-row">
-      <span class="os-name">${esc(os)}</span>
-      <div class="os-track"><div class="os-fill" style="width:${Math.round((n/max)*100)}%"></div></div>
-      <span class="os-n">${n}</span>
-    </div>`).join('');
+function renderStatusTable(clients){
+  const grid = {'🟢 Green':{},'🟡 Amber':{},'🔴 Red':{}};
+  const statuses = ['Active','Onboarding','Past Client'];
+  for(const row of Object.values(grid)) for(const s of statuses) row[s]=0;
+  for(const c of clients){
+    const h = c.health || '';
+    const s = c.status || '';
+    if(grid[h] && s in grid[h]) grid[h][s]++;
+  }
+  document.getElementById('t-h-active').textContent     = grid['🟢 Green']['Active'];
+  document.getElementById('t-h-onboarding').textContent = grid['🟢 Green']['Onboarding'];
+  document.getElementById('t-h-past').textContent       = grid['🟢 Green']['Past Client'];
+  document.getElementById('t-r-active').textContent     = grid['🟡 Amber']['Active'];
+  document.getElementById('t-r-onboarding').textContent = grid['🟡 Amber']['Onboarding'];
+  document.getElementById('t-r-past').textContent       = grid['🟡 Amber']['Past Client'];
+  document.getElementById('t-c-active').textContent     = grid['🔴 Red']['Active'];
+  document.getElementById('t-c-onboarding').textContent = grid['🔴 Red']['Onboarding'];
+  document.getElementById('t-c-past').textContent       = grid['🔴 Red']['Past Client'];
 }
 
 function renderClients(clients){
-  const total = clients.length;
-  document.getElementById('list-title').textContent = 'All Accounts';
+  const total=clients.length;
   document.getElementById('list-badge').textContent = total+' client'+(total!==1?'s':'');
-
   if(!total){ document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>'; return; }
 
   // Sort: Active → Onboarding → Past, then Critical → At Risk → Healthy → Unset
-  const hO = {'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
-  const sO = {'Active':0,'Onboarding':1,'Past Client':2};
-  const sorted = [...clients].sort((a,b)=>{
+  const hO={'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
+  const sO={'Active':0,'Onboarding':1,'Past Client':2};
+  const sorted=[...clients].sort((a,b)=>{
     const sd=(sO[a.status]??3)-(sO[b.status]??3);
     if(sd!==0)return sd;
-    return (hO[a.health]??3)-(hO[b.health]??3);
+    return(hO[a.health||'']??3)-(hO[b.health||'']??3);
   });
 
-  document.getElementById('client-list').innerHTML = sorted.map(c=>{
-    const installDate = fmtDate(c.installDate);
-    const touch = daysSince(c.lastTouchpoint);
-    const osNonBase = (c.osInstalled||[]).filter(o=>o!=='Base OS');
-    const metaParts = [
-      c.origin ? c.origin.replace('Existing Pre-Pipeline','Pre-pipeline') : null,
-      installDate ? 'Installed '+installDate : null,
+  document.getElementById('client-list').innerHTML=sorted.map(c=>{
+    const touch=daysSince(c.lastTouchpoint);
+    const installDate=fmtDate(c.installDate);
+    const osNonBase=(c.osInstalled||[]).filter(o=>o!=='Base OS');
+    const metaParts=[
+      c.origin?c.origin.replace('Existing Pre-Pipeline','Pre-pipeline'):null,
+      installDate?'Since '+installDate:null,
     ].filter(Boolean).join(' · ');
-    const accent = healthAccent(c.health);
-
     return `<div class="ci" onclick="window.open('${esc(c.url)}','_blank')">
-      <div class="ci-accent" style="background:${accent};"></div>
-      <div class="ci-inner">
+      <div class="ci-bar" style="background:${healthBar(c.health)};"></div>
+      <div class="ci-body">
         <div class="ci-info">
           <div class="ci-name">${esc(c.name)}</div>
           <div class="ci-meta">
             ${metaParts?`<span>${esc(metaParts)}</span>`:''}
-            ${osNonBase.map(o=>`<span class="os-tag">${esc(o)}</span>`).join('')}
+            ${osNonBase.slice(0,3).map(o=>`<span class="os-tag">${esc(o)}</span>`).join('')}
+            ${osNonBase.length>3?`<span class="os-tag">+${osNonBase.length-3}</span>`:''}
           </div>
         </div>
         <div class="ci-right">
-          ${touch?`<span class="touch">${esc(touch)}</span>`:''}
-          ${c.isExpansion?`<span class="exp-flag">↑ Expand</span>`:''}
+          ${touch?`<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,.22);">${esc(touch)}</span>`:''}
+          ${c.isExpansion?`<span class="exp-flag">↑</span>`:''}
           ${healthBadge(c.health)}
           ${statusPill(c.status)}
         </div>
@@ -382,14 +391,19 @@ function renderClients(clients){
 
 async function loadData(){
   try{
-    const r = await fetch(apiUrl('/api/data/accounts'));
+    const r=await fetch(apiUrl('/api/data/accounts'));
     if(!r.ok) throw new Error('HTTP '+r.status);
-    const j = await r.json();
-    document.getElementById('s-active').textContent     = j.statusCounts?.['Active']      ?? 0;
-    document.getElementById('s-onboarding').textContent = j.statusCounts?.['Onboarding']  ?? 0;
-    document.getElementById('s-expansion').textContent  = j.expansionCandidates           ?? 0;
-    renderHealth(j.healthCounts||{}, j.total||0);
-    renderOS(j.clients||[]);
+    const j=await r.json();
+    const total=j.total||0;
+    const active=j.statusCounts?.['Active']??0;
+    const onboarding=j.statusCounts?.['Onboarding']??0;
+    document.getElementById('s-total').textContent     = total;
+    document.getElementById('s-total-sub').textContent = total===1?'1 account':total+' accounts';
+    document.getElementById('s-active').textContent    = active;
+    document.getElementById('s-active-sub').textContent= active===1?'1 live account':active+' live accounts';
+    document.getElementById('s-expansion').textContent = j.expansionCandidates??0;
+    renderHealth(j.healthCounts||{}, total);
+    renderStatusTable(j.clients||[]);
     renderClients(j.clients||[]);
     setTs();
   }catch(e){

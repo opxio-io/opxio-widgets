@@ -2,7 +2,7 @@
 // POST /api/deposit_paid   { "page_id": "<invoice_page_id>" }
 // Triggered by Notion button "Mark Deposit Paid" on Invoice page.
 
-import { getPage, patchPage, createPage, queryDB, plain, DB, createLedgerEntry, hdrs } from "../../lib/notion"
+import { getPage, patchPage, createPage, queryDB, plain, DB, createLedgerEntry, hdrs, createTeamTask } from "../../lib/notion"
 import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import crypto from "crypto"
 
@@ -644,6 +644,18 @@ async function run(payload) {
   } catch (e) {
     console.warn("[deposit_paid] portal setup:", e.message)
   }
+
+  // ── Auto-create Team Task — kick off build ────────────────────────────────
+  await createTeamTask({
+    taskName:  `Kick off build — ${companyName || "New Client"}`,
+    category:  "Client",
+    priority:  "High",
+    projectId: projectId  || undefined,
+    dealId:    dealId     || undefined,
+    leadId:    leadId     || undefined,
+    companyId: companyId  || undefined,
+    accountId: clientAccountId || undefined,
+  })
 
   return {
     status:            "success",

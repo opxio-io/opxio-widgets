@@ -19,6 +19,8 @@
  *   3. Update Lead Discovery Call date
  */
 
+import { createTeamTask } from "../../lib/notion"
+
 const NOTION_KEY = process.env.NOTION_API_KEY;
 const NOTION_VERSION = "2022-06-28";
 
@@ -281,6 +283,19 @@ async function handleBookingCreated(payload) {
   if (meetingId && leadId)    await appendRelation(leadId, "Meetings", meetingId);
   if (meetingId && companyId) await appendRelation(companyId, "Meetings", meetingId);
   if (meetingId && personId)  await appendRelation(personId, "Meetings", meetingId);
+
+  // 6. Auto-create Team Task — prepare for discovery call
+  if (leadId) {
+    const label = companyName || name
+    await createTeamTask({
+      taskName:  `Prepare for discovery call — ${label}`,
+      category:  "Sales",
+      priority:  "High",
+      dueDate:   startTime ? startTime.split("T")[0] : undefined, // due on meeting day
+      leadId:    leadId.replace(/-/g, ""),
+      companyId: companyId ? companyId.replace(/-/g, "") : undefined,
+    })
+  }
 
   return { ok: true, meetingId, leadId };
 }

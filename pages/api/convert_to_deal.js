@@ -9,7 +9,7 @@
 // 4. Stitches: Deal["Origin Lead"] → Lead, Lead["Deal"] → Deal
 // 5. Updates Lead Stage → "Discovery Done"
 
-import { getPage, patchPage, createPage, plain, DB } from "../../lib/notion"
+import { getPage, patchPage, createPage, plain, DB, createTeamTask } from "../../lib/notion"
 
 // ─── Catalogue page IDs for each OS (OS Type relation in Deals) ────────────
 const CATALOGUE_OS_IDS = {
@@ -150,6 +150,15 @@ async function run(payload) {
   } catch (e) {
     console.warn("[convert_to_deal] lead stage update:", e.message)
   }
+
+  // ── 7. Auto-create Team Task — send proposal ───────────────────────────────
+  await createTeamTask({
+    taskName:  `Send proposal — ${companyName || dealName}`,
+    category:  "Sales",
+    priority:  "High",
+    dealId,
+    companyId: companyRel || undefined,
+  })
 
   return {
     status:      "success",

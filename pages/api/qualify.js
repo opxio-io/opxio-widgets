@@ -9,6 +9,8 @@
  * 5. Returns { qualified: bool, reason?: string }
  */
 
+import { createTeamTask } from "../../lib/notion"
+
 const NOTION_KEY = process.env.NOTION_API_KEY;
 const NOTION_VERSION = "2022-06-28";
 
@@ -222,7 +224,18 @@ export default async function handler(req, res) {
     if (leadId && personId)  await appendRelation(personId, "Linked Lead", leadId);
     if (personId && companyId) await appendRelation(companyId, "People", personId);
 
-    // 5. Return result
+    // 6. Auto-create Team Task — contact incoming lead
+    if (leadId && qualResult.qualified) {
+      await createTeamTask({
+        taskName:  `Contact incoming lead — ${form.name} (${form.company})`,
+        category:  "Sales",
+        priority:  "High",
+        leadId,
+        companyId: companyId || undefined,
+      })
+    }
+
+    // 7. Return result
     return res.status(200).json({
       qualified: qualResult.qualified,
       reason: qualResult.reason || null,

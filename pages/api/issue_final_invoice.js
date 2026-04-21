@@ -9,7 +9,7 @@
 // 5. Updates Project status → In Review
 // 6. Advances Lead stage → Pending Final Payment
 
-import { getPage, patchPage, createPage, plain, DB, createLedgerEntry } from "../../lib/notion"
+import { getPage, patchPage, createPage, plain, DB, createLedgerEntry, createTeamTask } from "../../lib/notion"
 
 
 const API_URL = process.env.NEXT_PUBLIC_BASE_URL || "https://api.opxio.io"
@@ -152,6 +152,17 @@ async function run(payload) {
     projectId: projectId,
     notes:     "Auto-created when final invoice issued — update to Received when paid",
   }, process.env.NOTION_API_KEY).catch(() => {})
+
+  // ── Auto-create Team Task — collect final payment ─────────────────────────
+  await createTeamTask({
+    taskName:  `Collect final payment — ${companyName || "Client"}`,
+    category:  "Billing",
+    priority:  "High",
+    invoiceId: invId,
+    projectId: projectId || undefined,
+    leadId:    leadId    || undefined,
+    companyId: companyId || undefined,
+  })
 
   return {
     status:        "success",

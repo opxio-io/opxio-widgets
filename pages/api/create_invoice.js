@@ -10,7 +10,7 @@
 // 6. Returns { invoice_id, project_id }
 
 import { waitUntil } from "@vercel/functions"
-import { getPage, patchPage, createPage, queryDB, plain, DB, hdrs } from "../../lib/notion"
+import { getPage, patchPage, createPage, queryDB, plain, DB, hdrs, createTeamTask } from "../../lib/notion"
 
 
 // ── Find inline Products & Services DB on a page (checks callouts too) ──
@@ -373,6 +373,21 @@ async function run(payload) {
 
   // ── 4. Mark Quotation → Approved ─────────────────────────────────────────
   await patchPage(quotId, { "Status": { select: { name: "Approved" } } }, token).catch(() => {})
+
+  // ── 5. Auto-create Team Task — send invoice to client ────────────────────
+  {
+    const label = packageName || "OS"
+    const companyLabel = companyId ? "" : ""  // companyName not available here — use package as context
+    await createTeamTask({
+      taskName:  `Send invoice & follow up — ${label}`,
+      category:  "Billing",
+      priority:  "High",
+      invoiceId: invId,
+      dealId:    dealId   || undefined,
+      leadId:    leadId   || undefined,
+      companyId: companyId || undefined,
+    })
+  }
 
   return {
     status:       "ok",

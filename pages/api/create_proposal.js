@@ -559,15 +559,21 @@ async function processProposal(sourceId) {
   }
 
   // ── 4. Line Items DB ───────────────────────────────────────────────────────
-  // Check immediately; if template hasn't applied yet, wait once then try again
-  let dbId = await findLineItemsDB(propId)
-  if (!dbId) {
-    await new Promise(r => setTimeout(r, 1200))
+  // Template (created by Notion button Action 1) always includes the inline
+  // Products & Services DB. Just find it — never create a second one.
+  // Retry up to 4 times (2 s gap) to handle template render lag.
+  let dbId = null
+  for (let attempt = 0; attempt < 4; attempt++) {
     dbId = await findLineItemsDB(propId)
+    if (dbId) break
+    console.log(`[create_proposal] DB not found yet, retry ${attempt + 1}/4…`)
+    await new Promise(r => setTimeout(r, 2000))
   }
+
   if (!dbId) {
-    dbId = await createLineItemsDB(propId)
-    console.log("[create_proposal] created line items DB:", dbId)
+    // Template DB missing — skip line items, don't create a duplicate
+    console.warn("[create_proposal] inline DB not found after retries — skipping line items")
+    return { propId, productName: mainProduct?.name ?? null, lineItemsCount: 0, warning: "inline_db_not_found" }
   }
 
   // ── 5. Fill line items ─────────────────────────────────────────────────────
@@ -577,9 +583,8 @@ async function processProposal(sourceId) {
   if (mainProduct?.id)         lineItems.push(mainProduct)
   lineItems.push(...addonProducts.filter(Boolean))
 
-  // Archive any existing template placeholder rows so we can create fresh rows
-  // in the correct order (Base OS → Main OS → Add-ons). Filling in-place risks
-  // wrong sort order because template rows may be numbered differently.
+  // Archive existing template placeholder rows then create fresh rows in the
+  // correct order: Base OS → Main OS → Add-ons
   const existingRows = await getExistingRows(dbId)
   if (existingRows.length > 0) {
     await Promise.all(existingRows.map(row =>

@@ -29,7 +29,7 @@ const HEADERS = {
 function checkQualification(form) {
   const { budget, monthlyRevenue } = form;
 
-  if (budget === "Under RM 1,500" || budget === "Under $400") {
+  if (budget === "Under RM 1500" || budget === "Under $400") {
     return { qualified: false, reason: "budget_too_low" };
   }
 

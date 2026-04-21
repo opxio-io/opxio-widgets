@@ -38,8 +38,8 @@ const REVENUE_OPTIONS = {
 }
 
 const BUDGET_OPTIONS = {
-  MYR: ["Under RM 1,500", "RM 1,500–3,500", "RM 3,500–6,500", "RM 6,500+", "Not sure yet"],
-  USD: ["Under $400", "$400–$900", "$900–$1,500", "$1,500+", "Not sure yet"],
+  MYR: ["Under RM 1500", "RM 1500–3500", "RM 3500–6500", "RM 6500+", "Not sure yet"],
+  USD: ["Under $400", "$400–$900", "$900–$1500", "$1500+", "Not sure yet"],
 }
 
 const SOLVE_OPTIONS = [

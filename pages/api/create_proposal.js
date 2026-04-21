@@ -370,8 +370,14 @@ async function processProposal(sourceId) {
   const sourceProps = sourcePage.properties
   const parentDb    = (sourcePage.parent?.database_id || "").replace(/-/g, "")
   const isFromDeal  = parentDb === DB.DEALS
-  const leadId      = isFromDeal ? null : sourceId
+  let   leadId      = isFromDeal ? null : sourceId
   const dealId      = isFromDeal ? sourceId : null
+
+  // Resolve Lead ID from Deal's Origin Lead relation (for stitching Lead Source on proposal)
+  if (isFromDeal && !leadId) {
+    leadId = (sourceProps["Origin Lead"]?.relation || [])[0]?.id?.replace(/-/g, "") || null
+    if (leadId) console.log("[create_proposal] resolved leadId from deal:", leadId)
+  }
 
   console.log("[create_proposal] source:", isFromDeal ? "deal" : "lead", sourceId)
 
@@ -530,6 +536,7 @@ async function processProposal(sourceId) {
     ...(companyIds.length                     ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
     ...(picIds.length                         ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
     ...(dealId                                ? { "Deal Source":     { relation: [{ id: dealId }] } } : {}),
+    ...(leadId                                ? { "Lead Source":     { relation: [{ id: leadId }] } } : {}),
     ...(situation                             ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
   }, token)
 

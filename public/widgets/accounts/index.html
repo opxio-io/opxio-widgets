@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Client Accounts</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;min-height:100%;transition:background .3s,color .3s;}
+body.light{background:#FAFAFA;color:#111;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--gr:rgba(170,255,0,.06);}
+
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:99px;}
+
+/* ── Header ── */
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
+.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.15);}
+body.light .ts{color:rgba(0,0,0,.3);}
+
+.icon-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.35);}
+body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#111;}
+
+/* ── Stat cards ── */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px;}
+@media(max-width:640px){.stat-grid{grid-template-columns:repeat(2,1fr);}}
+
+.scard{background:#222;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:14px 16px;position:relative;overflow:hidden;transition:border-color .2s,background .2s;}
+.scard:hover{background:#262626;border-color:rgba(255,255,255,.1);}
+.scard::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .22s;}
+.scard:hover::before{opacity:1;}
+
+body.light .scard{background:#fff;border-color:rgba(0,0,0,.07);}
+body.light .scard:hover{background:#f5f5f5;border-color:rgba(0,0,0,.12);}
+
+.scard.c-lime::before{background:linear-gradient(90deg,var(--g),transparent);}
+.scard.c-blue::before{background:linear-gradient(90deg,#60A5FA,transparent);}
+.scard.c-amber::before{background:linear-gradient(90deg,#FBBF24,transparent);}
+.scard.c-muted::before{background:linear-gradient(90deg,rgba(255,255,255,.25),transparent);}
+
+.sc-dot{position:absolute;top:12px;right:12px;width:5px;height:5px;border-radius:50%;}
+.c-lime .sc-dot{background:var(--g);opacity:.7;}
+.c-blue .sc-dot{background:#60A5FA;opacity:.7;}
+.c-amber .sc-dot{background:#FBBF24;opacity:.7;}
+.c-muted .sc-dot{background:rgba(255,255,255,.3);}
+
+.sc-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;color:rgba(255,255,255,.4);}
+body.light .sc-lbl{color:rgba(0,0,0,.4);}
+.sc-val{font-size:34px;font-weight:900;letter-spacing:-1.8px;line-height:1;}
+.c-lime .sc-val{color:var(--g);}
+.c-blue .sc-val{color:#60A5FA;}
+.c-amber .sc-val{color:#FBBF24;}
+.c-muted .sc-val{color:rgba(255,255,255,.4);}
+body.light .c-muted .sc-val{color:rgba(0,0,0,.3);}
+
+.sc-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
+body.light .sc-sub{color:rgba(0,0,0,.3);}
+
+/* ── Health bar ── */
+.health-row{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap;}
+.hpill{display:flex;align-items:center;gap:6px;background:#222;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:6px 12px;font-size:11px;font-weight:700;transition:border-color .2s;}
+.hpill:hover{border-color:rgba(255,255,255,.14);}
+body.light .hpill{background:#fff;border-color:rgba(0,0,0,.08);}
+.hpill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.hpill-count{font-size:14px;font-weight:900;line-height:1;}
+.h-green .hpill-dot{background:#22C55E;} .h-green .hpill-count{color:#22C55E;}
+.h-amber .hpill-dot{background:#FBBF24;} .h-amber .hpill-count{color:#FBBF24;}
+.h-red   .hpill-dot{background:#F87171;} .h-red   .hpill-count{color:#F87171;}
+.h-unset .hpill-dot{background:rgba(255,255,255,.2);} .h-unset .hpill-count{color:rgba(255,255,255,.3);}
+body.light .h-unset .hpill-count{color:rgba(0,0,0,.25);}
+.hpill-lbl{color:rgba(255,255,255,.3);font-size:10px;font-weight:600;}
+body.light .hpill-lbl{color:rgba(0,0,0,.3);}
+
+/* ── Section label ── */
+.sec-lbl{display:flex;align-items:center;gap:8px;margin:12px 0 8px;}
+.sec-bar{width:3px;height:12px;border-radius:99px;flex-shrink:0;}
+.sec-bar.lime{background:rgba(170,255,0,.5);}
+.sec-bar.muted{background:rgba(255,255,255,.15);}
+.sec-lbl span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);}
+body.light .sec-lbl span{color:rgba(0,0,0,.3);}
+.sec-lbl::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+body.light .sec-lbl::after{background:rgba(0,0,0,.06);}
+
+/* ── Client table ── */
+.client-table{width:100%;border-collapse:collapse;}
+.client-table th{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.2);text-align:left;padding:0 10px 8px 10px;}
+body.light .client-table th{color:rgba(0,0,0,.3);}
+.client-table th:first-child{padding-left:14px;}
+.client-table th:last-child{text-align:right;padding-right:14px;}
+
+.client-row{background:#222;border:1px solid rgba(255,255,255,.06);border-radius:10px;transition:border-color .18s,background .18s;cursor:pointer;}
+.client-row:hover{background:#282828;border-color:rgba(255,255,255,.12);}
+body.light .client-row{background:#fff;border-color:rgba(0,0,0,.07);}
+body.light .client-row:hover{background:#f5f5f5;border-color:rgba(0,0,0,.12);}
+.client-row td{padding:11px 10px;vertical-align:middle;}
+.client-row td:first-child{padding-left:14px;}
+.client-row td:last-child{text-align:right;padding-right:14px;}
+/* Row spacing via invisible separator rows */
+.row-gap{height:4px;}
+
+/* client name */
+.c-name{font-size:13px;font-weight:700;color:#fff;letter-spacing:-.01em;white-space:nowrap;}
+body.light .c-name{color:#111;}
+.c-origin{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.2);margin-top:1px;}
+body.light .c-origin{color:rgba(0,0,0,.3);}
+
+/* status badge */
+.status-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:5px;white-space:nowrap;}
+.sb-active{background:rgba(170,255,0,.1);color:var(--g);border:1px solid rgba(170,255,0,.2);}
+.sb-onboarding{background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.2);}
+.sb-past{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);border:1px solid rgba(255,255,255,.08);}
+body.light .sb-past{color:rgba(0,0,0,.3);border-color:rgba(0,0,0,.1);}
+
+/* OS chips */
+.os-chips{display:flex;flex-wrap:wrap;gap:3px;}
+.os-chip{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);white-space:nowrap;}
+body.light .os-chip{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.35);}
+.os-chip.rev{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.15);color:#FBBF24;}
+.os-chip.ops{background:rgba(34,197,94,.08);border-color:rgba(34,197,94,.15);color:#22C55E;}
+.os-chip.mkt{background:rgba(236,72,153,.08);border-color:rgba(236,72,153,.15);color:#EC4899;}
+.os-chip.fin{background:rgba(251,146,60,.08);border-color:rgba(251,146,60,.15);color:#FB923C;}
+.os-chip.team{background:rgba(234,179,8,.08);border-color:rgba(234,179,8,.15);color:#EAB308;}
+.os-chip.ret{background:rgba(96,165,250,.08);border-color:rgba(96,165,250,.15);color:#60A5FA;}
+.os-chip.sal{background:rgba(248,113,113,.08);border-color:rgba(248,113,113,.15);color:#F87171;}
+
+/* health dot */
+.hdot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+.hdot.green{background:#22C55E;}
+.hdot.amber{background:#FBBF24;}
+.hdot.red{background:#F87171;}
+.hdot.none{background:rgba(255,255,255,.15);}
+
+/* date */
+.date-txt{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.35);white-space:nowrap;}
+body.light .date-txt{color:rgba(0,0,0,.35);}
+.date-sub{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);margin-top:1px;}
+body.light .date-sub{color:rgba(0,0,0,.25);}
+
+/* expand flag */
+.expand-flag{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;color:var(--g);background:var(--gm);border:1px solid var(--gb);border-radius:5px;padding:2px 7px;white-space:nowrap;}
+
+/* link icon */
+.link-btn{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.2);transition:all .15s;text-decoration:none;}
+.link-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+body.light .link-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.08);color:rgba(0,0,0,.3);}
+body.light .link-btn:hover{background:rgba(0,0,0,.08);color:#111;}
+
+/* empty state */
+.empty{text-align:center;padding:40px 20px;color:rgba(255,255,255,.2);}
+body.light .empty{color:rgba(0,0,0,.25);}
+.empty p{font-size:12px;font-weight:600;margin-top:6px;}
+
+/* skeleton */
+.skel{background:rgba(255,255,255,.05);border-radius:4px;animation:shimmer 1.4s ease-in-out infinite;}
+@keyframes shimmer{0%,100%{opacity:.4}50%{opacity:1}}
+
+/* footer */
+.wgt-footer{text-align:center;padding:18px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+body.light .wgt-footer{color:rgba(0,0,0,.2);}
+</style></head><body>
+
+<!-- ── Header ── -->
+<div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px;">
+  <div>
+    <div class="eyebrow">Revenue OS · Opxio</div>
+    <h1 class="h-title">Client Accounts</h1>
+  </div>
+  <div style="display:flex;align-items:center;gap:6px;margin-top:2px;">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+    <button class="icon-btn" onclick="toggleMode()" title="Toggle light/dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ── Stat cards ── -->
+<div class="stat-grid" id="stat-grid">
+  <div class="scard c-lime"><div class="sc-dot"></div><div class="sc-lbl">Active</div><div class="sc-val" id="v-active">—</div><div class="sc-sub">Live accounts</div></div>
+  <div class="scard c-blue"><div class="sc-dot"></div><div class="sc-lbl">Onboarding</div><div class="sc-val" id="v-onboarding">—</div><div class="sc-sub">Setting up</div></div>
+  <div class="scard c-amber"><div class="sc-dot"></div><div class="sc-lbl">Expansion Ready</div><div class="sc-val" id="v-expansion">—</div><div class="sc-sub">Flagged for growth</div></div>
+  <div class="scard c-muted"><div class="sc-dot"></div><div class="sc-lbl">Past Client</div><div class="sc-val" id="v-past">—</div><div class="sc-sub">Completed</div></div>
+</div>
+
+<!-- ── Health row ── -->
+<div class="health-row" id="health-row">
+  <div class="hpill h-green"><div class="hpill-dot"></div><span class="hpill-count" id="h-green">—</span><span class="hpill-lbl">Healthy</span></div>
+  <div class="hpill h-amber"><div class="hpill-dot"></div><span class="hpill-count" id="h-amber">—</span><span class="hpill-lbl">At Risk</span></div>
+  <div class="hpill h-red"><div class="hpill-dot"></div><span class="hpill-count" id="h-red">—</span><span class="hpill-lbl">Critical</span></div>
+  <div class="hpill h-unset"><div class="hpill-dot"></div><span class="hpill-count" id="h-unset">—</span><span class="hpill-lbl">No Status</span></div>
+</div>
+
+<!-- ── Client list ── -->
+<div class="sec-lbl"><div class="sec-bar lime"></div><span id="sec-active-label">Active Clients</span></div>
+<div id="active-list"></div>
+
+<div id="onboarding-section" style="display:none;">
+  <div class="sec-lbl"><div class="sec-bar lime"></div><span>Onboarding</span></div>
+  <div id="onboarding-list"></div>
+</div>
+
+<div id="expansion-section" style="display:none;">
+  <div class="sec-lbl" style="margin-top:6px;"><div class="sec-bar lime"></div><span>Expansion Pipeline</span></div>
+  <div id="expansion-list"></div>
+</div>
+
+<div id="past-section" style="display:none;">
+  <div class="sec-lbl" style="margin-top:6px;"><div class="sec-bar muted"></div><span>Past Clients</span></div>
+  <div id="past-list"></div>
+</div>
+
+<div class="wgt-footer">Widgets by Opxio.io</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+function apiUrl(p) { return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
+
+let light = false;
+function toggleMode() {
+  light = !light;
+  document.body.classList.toggle('light', light);
+}
+
+function setTs() {
+  document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function fmtDate(iso) {
+  if (!iso) return null;
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' });
+  } catch { return null; }
+}
+
+function daysSince(iso) {
+  if (!iso) return null;
+  const diff = Date.now() - new Date(iso).getTime();
+  const d = Math.floor(diff / 86400000);
+  if (d === 0) return 'Today';
+  if (d === 1) return 'Yesterday';
+  if (d < 7)  return d + 'd ago';
+  if (d < 30) return Math.floor(d / 7) + 'w ago';
+  if (d < 365) return Math.floor(d / 30) + 'mo ago';
+  return Math.floor(d / 365) + 'y ago';
+}
+
+const OS_CLASS = {
+  'Revenue OS':    'rev',
+  'Operations OS': 'ops',
+  'Marketing OS':  'mkt',
+  'Finance OS':    'fin',
+  'Team OS':       'team',
+  'Retention OS':  'ret',
+  'Sales OS':      'sal',
+};
+
+const OS_SHORT = {
+  'Revenue OS':    'Rev',
+  'Operations OS': 'Ops',
+  'Marketing OS':  'Mkt',
+  'Finance OS':    'Fin',
+  'Team OS':       'Team',
+  'Retention OS':  'Ret',
+  'Sales OS':      'Sales',
+  'Base OS':       'Base',
+};
+
+function healthDot(h) {
+  if (h === '🟢 Green')  return '<span class="hdot green"></span>';
+  if (h === '🟡 Amber')  return '<span class="hdot amber"></span>';
+  if (h === '🔴 Red')    return '<span class="hdot red"></span>';
+  return '<span class="hdot none"></span>';
+}
+
+function statusBadge(s) {
+  if (s === 'Active')       return '<span class="status-badge sb-active">Active</span>';
+  if (s === 'Onboarding')   return '<span class="status-badge sb-onboarding">Onboarding</span>';
+  if (s === 'Past Client')  return '<span class="status-badge sb-past">Past</span>';
+  return '<span class="status-badge sb-past">' + (s || '—') + '</span>';
+}
+
+function osChips(arr) {
+  if (!arr || !arr.length) return '<span style="color:rgba(255,255,255,.15);font-size:10px;">—</span>';
+  return arr
+    .filter(o => o !== 'Base OS')
+    .map(o => `<span class="os-chip ${OS_CLASS[o] || ''}">${OS_SHORT[o] || o}</span>`)
+    .join('');
+}
+
+function renderRow(c) {
+  const installed = fmtDate(c.installDate);
+  const touch     = daysSince(c.lastTouchpoint);
+  const origin    = c.origin ? c.origin.replace('Existing Pre-Pipeline', 'Pre-pipeline') : '';
+
+  return `
+<tr class="client-row" onclick="window.open('${c.url}','_blank')" title="Open in Notion">
+  <td>
+    <div class="c-name">${c.name}</div>
+    ${origin ? `<div class="c-origin">${origin}</div>` : ''}
+  </td>
+  <td>${statusBadge(c.status)}</td>
+  <td><div class="os-chips">${osChips(c.osInstalled)}</div></td>
+  <td>${healthDot(c.health)}</td>
+  <td>
+    ${installed ? `<div class="date-txt">${installed}</div>` : '<span style="color:rgba(255,255,255,.15);font-size:10px;">—</span>'}
+  </td>
+  <td>
+    ${touch ? `<div class="date-txt">${touch}</div>` : '<span style="color:rgba(255,255,255,.15);font-size:10px;">—</span>'}
+  </td>
+  <td>
+    ${c.isExpansion ? '<span class="expand-flag">↑ Expand</span>' : ''}
+  </td>
+</tr>
+<tr class="row-gap"><td colspan="7"></td></tr>`;
+}
+
+function tableWrapper(rows) {
+  if (!rows.length) return '<div class="empty"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="opacity:.3"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18M9 21V9"/></svg><p>No records</p></div>';
+  return `<table class="client-table" style="width:100%;border-spacing:0 0;">
+  <thead><tr>
+    <th>Client</th><th>Status</th><th>OS Installed</th><th>Health</th><th>Install Date</th><th>Last Touchpoint</th><th></th>
+  </tr></thead>
+  <tbody>${rows.join('')}</tbody>
+</table>`;
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(apiUrl('/api/data/accounts'));
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+
+    // Stat cards
+    document.getElementById('v-active').textContent     = j.statusCounts?.['Active']      ?? 0;
+    document.getElementById('v-onboarding').textContent = j.statusCounts?.['Onboarding']  ?? 0;
+    document.getElementById('v-past').textContent       = j.statusCounts?.['Past Client'] ?? 0;
+    document.getElementById('v-expansion').textContent  = j.expansionCandidates           ?? 0;
+
+    // Health pills
+    document.getElementById('h-green').textContent = j.healthCounts?.['🟢 Green'] ?? 0;
+    document.getElementById('h-amber').textContent = j.healthCounts?.['🟡 Amber'] ?? 0;
+    document.getElementById('h-red').textContent   = j.healthCounts?.['🔴 Red']   ?? 0;
+    document.getElementById('h-unset').textContent = j.healthCounts?.['Unset']    ?? 0;
+
+    const clients = j.clients || [];
+
+    // Active clients (non-expansion, or all active)
+    const active      = clients.filter(c => c.status === 'Active');
+    const onboarding  = clients.filter(c => c.status === 'Onboarding');
+    const expansion   = clients.filter(c => c.isExpansion);
+    const past        = clients.filter(c => c.status === 'Past Client');
+
+    // Active section
+    const activeLabel = document.getElementById('sec-active-label');
+    activeLabel.textContent = 'Active Clients' + (active.length ? ` · ${active.length}` : '');
+    document.getElementById('active-list').innerHTML = tableWrapper(active.map(renderRow));
+
+    // Onboarding section
+    if (onboarding.length) {
+      document.getElementById('onboarding-section').style.display = '';
+      document.getElementById('onboarding-list').innerHTML = tableWrapper(onboarding.map(renderRow));
+    } else {
+      document.getElementById('onboarding-section').style.display = 'none';
+    }
+
+    // Expansion section — show separately only if not already shown in active
+    const expansionNotActive = expansion.filter(c => c.status !== 'Active');
+    if (expansion.length) {
+      document.getElementById('expansion-section').style.display = '';
+      document.getElementById('expansion-list').innerHTML = tableWrapper(expansion.map(renderRow));
+    } else {
+      document.getElementById('expansion-section').style.display = 'none';
+    }
+
+    // Past section
+    if (past.length) {
+      document.getElementById('past-section').style.display = '';
+      document.getElementById('past-list').innerHTML = tableWrapper(past.map(renderRow));
+    } else {
+      document.getElementById('past-section').style.display = 'none';
+    }
+
+    setTs();
+  } catch(e) {
+    console.error('accounts:', e);
+    document.getElementById('active-list').innerHTML = '<div class="empty"><p style="color:rgba(255,100,100,.5);">Failed to load — check token</p></div>';
+  }
+}
+
+function doRefresh() {
+  const b = document.getElementById('rb');
+  if (b) b.classList.add('spinning');
+  loadData().finally(() => {
+    const b2 = document.getElementById('rb');
+    if (b2) b2.classList.remove('spinning');
+  });
+}
+
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+</body></html>

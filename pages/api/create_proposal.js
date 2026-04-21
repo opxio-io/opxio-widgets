@@ -351,10 +351,10 @@ async function handleConvertToDeal(leadId, res) {
     await patchPage(quotationId, { "Deal Source": { relation: [{ id: dealId }] } }, token).catch(() => {})
   }
 
-  // ── Update Lead: link Deal + advance Stage → Converted ────────────────────
+  // ── Update Lead: link Deal, Stage stays Discovery Done ────────────────────
   await patchPage(leadId, {
     "Deal":  { relation: [{ id: dealId }] },
-    "Stage": { status: { name: "Converted" } },
+    "Stage": { status: { name: "Discovery Done" } },
   }, token)
 
   console.log(`[convert_to_deal] ✓ lead ${leadId} → deal ${dealId}`)
@@ -569,6 +569,24 @@ async function processProposal(sourceId) {
   // Create line items in order: Base OS → Main OS → Add-ons
   for (const product of lineItems) {
     await createLineItem(dbId, product)
+  }
+
+  // ── 6. Advance Lead stage → Proposal Sent ─────────────────────────────────
+  // Proposal is created from a Deal — resolve Lead via Deal.Origin Lead relation
+  try {
+    let resolvedLeadId = leadId
+    if (!resolvedLeadId && dealId) {
+      const dealPage = await getPage(dealId, token)
+      resolvedLeadId = (dealPage.properties["Origin Lead"]?.relation || [])[0]?.id?.replace(/-/g, "") || null
+    }
+    if (resolvedLeadId) {
+      await patchPage(resolvedLeadId, {
+        "Stage": { status: { name: "Proposal Sent" } },
+      }, token)
+      console.log(`[create_proposal] lead ${resolvedLeadId} → Proposal Sent`)
+    }
+  } catch (e) {
+    console.warn("[create_proposal] lead stage update:", e.message)
   }
 
   console.log(`[create_proposal] ✓ prop ${propId} — ${lineItems.length} line items, source: ${isFromDeal ? "deal" : "lead"}`)

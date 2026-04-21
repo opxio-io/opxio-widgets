@@ -3,157 +3,142 @@
 <title>Opxio — Client Accounts</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;height:100%;transition:background .3s,color .3s;}
-body.light{background:#FFFFFF;color:#111;}
-:root{--muted:rgba(255,255,255,.4);--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);}
-body.light{--muted:rgba(0,0,0,.4);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;background:transparent!important;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:18px 18px 28px;color:#fff;overflow-y:auto;overflow-x:hidden;}
 
-.card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.08);}
-body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
+:root{
+  --surface:#111111;
+  --surface2:#181818;
+  --border:#222222;
+  --border2:#2a2a2a;
+  --lime:#b5ff4d;
+  --lime-dim:rgba(181,255,77,.12);
+  --lime-glow:rgba(181,255,77,.06);
+  --text:#ffffff;
+  --muted:#666666;
+  --muted2:#444444;
+  --amber:#ffb84d;
+  --red:#ff5757;
+  --green:#4dff91;
+}
 
-::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
-::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,.2);}
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px;}
+
+/* ── Cards ── */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;}
 
 /* ── Icon buttons ── */
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
-.icon-btn svg{width:14px;height:14px;}
+.icon-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--lime-dim);border-color:var(--lime);color:var(--lime);}
+.icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.46);}
-body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
 
 /* ── Header ── */
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:8px;}
 .h-right{display:flex;align-items:center;gap:6px;}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.35);}
-.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
-body.light .h-title{color:#111;}
-.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
-body.light .ts{color:rgba(0,0,0,.32);}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.h-title{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.03em;}
+.ts{font-size:9px;font-weight:500;color:var(--muted2);}
 
-/* ── Section label ── */
-.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:16px 0 8px;}
-body.light .sec-lbl{color:rgba(0,0,0,.3);}
+/* ── Section labels ── */
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;justify-content:space-between;}
+.sec-badge{font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--lime-dim);color:var(--lime);border:1px solid rgba(181,255,77,.2);}
 
-/* ── Stat cards (CRM .stat pattern) ── */
-.stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-@media(max-width:520px){.stat-row{grid-template-columns:repeat(1,1fr);}}
-.stat{padding:18px 18px 16px;position:relative;overflow:hidden;}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--g),transparent);opacity:0;transition:opacity .25s;}
-.stat:hover::before{opacity:1;}
-.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.55;}
-.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.42);margin-bottom:10px;display:block;}
-body.light .s-lbl{color:rgba(0,0,0,.35);}
-.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
-.s-val.white{color:rgba(255,255,255,.88)!important;}
-.s-val.dim{color:rgba(170,255,0,.55)!important;}
-.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:7px;}
-body.light .s-sub{color:rgba(0,0,0,.3);}
+/* ── Stat strip ── */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+@media(max-width:540px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
+.s-card{padding:14px 16px;position:relative;}
+.s-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;display:block;}
+.s-val{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
+.s-sub{font-size:9px;font-weight:500;color:var(--muted);margin-top:5px;}
 
-/* ── 2-col grid (CRM pattern) ── */
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
+/* ── Health cards ── */
+.health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(max-width:480px){.health-grid{grid-template-columns:1fr;}}
+.hcard{padding:16px 18px 0;display:flex;flex-direction:column;overflow:hidden;}
+.hcard-top{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
+.hcard-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.hcard-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;}
+.hcard-num{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
+.hcard-sub{font-size:10px;font-weight:500;color:var(--muted);margin-bottom:14px;}
+/* Bottom bar */
+.hcard-bar-track{height:3px;width:100%;background:var(--border2);border-radius:0 0 14px 14px;overflow:hidden;}
+.hcard-bar-fill{height:100%;border-radius:0 0 14px 14px;transition:width 1s cubic-bezier(.4,0,.2,1);}
 
-/* ── Panel ── */
-.panel{padding:18px 20px;display:flex;flex-direction:column;}
-.panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;}
-body.light .panel-title{color:rgba(0,0,0,.55);}
-.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);margin-left:auto;}
-
-/* ── Health numbers ── */
-.health-nums{display:grid;grid-template-columns:repeat(3,1fr);flex:1;align-items:center;margin-bottom:20px;}
-.hn-col{padding:10px 12px;text-align:center;}
-.hn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:8px;}
-.hn-val{font-size:38px;font-weight:900;letter-spacing:-2px;line-height:1;}
-.hn-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.2);margin-top:5px;min-height:14px;}
-body.light .hn-sub{color:rgba(0,0,0,.28);}
 /* ── Gradient health bar ── */
-.gbar-wrap{position:relative;}
-.gbar-labels{display:flex;justify-content:space-between;margin-bottom:8px;}
-.gbar-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);}
-.gbar-score-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
-.gbar-outer{width:100%;height:14px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;position:relative;}
+.gbar-section{margin-top:12px;}
+.gbar-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+.gbar-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);}
+.gbar-score-lbl{font-size:8.5px;font-weight:700;font-family:'Satoshi',-apple-system,sans-serif;}
+.gbar-outer{width:100%;height:12px;border-radius:999px;background:var(--border2);overflow:hidden;position:relative;}
 .gbar-fill{height:100%;border-radius:999px;transition:width 1.1s cubic-bezier(.4,0,.2,1),background .6s ease;}
 .gbar-marker-wrap{position:absolute;top:0;height:100%;pointer-events:none;transition:left 1.1s cubic-bezier(.4,0,.2,1);}
-.gbar-marker{width:2px;height:100%;background:rgba(255,255,255,.95);border-radius:1px;box-shadow:0 0 8px rgba(255,255,255,.6);}
-.gbar-ticks{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;}
-.gbar-tick{font-family:'Satoshi',-apple-system,sans-serif;font-size:8px;font-weight:600;color:rgba(255,255,255,.2);}
-body.light .gbar-lbl{color:rgba(0,0,0,.25);}
-body.light .gbar-tick{color:rgba(0,0,0,.25);}
+.gbar-marker{width:2px;height:100%;background:rgba(255,255,255,.9);border-radius:1px;box-shadow:0 0 7px rgba(255,255,255,.5);}
+.gbar-ticks{display:flex;justify-content:space-between;margin-top:5px;}
+.gbar-tick{font-family:'Satoshi',-apple-system,sans-serif;font-size:7.5px;font-weight:600;color:var(--muted2);}
 
-/* ── Funnel bars (CRM pattern) ── */
-.f-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
-.f-row:last-child{margin-bottom:0;}
-.f-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.5);width:82px;flex-shrink:0;line-height:1.3;}
-body.light .f-lbl{color:rgba(0,0,0,.4);}
-.f-bg{flex:1;height:22px;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden;}
-body.light .f-bg{background:rgba(0,0,0,.04);}
-.f-fill{height:100%;border-radius:5px;transition:width .55s cubic-bezier(.4,0,.2,1);}
-.f-active{background:rgba(170,255,0,.4);}
-.f-onboarding{background:rgba(255,255,255,.12);}
-.f-past{background:rgba(255,255,255,.06);}
-.f-n{font-size:11px;font-weight:900;color:rgba(255,255,255,.6);width:16px;text-align:right;flex-shrink:0;}
-body.light .f-n{color:rgba(0,0,0,.5);}
+/* ── OS Coverage ── */
+.os-list{display:flex;flex-direction:column;gap:10px;padding:16px 18px;}
+.os-row{display:flex;align-items:center;gap:10px;}
+.os-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);flex-shrink:0;width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.os-track{flex:1;height:4px;border-radius:999px;background:var(--border2);overflow:hidden;}
+.os-fill{height:4px;border-radius:999px;background:var(--lime);opacity:.7;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.os-count{font-size:12px;font-weight:900;color:rgba(255,255,255,.5);min-width:16px;text-align:right;flex-shrink:0;}
 
-/* ── Growth Chart (CRM pattern) ── */
-.chart-card{padding:22px 24px;margin-top:0;}
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.chart-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);}
-body.light .chart-title{color:rgba(0,0,0,.55);}
-.chart-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.chart-wrap{position:relative;width:100%;height:150px;}
-.ctip{position:absolute;background:#2d2d2d;border:1px solid var(--gb);border-radius:9px;padding:7px 12px;font-size:11px;font-weight:700;color:var(--g);pointer-events:none;display:none;white-space:nowrap;z-index:10;}
+/* ── Growth chart ── */
+.chart-card{padding:18px 20px;}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.chart-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);}
+.chart-badge{font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--lime-dim);color:var(--lime);border:1px solid rgba(181,255,77,.2);}
+.chart-wrap{position:relative;width:100%;height:140px;}
+.ctip{position:absolute;background:var(--surface2);border:1px solid rgba(181,255,77,.25);border-radius:8px;padding:6px 11px;font-family:'Satoshi',-apple-system,sans-serif;font-size:11px;font-weight:700;color:var(--lime);pointer-events:none;display:none;white-space:nowrap;z-index:10;}
 
 /* ── Client list ── */
-.list-card{padding:0;overflow:hidden;}
-.list-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;}
-.list-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);}
-body.light .list-title{color:rgba(0,0,0,.55);}
-.list-scroll{max-height:420px;overflow-y:auto;}
-
-/* proj-item rows (ops overview pattern) */
-.ci{display:flex;align-items:center;padding:0 20px;cursor:pointer;transition:background .15s;}
+.list-wrap{overflow:hidden;}
+.list-scroll{max-height:440px;overflow-y:auto;}
+.ci{display:flex;align-items:center;padding:0 18px;cursor:pointer;transition:background .15s;}
 .ci:hover{background:rgba(255,255,255,.02);}
-.ci-bar{width:3px;border-radius:99px;height:32px;flex-shrink:0;margin-right:14px;}
-.ci-body{flex:1;display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ci-bar{width:3px;border-radius:99px;height:30px;flex-shrink:0;margin-right:13px;}
+.ci-body{flex:1;display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
 .ci:last-child .ci-body{border-bottom:none;}
-body.light .ci-body{border-bottom-color:rgba(0,0,0,.05);}
 .ci-info{flex:1;min-width:0;}
-.ci-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .ci-name{color:#111;}
-.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
-body.light .ci-meta{color:rgba(0,0,0,.3);}
-.os-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);white-space:nowrap;}
-body.light .os-tag{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
-.ci-right{display:flex;align-items:center;gap:7px;flex-shrink:0;}
-/* Health badge */
-.hbadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
-.hb-healthy{background:rgba(34,197,94,.1);color:#22C55E;border:1px solid rgba(34,197,94,.2);}
-.hb-risk{background:rgba(251,191,36,.1);color:#FBBF24;border:1px solid rgba(251,191,36,.2);}
-.hb-critical{background:rgba(255,107,107,.1);color:#FF6B6B;border:1px solid rgba(255,107,107,.2);}
-.hb-none{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
-/* Status pill */
-.sp{font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
-.sp-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.08);}
-.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.05);}
-.exp-flag{font-size:9px;font-weight:700;color:var(--g);opacity:.65;}
+.ci-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.ci-meta{font-size:10.5px;font-weight:500;color:var(--muted);margin-top:3px;}
+.ci-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
 
-.empty{padding:36px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
-body.light .empty{color:rgba(0,0,0,.25);}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
-body.light .wgt-footer{color:rgba(0,0,0,.2);}
+/* ── Tags & badges ── */
+.tag{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;border:1px solid transparent;}
+/* OS colours */
+.tag-revenue  {background:rgba(181,255,77,.1); color:#b5ff4d; border-color:rgba(181,255,77,.18);}
+.tag-operations{background:rgba(74,177,255,.1); color:#4ab1ff; border-color:rgba(74,177,255,.18);}
+.tag-marketing {background:rgba(255,184,77,.1); color:#ffb84d; border-color:rgba(255,184,77,.18);}
+.tag-finance   {background:rgba(167,139,250,.1);color:#a78bfa; border-color:rgba(167,139,250,.18);}
+.tag-team      {background:rgba(244,114,182,.1);color:#f472b6; border-color:rgba(244,114,182,.18);}
+.tag-retention {background:rgba(34,211,238,.1); color:#22d3ee; border-color:rgba(34,211,238,.18);}
+.tag-sales     {background:rgba(251,191,36,.1); color:#fbbf24; border-color:rgba(251,191,36,.18);}
+.tag-other     {background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.08);}
+/* Health */
+.tag-healthy  {background:rgba(77,255,145,.12); color:#4dff91; border-color:rgba(77,255,145,.2);}
+.tag-risk     {background:rgba(255,184,77,.12);  color:#ffb84d; border-color:rgba(255,184,77,.2);}
+.tag-critical {background:rgba(255,87,87,.12);   color:#ff5757; border-color:rgba(255,87,87,.2);}
+.tag-nohealth {background:rgba(255,255,255,.04); color:var(--muted);border-color:var(--border2);}
+/* Status */
+.tag-active     {background:var(--lime-dim);   color:var(--lime);  border-color:rgba(181,255,77,.2);}
+.tag-onboarding {background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);border-color:var(--border2);}
+.tag-past       {background:rgba(255,255,255,.03);color:var(--muted);border-color:var(--border2);}
+
+.empty{padding:36px;text-align:center;font-size:12px;color:var(--muted);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:8.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);}
 </style></head><body>
 
 <!-- Header -->
 <div class="header">
   <div>
-    <p class="eyebrow">Revenue OS · Opxio</p>
+    <div class="eyebrow">Revenue OS · Opxio</div>
     <h1 class="h-title">Client Accounts</h1>
   </div>
   <div class="h-right">
@@ -161,127 +146,134 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     </button>
-    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle theme">
       <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
   </div>
 </div>
 
 <!-- Stat strip -->
-<div class="stat-row">
-  <div class="card stat">
-    <div class="s-dot"></div>
-    <span class="s-lbl">Total Clients</span>
-    <div class="s-val" id="s-total">—</div>
+<div class="stat-strip">
+  <div class="card s-card">
+    <span class="s-label">Total Clients</span>
+    <div class="s-val" id="s-total" style="color:var(--lime);">—</div>
     <div class="s-sub" id="s-total-sub">All accounts</div>
   </div>
-  <div class="card stat">
-    <div class="s-dot"></div>
-    <span class="s-lbl">Active</span>
-    <div class="s-val" id="s-active">—</div>
+  <div class="card s-card">
+    <span class="s-label">Active</span>
+    <div class="s-val" id="s-active" style="color:var(--lime);">—</div>
     <div class="s-sub">Live accounts</div>
   </div>
-  <div class="card stat">
-    <div class="s-dot" style="opacity:.3;"></div>
-    <span class="s-lbl">Expansion Ready</span>
-    <div class="s-val dim" id="s-expansion">—</div>
+  <div class="card s-card">
+    <span class="s-label">Onboarding</span>
+    <div class="s-val" id="s-onboarding" style="color:rgba(255,255,255,.55);">—</div>
+    <div class="s-sub">Setting up</div>
+  </div>
+  <div class="card s-card">
+    <span class="s-label">Expansion Ready</span>
+    <div class="s-val" id="s-expansion" style="color:rgba(181,255,77,.55);">—</div>
     <div class="s-sub">Flagged for growth</div>
   </div>
 </div>
 
-<!-- Health + Status -->
-<div class="sec-lbl">Health &amp; Status</div>
-<div class="grid-2">
-
-  <!-- Health Status -->
-  <div class="card panel">
-    <div class="panel-title">
-      Client Health
-      <span class="panel-badge" id="h-pct-badge">—</span>
+<!-- Client Health -->
+<div class="sec-lbl">Client Health</div>
+<div class="health-grid">
+  <div class="card hcard">
+    <div class="hcard-top">
+      <div class="hcard-dot" style="background:var(--green);box-shadow:0 0 6px rgba(77,255,145,.5);"></div>
+      <span class="hcard-lbl" style="color:var(--green);">Healthy</span>
     </div>
-    <!-- 3 big health numbers -->
-    <div class="health-nums">
-      <div class="hn-col" style="border-right:1px solid rgba(255,255,255,.05);">
-        <div class="hn-lbl" style="color:#22C55E;">Healthy</div>
-        <div class="hn-val" style="color:#22C55E;" id="h-healthy">—</div>
-        <div class="hn-sub" id="h-healthy-pct"></div>
-      </div>
-      <div class="hn-col" style="border-right:1px solid rgba(255,255,255,.05);">
-        <div class="hn-lbl" style="color:#FBBF24;">At Risk</div>
-        <div class="hn-val" style="color:#FBBF24;" id="h-risk">—</div>
-        <div class="hn-sub" id="h-risk-pct"></div>
-      </div>
-      <div class="hn-col">
-        <div class="hn-lbl" style="color:#FF6B6B;">Critical</div>
-        <div class="hn-val" style="color:#FF6B6B;" id="h-critical">—</div>
-        <div class="hn-sub" id="h-critical-pct"></div>
-      </div>
-    </div>
-    <!-- Gradient health bar -->
-    <div class="gbar-wrap">
-      <div class="gbar-labels">
-        <span class="gbar-lbl">Health Score</span>
-        <span class="gbar-score-lbl" id="gbar-score-lbl" style="color:#22C55E;">—</span>
-      </div>
-      <div class="gbar-outer">
-        <div class="gbar-fill" id="gbar-fill" style="width:0%;"></div>
-        <div class="gbar-marker-wrap" id="gbar-marker-wrap" style="left:0%;">
-          <div class="gbar-marker"></div>
-        </div>
-      </div>
-      <div class="gbar-ticks">
-        <span class="gbar-tick">100% Healthy</span>
-        <span class="gbar-tick">50% Healthy</span>
-        <span class="gbar-tick">0% Healthy</span>
-      </div>
+    <div class="hcard-num" style="color:var(--green);" id="h-healthy">—</div>
+    <div class="hcard-sub" id="h-healthy-sub">— accounts</div>
+    <div class="hcard-bar-track">
+      <div class="hcard-bar-fill" id="bar-healthy" style="background:var(--green);width:0%;"></div>
     </div>
   </div>
-
-  <!-- Account Status Funnel -->
-  <div class="card panel">
-    <div class="panel-title">
-      Account Status
-      <span class="panel-badge" id="status-badge">—</span>
+  <div class="card hcard">
+    <div class="hcard-top">
+      <div class="hcard-dot" style="background:var(--amber);box-shadow:0 0 6px rgba(255,184,77,.5);"></div>
+      <span class="hcard-lbl" style="color:var(--amber);">At Risk</span>
     </div>
-    <div id="status-funnel" style="flex:1;display:flex;flex-direction:column;justify-content:center;"></div>
+    <div class="hcard-num" style="color:var(--amber);" id="h-risk">—</div>
+    <div class="hcard-sub" id="h-risk-sub">— accounts</div>
+    <div class="hcard-bar-track">
+      <div class="hcard-bar-fill" id="bar-risk" style="background:var(--amber);width:0%;"></div>
+    </div>
   </div>
-
+  <div class="card hcard">
+    <div class="hcard-top">
+      <div class="hcard-dot" style="background:var(--red);box-shadow:0 0 6px rgba(255,87,87,.5);"></div>
+      <span class="hcard-lbl" style="color:var(--red);">Critical</span>
+    </div>
+    <div class="hcard-num" style="color:var(--red);" id="h-critical">—</div>
+    <div class="hcard-sub" id="h-critical-sub">— accounts</div>
+    <div class="hcard-bar-track">
+      <div class="hcard-bar-fill" id="bar-critical" style="background:var(--red);width:0%;"></div>
+    </div>
+  </div>
 </div>
 
-<!-- Growth chart -->
-<div class="sec-lbl">Client Growth</div>
-<div class="card chart-card">
-  <div class="chart-hdr">
-    <span class="chart-title">Clients Installed by Month</span>
-    <span class="chart-badge" id="chart-badge">—</span>
+<!-- Gradient health bar -->
+<div class="gbar-section">
+  <div class="gbar-labels">
+    <span class="gbar-lbl">Health Score</span>
+    <span class="gbar-score-lbl" id="gbar-score-lbl">—</span>
   </div>
+  <div class="gbar-outer">
+    <div class="gbar-fill" id="gbar-fill" style="width:0%;"></div>
+    <div class="gbar-marker-wrap" id="gbar-marker-wrap" style="left:0%;">
+      <div class="gbar-marker"></div>
+    </div>
+  </div>
+  <div class="gbar-ticks">
+    <span class="gbar-tick">100% Healthy</span>
+    <span class="gbar-tick">50% Healthy</span>
+    <span class="gbar-tick">0% Healthy</span>
+  </div>
+</div>
+
+<!-- OS Coverage -->
+<div class="sec-lbl">
+  OS Coverage
+  <span class="sec-badge" id="os-badge">—</span>
+</div>
+<div class="card">
+  <div class="os-list" id="os-list"></div>
+</div>
+
+<!-- Client Growth -->
+<div class="sec-lbl">
+  Client Growth
+  <span class="sec-badge" id="chart-badge">—</span>
+</div>
+<div class="card chart-card">
   <div class="chart-wrap" id="cwrap">
     <svg id="growth-chart" style="display:block;overflow:visible;"></svg>
     <div class="ctip" id="ctip"></div>
   </div>
 </div>
 
-<!-- Client list -->
-<div class="sec-lbl">All Accounts</div>
-<div class="card list-card">
-  <div class="list-hdr">
-    <span class="list-title" id="list-title">Clients</span>
-    <span class="panel-badge" id="list-badge">—</span>
-  </div>
+<!-- All Clients -->
+<div class="sec-lbl">
+  All Clients
+  <span class="sec-badge" id="list-badge">—</span>
+</div>
+<div class="card list-wrap">
   <div class="list-scroll" id="client-list"></div>
 </div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
-let light = false;
-const SUN  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-function toggleMode(){ light=!light; document.body.classList.toggle('light',light); document.getElementById('mb').innerHTML=light?MOON:SUN; if(_lastData) renderHealth(_lastData.healthCounts, _lastData.total); }
-function setTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function setTs(){ document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
 function esc(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
 
-let _lastData = null;
+// Theme toggle (surface overlay on body for readability)
+let light=false;
+const SUN=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode(){ light=!light; document.getElementById('mb').innerHTML=light?MOON:SUN; }
 
 function fmtDate(iso){
   if(!iso) return null;
@@ -295,324 +287,248 @@ function daysSince(iso){
   if(d<7) return d+'d ago'; if(d<30) return Math.floor(d/7)+'w ago';
   if(d<365) return Math.floor(d/30)+'mo ago'; return Math.floor(d/365)+'y ago';
 }
-function healthBar(h){
-  if(h==='🟢 Green') return '#22C55E';
-  if(h==='🟡 Amber') return '#FBBF24';
-  if(h==='🔴 Red')   return '#FF6B6B';
-  return 'rgba(255,255,255,.08)';
+
+// OS → tag class
+function osTagClass(os){
+  const o=(os||'').toLowerCase();
+  if(o.includes('revenue'))   return 'tag-revenue';
+  if(o.includes('operations'))return 'tag-operations';
+  if(o.includes('marketing')) return 'tag-marketing';
+  if(o.includes('finance'))   return 'tag-finance';
+  if(o.includes('team'))      return 'tag-team';
+  if(o.includes('retention')) return 'tag-retention';
+  if(o.includes('sales'))     return 'tag-sales';
+  return 'tag-other';
 }
-function healthBadge(h){
-  if(h==='🟢 Green') return`<span class="hbadge hb-healthy">Healthy</span>`;
-  if(h==='🟡 Amber') return`<span class="hbadge hb-risk">At Risk</span>`;
-  if(h==='🔴 Red')   return`<span class="hbadge hb-critical">Critical</span>`;
-  return`<span class="hbadge hb-none">—</span>`;
+function healthTag(h){
+  if(h==='🟢 Green') return`<span class="tag tag-healthy">Healthy</span>`;
+  if(h==='🟡 Amber') return`<span class="tag tag-risk">At Risk</span>`;
+  if(h==='🔴 Red')   return`<span class="tag tag-critical">Critical</span>`;
+  return `<span class="tag tag-nohealth">—</span>`;
 }
-function statusPill(s){
-  if(s==='Active')     return`<span class="sp sp-active">Active</span>`;
-  if(s==='Onboarding') return`<span class="sp sp-onboarding">Onboarding</span>`;
-  if(s==='Past Client')return`<span class="sp sp-past">Past</span>`;
-  return s ? `<span class="sp sp-past">${esc(s)}</span>` : '';
+function statusTag(s){
+  if(s==='Active')     return`<span class="tag tag-active">Active</span>`;
+  if(s==='Onboarding') return`<span class="tag tag-onboarding">Onboarding</span>`;
+  if(s==='Past Client')return`<span class="tag tag-past">Past</span>`;
+  return s?`<span class="tag tag-past">${esc(s)}</span>`:'';
+}
+function healthBarColor(h){
+  if(h==='🟢 Green') return '#4dff91';
+  if(h==='🟡 Amber') return '#ffb84d';
+  if(h==='🔴 Red')   return '#ff5757';
+  return 'rgba(255,255,255,.1)';
 }
 
-// ── Health status — gradient bar ─────────────────────────────────────────────
+// ── Health section ────────────────────────────────────────────────────────────
 function renderHealth(hc, total){
-  const green = hc['🟢 Green']||0;
-  const amber  = hc['🟡 Amber']||0;
-  const red    = hc['🔴 Red']||0;
-  const unset  = hc['Unset']||0;
-  const tot    = total || (green+amber+red+unset);
-  const pct    = n => tot > 0 ? Math.round((n/tot)*100)+'%' : '—';
+  const green=hc['🟢 Green']||0, amber=hc['🟡 Amber']||0, red=hc['🔴 Red']||0;
+  const tot = total || (green+amber+red+(hc['Unset']||0));
+  const pct = n => tot>0 ? Math.round((n/tot)*100) : 0;
 
-  // Big numbers
-  document.getElementById('h-healthy').textContent     = green;
-  document.getElementById('h-risk').textContent        = amber;
-  document.getElementById('h-critical').textContent    = red;
-  document.getElementById('h-healthy-pct').textContent = tot>0 ? pct(green)+' of total' : '';
-  document.getElementById('h-risk-pct').textContent    = tot>0 ? pct(amber)+' of total' : '';
-  document.getElementById('h-critical-pct').textContent= tot>0 ? pct(red)+' of total' : '';
+  document.getElementById('h-healthy').textContent    = green;
+  document.getElementById('h-risk').textContent       = amber;
+  document.getElementById('h-critical').textContent   = red;
+  document.getElementById('h-healthy-sub').textContent = green+' account'+(green!==1?'s':'');
+  document.getElementById('h-risk-sub').textContent    = amber+' account'+(amber!==1?'s':'');
+  document.getElementById('h-critical-sub').textContent= red+' account'+(red!==1?'s':'');
 
-  // Risk score: 0=all healthy, 100=all critical
-  const riskScore = tot > 0 ? Math.min(100, Math.round(((amber*0.5 + red) / tot) * 100)) : 0;
-  // Fill width = % healthy (so all-healthy = full green bar)
-  const fillPct  = tot > 0 ? Math.round((green / tot) * 100) : 0;
+  // Bottom bar proportional to share of total
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    document.getElementById('bar-healthy').style.width  = pct(green)+'%';
+    document.getElementById('bar-risk').style.width     = pct(amber)+'%';
+    document.getElementById('bar-critical').style.width = pct(red)+'%';
+  }));
 
-  // Smooth colour lerp: green→lime→yellow→orange→red based on riskScore
+  // Gradient bar — fill = % healthy, color interpolated
+  const riskScore = tot>0 ? Math.min(100,Math.round(((amber*0.5+red)/tot)*100)) : 0;
+  const fillPct   = pct(green);
   function lerp(a,b,t){ return Math.round(a+(b-a)*Math.max(0,Math.min(1,t))); }
-  function riskColor(s){ // s 0–100
+  function riskColor(s){
     const t=s/100;
-    const stops=[[34,197,94],[132,204,22],[234,179,8],[249,115,22],[255,107,107]];
+    const stops=[[77,255,145],[181,255,77],[255,184,77],[255,120,57],[255,87,87]];
     const seg=Math.min(3,Math.floor(t*4)), f=(t*4)-seg;
     const[r1,g1,b1]=stops[seg],[r2,g2,b2]=stops[seg+1];
     return `rgb(${lerp(r1,r2,f)},${lerp(g1,g2,f)},${lerp(b1,b2,f)})`;
   }
   const fillColor = riskColor(riskScore);
+  let statusTxt;
+  if(riskScore<15)      statusTxt='Healthy';
+  else if(riskScore<40) statusTxt='Moderate';
+  else if(riskScore<70) statusTxt='At Risk';
+  else                  statusTxt='Critical';
 
-  // Status label
-  const badge = document.getElementById('h-pct-badge');
   const scoreLbl = document.getElementById('gbar-score-lbl');
-  let status;
-  if(riskScore < 15)      status='Healthy';
-  else if(riskScore < 40) status='Moderate';
-  else if(riskScore < 70) status='At Risk';
-  else                    status='Critical';
-
-  badge.textContent = status;
-  badge.style.background = fillColor+'22';
-  badge.style.color = fillColor;
-  badge.style.borderColor = fillColor+'55';
-  scoreLbl.textContent = (100-riskScore)+'% healthy · '+status;
+  scoreLbl.textContent = (100-riskScore)+'% healthy · '+statusTxt;
   scoreLbl.style.color = fillColor;
 
-  // Fill bar: width = % healthy, color = solid risk colour
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
     const fill = document.getElementById('gbar-fill');
     fill.style.width = fillPct+'%';
     fill.style.background = fillColor;
-    // Marker at right edge of fill
-    const markerEl = document.getElementById('gbar-marker-wrap');
-    if(markerEl) markerEl.style.left = Math.max(0, fillPct-0.3)+'%';
+    const marker = document.getElementById('gbar-marker-wrap');
+    if(marker) marker.style.left = Math.max(0,fillPct-0.2)+'%';
   }));
 }
 
-// ── Status Funnel (CRM funnel bars pattern) ───────────────────────────────────
-function renderStatus(sc){
-  const active    = sc['Active']||0;
-  const onboarding= sc['Onboarding']||0;
-  const past      = sc['Past Client']||0;
-  const total     = active+onboarding+past;
-  document.getElementById('status-badge').textContent = total+' client'+(total!==1?'s':'');
-  const max = Math.max(active, onboarding, past, 1);
-  const rows = [
-    { lbl:'Active',     n:active,     cls:'f-active' },
-    { lbl:'Onboarding', n:onboarding, cls:'f-onboarding' },
-    { lbl:'Past Client',n:past,       cls:'f-past' },
-  ];
-  document.getElementById('status-funnel').innerHTML = rows.map(r=>{
-    const pct = Math.max(Math.round((r.n/max)*100), r.n>0?6:0);
-    return `<div class="f-row">
-      <span class="f-lbl">${esc(r.lbl)}</span>
-      <div class="f-bg"><div class="f-fill ${r.cls}" style="width:${pct}%;"></div></div>
-      <span class="f-n">${r.n||''}</span>
-    </div>`;
-  }).join('');
+// ── OS Coverage ───────────────────────────────────────────────────────────────
+function renderOS(clients){
+  const counts={};
+  for(const c of clients) for(const os of (c.osInstalled||[])) if(os!=='Base OS') counts[os]=(counts[os]||0)+1;
+  const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const total=sorted.reduce((s,[,v])=>s+v,0);
+  document.getElementById('os-badge').textContent=total+' install'+(total!==1?'s':'');
+  if(!sorted.length){ document.getElementById('os-list').innerHTML='<div class="empty" style="padding:16px;">No OS data</div>'; return; }
+  const max=sorted[0][1];
+  document.getElementById('os-list').innerHTML=sorted.map(([os,n])=>`
+    <div class="os-row">
+      <span class="os-name">${esc(os)}</span>
+      <div class="os-track"><div class="os-fill" style="width:${Math.round((n/max)*100)}%"></div></div>
+      <span class="os-count">${n}</span>
+    </div>`).join('');
 }
+
+// ── Growth chart ──────────────────────────────────────────────────────────────
+let _chartData=[];
+function buildChartData(clients){
+  const now=new Date();
+  const months=[];
+  for(let i=11;i>=0;i--){
+    const d=new Date(now.getFullYear(),now.getMonth()-i,1);
+    months.push({year:d.getFullYear(),month:d.getMonth(),m:d.toLocaleString('default',{month:'short'}),v:0});
+  }
+  for(const c of clients){
+    if(!c.installDate) continue;
+    const d=new Date(c.installDate);
+    const e=months.find(m=>m.year===d.getFullYear()&&m.month===d.getMonth());
+    if(e) e.v++;
+  }
+  return months;
+}
+function drawChart(){
+  const wrap=document.getElementById('cwrap'), svgEl=document.getElementById('growth-chart');
+  if(!wrap||!svgEl||!_chartData.length) return;
+  const ns='http://www.w3.org/2000/svg';
+  const W=wrap.offsetWidth||600, H=wrap.offsetHeight||140;
+  svgEl.setAttribute('width',W); svgEl.setAttribute('height',H); svgEl.innerHTML='';
+  const PAD={t:12,r:14,b:28,l:22};
+  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
+  const maxV=Math.max(..._chartData.map(d=>d.v),1);
+  const AC='#b5ff4d', dim='rgba(255,255,255,.25)', grid='rgba(255,255,255,.04)';
+  const xP=i=>PAD.l+(i/(_chartData.length-1||1))*cW;
+  const yP=v=>PAD.t+cH-(v/maxV)*cH;
+  // Grid
+  for(let i=0;i<=3;i++){
+    const y=PAD.t+(i/3)*cH;
+    const gl=document.createElementNS(ns,'line');
+    gl.setAttribute('x1',PAD.l);gl.setAttribute('x2',W-PAD.r);gl.setAttribute('y1',y);gl.setAttribute('y2',y);
+    gl.setAttribute('stroke',grid);gl.setAttribute('stroke-dasharray','3,5');svgEl.appendChild(gl);
+    if(i<3){const t=document.createElementNS(ns,'text');t.setAttribute('x',PAD.l-4);t.setAttribute('y',y+4);t.setAttribute('text-anchor','end');t.setAttribute('fill',dim);t.setAttribute('font-size','9');t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=Math.round(maxV-(i/3)*maxV);svgEl.appendChild(t);}
+  }
+  // X labels
+  _chartData.forEach((d,i)=>{
+    if(i%2!==0&&i!==_chartData.length-1) return;
+    const isCur=i===_chartData.length-1;
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',xP(i));t.setAttribute('y',H-PAD.b+14);t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill',isCur?AC:dim);t.setAttribute('font-size','9');t.setAttribute('font-weight',isCur?'700':'500');
+    t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=d.m;svgEl.appendChild(t);
+  });
+  // Curve
+  function smooth(pts){if(pts.length<2)return`M ${pts[0][0]} ${pts[0][1]}`;let s=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const[x1,y1]=pts[i-1],[x2,y2]=pts[i],cx=(x1+x2)/2;s+=` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;}return s;}
+  const pts=_chartData.map((d,i)=>[xP(i),yP(d.v)]);
+  const pathD=smooth(pts), last=pts[pts.length-1], first=pts[0];
+  const defs=document.createElementNS(ns,'defs');
+  const grad=document.createElementNS(ns,'linearGradient');
+  grad.setAttribute('id','gAcc');grad.setAttribute('x1','0');grad.setAttribute('y1','0');grad.setAttribute('x2','0');grad.setAttribute('y2','1');
+  const s1=document.createElementNS(ns,'stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color',AC);s1.setAttribute('stop-opacity','0.16');
+  const s2=document.createElementNS(ns,'stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color',AC);s2.setAttribute('stop-opacity','0');
+  grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);svgEl.insertBefore(defs,svgEl.firstChild);
+  const area=document.createElementNS(ns,'path');area.setAttribute('d',pathD+` L ${last[0]} ${H-PAD.b} L ${first[0]} ${H-PAD.b} Z`);area.setAttribute('fill','url(#gAcc)');svgEl.appendChild(area);
+  const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');line.setAttribute('stroke',AC);line.setAttribute('stroke-width','1.8');line.setAttribute('stroke-linecap','round');svgEl.appendChild(line);
+  _chartData.forEach((d,i)=>{
+    const isCur=i===_chartData.length-1;
+    const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));
+    dot.setAttribute('r',isCur?'4.5':'3');dot.setAttribute('fill',isCur?AC:'#111111');dot.setAttribute('stroke',AC);dot.setAttribute('stroke-width','1.8');
+    if(isCur)dot.setAttribute('filter',`drop-shadow(0 0 5px rgba(181,255,77,.6))`);svgEl.appendChild(dot);
+  });
+  // Hover
+  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(181,255,77,.1)');hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svgEl.appendChild(hL);
+  const tip=document.getElementById('ctip');
+  wrap.onmousemove=function(e){
+    const rect=wrap.getBoundingClientRect(),mx=e.clientX-rect.left;
+    let bi=null,bd=Infinity;_chartData.forEach((_,i)=>{const dist=Math.abs(xP(i)-mx);if(dist<bd){bd=dist;bi=i;}});
+    if(bi===null||bd>50){hide();return;}
+    const d=_chartData[bi],px=xP(bi);
+    hL.setAttribute('x1',px);hL.setAttribute('x2',px);hL.style.opacity='1';
+    tip.style.display='block';tip.style.left=Math.min(e.clientX-rect.left+14,rect.width-130)+'px';tip.style.top=(e.clientY-rect.top-44)+'px';
+    tip.innerHTML=`<span style="color:rgba(255,255,255,.35);font-size:9px;">${d.m}</span>&nbsp;&nbsp;${d.v} client${d.v!==1?'s':''}`;
+  };
+  wrap.onmouseleave=hide;
+  function hide(){tip.style.display='none';hL.style.opacity='0';}
+}
+window.addEventListener('resize',()=>drawChart());
 
 // ── Client list ───────────────────────────────────────────────────────────────
 function renderClients(clients){
-  const total = clients.length;
-  document.getElementById('list-badge').textContent = total+' client'+(total!==1?'s':'');
-  if(!total){ document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>'; return; }
-
-  const hO = {'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
-  const sO = {'Active':0,'Onboarding':1,'Past Client':2};
-  const sorted = [...clients].sort((a,b)=>{
+  const total=clients.length;
+  document.getElementById('list-badge').textContent=total+' client'+(total!==1?'s':'');
+  if(!total){document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>';return;}
+  const hO={'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
+  const sO={'Active':0,'Onboarding':1,'Past Client':2};
+  const sorted=[...clients].sort((a,b)=>{
     const sd=(sO[a.status]??3)-(sO[b.status]??3);
-    if(sd!==0) return sd;
-    return (hO[a.health||'']??3)-(hO[b.health||'']??3);
+    if(sd!==0)return sd;
+    return(hO[a.health||'']??3)-(hO[b.health||'']??3);
   });
-
-  document.getElementById('client-list').innerHTML = sorted.map(c=>{
-    const touch = daysSince(c.lastTouchpoint);
-    const installDate = fmtDate(c.installDate);
-    const osNonBase = (c.osInstalled||[]).filter(o=>o!=='Base OS');
-    const metaParts = [
-      c.origin ? c.origin.replace('Existing Pre-Pipeline','Pre-pipeline') : null,
-      installDate ? 'Since '+installDate : null,
-    ].filter(Boolean).join(' · ');
-
+  document.getElementById('client-list').innerHTML=sorted.map(c=>{
+    const installDate=fmtDate(c.installDate);
+    const touch=daysSince(c.lastTouchpoint);
+    const osNonBase=(c.osInstalled||[]).filter(o=>o!=='Base OS');
+    const meta=[installDate?'Installed '+installDate:null, touch?touch:null].filter(Boolean).join(' · ');
     return `<div class="ci" onclick="window.open('${esc(c.url)}','_blank')">
-      <div class="ci-bar" style="background:${healthBar(c.health)};"></div>
+      <div class="ci-bar" style="background:${healthBarColor(c.health)};"></div>
       <div class="ci-body">
         <div class="ci-info">
           <div class="ci-name">${esc(c.name)}</div>
-          <div class="ci-meta">
-            ${metaParts ? `<span>${esc(metaParts)}</span>` : ''}
-            ${osNonBase.slice(0,3).map(o=>`<span class="os-tag">${esc(o)}</span>`).join('')}
-            ${osNonBase.length>3 ? `<span class="os-tag">+${osNonBase.length-3}</span>` : ''}
-          </div>
+          ${meta?`<div class="ci-meta">${esc(meta)}</div>`:''}
         </div>
         <div class="ci-right">
-          ${touch ? `<span style="font-size:11px;font-weight:600;color:rgba(255,255,255,.22);">${esc(touch)}</span>` : ''}
-          ${c.isExpansion ? `<span class="exp-flag">↑</span>` : ''}
-          ${healthBadge(c.health)}
-          ${statusPill(c.status)}
+          ${osNonBase.slice(0,2).map(o=>`<span class="tag ${osTagClass(o)}">${esc(o.replace(' OS',''))}</span>`).join('')}
+          ${osNonBase.length>2?`<span class="tag tag-other">+${osNonBase.length-2}</span>`:''}
+          ${healthTag(c.health)}
+          ${statusTag(c.status)}
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── Growth Chart (CRM drawChart pattern) ──────────────────────────────────────
-let _chartData = [];
-
-function buildChartData(clients){
-  // Build monthly install count for last 12 months
-  const now = new Date();
-  const months = [];
-  for(let i=11;i>=0;i--){
-    const d = new Date(now.getFullYear(), now.getMonth()-i, 1);
-    months.push({ year:d.getFullYear(), month:d.getMonth(), m:d.toLocaleString('default',{month:'short'}), v:0 });
-  }
-  for(const c of clients){
-    if(!c.installDate) continue;
-    const d = new Date(c.installDate);
-    const entry = months.find(m => m.year===d.getFullYear() && m.month===d.getMonth());
-    if(entry) entry.v++;
-  }
-  return months;
-}
-
-function accentColor(){ return 'rgba(255,255,255,.4)'; } // dim label color
-
-function drawChart(){
-  const wrap = document.getElementById('cwrap');
-  const svgEl = document.getElementById('growth-chart');
-  if(!wrap||!svgEl) return;
-  const ns='http://www.w3.org/2000/svg';
-  const W=wrap.offsetWidth||600, H=wrap.offsetHeight||150;
-  svgEl.setAttribute('width',W); svgEl.setAttribute('height',H); svgEl.innerHTML='';
-  if(!_chartData.length) return;
-
-  const PAD={t:14,r:16,b:30,l:24};
-  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
-  const maxV=Math.max(..._chartData.map(d=>d.v),1);
-  const AC='#AAFF00';
-  const dim='rgba(255,255,255,.35)';
-  const grid='rgba(255,255,255,.04)';
-
-  const xP=i=>PAD.l+(i/(_chartData.length-1||1))*cW;
-  const yP=v=>PAD.t+cH-(v/maxV)*cH;
-
-  // Grid lines
-  for(let i=0;i<=3;i++){
-    const y=PAD.t+(i/3)*cH;
-    const gl=document.createElementNS(ns,'line');
-    gl.setAttribute('x1',PAD.l); gl.setAttribute('x2',W-PAD.r);
-    gl.setAttribute('y1',y); gl.setAttribute('y2',y);
-    gl.setAttribute('stroke',grid); gl.setAttribute('stroke-dasharray','3,5');
-    svgEl.appendChild(gl);
-    if(i<3){
-      const t=document.createElementNS(ns,'text');
-      t.setAttribute('x',PAD.l-5); t.setAttribute('y',y+4);
-      t.setAttribute('text-anchor','end'); t.setAttribute('fill',dim);
-      t.setAttribute('font-size','9'); t.setAttribute('font-weight','500');
-      t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
-      t.textContent=Math.round(maxV-(i/3)*maxV);
-      svgEl.appendChild(t);
-    }
-  }
-
-  // X axis labels (every 2nd month)
-  _chartData.forEach((d,i)=>{
-    if(i%2!==0&&i!==_chartData.length-1) return;
-    const isCur=i===_chartData.length-1;
-    const t=document.createElementNS(ns,'text');
-    t.setAttribute('x',xP(i)); t.setAttribute('y',H-PAD.b+16);
-    t.setAttribute('text-anchor','middle');
-    t.setAttribute('fill',isCur?AC:dim);
-    t.setAttribute('font-size','9.5'); t.setAttribute('font-weight',isCur?'700':'500');
-    t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
-    t.textContent=d.m; svgEl.appendChild(t);
-  });
-
-  // Smooth curve path
-  function smooth(pts){
-    if(pts.length<2) return `M ${pts[0][0]} ${pts[0][1]}`;
-    let d=`M ${pts[0][0]} ${pts[0][1]}`;
-    for(let i=1;i<pts.length;i++){
-      const[x1,y1]=pts[i-1],[x2,y2]=pts[i],cx=(x1+x2)/2;
-      d+=` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;
-    }
-    return d;
-  }
-  const pts=_chartData.map((d,i)=>[xP(i),yP(d.v)]);
-  const pathD=smooth(pts);
-  const last=pts[pts.length-1], first=pts[0];
-
-  // Gradient fill
-  const defs=document.createElementNS(ns,'defs');
-  const grad=document.createElementNS(ns,'linearGradient');
-  grad.setAttribute('id','gFa'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0'); grad.setAttribute('x2','0'); grad.setAttribute('y2','1');
-  const s1=document.createElementNS(ns,'stop'); s1.setAttribute('offset','0%'); s1.setAttribute('stop-color',AC); s1.setAttribute('stop-opacity','0.18');
-  const s2=document.createElementNS(ns,'stop'); s2.setAttribute('offset','100%'); s2.setAttribute('stop-color',AC); s2.setAttribute('stop-opacity','0.01');
-  grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad); svgEl.insertBefore(defs,svgEl.firstChild);
-
-  const area=document.createElementNS(ns,'path');
-  area.setAttribute('d',pathD+` L ${last[0]} ${H-PAD.b} L ${first[0]} ${H-PAD.b} Z`);
-  area.setAttribute('fill','url(#gFa)'); svgEl.appendChild(area);
-
-  const line=document.createElementNS(ns,'path');
-  line.setAttribute('d',pathD); line.setAttribute('fill','none');
-  line.setAttribute('stroke',AC); line.setAttribute('stroke-width','2');
-  line.setAttribute('stroke-linecap','round'); svgEl.appendChild(line);
-
-  // Dots
-  _chartData.forEach((d,i)=>{
-    const isCur=i===_chartData.length-1;
-    const dot=document.createElementNS(ns,'circle');
-    dot.setAttribute('cx',xP(i)); dot.setAttribute('cy',yP(d.v));
-    dot.setAttribute('r',isCur?'5':'3.5');
-    dot.setAttribute('fill',isCur?AC:'#222222');
-    dot.setAttribute('stroke',AC); dot.setAttribute('stroke-width','2');
-    if(isCur) dot.setAttribute('filter',`drop-shadow(0 0 5px rgba(170,255,0,.55))`);
-    svgEl.appendChild(dot);
-  });
-
-  // Hover line
-  const hL=document.createElementNS(ns,'line');
-  hL.setAttribute('stroke','rgba(170,255,0,.1)'); hL.setAttribute('stroke-width','1');
-  hL.setAttribute('y1',PAD.t); hL.setAttribute('y2',H-PAD.b);
-  hL.style.opacity='0'; svgEl.appendChild(hL);
-
-  const tip=document.getElementById('ctip');
-  wrap.onmousemove=function(e){
-    const rect=wrap.getBoundingClientRect(), mx=e.clientX-rect.left;
-    let bi=null,bd=Infinity;
-    _chartData.forEach((_,i)=>{const dist=Math.abs(xP(i)-mx);if(dist<bd){bd=dist;bi=i;}});
-    if(bi===null||bd>50){hide();return;}
-    const d=_chartData[bi],px=xP(bi);
-    hL.setAttribute('x1',px); hL.setAttribute('x2',px); hL.style.opacity='1';
-    tip.style.display='block';
-    tip.style.left=Math.min(e.clientX-rect.left+14,rect.width-130)+'px';
-    tip.style.top=(e.clientY-rect.top-46)+'px';
-    tip.innerHTML=`<span style="color:rgba(255,255,255,.4);font-size:9px;">${d.m}</span>&nbsp;&nbsp;${d.v} client${d.v!==1?'s':''}`;
-  };
-  wrap.onmouseleave=hide;
-  function hide(){ tip.style.display='none'; hL.style.opacity='0'; }
-}
-window.addEventListener('resize',()=>drawChart());
-
-// ── Data load ─────────────────────────────────────────────────────────────────
+// ── Load ──────────────────────────────────────────────────────────────────────
 async function loadData(){
   try{
-    const r = await fetch(apiUrl('/api/data/accounts'));
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    const j = await r.json();
-    _lastData = j;
-    const total = j.total||0;
-    const active = j.statusCounts?.['Active']??0;
+    const r=await fetch(apiUrl('/api/data/accounts'));
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+    const total=j.total||0;
     document.getElementById('s-total').textContent      = total;
     document.getElementById('s-total-sub').textContent  = total===1?'1 account':total+' accounts';
-    document.getElementById('s-active').textContent     = active;
+    document.getElementById('s-active').textContent     = j.statusCounts?.['Active']??0;
+    document.getElementById('s-onboarding').textContent = j.statusCounts?.['Onboarding']??0;
     document.getElementById('s-expansion').textContent  = j.expansionCandidates??0;
     renderHealth(j.healthCounts||{}, total);
-    renderStatus(j.statusCounts||{});
+    renderOS(j.clients||[]);
+    const tracked=(j.clients||[]).filter(c=>c.installDate).length;
+    document.getElementById('chart-badge').textContent=tracked+' tracked';
+    _chartData=buildChartData(j.clients||[]);
+    setTimeout(drawChart,50);
     renderClients(j.clients||[]);
-    // Build + draw growth chart
-    _chartData = buildChartData(j.clients||[]);
-    const chartTotal = (j.clients||[]).filter(c=>c.installDate).length;
-    document.getElementById('chart-badge').textContent = chartTotal+' install'+(chartTotal!==1?'s':'')+' tracked';
-    setTimeout(drawChart, 50);
     setTs();
   }catch(e){
     console.error('accounts:',e);
-    document.getElementById('client-list').innerHTML='<div class="empty" style="color:rgba(255,107,107,.4);">Failed to load — check token</div>';
+    document.getElementById('client-list').innerHTML='<div class="empty" style="color:#ff5757;">Failed to load — check token</div>';
   }
 }
-function doRefresh(){
-  const b=document.getElementById('rb'); if(b)b.classList.add('spinning');
-  loadData().finally(()=>{ const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
-}
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 loadData();
 setInterval(loadData,5*60*1000);
 </script>

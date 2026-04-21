@@ -59,8 +59,16 @@ const OS_PACKAGE_SLUGS = new Set([
   "starter-os",
 ])
 
+// ── Country → currency (mirrors qualify.js) ────────────────────────────────
+const COUNTRY_CURRENCY = {
+  Malaysia: "MYR", Singapore: "SGD", Indonesia: "IDR", Philippines: "PHP",
+  Thailand: "THB", Vietnam: "VND", Bangladesh: "BDT", India: "INR",
+  UK: "GBP", Australia: "AUD", USA: "USD",
+}
+
 // ── Fetch product info from Catalogue ──────────────────────────────────────
-async function fetchProductInfo(slug) {
+// currency: "MYR" → use Price field; anything else → use Price (USD)
+async function fetchProductInfo(slug, currency = "MYR") {
   if (!slug) return null
   try {
     const rows = await queryDB(DB.CATALOGUE, {
@@ -68,10 +76,11 @@ async function fetchProductInfo(slug) {
     }, process.env.NOTION_API_KEY)
     if (!rows.length) return null
     const p = rows[0]
+    const priceField = currency === "MYR" ? "Price" : "Price (USD)"
     return {
       id:          p.id.replace(/-/g, ""),
       name:        plain(p.properties["Product Name"]?.title || []),
-      price:       p.properties.Price?.number ?? null,
+      price:       p.properties[priceField]?.number ?? p.properties.Price?.number ?? null,
       quote_type:  p.properties["Quote Type"]?.select?.name || "New Business",
       description: plain(p.properties.Description?.rich_text || []),
       slug,
@@ -472,11 +481,16 @@ async function processProposal(sourceId) {
     }
   }
 
+  // ── Detect client currency from Lead Country ──────────────────────────────
+  const country  = sourceProps.Country?.select?.name || ""
+  const currency = COUNTRY_CURRENCY[country] || "MYR"
+  console.log("[create_proposal] country:", country, "→ currency:", currency)
+
   const isOS = OS_PACKAGE_SLUGS.has(slug)
   const [mainProduct, baseProduct, ...addonProducts] = await Promise.all([
-    slug ? fetchProductInfo(slug) : Promise.resolve(null),
-    isOS ? fetchProductInfo("base-os") : Promise.resolve(null),
-    ...addonSlugs.map(s => fetchProductInfo(s)),
+    slug ? fetchProductInfo(slug, currency) : Promise.resolve(null),
+    isOS ? fetchProductInfo("base-os", currency) : Promise.resolve(null),
+    ...addonSlugs.map(s => fetchProductInfo(s, currency)),
   ])
 
   console.log("[create_proposal] slug:", slug, "osName:", osName, "addons:", addonSlugs.length, "fromDeal:", isFromDeal)
@@ -520,10 +534,8 @@ async function processProposal(sourceId) {
   const validUntil  = validUntilD.toISOString().split("T")[0]
   const situation  = plain(sourceProps.Situation?.rich_text || [])
 
-  // Build Packages multi_select: OS name + any add-ons
-  const packagesList = []
-  if (osName) packagesList.push({ name: osName })
-  addonNames.forEach(n => packagesList.push({ name: n }))
+  // Add-Ons multi_select: addon names only (OS goes to OS Type, not here)
+  const addonsList = addonNames.map(n => ({ name: n }))
 
   const VALID_OS_TYPES = new Set([
     "Revenue OS", "Operations OS", "Marketing OS", "Finance OS",
@@ -535,7 +547,8 @@ async function processProposal(sourceId) {
     "Date":          { date: { start: today } },
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },
-    ...(packagesList.length                   ? { "Packages":        { multi_select: packagesList } } : {}),
+    "Currency":      { select: { name: currency } },
+    ...(addonsList.length                     ? { "Add-Ons":         { multi_select: addonsList } } : {}),
     ...(mainProduct?.quote_type               ? { "Quote Type":      { select:   { name: mainProduct.quote_type } } } : {}),
     ...(VALID_OS_TYPES.has(osName)            ? { "OS Type":         { select:   { name: osName } } } : {}),
     ...(companyIds.length                     ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
@@ -611,7 +624,7 @@ async function processProposal(sourceId) {
   const totalAmount = lineItems.reduce((sum, p) => sum + (p?.price ?? 0), 0)
   if (totalAmount > 0) {
     try {
-      await patchPage(propId, { "Amount (MYR)": { number: totalAmount } }, token)
+      await patchPage(propId, { "Amount": { number: totalAmount } }, token)
       console.log(`[create_proposal] Amount (MYR): ${totalAmount}`)
     } catch (e) {
       console.warn("[create_proposal] amount patch:", e.message)

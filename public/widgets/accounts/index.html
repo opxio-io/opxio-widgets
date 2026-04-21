@@ -78,15 +78,13 @@ body.light .hn-sub{color:rgba(0,0,0,.28);}
 .gbar-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);}
 .gbar-score-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;}
 .gbar-outer{width:100%;height:14px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;position:relative;}
-.gbar-fill{height:100%;border-radius:999px;
-  background:linear-gradient(to right,#22C55E 0%,#84CC16 20%,#EAB308 45%,#F97316 70%,#FF6B6B 100%);
-  background-size:100% 100%;
-  transition:width 1.1s cubic-bezier(.4,0,.2,1);}
+.gbar-fill{height:100%;border-radius:999px;transition:width 1.1s cubic-bezier(.4,0,.2,1),background .6s ease;}
 .gbar-marker-wrap{position:absolute;top:0;height:100%;pointer-events:none;transition:left 1.1s cubic-bezier(.4,0,.2,1);}
 .gbar-marker{width:2px;height:100%;background:rgba(255,255,255,.95);border-radius:1px;box-shadow:0 0 8px rgba(255,255,255,.6);}
 .gbar-ticks{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;}
-.gbar-tick{font-size:8px;font-weight:600;color:rgba(255,255,255,.15);}
-body.light .gbar-lbl,.gbar-tick{color:rgba(0,0,0,.25);}
+.gbar-tick{font-family:'Satoshi',-apple-system,sans-serif;font-size:8px;font-weight:600;color:rgba(255,255,255,.2);}
+body.light .gbar-lbl{color:rgba(0,0,0,.25);}
+body.light .gbar-tick{color:rgba(0,0,0,.25);}
 
 /* ── Funnel bars (CRM pattern) ── */
 .f-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
@@ -232,9 +230,9 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
         </div>
       </div>
       <div class="gbar-ticks">
-        <span class="gbar-tick">Healthy</span>
-        <span class="gbar-tick">At Risk</span>
-        <span class="gbar-tick">Critical</span>
+        <span class="gbar-tick">100% Healthy</span>
+        <span class="gbar-tick">50% Healthy</span>
+        <span class="gbar-tick">0% Healthy</span>
       </div>
     </div>
   </div>
@@ -333,32 +331,46 @@ function renderHealth(hc, total){
   document.getElementById('h-risk-pct').textContent    = tot>0 ? pct(amber)+' of total' : '';
   document.getElementById('h-critical-pct').textContent= tot>0 ? pct(red)+' of total' : '';
 
-  // Health score: 0 = all healthy (green end), 100 = all critical (red end)
-  // score = (atRisk×0.5 + critical×1) / total × 100
-  const score = tot > 0 ? Math.min(100, Math.round(((amber*0.5 + red) / tot) * 100)) : 0;
+  // Risk score: 0=all healthy, 100=all critical
+  const riskScore = tot > 0 ? Math.min(100, Math.round(((amber*0.5 + red) / tot) * 100)) : 0;
+  // Fill width = % healthy (so all-healthy = full green bar)
+  const fillPct  = tot > 0 ? Math.round((green / tot) * 100) : 0;
 
-  // Badge label + colour
+  // Smooth colour lerp: green→lime→yellow→orange→red based on riskScore
+  function lerp(a,b,t){ return Math.round(a+(b-a)*Math.max(0,Math.min(1,t))); }
+  function riskColor(s){ // s 0–100
+    const t=s/100;
+    const stops=[[34,197,94],[132,204,22],[234,179,8],[249,115,22],[255,107,107]];
+    const seg=Math.min(3,Math.floor(t*4)), f=(t*4)-seg;
+    const[r1,g1,b1]=stops[seg],[r2,g2,b2]=stops[seg+1];
+    return `rgb(${lerp(r1,r2,f)},${lerp(g1,g2,f)},${lerp(b1,b2,f)})`;
+  }
+  const fillColor = riskColor(riskScore);
+
+  // Status label
   const badge = document.getElementById('h-pct-badge');
   const scoreLbl = document.getElementById('gbar-score-lbl');
-  let status, statusColor;
-  if(score < 20)       { status='Healthy';  statusColor='#22C55E'; }
-  else if(score < 50)  { status='Moderate'; statusColor='#EAB308'; }
-  else if(score < 75)  { status='At Risk';  statusColor='#F97316'; }
-  else                 { status='Critical'; statusColor='#FF6B6B'; }
+  let status;
+  if(riskScore < 15)      status='Healthy';
+  else if(riskScore < 40) status='Moderate';
+  else if(riskScore < 70) status='At Risk';
+  else                    status='Critical';
 
   badge.textContent = status;
-  badge.style.background = statusColor+'22';
-  badge.style.color = statusColor;
-  badge.style.borderColor = statusColor+'44';
-  scoreLbl.textContent = score+'% risk · '+status;
-  scoreLbl.style.color = statusColor;
+  badge.style.background = fillColor+'22';
+  badge.style.color = fillColor;
+  badge.style.borderColor = fillColor+'55';
+  scoreLbl.textContent = (100-riskScore)+'% healthy · '+status;
+  scoreLbl.style.color = fillColor;
 
-  // Gradient bar fill + marker
+  // Fill bar: width = % healthy, color = solid risk colour
   requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.getElementById('gbar-fill').style.width = score+'%';
-    // Marker sits at the score position
+    const fill = document.getElementById('gbar-fill');
+    fill.style.width = fillPct+'%';
+    fill.style.background = fillColor;
+    // Marker at right edge of fill
     const markerEl = document.getElementById('gbar-marker-wrap');
-    if(markerEl) markerEl.style.left = Math.max(0, score-0.5)+'%';
+    if(markerEl) markerEl.style.left = Math.max(0, fillPct-0.3)+'%';
   }));
 }
 

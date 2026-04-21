@@ -540,6 +540,24 @@ async function processProposal(sourceId) {
     ...(situation                             ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
   }, token)
 
+  // ── Stitch both ways: Lead.Proposals → this proposal ─────────────────────
+  // Notion's DUAL auto-sync is unreliable via API — always stitch explicitly
+  if (leadId) {
+    try {
+      const leadPage  = await getPage(leadId, token)
+      const existing  = (leadPage.properties["Proposals"]?.relation || []).map(r => ({ id: r.id }))
+      const alreadyIn = existing.some(r => r.id.replace(/-/g, "") === propId)
+      if (!alreadyIn) {
+        await patchPage(leadId, {
+          "Proposals": { relation: [...existing, { id: propId }] }
+        }, token)
+        console.log("[create_proposal] stitched Lead.Proposals →", propId)
+      }
+    } catch (e) {
+      console.warn("[create_proposal] stitch Lead.Proposals:", e.message)
+    }
+  }
+
   // ── 4. Line Items DB ───────────────────────────────────────────────────────
   // Check immediately; if template hasn't applied yet, wait once then try again
   let dbId = await findLineItemsDB(propId)

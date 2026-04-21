@@ -75,7 +75,7 @@ async function run(payload) {
   const osInterest    = lp["OS Interest"]?.multi_select?.[0]?.name || null
   const situation     = plain(lp.Situation?.rich_text || [])
   const discoveryCall = lp["Discovery Call"]?.date?.start || null
-  const potentialVal  = lp["Potential Value (MYR)"]?.number
+  const potentialVal  = lp["Potential Value"]?.formula?.number
                      ?? lp["Potential Value"]?.number
                      ?? null
   const country       = lp.Country?.select?.name || null

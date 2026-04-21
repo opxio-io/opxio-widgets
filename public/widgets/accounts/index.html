@@ -8,9 +8,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 body.light{background:#FFFFFF;color:#111;}
 :root{
   --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.18);
-  --healthy:#22C55E;--healthym:rgba(34,197,94,.1);--healthyb:rgba(34,197,94,.18);
-  --risk:#FBBF24;--riskm:rgba(251,191,36,.1);
-  --critical:#FF6B6B;--criticalm:rgba(255,107,107,.1);
+  --healthy:#22C55E;--healthym:rgba(34,197,94,.1);--healthyb:rgba(34,197,94,.2);
+  --risk:#FBBF24;--riskm:rgba(251,191,36,.1);--riskb:rgba(251,191,36,.2);
+  --critical:#FF6B6B;--criticalm:rgba(255,107,107,.1);--criticalb:rgba(255,107,107,.2);
   --muted:rgba(255,255,255,.35);
 }
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
@@ -22,107 +22,126 @@ body.light{background:#FFFFFF;color:#111;}
 /* ── Header ── */
 .header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:8px;}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
 .h-title{font-size:22px;font-weight:900;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
 .h-right{display:flex;align-items:center;gap:8px;}
-.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
+.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
+body.light .ts{color:rgba(0,0,0,.3);}
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn svg{width:14px;height:14px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── Stat cards ── */
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
-@media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr);}}
-.stat{padding:18px 20px;position:relative;overflow:hidden;}
-.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;opacity:.55;}
-.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px;display:block;}
-.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
-.s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.2);margin-top:6px;}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
+body.light .icon-btn:hover{background:rgba(0,0,0,.06);border-color:rgba(0,0,0,.12);color:#111;}
 
 /* ── Section label ── */
-.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:18px 0 10px;}
+.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.22);margin:16px 0 8px;}
+body.light .sec-lbl{color:rgba(0,0,0,.3);}
 
-/* ── Mid row ── */
-.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:680px){.mid-row{grid-template-columns:1fr;}}
-.panel{padding:20px 22px;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
-.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);}
-.panel-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+/* ── Stat strip ── */
+.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:580px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
+.m-card{padding:16px 18px;position:relative;overflow:hidden;}
+.m-dot{position:absolute;top:13px;right:14px;width:5px;height:5px;border-radius:50%;opacity:.55;}
+.m-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:9px;display:block;}
+body.light .m-lbl{color:rgba(0,0,0,.35);}
+.m-val{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
+.m-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:6px;}
+body.light .m-sub{color:rgba(0,0,0,.28);}
 
-/* ── Health ring ── */
-.ring-outer{display:flex;align-items:center;gap:22px;}
-@media(max-width:460px){.ring-outer{flex-direction:column;gap:14px;}}
-.ring-pos{position:relative;flex-shrink:0;width:110px;height:110px;}
-.ring-svg{width:110px;height:110px;overflow:visible;}
-.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
-.ring-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
-.ring-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:3px;}
-.ring-track{fill:none;stroke:rgba(255,255,255,.05);}
-/* Legend */
-.h-legend{display:flex;flex-direction:column;gap:12px;flex:1;}
-.hl-row{display:flex;align-items:center;gap:10px;}
-.hl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.hl-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);flex:1;}
-.hl-bar-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;max-width:80px;}
-.hl-bar-fill{height:5px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.hl-count{font-size:13px;font-weight:900;min-width:20px;text-align:right;flex-shrink:0;}
+/* ── Health breakdown (billing inv-cols pattern) ── */
+.health-card{padding:18px 22px;}
+.health-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.health-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
+body.light .health-title{color:rgba(0,0,0,.45);}
+.health-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-radius:10px;overflow:hidden;background:rgba(255,255,255,.025);}
+body.light .health-cols{background:rgba(0,0,0,.03);}
+.hcol{padding:14px 16px;border-right:1px solid rgba(255,255,255,.05);}
+.hcol:last-child{border-right:none;}
+body.light .hcol{border-right-color:rgba(0,0,0,.06);}
+.hcol-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.35);margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+body.light .hcol-lbl{color:rgba(0,0,0,.3);}
+.hcol-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;}
+.hcol-val{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.hcol-sub{font-size:9px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
+body.light .hcol-sub{color:rgba(0,0,0,.25);}
+/* Health bar */
+.health-bar-wrap{margin-top:14px;}
+.health-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;display:flex;}
+body.light .health-bar-track{background:rgba(0,0,0,.07);}
+.hbar-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);border-radius:0;}
+.hbar-seg:first-child{border-radius:999px 0 0 999px;}
+.hbar-seg:last-child{border-radius:0 999px 999px 0;}
+.health-bar-legend{display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;}
+.hleg-item{display:flex;align-items:center;gap:5px;}
+.hleg-dot{width:6px;height:6px;border-radius:50%;}
+.hleg-txt{font-size:9px;font-weight:600;color:rgba(255,255,255,.3);}
+body.light .hleg-txt{color:rgba(0,0,0,.3);}
 
-/* ── OS distribution bars ── */
-.os-bars{display:flex;flex-direction:column;gap:11px;}
+/* ── OS Coverage ── */
+.os-card{padding:18px 22px;}
+.os-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.os-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
+body.light .os-title{color:rgba(0,0,0,.45);}
+.os-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.os-rows{display:flex;flex-direction:column;gap:11px;}
 .os-row{display:flex;align-items:center;gap:10px;}
-.os-label{font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;width:72px;}
+.os-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);flex-shrink:0;width:110px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .os-name{color:rgba(0,0,0,.45);}
 .os-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
-.os-fill{height:5px;border-radius:999px;background:var(--g);opacity:.7;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.os-count{font-size:13px;font-weight:900;color:#fff;min-width:20px;text-align:right;flex-shrink:0;}
+body.light .os-track{background:rgba(0,0,0,.06);}
+.os-fill{height:5px;border-radius:999px;background:var(--g);opacity:.65;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.os-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.7);min-width:18px;text-align:right;flex-shrink:0;}
+body.light .os-n{color:rgba(0,0,0,.55);}
 
 /* ── Client list ── */
-.full-panel{padding:0;}
-.client-scroll{max-height:360px;overflow-y:auto;padding:4px 0;}
+.list-card{padding:0;overflow:hidden;}
+.list-hdr{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;}
+.list-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.55);}
+body.light .list-title{color:rgba(0,0,0,.45);}
+.list-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.list-scroll{max-height:400px;overflow-y:auto;}
 
-/* Each row */
-.ci{display:flex;align-items:center;gap:0;padding:0 20px;border-radius:10px;transition:background .15s;cursor:pointer;position:relative;overflow:hidden;}
-.ci:hover{background:rgba(255,255,255,.025);}
+/* Row */
+.ci{display:flex;align-items:center;padding:0 20px;cursor:pointer;transition:background .15s;position:relative;}
+.ci:hover{background:rgba(255,255,255,.02);}
+.ci-accent{width:3px;border-radius:99px;height:28px;flex-shrink:0;margin-right:14px;}
 .ci-inner{display:flex;align-items:center;gap:12px;flex:1;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .ci:last-child .ci-inner{border-bottom:none;}
-
-/* Health accent bar on left */
-.ci-bar{width:3px;border-radius:999px;height:32px;flex-shrink:0;margin-right:12px;}
-
-/* Info */
+body.light .ci-inner{border-bottom-color:rgba(0,0,0,.05);}
 .ci-info{flex:1;min-width:0;}
 .ci-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-/* Right side */
+body.light .ci-name{color:#111;}
+.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);margin-top:2px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+body.light .ci-meta{color:rgba(0,0,0,.3);}
+/* OS tags — full names, neutral */
+.os-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);white-space:nowrap;}
+body.light .os-tag{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.3);}
 .ci-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-
-/* OS tags — neutral only */
-.os-tags{display:flex;gap:4px;flex-wrap:wrap;}
-.os-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);white-space:nowrap;letter-spacing:.02em;}
-
-/* Status pill */
-.sp{font-size:9px;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
-.sp-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);}
-.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.06);}
-
-/* Health badge (text) */
-.hb{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
-.hb-green{background:var(--healthym);color:var(--healthy);border:1px solid var(--healthyb);}
-.hb-amber{background:var(--riskm);color:var(--risk);border:1px solid rgba(251,191,36,.18);}
-.hb-red{background:var(--criticalm);color:var(--critical);border:1px solid rgba(255,107,107,.18);}
+/* Health badge */
+.hbadge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+.hb-healthy{background:var(--healthym);color:var(--healthy);border:1px solid var(--healthyb);}
+.hb-risk{background:var(--riskm);color:var(--risk);border:1px solid var(--riskb);}
+.hb-critical{background:var(--criticalm);color:var(--critical);border:1px solid var(--criticalb);}
 .hb-none{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
-
-/* Expand flag */
+/* Status pill */
+.sp{font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;}
+.sp-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.08);}
+.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
+body.light .sp-onboarding,.sp-past{color:rgba(0,0,0,.3);}
+/* Touch */
+.touch{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);white-space:nowrap;}
+body.light .touch{color:rgba(0,0,0,.28);}
+/* Expand */
 .exp-flag{font-size:9px;font-weight:700;color:var(--g);white-space:nowrap;}
 
-/* Touchpoint */
-.touch{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);white-space:nowrap;}
-
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
+body.light .empty{color:rgba(0,0,0,.25);}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+body.light .wgt-footer{color:rgba(0,0,0,.2);}
 </style></head><body>
 
 <!-- Header -->
@@ -146,79 +165,96 @@ body.light{background:#FFFFFF;color:#111;}
   </div>
 </div>
 
-<!-- Stat cards -->
-<div class="g4">
-  <div class="card stat">
-    <div class="s-dot" style="background:var(--g);"></div>
-    <span class="s-lbl">Active</span>
-    <div class="s-val" id="s-active" style="color:var(--g);">—</div>
-    <div class="s-sub">Live accounts</div>
+<!-- Stat strip -->
+<div class="stat-strip">
+  <div class="card m-card">
+    <div class="m-dot" style="background:var(--g);"></div>
+    <span class="m-lbl">Active</span>
+    <div class="m-val" id="s-active" style="color:var(--g);">—</div>
+    <div class="m-sub">Live accounts</div>
   </div>
-  <div class="card stat">
-    <div class="s-dot" style="background:var(--g);"></div>
-    <span class="s-lbl">Onboarding</span>
-    <div class="s-val" id="s-onboarding" style="color:var(--g);">—</div>
-    <div class="s-sub">Setting up</div>
+  <div class="card m-card">
+    <div class="m-dot" style="background:var(--g);"></div>
+    <span class="m-lbl">Onboarding</span>
+    <div class="m-val" id="s-onboarding" style="color:var(--g);">—</div>
+    <div class="m-sub">Setting up</div>
   </div>
-  <div class="card stat">
-    <div class="s-dot" style="background:var(--healthy);"></div>
-    <span class="s-lbl">Healthy</span>
-    <div class="s-val" id="s-healthy" style="color:var(--healthy);">—</div>
-    <div class="s-sub">🟢 Green status</div>
+  <div class="card m-card">
+    <div class="m-dot" style="background:var(--healthy);"></div>
+    <span class="m-lbl">Healthy</span>
+    <div class="m-val" id="s-healthy" style="color:var(--healthy);">—</div>
+    <div class="m-sub">Green status</div>
   </div>
-  <div class="card stat">
-    <div class="s-dot" style="background:var(--g);opacity:.3;"></div>
-    <span class="s-lbl">Expansion Ready</span>
-    <div class="s-val" id="s-expansion" style="color:var(--g);">—</div>
-    <div class="s-sub">Flagged for growth</div>
+  <div class="card m-card">
+    <div class="m-dot" style="background:var(--g);opacity:.35;"></div>
+    <span class="m-lbl">Expansion Ready</span>
+    <div class="m-val" id="s-expansion" style="color:var(--g);opacity:.7;">—</div>
+    <div class="m-sub">Flagged for growth</div>
   </div>
 </div>
 
-<!-- Health & OS -->
-<div class="sec-lbl">Health & Coverage</div>
-<div class="mid-row">
-
-  <!-- Health ring -->
-  <div class="card panel">
-    <div class="panel-hdr">
-      <span class="panel-title">Client Health</span>
-      <span class="panel-badge" id="health-badge">—</span>
+<!-- Health breakdown -->
+<div class="sec-lbl">Client Health</div>
+<div class="card health-card">
+  <div class="health-hdr">
+    <span class="health-title">Health Breakdown</span>
+  </div>
+  <div class="health-cols">
+    <div class="hcol">
+      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--healthy);"></span>Healthy</div>
+      <div class="hcol-val" id="h-healthy" style="color:var(--healthy);">—</div>
+      <div class="hcol-sub">Green status</div>
     </div>
-    <div class="ring-outer">
-      <div class="ring-pos">
-        <svg class="ring-svg" viewBox="0 0 110 110" id="h-ring">
-          <circle class="ring-track" cx="55" cy="55" r="46" stroke-width="7"/>
-        </svg>
-        <div class="ring-center">
-          <div class="ring-val" id="h-ring-val" style="color:var(--healthy);">—</div>
-          <div class="ring-sub">Healthy</div>
-        </div>
-      </div>
-      <div class="h-legend" id="h-legend"></div>
+    <div class="hcol">
+      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--risk);"></span>At Risk</div>
+      <div class="hcol-val" id="h-risk" style="color:var(--risk);">—</div>
+      <div class="hcol-sub">Amber status</div>
+    </div>
+    <div class="hcol">
+      <div class="hcol-lbl"><span class="hcol-dot" style="background:var(--critical);"></span>Critical</div>
+      <div class="hcol-val" id="h-critical" style="color:var(--critical);">—</div>
+      <div class="hcol-sub">Red status</div>
     </div>
   </div>
-
-  <!-- OS coverage -->
-  <div class="card panel">
-    <div class="panel-hdr">
-      <span class="panel-title">OS Coverage</span>
-      <span class="panel-badge" id="os-badge">—</span>
+  <div class="health-bar-wrap">
+    <div class="health-bar-track">
+      <div class="hbar-seg" id="bar-healthy" style="background:var(--healthy);width:0%;"></div>
+      <div class="hbar-seg" id="bar-risk"    style="background:var(--risk);width:0%;"></div>
+      <div class="hbar-seg" id="bar-critical"style="background:var(--critical);width:0%;"></div>
+      <div class="hbar-seg" id="bar-unset"   style="background:rgba(255,255,255,.12);width:0%;"></div>
     </div>
-    <div class="os-bars" id="os-bars"></div>
+    <div class="health-bar-legend">
+      <div class="hleg-item"><div class="hleg-dot" style="background:var(--healthy);"></div><span class="hleg-txt">Healthy</span></div>
+      <div class="hleg-item"><div class="hleg-dot" style="background:var(--risk);"></div><span class="hleg-txt">At Risk</span></div>
+      <div class="hleg-item"><div class="hleg-dot" style="background:var(--critical);"></div><span class="hleg-txt">Critical</span></div>
+      <div class="hleg-item"><div class="hleg-dot" style="background:rgba(255,255,255,.2);"></div><span class="hleg-txt">No Status</span></div>
+    </div>
   </div>
+</div>
 
+<!-- OS Coverage -->
+<div class="sec-lbl">OS Coverage</div>
+<div class="card os-card">
+  <div class="os-hdr">
+    <span class="os-title">Installed Systems</span>
+    <span class="os-badge" id="os-badge">—</span>
+  </div>
+  <div class="os-rows" id="os-rows"></div>
 </div>
 
 <!-- Client list -->
-<div class="sec-lbl" id="list-label">Clients</div>
-<div class="card full-panel">
-  <div class="client-scroll" id="client-list"></div>
+<div class="sec-lbl">All Clients</div>
+<div class="card list-card">
+  <div class="list-hdr">
+    <span class="list-title" id="list-title">Accounts</span>
+    <span class="list-badge" id="list-badge">—</span>
+  </div>
+  <div class="list-scroll" id="client-list"></div>
 </div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
-
 let light = false;
 const SUN  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
 const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
@@ -234,131 +270,83 @@ function fmtDate(iso){
 function daysSince(iso){
   if(!iso)return null;
   const d=Math.floor((Date.now()-new Date(iso).getTime())/86400000);
-  if(d===0)return'Today';if(d===1)return'Yesterday';
-  if(d<7)return d+'d ago';if(d<30)return Math.floor(d/7)+'w ago';
-  if(d<365)return Math.floor(d/30)+'mo ago';return Math.floor(d/365)+'y ago';
+  if(d===0)return'Today'; if(d===1)return'Yesterday';
+  if(d<7)return d+'d ago'; if(d<30)return Math.floor(d/7)+'w ago';
+  if(d<365)return Math.floor(d/30)+'mo ago'; return Math.floor(d/365)+'y ago';
 }
 
-// Health config — only these three use semantic color
-const H = {
-  '🟢 Green': { color:'#22C55E', label:'Healthy',  barCls:'hb-green', barColor:'#22C55E' },
-  '🟡 Amber': { color:'#FBBF24', label:'At Risk',  barCls:'hb-amber', barColor:'#FBBF24' },
-  '🔴 Red':   { color:'#FF6B6B', label:'Critical', barCls:'hb-red',   barColor:'#FF6B6B' },
-  'Unset':    { color:'rgba(255,255,255,.12)', label:'No Status', barCls:'hb-none', barColor:'rgba(255,255,255,.12)' },
-};
-
-// Health accent bar per row
-function healthBar(h){
-  const cfg = H[h] || H['Unset'];
-  return `<div class="ci-bar" style="background:${cfg.color};opacity:.7;"></div>`;
+function healthAccent(h){
+  if(h==='🟢 Green')return'#22C55E';
+  if(h==='🟡 Amber')return'#FBBF24';
+  if(h==='🔴 Red')  return'#FF6B6B';
+  return'rgba(255,255,255,.1)';
 }
-
-// Health badge text
 function healthBadge(h){
-  if(!h) return `<span class="hb hb-none">—</span>`;
-  const cfg = H[h] || H['Unset'];
-  return `<span class="hb ${cfg.barCls}">${cfg.label}</span>`;
+  if(h==='🟢 Green') return`<span class="hbadge hb-healthy">Healthy</span>`;
+  if(h==='🟡 Amber') return`<span class="hbadge hb-risk">At Risk</span>`;
+  if(h==='🔴 Red')   return`<span class="hbadge hb-critical">Critical</span>`;
+  return`<span class="hbadge hb-none">—</span>`;
 }
-
-// Status pill
 function statusPill(s){
-  if(s==='Active')     return `<span class="sp sp-active">Active</span>`;
-  if(s==='Onboarding') return `<span class="sp sp-onboarding">Setting Up</span>`;
-  if(s==='Past Client')return `<span class="sp sp-past">Past</span>`;
+  if(s==='Active')     return`<span class="sp sp-active">Active</span>`;
+  if(s==='Onboarding') return`<span class="sp sp-onboarding">Setting Up</span>`;
+  if(s==='Past Client')return`<span class="sp sp-past">Past</span>`;
   return s?`<span class="sp sp-past">${esc(s)}</span>`:'';
 }
 
-// OS short names — neutral chips only
-const OSS = { 'Revenue OS':'Rev','Operations OS':'Ops','Marketing OS':'Mkt','Finance OS':'Fin','Team OS':'Team','Retention OS':'Ret','Sales OS':'Sales' };
-function osTags(arr){
-  return (arr||[]).filter(o=>o!=='Base OS').map(o=>`<span class="os-tag">${esc(OSS[o]||o)}</span>`).join('');
+function renderHealth(hc, total){
+  const green = hc['🟢 Green']||0, amber = hc['🟡 Amber']||0, red = hc['🔴 Red']||0, unset = hc['Unset']||0;
+  document.getElementById('h-healthy').textContent  = green;
+  document.getElementById('h-risk').textContent     = amber;
+  document.getElementById('h-critical').textContent = red;
+  document.getElementById('s-healthy').textContent  = green;
+
+  // Proportional bar
+  if(total > 0){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      document.getElementById('bar-healthy').style.width  = ((green/total)*100).toFixed(1)+'%';
+      document.getElementById('bar-risk').style.width     = ((amber/total)*100).toFixed(1)+'%';
+      document.getElementById('bar-critical').style.width = ((red/total)*100).toFixed(1)+'%';
+      document.getElementById('bar-unset').style.width    = ((unset/total)*100).toFixed(1)+'%';
+    }));
+  }
+
+  // Sub labels with count
+  document.querySelector('#h-healthy + .hcol-sub') && (document.querySelector('.hcol:nth-child(1) .hcol-sub').textContent = green===1?'1 account':green+' accounts');
+  document.querySelector('.hcol:nth-child(2) .hcol-sub').textContent = amber===1?'1 account':amber+' accounts';
+  document.querySelector('.hcol:nth-child(3) .hcol-sub').textContent = red===1?'1 account':red+' accounts';
 }
 
-// ── Health ring ──
-const CIRC = 2*Math.PI*46;
-function renderHealthRing(hc, total){
-  document.getElementById('health-badge').textContent = total+' account'+(total!==1?'s':'');
-  const green = hc['🟢 Green']||0;
-  document.getElementById('h-ring-val').textContent = green;
-
-  const svg = document.getElementById('h-ring');
-  svg.querySelectorAll('.harc').forEach(e=>e.remove());
-
-  const items = [
-    { key:'🟢 Green', val: green },
-    { key:'🟡 Amber', val: hc['🟡 Amber']||0 },
-    { key:'🔴 Red',   val: hc['🔴 Red']||0 },
-    { key:'Unset',    val: hc['Unset']||0 },
-  ].filter(x=>x.val>0);
-
-  let offset=0;
-  items.forEach(it=>{
-    const frac = total>0 ? it.val/total : 0;
-    const len  = frac*CIRC;
-    const arc  = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    arc.setAttribute('class','harc');
-    arc.setAttribute('cx','55');arc.setAttribute('cy','55');arc.setAttribute('r','46');
-    arc.setAttribute('fill','none');
-    arc.setAttribute('stroke', H[it.key].color);
-    arc.setAttribute('stroke-width','7');
-    arc.setAttribute('stroke-linecap','round');
-    arc.setAttribute('stroke-dasharray',`${Math.max(len-2,1)} ${CIRC}`);
-    arc.setAttribute('transform',`rotate(${-90+offset*360} 55 55)`);
-    arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
-    svg.appendChild(arc);
-    offset+=frac;
-  });
-
-  const max = Math.max(...[green,hc['🟡 Amber']||0,hc['🔴 Red']||0,hc['Unset']||0],1);
-  document.getElementById('h-legend').innerHTML = Object.keys(H).map(key=>{
-    const val = key==='Unset'?(hc['Unset']||0):(hc[key]||0);
-    const cfg = H[key];
-    const barW = Math.round((val/max)*100);
-    return `<div class="hl-row">
-      <div class="hl-dot" style="background:${cfg.color}"></div>
-      <span class="hl-label">${cfg.label}</span>
-      <div class="hl-bar-track"><div class="hl-bar-fill" style="width:${barW}%;background:${cfg.color}"></div></div>
-      <span class="hl-count" style="color:${cfg.color}">${val}</span>
-    </div>`;
-  }).join('');
-}
-
-// ── OS bars — lime green only ──
-function renderOSBars(clients){
+function renderOS(clients){
   const counts = {};
   for(const c of clients) for(const os of (c.osInstalled||[])) if(os!=='Base OS') counts[os]=(counts[os]||0)+1;
   const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
-  const totalInstalls = sorted.reduce((s,[,v])=>s+v,0);
-  document.getElementById('os-badge').textContent = totalInstalls+' install'+(totalInstalls!==1?'s':'');
-
-  if(!sorted.length){ document.getElementById('os-bars').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>'; return; }
-
+  const total = sorted.reduce((s,[,v])=>s+v,0);
+  document.getElementById('os-badge').textContent = total+' install'+(total!==1?'s':'');
+  if(!sorted.length){ document.getElementById('os-rows').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>'; return; }
   const max = sorted[0][1];
-  document.getElementById('os-bars').innerHTML = sorted.map(([os,count])=>{
-    const barW = Math.round((count/max)*100);
-    return `<div class="os-row">
-      <span class="os-label">${esc(OSS[os]||os)}</span>
-      <div class="os-track"><div class="os-fill" style="width:${barW}%"></div></div>
-      <span class="os-count">${count}</span>
-    </div>`;
-  }).join('');
+  document.getElementById('os-rows').innerHTML = sorted.map(([os,n])=>`
+    <div class="os-row">
+      <span class="os-name">${esc(os)}</span>
+      <div class="os-track"><div class="os-fill" style="width:${Math.round((n/max)*100)}%"></div></div>
+      <span class="os-n">${n}</span>
+    </div>`).join('');
 }
 
-// ── Client list ──
 function renderClients(clients){
-  document.getElementById('list-label').textContent = `Clients · ${clients.length}`;
-  if(!clients.length){
-    document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>';
-    return;
-  }
+  const total = clients.length;
+  document.getElementById('list-title').textContent = 'All Accounts';
+  document.getElementById('list-badge').textContent = total+' client'+(total!==1?'s':'');
 
-  // Sort: Active → Onboarding → Past, then by health severity (Red first within each group)
-  const hOrder = {'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'Unset':3,'':3};
-  const sOrder = {'Active':0,'Onboarding':1,'Past Client':2};
+  if(!total){ document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>'; return; }
+
+  // Sort: Active → Onboarding → Past, then Critical → At Risk → Healthy → Unset
+  const hO = {'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
+  const sO = {'Active':0,'Onboarding':1,'Past Client':2};
   const sorted = [...clients].sort((a,b)=>{
-    const sd=(sOrder[a.status]??3)-(sOrder[b.status]??3);
+    const sd=(sO[a.status]??3)-(sO[b.status]??3);
     if(sd!==0)return sd;
-    return (hOrder[a.health]??3)-(hOrder[b.health]??3);
+    return (hO[a.health]??3)-(hO[b.health]??3);
   });
 
   document.getElementById('client-list').innerHTML = sorted.map(c=>{
@@ -369,15 +357,16 @@ function renderClients(clients){
       c.origin ? c.origin.replace('Existing Pre-Pipeline','Pre-pipeline') : null,
       installDate ? 'Installed '+installDate : null,
     ].filter(Boolean).join(' · ');
+    const accent = healthAccent(c.health);
 
     return `<div class="ci" onclick="window.open('${esc(c.url)}','_blank')">
-      ${healthBar(c.health)}
+      <div class="ci-accent" style="background:${accent};"></div>
       <div class="ci-inner">
         <div class="ci-info">
           <div class="ci-name">${esc(c.name)}</div>
-          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;">
-            ${metaParts?`<span class="ci-meta">${esc(metaParts)}</span>`:''}
-            ${osNonBase.length?`<div class="os-tags">${osTags(osNonBase)}</div>`:''}
+          <div class="ci-meta">
+            ${metaParts?`<span>${esc(metaParts)}</span>`:''}
+            ${osNonBase.map(o=>`<span class="os-tag">${esc(o)}</span>`).join('')}
           </div>
         </div>
         <div class="ci-right">
@@ -396,28 +385,22 @@ async function loadData(){
     const r = await fetch(apiUrl('/api/data/accounts'));
     if(!r.ok) throw new Error('HTTP '+r.status);
     const j = await r.json();
-
     document.getElementById('s-active').textContent     = j.statusCounts?.['Active']      ?? 0;
     document.getElementById('s-onboarding').textContent = j.statusCounts?.['Onboarding']  ?? 0;
-    document.getElementById('s-healthy').textContent    = j.healthCounts?.['🟢 Green']    ?? 0;
     document.getElementById('s-expansion').textContent  = j.expansionCandidates           ?? 0;
-
-    renderHealthRing(j.healthCounts||{}, j.total||0);
-    renderOSBars(j.clients||[]);
+    renderHealth(j.healthCounts||{}, j.total||0);
+    renderOS(j.clients||[]);
     renderClients(j.clients||[]);
     setTs();
   }catch(e){
     console.error('accounts:',e);
-    document.getElementById('client-list').innerHTML='<div class="empty" style="color:rgba(255,107,107,.5);">Failed to load — check token</div>';
+    document.getElementById('client-list').innerHTML='<div class="empty" style="color:rgba(255,107,107,.4);">Failed to load — check token</div>';
   }
 }
-
 function doRefresh(){
-  const b=document.getElementById('rb');
-  if(b)b.classList.add('spinning');
+  const b=document.getElementById('rb'); if(b)b.classList.add('spinning');
   loadData().finally(()=>{ const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
 }
-
 loadData();
 setInterval(loadData,5*60*1000);
 </script>

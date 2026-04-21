@@ -6,140 +6,126 @@
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;transition:background .3s,color .3s;}
 body.light{background:#FFFFFF;color:#111;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--muted:rgba(255,255,255,.4);}
-body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--muted:rgba(0,0,0,.5);}
+:root{
+  --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.18);
+  --healthy:#22C55E;--healthym:rgba(34,197,94,.1);--healthyb:rgba(34,197,94,.18);
+  --risk:#FBBF24;--riskm:rgba(251,191,36,.1);
+  --critical:#FF6B6B;--criticalm:rgba(255,107,107,.1);
+  --muted:rgba(255,255,255,.35);
+}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
-body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.09);border-radius:999px;}
 
 .card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.08);}
-body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
+.card:hover{border-color:rgba(170,255,0,.07);}
 
 /* ── Header ── */
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
-.h-right{display:flex;align-items:center;gap:8px;}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;gap:8px;}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
-body.light .eyebrow{color:rgba(0,0,0,.35);}
-.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
-body.light .h-title{color:#111;}
+.h-title{font-size:22px;font-weight:900;letter-spacing:-.03em;}
+.h-right{display:flex;align-items:center;gap:8px;}
 .ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
-body.light .ts{color:rgba(0,0,0,.32);}
-
-/* Icon buttons */
 .icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn svg{width:14px;height:14px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.65);}
-body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
 
 /* ── Stat cards ── */
 .g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 @media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr);}}
 .stat{padding:18px 20px;position:relative;overflow:hidden;}
-.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;background:var(--g);opacity:.6;}
+.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;opacity:.55;}
 .s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px;display:block;}
-.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
-.s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);margin-top:6px;}
-body.light .s-sub{color:rgba(255,255,255,.22);}
+.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.2);margin-top:6px;}
 
 /* ── Section label ── */
 .sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:18px 0 10px;}
-body.light .sec-lbl{color:rgba(255,255,255,.65);}
 
 /* ── Mid row ── */
 .mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:700px){.mid-row{grid-template-columns:1fr;}}
+@media(max-width:680px){.mid-row{grid-template-columns:1fr;}}
 .panel{padding:20px 22px;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
 .panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);}
-body.light .panel-title{color:rgba(255,255,255,.65);}
 .panel-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 
 /* ── Health ring ── */
-.ring-wrap-outer{display:flex;align-items:center;gap:24px;}
-@media(max-width:500px){.ring-wrap-outer{flex-direction:column;align-items:flex-start;gap:14px;}}
-.ring-pos{position:relative;flex-shrink:0;width:120px;height:120px;}
-.ring-svg{width:120px;height:120px;overflow:visible;}
-.ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
-.ring-val{font-size:32px;font-weight:900;color:var(--g);letter-spacing:-1.5px;line-height:1;}
-.ring-sub-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:4px;}
-body.light .ring-sub-lbl{color:rgba(255,255,255,.5);}
-.ring-track{fill:none;stroke:rgba(255,255,255,.06);}
-body.light .ring-track{stroke:rgba(0,0,0,.1);}
-.health-legend{display:flex;flex-direction:column;gap:10px;flex:1;}
-.hl-item{display:flex;align-items:center;gap:10px;}
-.hl-swatch{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.hl-info{flex:1;min-width:0;}
-.hl-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);}
-body.light .hl-name{color:rgba(255,255,255,.9);}
-.hl-bar-track{width:100%;height:6px;border-radius:999px;background:rgba(255,255,255,.05);margin-top:4px;overflow:hidden;}
-body.light .hl-bar-track{background:rgba(0,0,0,.05);}
-.hl-bar-fill{height:6px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.hl-meta{font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;text-align:right;min-width:40px;}
+.ring-outer{display:flex;align-items:center;gap:22px;}
+@media(max-width:460px){.ring-outer{flex-direction:column;gap:14px;}}
+.ring-pos{position:relative;flex-shrink:0;width:110px;height:110px;}
+.ring-svg{width:110px;height:110px;overflow:visible;}
+.ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none;}
+.ring-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.ring-sub{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:3px;}
+.ring-track{fill:none;stroke:rgba(255,255,255,.05);}
+/* Legend */
+.h-legend{display:flex;flex-direction:column;gap:12px;flex:1;}
+.hl-row{display:flex;align-items:center;gap:10px;}
+.hl-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.hl-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);flex:1;}
+.hl-bar-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;max-width:80px;}
+.hl-bar-fill{height:5px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.hl-count{font-size:13px;font-weight:900;min-width:20px;text-align:right;flex-shrink:0;}
 
-/* ── OS bars ── */
-.os-bars{display:flex;flex-direction:column;gap:10px;}
+/* ── OS distribution bars ── */
+.os-bars{display:flex;flex-direction:column;gap:11px;}
 .os-row{display:flex;align-items:center;gap:10px;}
-.os-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.os-label{font-size:11px;font-weight:700;color:var(--muted);width:86px;flex-shrink:0;}
-.os-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
-body.light .os-track{background:rgba(0,0,0,.05);}
-.os-fill{height:6px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.os-count{font-size:13px;font-weight:900;color:#fff;width:24px;text-align:right;flex-shrink:0;}
-body.light .os-count{color:rgba(255,255,255,.9);}
+.os-label{font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;width:72px;}
+.os-track{flex:1;height:5px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
+.os-fill{height:5px;border-radius:999px;background:var(--g);opacity:.7;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.os-count{font-size:13px;font-weight:900;color:#fff;min-width:20px;text-align:right;flex-shrink:0;}
 
 /* ── Client list ── */
-.client-scroll{max-height:320px;overflow-y:auto;padding-right:2px;}
-.client-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);cursor:pointer;transition:background .15s;border-radius:4px;}
-body.light .client-item{border-bottom-color:rgba(0,0,0,.05);}
-.client-item:last-child{border-bottom:none;}
-.client-item:hover{background:rgba(255,255,255,.02);}
+.full-panel{padding:0;}
+.client-scroll{max-height:360px;overflow-y:auto;padding:4px 0;}
+
+/* Each row */
+.ci{display:flex;align-items:center;gap:0;padding:0 20px;border-radius:10px;transition:background .15s;cursor:pointer;position:relative;overflow:hidden;}
+.ci:hover{background:rgba(255,255,255,.025);}
+.ci-inner{display:flex;align-items:center;gap:12px;flex:1;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.ci:last-child .ci-inner{border-bottom:none;}
+
+/* Health accent bar on left */
+.ci-bar{width:3px;border-radius:999px;height:32px;flex-shrink:0;margin-right:12px;}
+
+/* Info */
 .ci-info{flex:1;min-width:0;}
 .ci-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .ci-name{color:rgba(255,255,255,.9);}
-.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-body.light .ci-meta{color:rgba(255,255,255,.65);}
+.ci-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* Right side */
 .ci-right{display:flex;align-items:center;gap:8px;flex-shrink:0;}
 
-/* Status badge */
-.status-pill{font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+/* OS tags — neutral only */
+.os-tags{display:flex;gap:4px;flex-wrap:wrap;}
+.os-tag{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);white-space:nowrap;letter-spacing:.02em;}
+
+/* Status pill */
+.sp{font-size:9px;font-weight:700;padding:3px 9px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;}
 .sp-active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.sp-onboarding{background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.18);}
-.sp-past{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);border:1px solid rgba(255,255,255,.08);}
-body.light .sp-past{color:rgba(255,255,255,.6);border-color:rgba(255,255,255,.15);}
+.sp-onboarding{background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);}
+.sp-past{background:rgba(255,255,255,.03);color:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.06);}
 
-/* Health dot */
-.hdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.hd-green{background:#22C55E;}
-.hd-amber{background:#FBBF24;}
-.hd-red{background:#FF6B6B;}
-.hd-none{background:rgba(255,255,255,.15);}
-
-/* OS chips in list */
-.ci-chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px;}
-.ci-chip{font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;white-space:nowrap;}
+/* Health badge (text) */
+.hb{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;}
+.hb-green{background:var(--healthym);color:var(--healthy);border:1px solid var(--healthyb);}
+.hb-amber{background:var(--riskm);color:var(--risk);border:1px solid rgba(251,191,36,.18);}
+.hb-red{background:var(--criticalm);color:var(--critical);border:1px solid rgba(255,107,107,.18);}
+.hb-none{background:rgba(255,255,255,.03);color:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.06);}
 
 /* Expand flag */
-.exp-flag{font-size:9px;font-weight:700;color:var(--g);background:var(--gm);border:1px solid var(--gb);border-radius:5px;padding:2px 7px;white-space:nowrap;}
+.exp-flag{font-size:9px;font-weight:700;color:var(--g);white-space:nowrap;}
 
-/* Date text */
-.date-val{font-size:12px;font-weight:700;color:rgba(255,255,255,.3);white-space:nowrap;}
-body.light .date-val{color:rgba(255,255,255,.55);}
+/* Touchpoint */
+.touch{font-size:11px;font-weight:600;color:rgba(255,255,255,.25);white-space:nowrap;}
 
 .empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
-body.light .empty{color:rgba(255,255,255,.4);}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
-body.light .wgt-footer{color:rgba(0,0,0,.25);}
-
-/* Loading skeleton */
-@keyframes shimmer{0%,100%{opacity:.3}50%{opacity:.7}}
-.skel{background:rgba(255,255,255,.05);border-radius:6px;animation:shimmer 1.4s ease-in-out infinite;}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style></head><body>
 
-<!-- ── Header ── -->
+<!-- Header -->
 <div class="header">
   <div>
     <div class="eyebrow">Revenue OS · Opxio</div>
@@ -149,8 +135,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     <span class="ts" id="ts"></span>
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"/>
-        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
       </svg>
     </button>
     <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
@@ -161,266 +146,280 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
   </div>
 </div>
 
-<!-- ── Stat cards ── -->
+<!-- Stat cards -->
 <div class="g4">
-  <div class="card stat"><div class="s-dot"></div><span class="s-lbl">Active</span><div class="s-val" id="s-active">—</div><div class="s-sub">Live accounts</div></div>
-  <div class="card stat"><div class="s-dot"></div><span class="s-lbl">Onboarding</span><div class="s-val" id="s-onboarding">—</div><div class="s-sub">Setting up</div></div>
-  <div class="card stat"><div class="s-dot"></div><span class="s-lbl">Expansion Ready</span><div class="s-val" id="s-expansion">—</div><div class="s-sub">Flagged for growth</div></div>
-  <div class="card stat"><div class="s-dot" style="opacity:.3;"></div><span class="s-lbl">Past Client</span><div class="s-val" id="s-past" style="color:rgba(255,255,255,.3);">—</div><div class="s-sub">Completed</div></div>
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--g);"></div>
+    <span class="s-lbl">Active</span>
+    <div class="s-val" id="s-active" style="color:var(--g);">—</div>
+    <div class="s-sub">Live accounts</div>
+  </div>
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--g);"></div>
+    <span class="s-lbl">Onboarding</span>
+    <div class="s-val" id="s-onboarding" style="color:var(--g);">—</div>
+    <div class="s-sub">Setting up</div>
+  </div>
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--healthy);"></div>
+    <span class="s-lbl">Healthy</span>
+    <div class="s-val" id="s-healthy" style="color:var(--healthy);">—</div>
+    <div class="s-sub">🟢 Green status</div>
+  </div>
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--g);opacity:.3;"></div>
+    <span class="s-lbl">Expansion Ready</span>
+    <div class="s-val" id="s-expansion" style="color:var(--g);">—</div>
+    <div class="s-sub">Flagged for growth</div>
+  </div>
 </div>
 
-<!-- ── Mid row: Health ring + OS distribution ── -->
-<div class="sec-lbl">Health & Distribution</div>
+<!-- Health & OS -->
+<div class="sec-lbl">Health & Coverage</div>
 <div class="mid-row">
 
-  <!-- Left: Client Health ring -->
+  <!-- Health ring -->
   <div class="card panel">
     <div class="panel-hdr">
       <span class="panel-title">Client Health</span>
-      <span class="panel-badge" id="health-badge">0 accounts</span>
+      <span class="panel-badge" id="health-badge">—</span>
     </div>
-    <div class="ring-wrap-outer">
+    <div class="ring-outer">
       <div class="ring-pos">
-        <svg class="ring-svg" viewBox="0 0 120 120" id="health-ring-svg">
-          <circle class="ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
+        <svg class="ring-svg" viewBox="0 0 110 110" id="h-ring">
+          <circle class="ring-track" cx="55" cy="55" r="46" stroke-width="7"/>
         </svg>
         <div class="ring-center">
-          <div class="ring-val" id="health-ring-val">—</div>
-          <div class="ring-sub-lbl">Green</div>
+          <div class="ring-val" id="h-ring-val" style="color:var(--healthy);">—</div>
+          <div class="ring-sub">Healthy</div>
         </div>
       </div>
-      <div class="health-legend" id="health-legend"></div>
+      <div class="h-legend" id="h-legend"></div>
     </div>
   </div>
 
-  <!-- Right: OS distribution bars -->
+  <!-- OS coverage -->
   <div class="card panel">
     <div class="panel-hdr">
-      <span class="panel-title">OS Installed</span>
-      <span class="panel-badge" id="os-badge">0 installs</span>
+      <span class="panel-title">OS Coverage</span>
+      <span class="panel-badge" id="os-badge">—</span>
     </div>
     <div class="os-bars" id="os-bars"></div>
   </div>
 
 </div>
 
-<!-- ── Client list ── -->
-<div class="sec-lbl" id="client-list-label">Clients</div>
-<div class="card panel" style="padding-bottom:6px;">
+<!-- Client list -->
+<div class="sec-lbl" id="list-label">Clients</div>
+<div class="card full-panel">
   <div class="client-scroll" id="client-list"></div>
 </div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl(p) { return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
+function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
 
 let light = false;
-const SUN  = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-const MOON = `<svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-function toggleMode() { light=!light; document.body.classList.toggle('light',light); const mb=document.getElementById('mb'); if(mb)mb.innerHTML=light?MOON:SUN; }
+const SUN  = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode(){ light=!light; document.body.classList.toggle('light',light); document.getElementById('mb').innerHTML=light?MOON:SUN; }
+function setTs(){ document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+function esc(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
 
-function setTs() { document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-function esc(s) { const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
-
-function fmtDate(iso) {
-  if (!iso) return null;
-  try { return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}); }
-  catch { return null; }
+function fmtDate(iso){
+  if(!iso)return null;
+  try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}); }
+  catch{return null;}
+}
+function daysSince(iso){
+  if(!iso)return null;
+  const d=Math.floor((Date.now()-new Date(iso).getTime())/86400000);
+  if(d===0)return'Today';if(d===1)return'Yesterday';
+  if(d<7)return d+'d ago';if(d<30)return Math.floor(d/7)+'w ago';
+  if(d<365)return Math.floor(d/30)+'mo ago';return Math.floor(d/365)+'y ago';
 }
 
-function daysSince(iso) {
-  if (!iso) return null;
-  const d = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
-  if (d === 0) return 'Today';
-  if (d === 1) return 'Yesterday';
-  if (d < 7)  return d + 'd ago';
-  if (d < 30) return Math.floor(d/7) + 'w ago';
-  if (d < 365) return Math.floor(d/30) + 'mo ago';
-  return Math.floor(d/365) + 'y ago';
-}
-
-const CIRC = 2 * Math.PI * 50;
-
-// Health colours
-const HC = { '🟢 Green': '#22C55E', '🟡 Amber': '#FBBF24', '🔴 Red': '#FF6B6B', 'Unset': 'rgba(255,255,255,.15)' };
-const HN = { '🟢 Green': 'Healthy',  '🟡 Amber': 'At Risk',  '🔴 Red': 'Critical', 'Unset': 'No Status' };
-const HD = { '🟢 Green': 'hd-green', '🟡 Amber': 'hd-amber', '🔴 Red': 'hd-red', 'Unset': 'hd-none' };
-
-// OS colours
-const OC = {
-  'Revenue OS':    '#FBBF24',
-  'Operations OS': '#22C55E',
-  'Marketing OS':  '#EC4899',
-  'Finance OS':    '#FB923C',
-  'Team OS':       '#EAB308',
-  'Retention OS':  '#60A5FA',
-  'Sales OS':      '#FF6B6B',
-  'Base OS':       'rgba(255,255,255,.2)',
+// Health config — only these three use semantic color
+const H = {
+  '🟢 Green': { color:'#22C55E', label:'Healthy',  barCls:'hb-green', barColor:'#22C55E' },
+  '🟡 Amber': { color:'#FBBF24', label:'At Risk',  barCls:'hb-amber', barColor:'#FBBF24' },
+  '🔴 Red':   { color:'#FF6B6B', label:'Critical', barCls:'hb-red',   barColor:'#FF6B6B' },
+  'Unset':    { color:'rgba(255,255,255,.12)', label:'No Status', barCls:'hb-none', barColor:'rgba(255,255,255,.12)' },
 };
-const OS_SHORT = { 'Revenue OS':'Rev OS','Operations OS':'Ops OS','Marketing OS':'Mkt OS','Finance OS':'Fin OS','Team OS':'Team OS','Retention OS':'Ret OS','Sales OS':'Sales OS','Base OS':'Base OS' };
 
-function chipHTML(os) {
-  const color = OC[os] || 'rgba(255,255,255,.2)';
-  return `<span class="ci-chip" style="background:${color}18;border:1px solid ${color}28;color:${color};">${esc(OS_SHORT[os]||os)}</span>`;
+// Health accent bar per row
+function healthBar(h){
+  const cfg = H[h] || H['Unset'];
+  return `<div class="ci-bar" style="background:${cfg.color};opacity:.7;"></div>`;
 }
 
-function renderHealthRing(hc, total) {
-  document.getElementById('health-badge').textContent = total + ' account' + (total!==1?'s':'');
-  const green = hc['🟢 Green'] || 0;
-  document.getElementById('health-ring-val').textContent = green;
+// Health badge text
+function healthBadge(h){
+  if(!h) return `<span class="hb hb-none">—</span>`;
+  const cfg = H[h] || H['Unset'];
+  return `<span class="hb ${cfg.barCls}">${cfg.label}</span>`;
+}
 
-  const svg = document.getElementById('health-ring-svg');
-  svg.querySelectorAll('.h-arc').forEach(e => e.remove());
+// Status pill
+function statusPill(s){
+  if(s==='Active')     return `<span class="sp sp-active">Active</span>`;
+  if(s==='Onboarding') return `<span class="sp sp-onboarding">Setting Up</span>`;
+  if(s==='Past Client')return `<span class="sp sp-past">Past</span>`;
+  return s?`<span class="sp sp-past">${esc(s)}</span>`:'';
+}
+
+// OS short names — neutral chips only
+const OSS = { 'Revenue OS':'Rev','Operations OS':'Ops','Marketing OS':'Mkt','Finance OS':'Fin','Team OS':'Team','Retention OS':'Ret','Sales OS':'Sales' };
+function osTags(arr){
+  return (arr||[]).filter(o=>o!=='Base OS').map(o=>`<span class="os-tag">${esc(OSS[o]||o)}</span>`).join('');
+}
+
+// ── Health ring ──
+const CIRC = 2*Math.PI*46;
+function renderHealthRing(hc, total){
+  document.getElementById('health-badge').textContent = total+' account'+(total!==1?'s':'');
+  const green = hc['🟢 Green']||0;
+  document.getElementById('h-ring-val').textContent = green;
+
+  const svg = document.getElementById('h-ring');
+  svg.querySelectorAll('.harc').forEach(e=>e.remove());
 
   const items = [
-    { key: '🟢 Green', val: green },
-    { key: '🟡 Amber', val: hc['🟡 Amber'] || 0 },
-    { key: '🔴 Red',   val: hc['🔴 Red']   || 0 },
-    { key: 'Unset',    val: hc['Unset']    || 0 },
-  ].filter(x => x.val > 0);
+    { key:'🟢 Green', val: green },
+    { key:'🟡 Amber', val: hc['🟡 Amber']||0 },
+    { key:'🔴 Red',   val: hc['🔴 Red']||0 },
+    { key:'Unset',    val: hc['Unset']||0 },
+  ].filter(x=>x.val>0);
 
-  let offset = 0;
-  items.forEach(it => {
-    const frac = total > 0 ? it.val / total : 0;
-    const len  = frac * CIRC;
+  let offset=0;
+  items.forEach(it=>{
+    const frac = total>0 ? it.val/total : 0;
+    const len  = frac*CIRC;
     const arc  = document.createElementNS('http://www.w3.org/2000/svg','circle');
-    arc.setAttribute('class','h-arc');
-    arc.setAttribute('cx','60'); arc.setAttribute('cy','60'); arc.setAttribute('r','50');
+    arc.setAttribute('class','harc');
+    arc.setAttribute('cx','55');arc.setAttribute('cy','55');arc.setAttribute('r','46');
     arc.setAttribute('fill','none');
-    arc.setAttribute('stroke', HC[it.key]);
-    arc.setAttribute('stroke-width','8');
+    arc.setAttribute('stroke', H[it.key].color);
+    arc.setAttribute('stroke-width','7');
     arc.setAttribute('stroke-linecap','round');
-    arc.setAttribute('stroke-dasharray', `${Math.max(len-2,1)} ${CIRC}`);
-    arc.setAttribute('transform', `rotate(${-90 + offset*360} 60 60)`);
-    arc.style.transition = 'all .8s cubic-bezier(.4,0,.2,1)';
+    arc.setAttribute('stroke-dasharray',`${Math.max(len-2,1)} ${CIRC}`);
+    arc.setAttribute('transform',`rotate(${-90+offset*360} 55 55)`);
+    arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
     svg.appendChild(arc);
-    offset += frac;
+    offset+=frac;
   });
 
-  const max = Math.max(...Object.values(hc), 1);
-  document.getElementById('health-legend').innerHTML = [
-    { key: '🟢 Green' }, { key: '🟡 Amber' }, { key: '🔴 Red' }, { key: 'Unset' }
-  ].map(({ key }) => {
-    const val = hc[key] || 0;
-    const color = HC[key];
-    const barW = Math.round((val / max) * 100);
-    return `<div class="hl-item">
-      <div class="hl-swatch" style="background:${color}"></div>
-      <div class="hl-info">
-        <div class="hl-name">${esc(HN[key])}</div>
-        <div class="hl-bar-track"><div class="hl-bar-fill" style="width:${barW}%;background:${color}"></div></div>
-      </div>
-      <div class="hl-meta">${val}</div>
+  const max = Math.max(...[green,hc['🟡 Amber']||0,hc['🔴 Red']||0,hc['Unset']||0],1);
+  document.getElementById('h-legend').innerHTML = Object.keys(H).map(key=>{
+    const val = key==='Unset'?(hc['Unset']||0):(hc[key]||0);
+    const cfg = H[key];
+    const barW = Math.round((val/max)*100);
+    return `<div class="hl-row">
+      <div class="hl-dot" style="background:${cfg.color}"></div>
+      <span class="hl-label">${cfg.label}</span>
+      <div class="hl-bar-track"><div class="hl-bar-fill" style="width:${barW}%;background:${cfg.color}"></div></div>
+      <span class="hl-count" style="color:${cfg.color}">${val}</span>
     </div>`;
   }).join('');
 }
 
-function renderOSBars(clients) {
+// ── OS bars — lime green only ──
+function renderOSBars(clients){
   const counts = {};
-  for (const c of clients) {
-    for (const os of (c.osInstalled || [])) {
-      if (os !== 'Base OS') counts[os] = (counts[os] || 0) + 1;
-    }
-  }
-  const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]);
-  const totalInstalls = sorted.reduce((s,[,v]) => s+v, 0);
-  document.getElementById('os-badge').textContent = totalInstalls + ' install' + (totalInstalls!==1?'s':'');
+  for(const c of clients) for(const os of (c.osInstalled||[])) if(os!=='Base OS') counts[os]=(counts[os]||0)+1;
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const totalInstalls = sorted.reduce((s,[,v])=>s+v,0);
+  document.getElementById('os-badge').textContent = totalInstalls+' install'+(totalInstalls!==1?'s':'');
 
-  if (!sorted.length) {
-    document.getElementById('os-bars').innerHTML = '<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>';
-    return;
-  }
+  if(!sorted.length){ document.getElementById('os-bars').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>'; return; }
 
   const max = sorted[0][1];
-  document.getElementById('os-bars').innerHTML = sorted.map(([os, count]) => {
-    const color = OC[os] || 'rgba(255,255,255,.4)';
-    const barW  = Math.round((count / max) * 100);
+  document.getElementById('os-bars').innerHTML = sorted.map(([os,count])=>{
+    const barW = Math.round((count/max)*100);
     return `<div class="os-row">
-      <div class="os-dot" style="background:${color}"></div>
-      <span class="os-label">${esc(OS_SHORT[os]||os)}</span>
-      <div class="os-track"><div class="os-fill" style="width:${barW}%;background:${color}"></div></div>
+      <span class="os-label">${esc(OSS[os]||os)}</span>
+      <div class="os-track"><div class="os-fill" style="width:${barW}%"></div></div>
       <span class="os-count">${count}</span>
     </div>`;
   }).join('');
 }
 
-function statusPill(s) {
-  if (s === 'Active')      return '<span class="status-pill sp-active">Active</span>';
-  if (s === 'Onboarding')  return '<span class="status-pill sp-onboarding">Onboarding</span>';
-  if (s === 'Past Client') return '<span class="status-pill sp-past">Past</span>';
-  return s ? `<span class="status-pill sp-past">${esc(s)}</span>` : '';
-}
-
-function renderClientList(clients) {
-  const active     = clients.filter(c => c.status === 'Active');
-  const onboarding = clients.filter(c => c.status === 'Onboarding');
-  const past       = clients.filter(c => c.status === 'Past Client');
-  const all        = [...active, ...onboarding, ...past];
-
-  const label = document.getElementById('client-list-label');
-  label.textContent = `Clients · ${clients.length}`;
-
-  if (!all.length) {
-    document.getElementById('client-list').innerHTML = '<div class="empty">No client accounts yet</div>';
+// ── Client list ──
+function renderClients(clients){
+  document.getElementById('list-label').textContent = `Clients · ${clients.length}`;
+  if(!clients.length){
+    document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>';
     return;
   }
 
-  document.getElementById('client-list').innerHTML = all.map(c => {
-    const osNonBase = (c.osInstalled || []).filter(o => o !== 'Base OS');
+  // Sort: Active → Onboarding → Past, then by health severity (Red first within each group)
+  const hOrder = {'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'Unset':3,'':3};
+  const sOrder = {'Active':0,'Onboarding':1,'Past Client':2};
+  const sorted = [...clients].sort((a,b)=>{
+    const sd=(sOrder[a.status]??3)-(sOrder[b.status]??3);
+    if(sd!==0)return sd;
+    return (hOrder[a.health]??3)-(hOrder[b.health]??3);
+  });
+
+  document.getElementById('client-list').innerHTML = sorted.map(c=>{
     const installDate = fmtDate(c.installDate);
     const touch = daysSince(c.lastTouchpoint);
+    const osNonBase = (c.osInstalled||[]).filter(o=>o!=='Base OS');
     const metaParts = [
       c.origin ? c.origin.replace('Existing Pre-Pipeline','Pre-pipeline') : null,
-      installDate ? 'Installed ' + installDate : null,
-    ].filter(Boolean);
+      installDate ? 'Installed '+installDate : null,
+    ].filter(Boolean).join(' · ');
 
-    return `<div class="client-item" onclick="window.open('${esc(c.url)}','_blank')">
-      <div class="ci-info">
-        <div class="ci-name">${esc(c.name)}</div>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:3px;">
-          ${metaParts.length ? `<span class="ci-meta">${esc(metaParts.join(' · '))}</span>` : ''}
-          <div class="ci-chips">${osNonBase.map(chipHTML).join('')}</div>
+    return `<div class="ci" onclick="window.open('${esc(c.url)}','_blank')">
+      ${healthBar(c.health)}
+      <div class="ci-inner">
+        <div class="ci-info">
+          <div class="ci-name">${esc(c.name)}</div>
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;flex-wrap:wrap;">
+            ${metaParts?`<span class="ci-meta">${esc(metaParts)}</span>`:''}
+            ${osNonBase.length?`<div class="os-tags">${osTags(osNonBase)}</div>`:''}
+          </div>
         </div>
-      </div>
-      <div class="ci-right">
-        ${touch ? `<span class="date-val">${esc(touch)}</span>` : ''}
-        ${c.isExpansion ? '<span class="exp-flag">↑ Expand</span>' : ''}
-        <div class="hdot ${HD[c.health] || 'hd-none'}" title="${esc(c.health || 'No health status')}"></div>
-        ${statusPill(c.status)}
+        <div class="ci-right">
+          ${touch?`<span class="touch">${esc(touch)}</span>`:''}
+          ${c.isExpansion?`<span class="exp-flag">↑ Expand</span>`:''}
+          ${healthBadge(c.health)}
+          ${statusPill(c.status)}
+        </div>
       </div>
     </div>`;
   }).join('');
 }
 
-async function loadData() {
-  try {
+async function loadData(){
+  try{
     const r = await fetch(apiUrl('/api/data/accounts'));
-    if (!r.ok) throw new Error('HTTP ' + r.status);
+    if(!r.ok) throw new Error('HTTP '+r.status);
     const j = await r.json();
 
     document.getElementById('s-active').textContent     = j.statusCounts?.['Active']      ?? 0;
     document.getElementById('s-onboarding').textContent = j.statusCounts?.['Onboarding']  ?? 0;
+    document.getElementById('s-healthy').textContent    = j.healthCounts?.['🟢 Green']    ?? 0;
     document.getElementById('s-expansion').textContent  = j.expansionCandidates           ?? 0;
-    document.getElementById('s-past').textContent       = j.statusCounts?.['Past Client'] ?? 0;
 
-    renderHealthRing(j.healthCounts || {}, j.total || 0);
-    renderOSBars(j.clients || []);
-    renderClientList(j.clients || []);
+    renderHealthRing(j.healthCounts||{}, j.total||0);
+    renderOSBars(j.clients||[]);
+    renderClients(j.clients||[]);
     setTs();
-  } catch(e) {
-    console.error('accounts:', e);
-    document.getElementById('client-list').innerHTML = '<div class="empty" style="color:rgba(255,100,100,.5);">Failed to load — check token</div>';
+  }catch(e){
+    console.error('accounts:',e);
+    document.getElementById('client-list').innerHTML='<div class="empty" style="color:rgba(255,107,107,.5);">Failed to load — check token</div>';
   }
 }
 
-function doRefresh() {
-  const b = document.getElementById('rb');
-  if (b) b.classList.add('spinning');
-  loadData().finally(() => { const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
+function doRefresh(){
+  const b=document.getElementById('rb');
+  if(b)b.classList.add('spinning');
+  loadData().finally(()=>{ const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
 }
 
 loadData();
-setInterval(loadData, 5 * 60 * 1000);
+setInterval(loadData,5*60*1000);
 </script>
 <div class="wgt-footer">Widgets by Opxio.io</div>
 </body></html>

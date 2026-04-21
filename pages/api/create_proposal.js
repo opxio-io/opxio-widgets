@@ -438,8 +438,13 @@ async function processProposal(sourceId) {
   const addonSlugs = []
   const addonNames = []
 
-  // Deals: Add-ons is a relation to Catalogue. Leads: Add-ons is multi_select (may not exist).
-  const addonRelationIds = (sourceProps["Add-ons"]?.relation || sourceProps["Add-Ons"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+  // Deals: Add-ons is a relation to Catalogue. Leads: "Add-On Interest" is a relation to Catalogue.
+  const addonRelationIds = (
+    sourceProps["Add-On Interest"]?.relation ||
+    sourceProps["Add-ons"]?.relation ||
+    sourceProps["Add-Ons"]?.relation ||
+    []
+  ).map(r => r.id.replace(/-/g, ""))
   if (addonRelationIds.length) {
     // Fetch Catalogue items to get their names + slugs
     const addonPages = await Promise.all(addonRelationIds.map(id => getPage(id, token).catch(() => null)))

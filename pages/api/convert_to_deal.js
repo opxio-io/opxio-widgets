@@ -124,7 +124,7 @@ async function run(payload) {
   if (situation)      dealProps["Situation"]        = { rich_text: [{ text: { content: situation } }] }
   if (discoveryCall)  dealProps["Discovery Call"]   = { date: { start: discoveryCall } }
   if (country)        dealProps["Country"]          = { select: { name: country } }
-  if (potentialVal)   dealProps["Deal Value (MYR)"] = { number: potentialVal }
+  if (potentialVal)   dealProps["Deal Value"]       = { number: potentialVal }
   if (notes)          dealProps["Notes"]            = { rich_text: [{ text: { content: notes } }] }
   if (dealSourceName) dealProps["Source"]           = { select: { name: dealSourceName } }
   if (catalogueOsId)  dealProps["OS Type"]          = { relation: [{ id: catalogueOsId }] }

@@ -195,8 +195,8 @@ async function createDealFromLead(leadId, leadProps, companyId, companyName, osT
   const osInterest = leadProps["OS Interest"]?.multi_select?.map(s => s.name) || []
   if (osInterest.length) dealProps["Packages"] = { multi_select: osInterest.map(n => ({ name: n })) }
 
-  const potValue = leadProps["Potential Value (MYR)"]?.number
-  if (potValue) dealProps["Deal Value (MYR)"] = { number: potValue }
+  const potValue = leadProps["Potential Value"]?.number
+  if (potValue) dealProps["Deal Value"] = { number: potValue }
 
   const page = await createPage({
     parent:     { database_id: DB.DEALS },

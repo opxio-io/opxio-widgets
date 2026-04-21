@@ -67,7 +67,7 @@ export default async function handler(req, res) {
     for (const deal of deals) {
       const p     = deal.properties
       const stage = p.Stage?.status?.name || p.Stage?.select?.name || "Unknown"
-      const value = p["Deal Value (MYR)"]?.number || p["Deal Value"]?.number || p["Total Value"]?.number || 0
+      const value = p["Deal Value"]?.number || p["Total Value"]?.number || 0
       const name  = plain(p["Deal Name"]?.title || p.Name?.title || []) || "Untitled"
       const pkgs  = p.Packages?.multi_select?.map(x => x.name) || []
       const src   = p.Source?.select?.name || null

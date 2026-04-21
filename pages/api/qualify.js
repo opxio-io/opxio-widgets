@@ -171,8 +171,13 @@ async function createLead(form, companyId, personId, qualified) {
   // Team Size (select)
   if (form.teamSize) props["Team Size"] = { select: { name: form.teamSize } };
 
-  // Text fields
-  if (form.situation) props.Situation = { rich_text: [{ text: { content: form.situation } }] };
+  // Text fields — combine solve + situation into one Situation field
+  const situationParts = []
+  if (form.solve)     situationParts.push(`Hoping to solve: ${form.solve}`)
+  if (form.situation) situationParts.push(form.situation)
+  if (situationParts.length) {
+    props.Situation = { rich_text: [{ text: { content: situationParts.join("\n\n") } }] }
+  }
   if (form.utmSource) props["UTM Source"] = { rich_text: [{ text: { content: form.utmSource } }] };
   if (form.utmMedium) props["UTM Medium"] = { rich_text: [{ text: { content: form.utmMedium } }] };
   if (form.utmCampaign) props["UTM Campaign"] = { rich_text: [{ text: { content: form.utmCampaign } }] };

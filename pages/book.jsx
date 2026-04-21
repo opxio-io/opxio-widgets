@@ -25,10 +25,22 @@ const INDUSTRIES = [
 const OS_OPTIONS = [
   "Revenue OS",
   "Operations OS",
-  "Business OS",
   "Marketing OS",
-  "Agency OS",
+  "Finance OS",
+  "Team OS",
   "Not Sure Yet",
+];
+
+const SOLVE_OPTIONS = [
+  "Messy pipeline — losing track of leads and deals",
+  "No visibility over projects and client delivery",
+  "Scattered tools — nothing is connected",
+  "Can't track cash flow, invoices, or payments",
+  "No system for content, campaigns, or marketing",
+  "Team has no clear ownership or task structure",
+  "Payroll, HR, or staff management is manual",
+  "All of the above",
+  "Not sure yet — need help figuring it out",
 ];
 
 const SOURCES = [
@@ -76,6 +88,7 @@ export default function Book() {
     monthlyRevenue: "",
     // Step 3
     budget: "",
+    solve: "",
     osInterest: [],
     situation: "",
     source: "",
@@ -425,6 +438,14 @@ export default function Book() {
                     "RM 6500+",
                     "Not sure yet",
                   ]}
+                  wide
+                />
+
+                <SelectField
+                  label="What are you hoping to solve?"
+                  value={form.solve}
+                  onChange={(v) => set("solve", v)}
+                  options={SOLVE_OPTIONS}
                   wide
                 />
 

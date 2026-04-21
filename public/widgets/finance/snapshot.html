@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Finance Snapshot</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;transition:background .3s,color .3s;}
+body.light{background:#FFFFFF;color:#111;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--muted:rgba(255,255,255,.4);}
+body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--muted:rgba(0,0,0,.5);}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
+
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
+
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.65);}
+body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
+
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
+.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
+body.light .ts{color:rgba(0,0,0,.32);}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:18px 0 10px;}
+body.light .sec-lbl{color:rgba(255,255,255,.65);}
+
+/* ── STAT CARDS ── */
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:540px){.g3{grid-template-columns:1fr;}}
+.stat{padding:18px 20px;position:relative;overflow:hidden;}
+.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;opacity:.6;}
+.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px;display:block;}
+.s-val{font-size:26px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);margin-top:6px;}
+body.light .s-sub{color:rgba(255,255,255,.22);}
+
+/* ── MID ROW ── */
+.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+@media(max-width:700px){.mid-row{grid-template-columns:1fr;}}
+.panel{padding:20px 22px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);}
+body.light .panel-title{color:rgba(255,255,255,.65);}
+.panel-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+
+/* ── DONUT ── */
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+@media(max-width:500px){.donut-wrap{flex-direction:column;align-items:flex-start;gap:14px;}}
+.donut-svg{flex-shrink:0;overflow:visible;}
+.ov-ring-wrap{position:relative;flex-shrink:0;width:120px;height:120px;}
+.ring-svg{width:120px;height:120px;overflow:visible;}
+.ov-ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.ov-ring-pct{font-size:11px;font-weight:700;color:var(--muted);line-height:1;text-transform:uppercase;letter-spacing:.06em;}
+.ov-ring-val{font-size:18px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.1;margin-top:4px;}
+.ov-ring-track{fill:none;stroke:rgba(255,255,255,.06);}
+body.light .ov-ring-track{stroke:rgba(0,0,0,.1);}
+.cat-legend{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0;}
+.dl-item{display:flex;align-items:center;gap:10px;}
+.dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
+.dl-info{flex:1;min-width:0;}
+.dl-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .dl-name{color:rgba(255,255,255,.9);}
+.dl-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.05);margin-top:4px;overflow:hidden;}
+body.light .dl-bar-track{background:rgba(0,0,0,.05);}
+.dl-bar-fill{height:5px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.dl-meta{font-size:11px;font-weight:700;color:var(--muted);flex-shrink:0;text-align:right;min-width:40px;}
+
+/* ── P&L CHART ── */
+.chart-wrap{position:relative;width:100%;height:160px;}
+.ctip{position:absolute;background:#2a2a2a;border:1px solid rgba(170,255,0,.2);border-radius:8px;padding:6px 11px;font-family:'Satoshi',-apple-system,sans-serif;font-size:11px;font-weight:700;color:#AAFF00;pointer-events:none;display:none;white-space:nowrap;z-index:10;}
+
+.empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
+body.light .empty{color:rgba(255,255,255,.4);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
+</style></head><body>
+
+<div class="header">
+  <div class="h-left">
+    <div class="eyebrow" id="_eyebrow">Finance OS · Opxio</div>
+    <h1 class="h-title">Finance Snapshot</h1>
+  </div>
+  <div class="h-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
+    </button>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="g3">
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--g);"></div>
+    <span class="s-lbl">Income</span>
+    <div class="s-val" id="kpi-income" style="color:var(--g);">—</div>
+    <div class="s-sub">This month</div>
+  </div>
+  <div class="card stat">
+    <div class="s-dot" style="background:var(--red);"></div>
+    <span class="s-lbl">Expenses</span>
+    <div class="s-val" id="kpi-expenses" style="color:var(--red);">—</div>
+    <div class="s-sub">This month</div>
+  </div>
+  <div class="card stat">
+    <div class="s-dot" id="pl-dot" style="background:var(--g);"></div>
+    <span class="s-lbl">Net P&amp;L</span>
+    <div class="s-val" id="kpi-pl">—</div>
+    <div class="s-sub" id="kpi-pl-sub">This month</div>
+  </div>
+</div>
+
+<!-- MID ROW -->
+<div class="sec-lbl">Breakdown</div>
+<div class="mid-row">
+  <!-- LEFT: Expense donut -->
+  <div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Expenses by Category</span>
+      <span class="panel-badge" id="exp-badge">—</span>
+    </div>
+    <div class="donut-wrap">
+      <div class="ov-ring-wrap">
+        <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="donut-svg">
+          <circle class="ov-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
+        </svg>
+        <div class="ov-ring-center">
+          <div class="ov-ring-pct">Total</div>
+          <div class="ov-ring-val" id="donut-total">—</div>
+        </div>
+      </div>
+      <div class="cat-legend" id="cat-legend"></div>
+    </div>
+  </div>
+  <!-- RIGHT: P&L trend -->
+  <div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Net P&amp;L — 6 Months</span>
+      <span class="panel-badge" id="trend-badge">—</span>
+    </div>
+    <div class="chart-wrap" id="cwrap">
+      <svg id="pl-chart" style="display:block;overflow:visible;"></svg>
+      <div class="ctip" id="ctip"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const _tok=new URLSearchParams(location.search).get('token')||'';
+function apiUrl(p){return _tok?p+'?token='+encodeURIComponent(_tok):p;}
+let light=false;
+const SUN=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode(){light=!light;document.body.classList.toggle('light',light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=light?MOON:SUN;}
+function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function fmt(n){
+  if(n===null||n===undefined)return'—';
+  const abs=Math.abs(n);
+  let s;
+  if(abs>=1000000)s='RM '+(abs/1000000).toFixed(1)+'M';
+  else if(abs>=1000)s='RM '+(abs/1000).toFixed(1)+'K';
+  else s='RM '+abs.toLocaleString();
+  return n<0?'-'+s:s;
+}
+
+const CIRC=2*Math.PI*50;
+const CAT_COLORS=['#AAFF00','#60A5FA','#FBBF24','#A78BFA','#FB923C','#34D399','#F472B6','#22D3EE'];
+
+// ── DONUT ────────────────────────────────────────────────────────────────────
+function renderDonut(cats, totalExpenses){
+  document.getElementById('exp-badge').textContent=fmt(totalExpenses);
+  document.getElementById('donut-total').textContent=fmt(totalExpenses);
+
+  const svg=document.getElementById('donut-svg');
+  svg.querySelectorAll('.cat-arc').forEach(e=>e.remove());
+
+  if(!cats||!cats.length){
+    document.getElementById('cat-legend').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No expense data</div>';
+    return;
+  }
+
+  const totalAmt=cats.reduce((s,c)=>s+(c.amount||0),0)||1;
+  let offset=0;
+  cats.forEach((c,i)=>{
+    const frac=(c.amount||0)/totalAmt;
+    const len=frac*CIRC;
+    const gap=cats.length>1?2:0;
+    const arc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    arc.setAttribute('class','cat-arc');
+    arc.setAttribute('cx','60');arc.setAttribute('cy','60');arc.setAttribute('r','50');
+    arc.setAttribute('fill','none');arc.setAttribute('stroke',CAT_COLORS[i%CAT_COLORS.length]);
+    arc.setAttribute('stroke-width','8');arc.setAttribute('stroke-linecap','round');
+    arc.setAttribute('stroke-dasharray',`${Math.max(len-gap,1)} ${CIRC}`);
+    arc.setAttribute('transform',`rotate(${-90+offset*360} 60 60)`);
+    arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
+    svg.appendChild(arc);
+    offset+=frac;
+  });
+
+  const maxAmt=cats[0]?.amount||1;
+  document.getElementById('cat-legend').innerHTML=cats.slice(0,5).map((c,i)=>{
+    const col=CAT_COLORS[i%CAT_COLORS.length];
+    const name=c.cat||c.category||'Other';
+    const w=Math.round(((c.amount||0)/maxAmt)*100);
+    const pct=c.pct??Math.round(((c.amount||0)/totalAmt)*100);
+    return`<div class="dl-item">
+      <div class="dl-swatch" style="background:${col}"></div>
+      <div class="dl-info">
+        <div class="dl-name">${esc(name)}</div>
+        <div class="dl-bar-track"><div class="dl-bar-fill" style="width:${w}%;background:${col}"></div></div>
+      </div>
+      <div class="dl-meta">${pct}%</div>
+    </div>`;
+  }).join('');
+}
+
+// ── P&L TREND ────────────────────────────────────────────────────────────────
+let _trendData=[];
+function drawChart(){
+  const wrap=document.getElementById('cwrap'),svgEl=document.getElementById('pl-chart');
+  if(!wrap||!svgEl||!_trendData.length)return;
+  const ns='http://www.w3.org/2000/svg';
+  const W=wrap.offsetWidth||500,H=wrap.offsetHeight||160;
+  svgEl.setAttribute('width',W);svgEl.setAttribute('height',H);svgEl.innerHTML='';
+  const PAD={t:14,r:14,b:28,l:30};
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
+
+  const vals=_trendData.map(d=>d.pl);
+  const minV=Math.min(...vals);
+  const maxV=Math.max(...vals);
+  const span=maxV-minV||1;
+  const padV=span*0.15;
+  const lo=minV-padV, hi=maxV+padV, range=hi-lo||1;
+
+  const dim='rgba(255,255,255,.25)', grid='rgba(255,255,255,.04)';
+  const xP=i=>PAD.l+(i/(_trendData.length-1||1))*cW;
+  const yP=v=>PAD.t+cH-((v-lo)/range)*cH;
+  const zero=yP(0);
+
+  // Zero line
+  if(minV<0&&maxV>0){
+    const zl=document.createElementNS(ns,'line');
+    zl.setAttribute('x1',PAD.l);zl.setAttribute('x2',W-PAD.r);zl.setAttribute('y1',zero);zl.setAttribute('y2',zero);
+    zl.setAttribute('stroke','rgba(255,255,255,.08)');zl.setAttribute('stroke-dasharray','4,4');svgEl.appendChild(zl);
+    const zt=document.createElementNS(ns,'text');zt.setAttribute('x',PAD.l-4);zt.setAttribute('y',zero+4);
+    zt.setAttribute('text-anchor','end');zt.setAttribute('fill','rgba(255,255,255,.2)');zt.setAttribute('font-size','8');zt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');zt.textContent='0';svgEl.appendChild(zt);
+  }
+
+  // Grid lines
+  for(let i=0;i<=3;i++){
+    const y=PAD.t+(i/3)*cH;
+    const gl=document.createElementNS(ns,'line');
+    gl.setAttribute('x1',PAD.l);gl.setAttribute('x2',W-PAD.r);gl.setAttribute('y1',y);gl.setAttribute('y2',y);
+    gl.setAttribute('stroke',grid);gl.setAttribute('stroke-dasharray','3,5');svgEl.appendChild(gl);
+    const v=hi-((i/3)*range);
+    const t=document.createElementNS(ns,'text');t.setAttribute('x',PAD.l-4);t.setAttribute('y',y+4);
+    t.setAttribute('text-anchor','end');t.setAttribute('fill',dim);t.setAttribute('font-size','8');t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
+    const absV=Math.abs(v);
+    t.textContent=(v<0?'-':'')+(absV>=1000?(absV/1000).toFixed(0)+'k':Math.round(absV));svgEl.appendChild(t);
+  }
+
+  // X labels
+  _trendData.forEach((d,i)=>{
+    const isCur=i===_trendData.length-1;
+    const AC=isCur?(vals[i]>=0?'#AAFF00':'#FF6B6B'):dim;
+    const t=document.createElementNS(ns,'text');
+    t.setAttribute('x',xP(i));t.setAttribute('y',H-PAD.b+14);t.setAttribute('text-anchor','middle');
+    t.setAttribute('fill',AC);t.setAttribute('font-size','9');t.setAttribute('font-weight',isCur?'700':'500');
+    t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=d.m;svgEl.appendChild(t);
+  });
+
+  // Smooth curve
+  function smooth(pts){if(pts.length<2)return`M ${pts[0][0]} ${pts[0][1]}`;let s=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const[x1,y1]=pts[i-1],[x2,y2]=pts[i],cx=(x1+x2)/2;s+=` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;}return s;}
+  const pts=_trendData.map((d,i)=>[xP(i),yP(d.pl)]);
+  const pathD=smooth(pts);
+  const lastPl=vals[vals.length-1];
+  const lineColor=lastPl>=0?'#AAFF00':'#FF6B6B';
+  const fillColor=lastPl>=0?'rgba(170,255,0,.12)':'rgba(255,107,107,.08)';
+
+  // Area fill (to zero line)
+  const areaBase=Math.min(Math.max(zero,PAD.t),H-PAD.b);
+  const first=pts[0],last2=pts[pts.length-1];
+  const area=document.createElementNS(ns,'path');
+  area.setAttribute('d',pathD+` L ${last2[0]} ${areaBase} L ${first[0]} ${areaBase} Z`);
+  area.setAttribute('fill',fillColor);svgEl.appendChild(area);
+
+  // Line
+  const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');
+  line.setAttribute('stroke',lineColor);line.setAttribute('stroke-width','1.8');line.setAttribute('stroke-linecap','round');svgEl.appendChild(line);
+
+  // Dots
+  _trendData.forEach((d,i)=>{
+    const isCur=i===_trendData.length-1;
+    const col=d.pl>=0?'#AAFF00':'#FF6B6B';
+    const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.pl));
+    dot.setAttribute('r',isCur?'4.5':'3');dot.setAttribute('fill',isCur?col:'#1E1E1E');dot.setAttribute('stroke',col);dot.setAttribute('stroke-width','1.8');
+    if(isCur)dot.setAttribute('filter',`drop-shadow(0 0 5px ${col}99)`);svgEl.appendChild(dot);
+  });
+
+  // Hover
+  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(170,255,0,.1)');hL.setAttribute('stroke-width','1');
+  hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svgEl.appendChild(hL);
+  const tip=document.getElementById('ctip');
+  wrap.onmousemove=function(e){
+    const rect=wrap.getBoundingClientRect(),mx=e.clientX-rect.left;
+    let bi=null,bd=Infinity;_trendData.forEach((_,i)=>{const dist=Math.abs(xP(i)-mx);if(dist<bd){bd=dist;bi=i;}});
+    if(bi===null||bd>50){hide();return;}
+    const d=_trendData[bi],px=xP(bi);
+    hL.setAttribute('x1',px);hL.setAttribute('x2',px);hL.style.opacity='1';
+    const col=d.pl>=0?'#AAFF00':'#FF6B6B';
+    tip.style.color=col;tip.style.display='block';
+    tip.style.left=Math.min(e.clientX-rect.left+14,rect.width-150)+'px';
+    tip.style.top=(e.clientY-rect.top-44)+'px';
+    tip.innerHTML=`<span style="color:rgba(255,255,255,.35);font-size:9px;">${d.m}</span>&nbsp;&nbsp;${fmt(d.pl)}`;
+  };
+  wrap.onmouseleave=hide;
+  function hide(){tip.style.display='none';hL.style.opacity='0';}
+}
+window.addEventListener('resize',()=>drawChart());
+
+// ── LOAD ─────────────────────────────────────────────────────────────────────
+async function loadData(){
+  try{
+    const r=await fetch(apiUrl('/api/data/finance-snapshot'));
+    if(!r.ok)throw new Error('HTTP '+r.status);
+    const j=await r.json();
+
+    const{thisMonthIncome=0,thisMonthExpenses=0,thisMonthPL=0}=j.kpi||{};
+
+    document.getElementById('kpi-income').textContent=fmt(thisMonthIncome);
+    document.getElementById('kpi-expenses').textContent=fmt(thisMonthExpenses);
+
+    const plEl=document.getElementById('kpi-pl');
+    const plDot=document.getElementById('pl-dot');
+    const plSub=document.getElementById('kpi-pl-sub');
+    plEl.textContent=fmt(thisMonthPL);
+    const plPos=thisMonthPL>=0;
+    plEl.style.color=plPos?'var(--g)':'var(--red)';
+    plDot.style.background=plPos?'var(--g)':'var(--red)';
+    plSub.textContent=plPos?'Profitable this month':'Loss this month';
+
+    const cats=j.categoryBreakdown||[];
+    const totalExp=cats.reduce((s,c)=>s+(c.amount||0),0);
+    renderDonut(cats,totalExp||thisMonthExpenses);
+
+    _trendData=j.monthlyTrend||[];
+    const posMonths=_trendData.filter(d=>d.pl>0).length;
+    document.getElementById('trend-badge').textContent=posMonths+' profitable month'+(posMonths!==1?'s':'');
+    setTimeout(drawChart,50);
+
+    setTs();
+  }catch(e){
+    console.error('finance-snapshot:',e);
+    document.getElementById('kpi-income').textContent='Error';
+  }
+}
+function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
+setTs();loadData();setInterval(loadData,5*60*1000);
+</script>
+<div class="wgt-footer">Widgets by Opxio.io</div>
+<script>
+(function(){
+  const el=document.getElementById('_eyebrow');
+  if(!el)return;
+  const tok=new URLSearchParams(location.search).get('token');
+  if(!tok)return;
+  fetch('/api/client/info?token='+tok)
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · FINANCE OS';})
+    .catch(()=>{});
+})();
+</script>
+</body></html>

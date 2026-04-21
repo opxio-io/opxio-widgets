@@ -1,5 +1,5 @@
 import Head from "next/head";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 
 const STEPS = ["contact", "business", "needs", "result"];
 
@@ -30,6 +30,17 @@ const OS_OPTIONS = [
   "Team OS",
   "Not Sure Yet",
 ];
+
+// Revenue options by currency — MYR for Malaysia, USD for everyone else
+const REVENUE_OPTIONS = {
+  MYR: ["Under RM 15K", "RM 15K–30K", "RM 30K–100K", "RM 100K–200K", "RM 200K+"],
+  USD: ["Under $3,000", "$3,000–$7,000", "$7,000–$25,000", "$25,000–$50,000", "$50,000+"],
+}
+
+const BUDGET_OPTIONS = {
+  MYR: ["Under RM 1,500", "RM 1,500–3,500", "RM 3,500–6,500", "RM 6,500+", "Not sure yet"],
+  USD: ["Under $400", "$400–$900", "$900–$1,500", "$1,500+", "Not sure yet"],
+}
 
 const SOLVE_OPTIONS = [
   "Messy pipeline — losing track of leads and deals",
@@ -133,6 +144,18 @@ export default function Book() {
       setCalSrc(`https://cal.com/opxio/discovery-call?${params.toString()}`);
     }
   }, [result]);
+
+  const currency = countryCode === "+60" ? "MYR" : "USD"
+
+  // Reset revenue + budget if currency changes so stale values don't persist
+  const prevCurrency = React.useRef(currency)
+  useEffect(() => {
+    if (prevCurrency.current !== currency) {
+      set("monthlyRevenue", "")
+      set("budget", "")
+      prevCurrency.current = currency
+    }
+  }, [currency])
 
   const set = (field, value) => setForm((f) => ({ ...f, [field]: value }));
   const toggleOS = (val) =>
@@ -389,17 +412,11 @@ export default function Book() {
                   wide
                 />
                 <SelectField
-                  label="Monthly Revenue"
+                  label={`Monthly Revenue (${currency})`}
                   required
                   value={form.monthlyRevenue}
                   onChange={(v) => set("monthlyRevenue", v)}
-                  options={[
-                    "Under RM 15K",
-                    "RM 15K–30K",
-                    "RM 30K–100K",
-                    "RM 100K–200K",
-                    "RM 200K+",
-                  ]}
+                  options={REVENUE_OPTIONS[currency]}
                   wide
                 />
 
@@ -427,17 +444,11 @@ export default function Book() {
                 <h2 style={styles.sectionTitle}>What are you looking to build?</h2>
 
                 <SelectField
-                  label="Investment Budget"
+                  label={`Investment Budget (${currency})`}
                   required
                   value={form.budget}
                   onChange={(v) => set("budget", v)}
-                  options={[
-                    "Under RM 1500",
-                    "RM 1500 - RM 3500",
-                    "RM 3500 - RM 6500",
-                    "RM 6500+",
-                    "Not sure yet",
-                  ]}
+                  options={BUDGET_OPTIONS[currency]}
                   wide
                 />
 

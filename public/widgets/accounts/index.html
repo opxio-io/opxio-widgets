@@ -65,15 +65,16 @@ body.light .s-sub{color:rgba(0,0,0,.3);}
 body.light .panel-title{color:rgba(0,0,0,.55);}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);margin-left:auto;}
 
-/* ── Donut (CRM pattern — same SVG technique) ── */
-.donut-wrap{flex:1;display:flex;align-items:center;justify-content:center;gap:18px;padding:4px 0;}
-.legend{display:flex;flex-direction:column;gap:9px;}
-.l-row{display:flex;align-items:center;gap:9px;}
-.l-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.l-name{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.5);flex:1;}
-body.light .l-name{color:rgba(0,0,0,.45);}
-.l-val{font-size:13px;font-weight:900;color:#fff;}
-body.light .l-val{color:rgba(0,0,0,.8);}
+/* ── Health numbers ── */
+.health-nums{display:grid;grid-template-columns:repeat(3,1fr);flex:1;align-items:center;margin-bottom:18px;}
+.hn-col{padding:10px 12px;text-align:center;}
+.hn-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;opacity:.75;margin-bottom:8px;}
+.hn-val{font-size:38px;font-weight:900;letter-spacing:-2px;line-height:1;}
+.hn-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.2);margin-top:5px;min-height:14px;}
+body.light .hn-sub{color:rgba(0,0,0,.28);}
+.health-bar-wrap{margin-top:4px;}
+.health-bar-track{width:100%;height:10px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;display:flex;}
+.hbar-seg{height:100%;transition:width .9s cubic-bezier(.4,0,.2,1);}
 
 /* ── Funnel bars (CRM pattern) ── */
 .f-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
@@ -182,15 +183,38 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
 <div class="sec-lbl">Health &amp; Status</div>
 <div class="grid-2">
 
-  <!-- Health Donut -->
+  <!-- Health Status -->
   <div class="card panel">
     <div class="panel-title">
       Client Health
       <span class="panel-badge" id="h-pct-badge">—</span>
     </div>
-    <div class="donut-wrap">
-      <svg width="130" height="130" viewBox="0 0 160 160" id="health-donut" style="flex-shrink:0;overflow:visible;"></svg>
-      <div class="legend" id="health-legend"></div>
+    <!-- 3 big health numbers -->
+    <div class="health-nums">
+      <div class="hn-col" style="border-right:1px solid rgba(255,255,255,.05);">
+        <div class="hn-lbl" style="color:#22C55E;">Healthy</div>
+        <div class="hn-val" style="color:#22C55E;" id="h-healthy">—</div>
+        <div class="hn-sub" id="h-healthy-pct"></div>
+      </div>
+      <div class="hn-col" style="border-right:1px solid rgba(255,255,255,.05);">
+        <div class="hn-lbl" style="color:#FBBF24;">At Risk</div>
+        <div class="hn-val" style="color:#FBBF24;" id="h-risk">—</div>
+        <div class="hn-sub" id="h-risk-pct"></div>
+      </div>
+      <div class="hn-col">
+        <div class="hn-lbl" style="color:#FF6B6B;">Critical</div>
+        <div class="hn-val" style="color:#FF6B6B;" id="h-critical">—</div>
+        <div class="hn-sub" id="h-critical-pct"></div>
+      </div>
+    </div>
+    <!-- Segmented bar -->
+    <div class="health-bar-wrap">
+      <div class="health-bar-track">
+        <div class="hbar-seg" id="bar-healthy" style="background:#22C55E;width:0%;border-radius:999px 0 0 999px;"></div>
+        <div class="hbar-seg" id="bar-risk"    style="background:#FBBF24;width:0%;"></div>
+        <div class="hbar-seg" id="bar-critical"style="background:#FF6B6B;width:0%;"></div>
+        <div class="hbar-seg" id="bar-unset"   style="background:rgba(255,255,255,.08);width:0%;border-radius:0 999px 999px 0;"></div>
+      </div>
     </div>
   </div>
 
@@ -271,53 +295,34 @@ function statusPill(s){
   return s ? `<span class="sp sp-past">${esc(s)}</span>` : '';
 }
 
-// ── Health Donut (CRM renderDonut pattern) ────────────────────────────────────
+// ── Health status (big numbers + segmented bar) ───────────────────────────────
 function renderHealth(hc, total){
   const green = hc['🟢 Green']||0;
   const amber  = hc['🟡 Amber']||0;
   const red    = hc['🔴 Red']||0;
   const unset  = hc['Unset']||0;
+  const tot    = total || (green+amber+red+unset);
+  const pct    = n => tot > 0 ? Math.round((n/tot)*100)+'%' : '—';
 
-  const segments = [
-    { label:'Healthy',  count:green, color:'#22C55E' },
-    { label:'At Risk',  count:amber, color:'#FBBF24' },
-    { label:'Critical', count:red,   color:'#FF6B6B' },
-    { label:'No Status',count:unset, color:'rgba(255,255,255,.15)' },
-  ].filter(s => s.count > 0);
+  document.getElementById('h-healthy').textContent    = green;
+  document.getElementById('h-risk').textContent       = amber;
+  document.getElementById('h-critical').textContent   = red;
+  document.getElementById('h-healthy-pct').textContent = tot>0 ? pct(green)+' of total' : '';
+  document.getElementById('h-risk-pct').textContent    = tot>0 ? pct(amber)+' of total' : '';
+  document.getElementById('h-critical-pct').textContent= tot>0 ? pct(red)+' of total' : '';
 
-  const tot = total || (green+amber+red+unset);
   const pctHealthy = tot > 0 ? Math.round((green/tot)*100) : 0;
   document.getElementById('h-pct-badge').textContent = pctHealthy + '% Healthy';
 
-  // SVG donut — CRM technique
-  const R=55, SW=18, C=2*Math.PI*R;
-  let off=0;
-  let svg = `<circle cx="80" cy="80" r="${R}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="${SW}"/>`;
-
-  if(tot === 0){
-    // empty state ring
-    svg += `<circle cx="80" cy="80" r="${R}" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="${SW}"/>`;
-  } else {
-    segments.forEach(s=>{
-      const d=(s.count/tot)*C, gap=C-d;
-      svg += `<circle cx="80" cy="80" r="${R}" fill="none" stroke="${s.color}" stroke-width="${SW}" stroke-dasharray="${d.toFixed(2)} ${gap.toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 80 80)"/>`;
-      off += d;
-    });
+  // Segmented bar
+  if(tot > 0){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      document.getElementById('bar-healthy').style.width  = ((green/tot)*100).toFixed(1)+'%';
+      document.getElementById('bar-risk').style.width     = ((amber/tot)*100).toFixed(1)+'%';
+      document.getElementById('bar-critical').style.width = ((red/tot)*100).toFixed(1)+'%';
+      document.getElementById('bar-unset').style.width    = ((unset/tot)*100).toFixed(1)+'%';
+    }));
   }
-
-  // Center: % healthy
-  svg += `<text x="80" y="72" text-anchor="middle" font-family="'Satoshi',-apple-system,sans-serif" font-size="30" font-weight="900" fill="#fff">${pctHealthy}%</text>`;
-  svg += `<text x="80" y="94" text-anchor="middle" font-family="'Satoshi',-apple-system,sans-serif" font-size="8" font-weight="700" fill="rgba(255,255,255,.22)">HEALTHY</text>`;
-
-  document.getElementById('health-donut').innerHTML = svg;
-
-  // Legend
-  document.getElementById('health-legend').innerHTML = segments.map(s=>`
-    <div class="l-row">
-      <span class="l-dot" style="background:${s.color};"></span>
-      <span class="l-name">${esc(s.label)}</span>
-      <span class="l-val">${s.count}</span>
-    </div>`).join('');
 }
 
 // ── Status Funnel (CRM funnel bars pattern) ───────────────────────────────────

@@ -3,391 +3,301 @@
 <title>Opxio — Client Accounts</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:18px 18px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;transition:background .3s,color .3s;}
+body.light{background:#FFFFFF;color:#111;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--muted:rgba(255,255,255,.4);}
+body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--muted:rgba(0,0,0,.5);}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 
-:root{
-  --surface:#111111;
-  --surface2:#181818;
-  --border:#222222;
-  --border2:#2a2a2a;
-  --lime:#b5ff4d;
-  --lime-dim:rgba(181,255,77,.12);
-  --lime-glow:rgba(181,255,77,.06);
-  --text:#ffffff;
-  --muted:#666666;
-  --muted2:#444444;
-  --amber:#ffb84d;
-  --red:#ff5757;
-  --green:#4dff91;
-}
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
+body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 
-::-webkit-scrollbar{width:4px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--border2);border-radius:999px;}
-
-/* ── Cards ── */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:14px;}
-
-/* ── Icon buttons ── */
-.icon-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
-.icon-btn:hover{background:var(--lime-dim);border-color:var(--lime);color:var(--lime);}
-.icon-btn svg{width:13px;height:13px;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+body.light .icon-btn{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(255,255,255,.65);}
+body.light .icon-btn:hover{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.12);color:var(--g);}
 
-/* ── Header ── */
-.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;gap:8px;}
-.h-right{display:flex;align-items:center;gap:6px;}
-.eyebrow{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
-.h-title{font-size:20px;font-weight:900;color:var(--text);letter-spacing:-.03em;}
-.ts{font-size:9px;font-weight:500;color:var(--muted2);}
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+body.light .eyebrow{color:rgba(0,0,0,.35);}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+body.light .h-title{color:#111;}
+.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
+body.light .ts{color:rgba(0,0,0,.32);}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:18px 0 10px;}
+body.light .sec-lbl{color:rgba(255,255,255,.65);}
 
-/* ── Section labels ── */
-.sec-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:var(--muted);margin:18px 0 10px;display:flex;align-items:center;justify-content:space-between;}
-.sec-badge{font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--lime-dim);color:var(--lime);border:1px solid rgba(181,255,77,.2);}
+/* ── STAT CARDS ── */
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:600px){.g4{grid-template-columns:repeat(2,1fr);}}
+.stat{padding:18px 20px;position:relative;overflow:hidden;}
+.s-dot{position:absolute;top:14px;right:14px;width:6px;height:6px;border-radius:50%;opacity:.6;}
+.s-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:10px;display:block;}
+.s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.s-sub{font-size:11px;font-weight:600;color:rgba(255,255,255,.22);margin-top:6px;}
+body.light .s-sub{color:rgba(255,255,255,.22);}
 
-/* ── Stat strip ── */
-.stat-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
-@media(max-width:540px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
-.s-card{padding:14px 16px;position:relative;}
-.s-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:8px;display:block;}
-.s-val{font-size:26px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
-.s-sub{font-size:9px;font-weight:500;color:var(--muted);margin-top:5px;}
+/* ── MID ROW ── */
+.mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
+@media(max-width:700px){.mid-row{grid-template-columns:1fr;}}
+.panel{padding:20px 22px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.panel-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.3);}
+body.light .panel-title{color:rgba(255,255,255,.65);}
+.panel-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 
-/* ── Health cards ── */
-.health-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
-@media(max-width:480px){.health-grid{grid-template-columns:1fr;}}
-.hcard{padding:16px 18px 0;display:flex;flex-direction:column;overflow:hidden;}
-.hcard-top{display:flex;align-items:center;gap:7px;margin-bottom:10px;}
-.hcard-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.hcard-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;}
-.hcard-num{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
-.hcard-sub{font-size:10px;font-weight:500;color:var(--muted);margin-bottom:14px;}
-/* Bottom bar */
-.hcard-bar-track{height:3px;width:100%;background:var(--border2);border-radius:0 0 14px 14px;overflow:hidden;}
-.hcard-bar-fill{height:100%;border-radius:0 0 14px 14px;transition:width 1s cubic-bezier(.4,0,.2,1);}
+/* ── HEALTH RING + BARS ── */
+.health-wrap{display:flex;align-items:center;gap:20px;}
+@media(max-width:500px){.health-wrap{flex-direction:column;}}
+.ov-ring-wrap{position:relative;flex-shrink:0;width:120px;height:120px;}
+.ring-svg{width:120px;height:120px;overflow:visible;}
+.ov-ring-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.ov-ring-pct{font-size:32px;font-weight:900;color:var(--g);letter-spacing:-1.5px;line-height:1;}
+.ov-ring-sub{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-top:4px;}
+body.light .ov-ring-sub{color:rgba(255,255,255,.5);}
+.ov-ring-track{fill:none;stroke:rgba(255,255,255,.06);}
+body.light .ov-ring-track{stroke:rgba(0,0,0,.1);}
+.health-bars{flex:1;display:flex;flex-direction:column;gap:10px;min-width:0;}
+.hb-row{display:flex;align-items:center;gap:8px;}
+.hb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.hb-label{font-size:11px;font-weight:700;color:var(--muted);width:60px;flex-shrink:0;}
+.hb-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
+body.light .hb-track{background:rgba(0,0,0,.05);}
+.hb-fill{height:6px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.hb-val{font-size:13px;font-weight:900;color:#fff;width:32px;text-align:right;flex-shrink:0;}
+body.light .hb-val{color:rgba(255,255,255,.9);}
+.hb-pct{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);width:32px;text-align:right;flex-shrink:0;}
+body.light .hb-pct{color:rgba(255,255,255,.4);}
 
-/* ── Gradient health bar ── */
-.gbar-section{margin-top:12px;}
-.gbar-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
-.gbar-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);}
-.gbar-score-lbl{font-size:8.5px;font-weight:700;font-family:'Satoshi',-apple-system,sans-serif;}
-.gbar-outer{width:100%;height:12px;border-radius:999px;background:var(--border2);overflow:hidden;position:relative;}
-.gbar-fill{height:100%;border-radius:999px;transition:width 1.1s cubic-bezier(.4,0,.2,1),background .6s ease;}
-.gbar-marker-wrap{position:absolute;top:0;height:100%;pointer-events:none;transition:left 1.1s cubic-bezier(.4,0,.2,1);}
-.gbar-marker{width:2px;height:100%;background:rgba(255,255,255,.9);border-radius:1px;box-shadow:0 0 7px rgba(255,255,255,.5);}
-.gbar-ticks{display:flex;justify-content:space-between;margin-top:5px;}
-.gbar-tick{font-family:'Satoshi',-apple-system,sans-serif;font-size:7.5px;font-weight:600;color:var(--muted2);}
-
-/* ── OS Coverage ── */
-.os-list{display:flex;flex-direction:column;gap:10px;padding:16px 18px;}
+/* ── OS COVERAGE BARS ── */
+.os-bars{display:flex;flex-direction:column;gap:10px;}
 .os-row{display:flex;align-items:center;gap:10px;}
-.os-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.65);flex-shrink:0;width:120px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.os-track{flex:1;height:4px;border-radius:999px;background:var(--border2);overflow:hidden;}
-.os-fill{height:4px;border-radius:999px;background:var(--lime);opacity:.7;transition:width .8s cubic-bezier(.4,0,.2,1);}
-.os-count{font-size:12px;font-weight:900;color:rgba(255,255,255,.5);min-width:16px;text-align:right;flex-shrink:0;}
+.os-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.os-label{font-size:11px;font-weight:700;width:110px;flex-shrink:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.os-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
+body.light .os-track{background:rgba(0,0,0,.05);}
+.os-fill{height:6px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.os-count{font-size:13px;font-weight:900;color:#fff;width:32px;text-align:right;flex-shrink:0;}
+body.light .os-count{color:rgba(255,255,255,.9);}
 
-/* ── Growth chart ── */
-.chart-card{padding:18px 20px;}
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.chart-title{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);}
-.chart-badge{font-size:9.5px;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--lime-dim);color:var(--lime);border:1px solid rgba(181,255,77,.2);}
+/* ── CLIENT LIST ── */
+.proj-scroll{max-height:300px;overflow-y:auto;padding-right:2px;}
+.proj-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+body.light .proj-item{border-bottom-color:rgba(0,0,0,.05);}
+.proj-item:last-child{border-bottom:none;}
+.proj-info{flex:1;min-width:0;}
+.proj-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .proj-name{color:rgba(255,255,255,.9);}
+.proj-meta{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+body.light .proj-meta{color:rgba(255,255,255,.65);}
+.proj-badge{font-size:9px;font-weight:700;padding:3px 8px;border-radius:999px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);white-space:nowrap;text-transform:uppercase;letter-spacing:.06em;flex-shrink:0;border:1px solid transparent;}
+body.light .proj-badge{background:rgba(0,0,0,.05);color:rgba(255,255,255,.65);}
+.proj-tags{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
+
+/* ── GROWTH CHART ── */
 .chart-wrap{position:relative;width:100%;height:140px;}
-.ctip{position:absolute;background:var(--surface2);border:1px solid rgba(181,255,77,.25);border-radius:8px;padding:6px 11px;font-family:'Satoshi',-apple-system,sans-serif;font-size:11px;font-weight:700;color:var(--lime);pointer-events:none;display:none;white-space:nowrap;z-index:10;}
+.ctip{position:absolute;background:#2a2a2a;border:1px solid rgba(170,255,0,.2);border-radius:8px;padding:6px 11px;font-family:'Satoshi',-apple-system,sans-serif;font-size:11px;font-weight:700;color:#AAFF00;pointer-events:none;display:none;white-space:nowrap;z-index:10;}
 
-/* ── Client list ── */
-.list-wrap{overflow:hidden;}
-.list-scroll{max-height:440px;overflow-y:auto;}
-.ci{display:flex;align-items:center;padding:0 18px;cursor:pointer;transition:background .15s;}
-.ci:hover{background:rgba(255,255,255,.02);}
-.ci-bar{width:3px;border-radius:99px;height:30px;flex-shrink:0;margin-right:13px;}
-.ci-body{flex:1;display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border);}
-.ci:last-child .ci-body{border-bottom:none;}
-.ci-info{flex:1;min-width:0;}
-.ci-name{font-size:13px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.ci-meta{font-size:10.5px;font-weight:500;color:var(--muted);margin-top:3px;}
-.ci-right{display:flex;align-items:center;gap:6px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;}
-
-/* ── Tags & badges ── */
-.tag{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:5px;white-space:nowrap;border:1px solid transparent;}
-/* OS colours */
-.tag-revenue  {background:rgba(181,255,77,.1); color:#b5ff4d; border-color:rgba(181,255,77,.18);}
-.tag-operations{background:rgba(74,177,255,.1); color:#4ab1ff; border-color:rgba(74,177,255,.18);}
-.tag-marketing {background:rgba(255,184,77,.1); color:#ffb84d; border-color:rgba(255,184,77,.18);}
-.tag-finance   {background:rgba(167,139,250,.1);color:#a78bfa; border-color:rgba(167,139,250,.18);}
-.tag-team      {background:rgba(244,114,182,.1);color:#f472b6; border-color:rgba(244,114,182,.18);}
-.tag-retention {background:rgba(34,211,238,.1); color:#22d3ee; border-color:rgba(34,211,238,.18);}
-.tag-sales     {background:rgba(251,191,36,.1); color:#fbbf24; border-color:rgba(251,191,36,.18);}
-.tag-other     {background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border-color:rgba(255,255,255,.08);}
-/* Health */
-.tag-healthy  {background:rgba(77,255,145,.12); color:#4dff91; border-color:rgba(77,255,145,.2);}
-.tag-risk     {background:rgba(255,184,77,.12);  color:#ffb84d; border-color:rgba(255,184,77,.2);}
-.tag-critical {background:rgba(255,87,87,.12);   color:#ff5757; border-color:rgba(255,87,87,.2);}
-.tag-nohealth {background:rgba(255,255,255,.04); color:var(--muted);border-color:var(--border2);}
-/* Status */
-.tag-active     {background:var(--lime-dim);   color:var(--lime);  border-color:rgba(181,255,77,.2);}
-.tag-onboarding {background:rgba(255,255,255,.05);color:rgba(255,255,255,.45);border-color:var(--border2);}
-.tag-past       {background:rgba(255,255,255,.03);color:var(--muted);border-color:var(--border2);}
-
-.empty{padding:36px;text-align:center;font-size:12px;color:var(--muted);}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:8.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted2);}
+.empty{padding:40px;text-align:center;font-size:12px;color:rgba(255,255,255,.18);}
+body.light .empty{color:rgba(255,255,255,.4);}
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
+body.light .wgt-footer{color:rgba(0,0,0,.25);}
 </style></head><body>
 
-<!-- Header -->
 <div class="header">
-  <div>
-    <div class="eyebrow">Revenue OS · Opxio</div>
+  <div class="h-left">
+    <div class="eyebrow" id="_eyebrow">Revenue OS · Opxio</div>
     <h1 class="h-title">Client Accounts</h1>
   </div>
   <div class="h-right">
     <span class="ts" id="ts"></span>
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
     </button>
-    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle theme">
-      <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    <button class="icon-btn" onclick="toggleMode()" id="mb" title="Toggle light/dark">
+      <svg id="mode-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
     </button>
   </div>
 </div>
 
-<!-- Stat strip -->
-<div class="stat-strip">
-  <div class="card s-card">
-    <span class="s-label">Total Clients</span>
-    <div class="s-val" id="s-total" style="color:var(--lime);">—</div>
-    <div class="s-sub" id="s-total-sub">All accounts</div>
+<!-- STAT CARDS -->
+<div class="g4">
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Total Clients</span><div class="s-val" id="s-total">0</div><div class="s-sub" id="s-total-sub">All accounts</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Active</span><div class="s-val" id="s-active">0</div><div class="s-sub">Live accounts</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Onboarding</span><div class="s-val" id="s-onboarding">0</div><div class="s-sub">Setting up</div></div>
+  <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Expansion Ready</span><div class="s-val" id="s-expansion">0</div><div class="s-sub">Flagged for growth</div></div>
+</div>
+
+<!-- MID ROW: Health Ring + OS Coverage -->
+<div class="sec-lbl">Accounts</div>
+<div class="mid-row">
+  <!-- LEFT: Client Health Ring -->
+  <div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Client Health</span>
+      <span class="panel-badge" id="health-badge">—</span>
+    </div>
+    <div class="health-wrap">
+      <div class="ov-ring-wrap">
+        <svg class="ring-svg" width="120" height="120" viewBox="0 0 120 120" id="health-ring-svg">
+          <circle class="ov-ring-track" cx="60" cy="60" r="50" fill="none" stroke-width="8"/>
+        </svg>
+        <div class="ov-ring-center">
+          <div class="ov-ring-pct" id="ring-pct">—</div>
+          <div class="ov-ring-sub">Healthy</div>
+        </div>
+      </div>
+      <div class="health-bars" id="health-bars"></div>
+    </div>
   </div>
-  <div class="card s-card">
-    <span class="s-label">Active</span>
-    <div class="s-val" id="s-active" style="color:var(--lime);">—</div>
-    <div class="s-sub">Live accounts</div>
-  </div>
-  <div class="card s-card">
-    <span class="s-label">Onboarding</span>
-    <div class="s-val" id="s-onboarding" style="color:rgba(255,255,255,.55);">—</div>
-    <div class="s-sub">Setting up</div>
-  </div>
-  <div class="card s-card">
-    <span class="s-label">Expansion Ready</span>
-    <div class="s-val" id="s-expansion" style="color:rgba(181,255,77,.55);">—</div>
-    <div class="s-sub">Flagged for growth</div>
+  <!-- RIGHT: OS Coverage -->
+  <div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">OS Coverage</span>
+      <span class="panel-badge" id="os-badge">—</span>
+    </div>
+    <div class="os-bars" id="os-bars"></div>
   </div>
 </div>
 
-<!-- Client Health -->
-<div class="sec-lbl">Client Health</div>
-<div class="health-grid">
-  <div class="card hcard">
-    <div class="hcard-top">
-      <div class="hcard-dot" style="background:var(--green);box-shadow:0 0 6px rgba(77,255,145,.5);"></div>
-      <span class="hcard-lbl" style="color:var(--green);">Healthy</span>
-    </div>
-    <div class="hcard-num" style="color:var(--green);" id="h-healthy">—</div>
-    <div class="hcard-sub" id="h-healthy-sub">— accounts</div>
-    <div class="hcard-bar-track">
-      <div class="hcard-bar-fill" id="bar-healthy" style="background:var(--green);width:0%;"></div>
-    </div>
+<!-- CLIENT GROWTH -->
+<div class="sec-lbl">Growth</div>
+<div class="card panel">
+  <div class="panel-hdr">
+    <span class="panel-title">Client Growth</span>
+    <span class="panel-badge" id="growth-badge">—</span>
   </div>
-  <div class="card hcard">
-    <div class="hcard-top">
-      <div class="hcard-dot" style="background:var(--amber);box-shadow:0 0 6px rgba(255,184,77,.5);"></div>
-      <span class="hcard-lbl" style="color:var(--amber);">At Risk</span>
-    </div>
-    <div class="hcard-num" style="color:var(--amber);" id="h-risk">—</div>
-    <div class="hcard-sub" id="h-risk-sub">— accounts</div>
-    <div class="hcard-bar-track">
-      <div class="hcard-bar-fill" id="bar-risk" style="background:var(--amber);width:0%;"></div>
-    </div>
-  </div>
-  <div class="card hcard">
-    <div class="hcard-top">
-      <div class="hcard-dot" style="background:var(--red);box-shadow:0 0 6px rgba(255,87,87,.5);"></div>
-      <span class="hcard-lbl" style="color:var(--red);">Critical</span>
-    </div>
-    <div class="hcard-num" style="color:var(--red);" id="h-critical">—</div>
-    <div class="hcard-sub" id="h-critical-sub">— accounts</div>
-    <div class="hcard-bar-track">
-      <div class="hcard-bar-fill" id="bar-critical" style="background:var(--red);width:0%;"></div>
-    </div>
-  </div>
-</div>
-
-<!-- Gradient health bar -->
-<div class="gbar-section">
-  <div class="gbar-labels">
-    <span class="gbar-lbl">Health Score</span>
-    <span class="gbar-score-lbl" id="gbar-score-lbl">—</span>
-  </div>
-  <div class="gbar-outer">
-    <div class="gbar-fill" id="gbar-fill" style="width:0%;"></div>
-    <div class="gbar-marker-wrap" id="gbar-marker-wrap" style="left:0%;">
-      <div class="gbar-marker"></div>
-    </div>
-  </div>
-  <div class="gbar-ticks">
-    <span class="gbar-tick">100% Healthy</span>
-    <span class="gbar-tick">50% Healthy</span>
-    <span class="gbar-tick">0% Healthy</span>
-  </div>
-</div>
-
-<!-- OS Coverage -->
-<div class="sec-lbl">
-  OS Coverage
-  <span class="sec-badge" id="os-badge">—</span>
-</div>
-<div class="card">
-  <div class="os-list" id="os-list"></div>
-</div>
-
-<!-- Client Growth -->
-<div class="sec-lbl">
-  Client Growth
-  <span class="sec-badge" id="chart-badge">—</span>
-</div>
-<div class="card chart-card">
   <div class="chart-wrap" id="cwrap">
     <svg id="growth-chart" style="display:block;overflow:visible;"></svg>
     <div class="ctip" id="ctip"></div>
   </div>
 </div>
 
-<!-- All Clients -->
-<div class="sec-lbl">
-  All Clients
-  <span class="sec-badge" id="list-badge">—</span>
-</div>
-<div class="card list-wrap">
-  <div class="list-scroll" id="client-list"></div>
+<!-- ALL CLIENTS -->
+<div class="sec-lbl">All Clients</div>
+<div class="card panel">
+  <div class="panel-hdr">
+    <span class="panel-title">Client List</span>
+    <span class="panel-badge" id="list-badge">—</span>
+  </div>
+  <div class="proj-scroll" id="client-list"></div>
 </div>
 
 <script>
-const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl(p){ return _tok ? p+'?token='+encodeURIComponent(_tok) : p; }
-function setTs(){ document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
-function esc(s){ const d=document.createElement('div');d.textContent=s;return d.innerHTML; }
-
-// Theme toggle (surface overlay on body for readability)
+const _tok=new URLSearchParams(location.search).get('token')||'';
+function apiUrl(p){return _tok?p+'?token='+encodeURIComponent(_tok):p;}
 let light=false;
-const SUN=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
-const MOON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
-function toggleMode(){ light=!light; document.getElementById('mb').innerHTML=light?MOON:SUN; }
+const SUN_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON_ICON=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode(){light=!light;document.body.classList.toggle('light',light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=light?MOON_ICON:SUN_ICON;}
+function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+const CIRC=2*Math.PI*50;
+const OS_COLORS=['#AAFF00','#60A5FA','#FBBF24','#A78BFA','#FB923C','#34D399','#F472B6'];
 
 function fmtDate(iso){
-  if(!iso) return null;
-  try{ return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'}); }
-  catch{ return null; }
+  if(!iso)return null;
+  try{return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'2-digit'});}
+  catch{return null;}
 }
 function daysSince(iso){
-  if(!iso) return null;
+  if(!iso)return null;
   const d=Math.floor((Date.now()-new Date(iso).getTime())/86400000);
-  if(d===0) return 'Today'; if(d===1) return 'Yesterday';
-  if(d<7) return d+'d ago'; if(d<30) return Math.floor(d/7)+'w ago';
-  if(d<365) return Math.floor(d/30)+'mo ago'; return Math.floor(d/365)+'y ago';
+  if(d===0)return'Today';if(d===1)return'Yesterday';
+  if(d<7)return d+'d ago';if(d<30)return Math.floor(d/7)+'w ago';
+  if(d<365)return Math.floor(d/30)+'mo ago';return Math.floor(d/365)+'y ago';
 }
 
-// OS → tag class
-function osTagClass(os){
-  const o=(os||'').toLowerCase();
-  if(o.includes('revenue'))   return 'tag-revenue';
-  if(o.includes('operations'))return 'tag-operations';
-  if(o.includes('marketing')) return 'tag-marketing';
-  if(o.includes('finance'))   return 'tag-finance';
-  if(o.includes('team'))      return 'tag-team';
-  if(o.includes('retention')) return 'tag-retention';
-  if(o.includes('sales'))     return 'tag-sales';
-  return 'tag-other';
-}
-function healthTag(h){
-  if(h==='🟢 Green') return`<span class="tag tag-healthy">Healthy</span>`;
-  if(h==='🟡 Amber') return`<span class="tag tag-risk">At Risk</span>`;
-  if(h==='🔴 Red')   return`<span class="tag tag-critical">Critical</span>`;
-  return `<span class="tag tag-nohealth">—</span>`;
-}
-function statusTag(s){
-  if(s==='Active')     return`<span class="tag tag-active">Active</span>`;
-  if(s==='Onboarding') return`<span class="tag tag-onboarding">Onboarding</span>`;
-  if(s==='Past Client')return`<span class="tag tag-past">Past</span>`;
-  return s?`<span class="tag tag-past">${esc(s)}</span>`:'';
-}
-function healthBarColor(h){
-  if(h==='🟢 Green') return '#4dff91';
-  if(h==='🟡 Amber') return '#ffb84d';
-  if(h==='🔴 Red')   return '#ff5757';
-  return 'rgba(255,255,255,.1)';
-}
-
-// ── Health section ────────────────────────────────────────────────────────────
+// ── HEALTH RING ──────────────────────────────────────────────────────────────
 function renderHealth(hc, total){
   const green=hc['🟢 Green']||0, amber=hc['🟡 Amber']||0, red=hc['🔴 Red']||0;
-  const tot = total || (green+amber+red+(hc['Unset']||0));
-  const pct = n => tot>0 ? Math.round((n/tot)*100) : 0;
+  const tot=total||(green+amber+red)||1;
+  const pct=n=>tot>0?Math.round((n/tot)*100):0;
 
-  document.getElementById('h-healthy').textContent    = green;
-  document.getElementById('h-risk').textContent       = amber;
-  document.getElementById('h-critical').textContent   = red;
-  document.getElementById('h-healthy-sub').textContent = green+' account'+(green!==1?'s':'');
-  document.getElementById('h-risk-sub').textContent    = amber+' account'+(amber!==1?'s':'');
-  document.getElementById('h-critical-sub').textContent= red+' account'+(red!==1?'s':'');
+  document.getElementById('health-badge').textContent=tot+' account'+(tot!==1?'s':'');
+  document.getElementById('ring-pct').textContent=pct(green)+'%';
 
-  // Bottom bar proportional to share of total
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    document.getElementById('bar-healthy').style.width  = pct(green)+'%';
-    document.getElementById('bar-risk').style.width     = pct(amber)+'%';
-    document.getElementById('bar-critical').style.width = pct(red)+'%';
-  }));
+  // Draw ring
+  const svg=document.getElementById('health-ring-svg');
+  svg.querySelectorAll('.h-arc').forEach(e=>e.remove());
+  const items=[
+    {val:green,color:'#AAFF00'},
+    {val:amber, color:'#FBBF24'},
+    {val:red,   color:'#FF6B6B'},
+  ];
+  let offset=0;
+  items.forEach(item=>{
+    if(item.val<=0)return;
+    const frac=item.val/tot;
+    const len=frac*CIRC;
+    const arc=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    arc.setAttribute('class','h-arc');
+    arc.setAttribute('cx','60');arc.setAttribute('cy','60');arc.setAttribute('r','50');
+    arc.setAttribute('fill','none');arc.setAttribute('stroke',item.color);
+    arc.setAttribute('stroke-width','8');arc.setAttribute('stroke-linecap','round');
+    arc.setAttribute('stroke-dasharray',`${Math.max(len-2,1)} ${CIRC}`);
+    arc.setAttribute('transform',`rotate(${-90+offset*360} 60 60)`);
+    arc.style.transition='all .8s cubic-bezier(.4,0,.2,1)';
+    svg.appendChild(arc);
+    offset+=frac;
+  });
 
-  // Gradient bar — fill = % healthy, color interpolated
-  const riskScore = tot>0 ? Math.min(100,Math.round(((amber*0.5+red)/tot)*100)) : 0;
-  const fillPct   = pct(green);
-  function lerp(a,b,t){ return Math.round(a+(b-a)*Math.max(0,Math.min(1,t))); }
-  function riskColor(s){
-    const t=s/100;
-    const stops=[[77,255,145],[181,255,77],[255,184,77],[255,120,57],[255,87,87]];
-    const seg=Math.min(3,Math.floor(t*4)), f=(t*4)-seg;
-    const[r1,g1,b1]=stops[seg],[r2,g2,b2]=stops[seg+1];
-    return `rgb(${lerp(r1,r2,f)},${lerp(g1,g2,f)},${lerp(b1,b2,f)})`;
-  }
-  const fillColor = riskColor(riskScore);
-  let statusTxt;
-  if(riskScore<15)      statusTxt='Healthy';
-  else if(riskScore<40) statusTxt='Moderate';
-  else if(riskScore<70) statusTxt='At Risk';
-  else                  statusTxt='Critical';
-
-  const scoreLbl = document.getElementById('gbar-score-lbl');
-  scoreLbl.textContent = (100-riskScore)+'% healthy · '+statusTxt;
-  scoreLbl.style.color = fillColor;
-
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    const fill = document.getElementById('gbar-fill');
-    fill.style.width = fillPct+'%';
-    fill.style.background = fillColor;
-    const marker = document.getElementById('gbar-marker-wrap');
-    if(marker) marker.style.left = Math.max(0,fillPct-0.2)+'%';
-  }));
+  // Bars
+  const barItems=[
+    {label:'Healthy', val:green, color:'#AAFF00', dot:'#AAFF00'},
+    {label:'At Risk',  val:amber,  color:'#FBBF24', dot:'#FBBF24'},
+    {label:'Critical', val:red,    color:'#FF6B6B', dot:'#FF6B6B'},
+  ];
+  const barMax=Math.max(...barItems.map(s=>s.val),1);
+  document.getElementById('health-bars').innerHTML=barItems.map(s=>{
+    const w=Math.round((s.val/barMax)*100);
+    const p=pct(s.val);
+    return`<div class="hb-row">
+      <div class="hb-dot" style="background:${s.dot}"></div>
+      <span class="hb-label">${s.label}</span>
+      <div class="hb-track"><div class="hb-fill" style="width:${w}%;background:${s.color}"></div></div>
+      <span class="hb-val">${s.val}</span>
+      <span class="hb-pct">${p}%</span>
+    </div>`;
+  }).join('');
 }
 
-// ── OS Coverage ───────────────────────────────────────────────────────────────
+// ── OS COVERAGE ──────────────────────────────────────────────────────────────
 function renderOS(clients){
   const counts={};
-  for(const c of clients) for(const os of (c.osInstalled||[])) if(os!=='Base OS') counts[os]=(counts[os]||0)+1;
+  for(const c of clients) for(const os of(c.osInstalled||[])) if(os&&os!=='Base OS') counts[os]=(counts[os]||0)+1;
   const sorted=Object.entries(counts).sort((a,b)=>b[1]-a[1]);
   const total=sorted.reduce((s,[,v])=>s+v,0);
   document.getElementById('os-badge').textContent=total+' install'+(total!==1?'s':'');
-  if(!sorted.length){ document.getElementById('os-list').innerHTML='<div class="empty" style="padding:16px;">No OS data</div>'; return; }
-  const max=sorted[0][1];
-  document.getElementById('os-list').innerHTML=sorted.map(([os,n])=>`
-    <div class="os-row">
-      <span class="os-name">${esc(os)}</span>
-      <div class="os-track"><div class="os-fill" style="width:${Math.round((n/max)*100)}%"></div></div>
+  if(!sorted.length){document.getElementById('os-bars').innerHTML='<div style="font-size:11px;color:rgba(255,255,255,.2);">No data</div>';return;}
+  const barMax=sorted[0][1];
+  document.getElementById('os-bars').innerHTML=sorted.map(([os,n],i)=>{
+    const col=OS_COLORS[i%OS_COLORS.length];
+    const w=Math.round((n/barMax)*100);
+    return`<div class="os-row">
+      <div class="os-dot" style="background:${col}"></div>
+      <span class="os-label">${esc(os)}</span>
+      <div class="os-track"><div class="os-fill" style="width:${w}%;background:${col}"></div></div>
       <span class="os-count">${n}</span>
-    </div>`).join('');
+    </div>`;
+  }).join('');
 }
 
-// ── Growth chart ──────────────────────────────────────────────────────────────
+// ── GROWTH CHART ─────────────────────────────────────────────────────────────
 let _chartData=[];
 function buildChartData(clients){
   const now=new Date();
@@ -397,26 +307,26 @@ function buildChartData(clients){
     months.push({year:d.getFullYear(),month:d.getMonth(),m:d.toLocaleString('default',{month:'short'}),v:0});
   }
   for(const c of clients){
-    if(!c.installDate) continue;
+    if(!c.installDate)continue;
     const d=new Date(c.installDate);
     const e=months.find(m=>m.year===d.getFullYear()&&m.month===d.getMonth());
-    if(e) e.v++;
+    if(e)e.v++;
   }
   return months;
 }
 function drawChart(){
-  const wrap=document.getElementById('cwrap'), svgEl=document.getElementById('growth-chart');
-  if(!wrap||!svgEl||!_chartData.length) return;
+  const wrap=document.getElementById('cwrap'),svgEl=document.getElementById('growth-chart');
+  if(!wrap||!svgEl||!_chartData.length)return;
   const ns='http://www.w3.org/2000/svg';
-  const W=wrap.offsetWidth||600, H=wrap.offsetHeight||140;
-  svgEl.setAttribute('width',W); svgEl.setAttribute('height',H); svgEl.innerHTML='';
+  const W=wrap.offsetWidth||600,H=wrap.offsetHeight||140;
+  svgEl.setAttribute('width',W);svgEl.setAttribute('height',H);svgEl.innerHTML='';
   const PAD={t:12,r:14,b:28,l:22};
-  const cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
+  const cW=W-PAD.l-PAD.r,cH=H-PAD.t-PAD.b;
   const maxV=Math.max(..._chartData.map(d=>d.v),1);
-  const AC='#b5ff4d', dim='rgba(255,255,255,.25)', grid='rgba(255,255,255,.04)';
+  const AC='#AAFF00',dim='rgba(255,255,255,.25)',grid='rgba(255,255,255,.04)';
   const xP=i=>PAD.l+(i/(_chartData.length-1||1))*cW;
   const yP=v=>PAD.t+cH-(v/maxV)*cH;
-  // Grid
+  // Grid lines
   for(let i=0;i<=3;i++){
     const y=PAD.t+(i/3)*cH;
     const gl=document.createElementNS(ns,'line');
@@ -426,17 +336,18 @@ function drawChart(){
   }
   // X labels
   _chartData.forEach((d,i)=>{
-    if(i%2!==0&&i!==_chartData.length-1) return;
+    if(i%2!==0&&i!==_chartData.length-1)return;
     const isCur=i===_chartData.length-1;
     const t=document.createElementNS(ns,'text');
     t.setAttribute('x',xP(i));t.setAttribute('y',H-PAD.b+14);t.setAttribute('text-anchor','middle');
     t.setAttribute('fill',isCur?AC:dim);t.setAttribute('font-size','9');t.setAttribute('font-weight',isCur?'700':'500');
     t.setAttribute('font-family','Satoshi,-apple-system,sans-serif');t.textContent=d.m;svgEl.appendChild(t);
   });
-  // Curve
+  // Smooth curve
   function smooth(pts){if(pts.length<2)return`M ${pts[0][0]} ${pts[0][1]}`;let s=`M ${pts[0][0]} ${pts[0][1]}`;for(let i=1;i<pts.length;i++){const[x1,y1]=pts[i-1],[x2,y2]=pts[i],cx=(x1+x2)/2;s+=` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;}return s;}
   const pts=_chartData.map((d,i)=>[xP(i),yP(d.v)]);
-  const pathD=smooth(pts), last=pts[pts.length-1], first=pts[0];
+  const pathD=smooth(pts),last=pts[pts.length-1],first=pts[0];
+  // Gradient fill
   const defs=document.createElementNS(ns,'defs');
   const grad=document.createElementNS(ns,'linearGradient');
   grad.setAttribute('id','gAcc');grad.setAttribute('x1','0');grad.setAttribute('y1','0');grad.setAttribute('x2','0');grad.setAttribute('y2','1');
@@ -445,14 +356,15 @@ function drawChart(){
   grad.appendChild(s1);grad.appendChild(s2);defs.appendChild(grad);svgEl.insertBefore(defs,svgEl.firstChild);
   const area=document.createElementNS(ns,'path');area.setAttribute('d',pathD+` L ${last[0]} ${H-PAD.b} L ${first[0]} ${H-PAD.b} Z`);area.setAttribute('fill','url(#gAcc)');svgEl.appendChild(area);
   const line=document.createElementNS(ns,'path');line.setAttribute('d',pathD);line.setAttribute('fill','none');line.setAttribute('stroke',AC);line.setAttribute('stroke-width','1.8');line.setAttribute('stroke-linecap','round');svgEl.appendChild(line);
+  // Dots
   _chartData.forEach((d,i)=>{
     const isCur=i===_chartData.length-1;
     const dot=document.createElementNS(ns,'circle');dot.setAttribute('cx',xP(i));dot.setAttribute('cy',yP(d.v));
-    dot.setAttribute('r',isCur?'4.5':'3');dot.setAttribute('fill',isCur?AC:'#111111');dot.setAttribute('stroke',AC);dot.setAttribute('stroke-width','1.8');
-    if(isCur)dot.setAttribute('filter',`drop-shadow(0 0 5px rgba(181,255,77,.6))`);svgEl.appendChild(dot);
+    dot.setAttribute('r',isCur?'4.5':'3');dot.setAttribute('fill',isCur?AC:'#1E1E1E');dot.setAttribute('stroke',AC);dot.setAttribute('stroke-width','1.8');
+    if(isCur)dot.setAttribute('filter','drop-shadow(0 0 5px rgba(170,255,0,.6))');svgEl.appendChild(dot);
   });
   // Hover
-  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(181,255,77,.1)');hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svgEl.appendChild(hL);
+  const hL=document.createElementNS(ns,'line');hL.setAttribute('stroke','rgba(170,255,0,.1)');hL.setAttribute('stroke-width','1');hL.setAttribute('y1',PAD.t);hL.setAttribute('y2',H-PAD.b);hL.style.opacity='0';svgEl.appendChild(hL);
   const tip=document.getElementById('ctip');
   wrap.onmousemove=function(e){
     const rect=wrap.getBoundingClientRect(),mx=e.clientX-rect.left;
@@ -468,69 +380,102 @@ function drawChart(){
 }
 window.addEventListener('resize',()=>drawChart());
 
-// ── Client list ───────────────────────────────────────────────────────────────
+// ── CLIENT LIST ───────────────────────────────────────────────────────────────
+function healthColor(h){
+  if(h==='🟢 Green')return'#AAFF00';
+  if(h==='🟡 Amber')return'#FBBF24';
+  if(h==='🔴 Red')  return'#FF6B6B';
+  return'rgba(255,255,255,.15)';
+}
+function healthLabel(h){
+  if(h==='🟢 Green')return'Healthy';
+  if(h==='🟡 Amber')return'At Risk';
+  if(h==='🔴 Red')  return'Critical';
+  return'—';
+}
+function statusColor(s){
+  if(s==='Active')     return'var(--g)';
+  if(s==='Onboarding') return'rgba(255,255,255,.4)';
+  return'rgba(255,255,255,.2)';
+}
+
 function renderClients(clients){
   const total=clients.length;
   document.getElementById('list-badge').textContent=total+' client'+(total!==1?'s':'');
   if(!total){document.getElementById('client-list').innerHTML='<div class="empty">No client accounts yet</div>';return;}
-  const hO={'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
+
   const sO={'Active':0,'Onboarding':1,'Past Client':2};
+  const hO={'🔴 Red':0,'🟡 Amber':1,'🟢 Green':2,'':3};
   const sorted=[...clients].sort((a,b)=>{
     const sd=(sO[a.status]??3)-(sO[b.status]??3);
     if(sd!==0)return sd;
     return(hO[a.health||'']??3)-(hO[b.health||'']??3);
   });
+
   document.getElementById('client-list').innerHTML=sorted.map(c=>{
+    const hCol=healthColor(c.health);
+    const hLbl=healthLabel(c.health);
+    const sCol=statusColor(c.status);
     const installDate=fmtDate(c.installDate);
     const touch=daysSince(c.lastTouchpoint);
-    const osNonBase=(c.osInstalled||[]).filter(o=>o!=='Base OS');
-    const meta=[installDate?'Installed '+installDate:null, touch?touch:null].filter(Boolean).join(' · ');
-    return `<div class="ci" onclick="window.open('${esc(c.url)}','_blank')">
-      <div class="ci-bar" style="background:${healthBarColor(c.health)};"></div>
-      <div class="ci-body">
-        <div class="ci-info">
-          <div class="ci-name">${esc(c.name)}</div>
-          ${meta?`<div class="ci-meta">${esc(meta)}</div>`:''}
-        </div>
-        <div class="ci-right">
-          ${osNonBase.slice(0,2).map(o=>`<span class="tag ${osTagClass(o)}">${esc(o.replace(' OS',''))}</span>`).join('')}
-          ${osNonBase.length>2?`<span class="tag tag-other">+${osNonBase.length-2}</span>`:''}
-          ${healthTag(c.health)}
-          ${statusTag(c.status)}
-        </div>
+    const osNonBase=(c.osInstalled||[]).filter(o=>o&&o!=='Base OS');
+    const metaParts=[installDate?'Installed '+installDate:null,touch||null].filter(Boolean);
+    const meta=metaParts.join(' · ');
+
+    return`<div class="proj-item" style="cursor:pointer;" onclick="if('${esc(c.url||'')}')window.open('${esc(c.url||'')}','_blank')">
+      <div class="proj-info">
+        <div class="proj-name">${esc(c.name||'Unnamed')}</div>
+        ${meta?`<div class="proj-meta">${esc(meta)}</div>`:''}
+      </div>
+      <div class="proj-tags">
+        ${osNonBase.slice(0,2).map(o=>`<span class="proj-badge" style="color:rgba(255,255,255,.45);border-color:rgba(255,255,255,.08);">${esc(o.replace(' OS',''))}</span>`).join('')}
+        ${osNonBase.length>2?`<span class="proj-badge" style="color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.06);">+${osNonBase.length-2}</span>`:''}
+        <span class="proj-badge" style="color:${hCol};border-color:${hCol}22;">${hLbl}</span>
+        ${c.status?`<span class="proj-badge" style="color:${sCol};border-color:${sCol.includes('var')?'rgba(170,255,0,.2)':sCol+'22'};">${esc(c.status)}</span>`:''}
       </div>
     </div>`;
   }).join('');
 }
 
-// ── Load ──────────────────────────────────────────────────────────────────────
+// ── LOAD ──────────────────────────────────────────────────────────────────────
 async function loadData(){
   try{
     const r=await fetch(apiUrl('/api/data/accounts'));
     if(!r.ok)throw new Error('HTTP '+r.status);
     const j=await r.json();
     const total=j.total||0;
-    document.getElementById('s-total').textContent      = total;
-    document.getElementById('s-total-sub').textContent  = total===1?'1 account':total+' accounts';
-    document.getElementById('s-active').textContent     = j.statusCounts?.['Active']??0;
-    document.getElementById('s-onboarding').textContent = j.statusCounts?.['Onboarding']??0;
-    document.getElementById('s-expansion').textContent  = j.expansionCandidates??0;
-    renderHealth(j.healthCounts||{}, total);
+    document.getElementById('s-total').textContent=total;
+    document.getElementById('s-total-sub').textContent=total===1?'1 account':total+' accounts';
+    document.getElementById('s-active').textContent=j.statusCounts?.['Active']??0;
+    document.getElementById('s-onboarding').textContent=j.statusCounts?.['Onboarding']??0;
+    document.getElementById('s-expansion').textContent=j.expansionCandidates??0;
+    renderHealth(j.healthCounts||{},total);
     renderOS(j.clients||[]);
     const tracked=(j.clients||[]).filter(c=>c.installDate).length;
-    document.getElementById('chart-badge').textContent=tracked+' tracked';
+    document.getElementById('growth-badge').textContent=tracked+' tracked';
     _chartData=buildChartData(j.clients||[]);
     setTimeout(drawChart,50);
     renderClients(j.clients||[]);
     setTs();
   }catch(e){
     console.error('accounts:',e);
-    document.getElementById('client-list').innerHTML='<div class="empty" style="color:#ff5757;">Failed to load — check token</div>';
+    document.getElementById('client-list').innerHTML='<div class="empty" style="color:#FF6B6B;">Failed to load — check token</div>';
   }
 }
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-loadData();
-setInterval(loadData,5*60*1000);
+setTs();loadData();setInterval(loadData,5*60*1000);
 </script>
 <div class="wgt-footer">Widgets by Opxio.io</div>
+<script>
+(function(){
+  const el=document.getElementById('_eyebrow');
+  if(!el)return;
+  const tok=new URLSearchParams(location.search).get('token');
+  if(!tok)return;
+  fetch('/api/client/info?token='+tok)
+    .then(r=>r.ok?r.json():null)
+    .then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · REVENUE OS';})
+    .catch(()=>{});
+})();
+</script>
 </body></html>

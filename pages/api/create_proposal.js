@@ -606,6 +606,18 @@ async function processProposal(sourceId) {
     await createLineItem(dbId, product)
   }
 
+  // ── 5b. Write Amount (MYR) to Proposal ────────────────────────────────────
+  // Sum prices of all line items (Base OS is complimentary → price 0, excluded from total)
+  const totalAmount = lineItems.reduce((sum, p) => sum + (p?.price ?? 0), 0)
+  if (totalAmount > 0) {
+    try {
+      await patchPage(propId, { "Amount (MYR)": { number: totalAmount } }, token)
+      console.log(`[create_proposal] Amount (MYR): ${totalAmount}`)
+    } catch (e) {
+      console.warn("[create_proposal] amount patch:", e.message)
+    }
+  }
+
   // ── 6. Advance Lead stage → Proposal Sent ─────────────────────────────────
   // Proposal is created from a Deal — resolve Lead via Deal.Origin Lead relation
   try {

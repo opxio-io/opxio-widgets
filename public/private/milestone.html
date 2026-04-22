@@ -97,9 +97,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .t-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;}
 .t-cat{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
 .t-cat.main-meal{color:#FF7040;}.t-cat.dessert{color:var(--rose);}.t-cat.drinks{color:var(--blue);}.t-cat.fine-dining{color:var(--gold);}.t-cat.snack{color:#FFD232;}
-/* Status badges — on the ticket body */
-.t-badge-lock{display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.13);border:1px solid rgba(255,40,40,.32);border-radius:4px;padding:3px 8px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#FF4040;flex-shrink:0;}
-.t-badge-earned{display:inline-flex;align-items:center;gap:3px;background:rgba(170,255,0,.11);border:1px solid rgba(170,255,0,.32);border-radius:4px;padding:3px 8px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--g);flex-shrink:0;}
+/* Status badges — full-width, below the dish */
+.t-badge-lock{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(255,40,40,.13);border:1px solid rgba(255,40,40,.3);border-radius:6px;padding:7px 12px;font-size:12px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:#FF4040;width:100%;margin-top:2px;}
+.t-badge-earned{display:flex;align-items:center;justify-content:center;gap:6px;background:rgba(170,255,0,.11);border:1px solid rgba(170,255,0,.3);border-radius:6px;padding:7px 12px;font-size:12px;font-weight:900;letter-spacing:.2em;text-transform:uppercase;color:var(--g);width:100%;margin-top:2px;}
 .t-dish{font-size:17px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
 .ticket.t-locked .t-dish{filter:blur(6px);user-select:none;opacity:.65;}
 .t-stub-lbl{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
@@ -110,10 +110,10 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 /* Bonus strip */
 .bonus-strip{background:#0d0d07;border:1px solid rgba(255,184,0,.12);border-radius:7px;padding:10px 12px;margin-top:6px;}
 .bonus-strip.done{border-color:rgba(255,184,0,.4);background:#131100;}
-.bs-lbl{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:3px;}
-.bs-tgt{font-size:8.5px;font-weight:600;color:rgba(255,255,255,.3);margin-bottom:2px;}
-.bs-txt{font-size:12px;font-weight:700;color:#fff;}
-.bs-hint{font-size:8.5px;color:rgba(255,184,0,.3);margin-top:4px;}
+.bs-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:4px;}
+.bs-tgt{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);margin-bottom:3px;}
+.bs-txt{font-size:15px;font-weight:700;color:#fff;}
+.bs-hint{font-size:10px;color:rgba(255,184,0,.35);margin-top:5px;}
 /* Roadmap */
 .roadmap{display:flex;flex-direction:column;gap:5px;margin-bottom:20px;}
 .rm-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
@@ -260,11 +260,9 @@ function ticketHtml(dish,cat,targetWeight,stageIdx,milestoneStatus){
     :`<span class="t-badge-lock">🔒 Locked</span>`;
   return`<div class="ticket ${ticketCls}">
     <div class="ticket-main">
-      <div class="t-hdr">
-        ${cat?`<span class="t-cat ${catCls}">${cat}</span>`:`<span></span>`}
-        ${badge}
-      </div>
+      ${cat?`<div class="t-cat ${catCls}">${cat}</div>`:''}
       <div class="t-dish">${strip(dish)||'TBA'}</div>
+      ${badge}
     </div>
     <div class="ticket-stub">
       <div class="t-stub-lbl">Stage ${stageIdx+1}</div>

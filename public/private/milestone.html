@@ -84,19 +84,21 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .ac-bar-sub{font-size:8.5px;color:rgba(255,255,255,.27);margin-top:4px;}
 .rwd-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.27);margin-bottom:7px;}
 /* Ticket */
-.ticket{display:flex;background:#181818;border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
-.ticket::before,.ticket::after{content:'';position:absolute;right:calc(70px - 5.5px);width:11px;height:11px;background:#111;border-radius:50%;border:1px solid rgba(255,255,255,.1);}
+.ticket{display:flex;background:#181818;border:1px solid rgba(255,255,255,.13);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
+.ticket::before,.ticket::after{content:'';position:absolute;right:calc(62px - 5.5px);width:11px;height:11px;background:#111;border-radius:50%;border:1px solid rgba(255,255,255,.1);}
 .ticket::before{top:-5.5px;}.ticket::after{bottom:-5.5px;}
 .ticket.upcoming-ticket .t-dish{filter:blur(5px);user-select:none;}
 .ticket.upcoming-ticket::before,.ticket.upcoming-ticket::after{display:none;}
-.ticket-main{flex:1;padding:12px 14px;border-right:1.5px dashed rgba(255,255,255,.12);}
-.ticket-stub{width:70px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;}
-.t-cat{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
+.ticket-main{flex:1;padding:9px 12px;border-right:1.5px dashed rgba(255,255,255,.11);}
+.ticket-stub{width:62px;padding:8px 7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0;}
+.t-cat{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px;}
 .t-cat.main-meal{color:#FF7040;}.t-cat.dessert{color:var(--rose);}.t-cat.drinks{color:var(--blue);}.t-cat.fine-dining{color:var(--gold);}.t-cat.snack{color:#FFD232;}
-.t-dish{font-size:15px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
-.t-stub-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);text-align:center;line-height:1.4;}
-.t-stub-wt{font-size:14px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.6);text-align:center;line-height:1.1;}
-.t-stub-wu{font-size:8px;font-weight:700;color:rgba(255,255,255,.28);text-align:center;}
+.t-dish{font-size:14px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
+.t-stub-lbl{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.28);text-align:center;line-height:1.4;}
+.t-stub-wt{font-size:13px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.58);text-align:center;line-height:1.1;}
+.t-stub-wu{font-size:7.5px;font-weight:700;color:rgba(255,255,255,.25);text-align:center;}
+.t-stub-lock{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.25);text-align:center;border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 4px;margin-top:1px;}
+.t-stub-earned{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(170,255,0,.5);text-align:center;border:1px solid rgba(170,255,0,.2);border-radius:3px;padding:1px 4px;margin-top:1px;}
 .tba{font-size:10px;color:rgba(255,255,255,.2);font-style:italic;padding:4px 0;}
 /* Bonus strip */
 .bonus-strip{background:#0d0d07;border:1px solid rgba(255,184,0,.12);border-radius:7px;padding:10px 12px;margin-top:6px;}
@@ -239,9 +241,14 @@ function daysBadge(days,status){
   return`<div class="ac-days ok">${days} days left</div>`;
 }
 
-function ticketHtml(dish,loc,cat,targetWeight,stageIdx,isUpcoming){
+function ticketHtml(dish,cat,targetWeight,stageIdx,milestoneStatus){
   const catCls=CAT_CSS[cat]||'';
+  const isUpcoming=milestoneStatus==='Upcoming';
+  const isEarned=milestoneStatus==='Achieved'||milestoneStatus==='Claimed';
   const cls=isUpcoming?'upcoming-ticket':'';
+  const stubStatus=isEarned
+    ?`<div class="t-stub-earned">Earned</div>`
+    :`<div class="t-stub-lock">Locked</div>`;
   return`<div class="ticket ${cls}">
     <div class="ticket-main">
       ${cat?`<div class="t-cat ${catCls}">${cat}</div>`:''}
@@ -251,14 +258,15 @@ function ticketHtml(dish,loc,cat,targetWeight,stageIdx,isUpcoming){
       <div class="t-stub-lbl">Stage ${stageIdx+1}</div>
       <div class="t-stub-wt">${targetWeight??'—'}</div>
       <div class="t-stub-wu">kg</div>
+      ${stubStatus}
     </div>
   </div>`;
 }
 
-function renderTickets(m,idx,isUpcoming){
+function renderTickets(m,idx){
   const main=m.rewards.filter(r=>r.type!=='Bonus Reward');
-  if(main.length) return main.map(r=>ticketHtml(r.dish,r.location,r.category,m.targetWeight,idx,isUpcoming)).join('');
-  if(m.foodReward) return ticketHtml(m.foodReward,m.rewardLocation,null,m.targetWeight,idx,isUpcoming);
+  if(main.length) return main.map(r=>ticketHtml(r.dish,r.category,m.targetWeight,idx,m.status)).join('');
+  if(m.foodReward) return ticketHtml(m.foodReward,null,m.targetWeight,idx,m.status);
   return'<div class="tba">Reward TBA</div>';
 }
 
@@ -294,7 +302,7 @@ function activeCardHtml(m,idx,cw){
       ${toGo!==null?`<div class="ac-bar-sub">${toGo} kg to go</div>`:''}
     </div>
     <div class="rwd-lbl">Reward</div>
-    ${renderTickets(m,idx,false)}
+    ${renderTickets(m,idx)}
     ${bonusHtml(m)}
   </div>`;
 }

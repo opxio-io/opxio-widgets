@@ -41,13 +41,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .px-fill{height:100%;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);
   background-image:repeating-linear-gradient(90deg,var(--g) 0,var(--g) 10px,rgba(0,0,0,.45) 10px,rgba(0,0,0,.45) 12px);
   background-size:12px 100%;box-shadow:0 0 6px rgba(170,255,0,.15);}
-/* Waypoints */
-.xp-waypoints{position:relative;height:28px;margin-top:4px;}
-.wp{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;}
-.wp-line{width:1px;height:7px;background:rgba(255,255,255,.14);}
-.wp-line.wp-act{background:rgba(170,255,0,.6);}
-.wp-tag{font-size:7px;font-weight:700;color:rgba(255,255,255,.22);white-space:nowrap;text-align:center;line-height:1.4;}
-.wp-tag.wp-act{color:rgba(170,255,0,.65);}
+/* Waypoints — notches ON the bar track */
+.xp-bar-outer{position:relative;margin-bottom:6px;}
+.wp-notch{position:absolute;top:0;width:2px;height:100%;background:rgba(255,255,255,.2);transform:translateX(-50%);pointer-events:none;z-index:2;}
+.wp-notch.wp-act{background:rgba(170,255,0,.7);}
+/* Labels row below bar */
+.xp-waypoints{position:relative;height:20px;margin-top:3px;}
+.wp{position:absolute;transform:translateX(-50%);}
+.wp-tag{font-size:7px;font-weight:700;color:rgba(255,255,255,.2);white-space:nowrap;text-align:center;line-height:1.3;}
+.wp-tag.wp-act{color:rgba(170,255,0,.6);}
+/* Stagger: even waypoints float up */
+.wp.wp-up .wp-tag{transform:translateY(-9px);}
 .xp-ends{display:flex;justify-content:space-between;margin-top:2px;}
 .xp-e{font-size:8.5px;font-weight:700;color:rgba(255,255,255,.22);}
 .xp-e.now{color:rgba(170,255,0,.55);}
@@ -80,21 +84,19 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .ac-bar-sub{font-size:8.5px;color:rgba(255,255,255,.27);margin-top:4px;}
 .rwd-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.27);margin-bottom:7px;}
 /* Ticket */
-.ticket{display:flex;background:#141414;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
-.ticket::before,.ticket::after{content:'';position:absolute;right:calc(64px - 5.5px);width:11px;height:11px;background:var(--card);border-radius:50%;border:1px solid rgba(255,255,255,.06);}
+.ticket{display:flex;background:#181818;border:1px solid rgba(255,255,255,.14);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
+.ticket::before,.ticket::after{content:'';position:absolute;right:calc(70px - 5.5px);width:11px;height:11px;background:#111;border-radius:50%;border:1px solid rgba(255,255,255,.1);}
 .ticket::before{top:-5.5px;}.ticket::after{bottom:-5.5px;}
 .ticket.upcoming-ticket .t-dish{filter:blur(5px);user-select:none;}
-.ticket.upcoming-ticket .t-loc{filter:blur(3px);user-select:none;}
 .ticket.upcoming-ticket::before,.ticket.upcoming-ticket::after{display:none;}
-.ticket-main{flex:1;padding:11px 13px;border-right:1.5px dashed rgba(255,255,255,.07);}
-.ticket-stub{width:64px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;}
-.t-cat{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.ticket-main{flex:1;padding:12px 14px;border-right:1.5px dashed rgba(255,255,255,.12);}
+.ticket-stub{width:70px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;}
+.t-cat{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:5px;}
 .t-cat.main-meal{color:#FF7040;}.t-cat.dessert{color:var(--rose);}.t-cat.drinks{color:var(--blue);}.t-cat.fine-dining{color:var(--gold);}.t-cat.snack{color:#FFD232;}
-.t-dish{font-size:14px;font-weight:700;letter-spacing:-.02em;color:#fff;line-height:1.25;margin-bottom:3px;}
-.t-loc{font-size:9px;color:rgba(255,255,255,.35);}
-.t-stub-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);text-align:center;line-height:1.4;}
-.t-stub-wt{font-size:13px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.48);text-align:center;line-height:1.1;}
-.t-stub-wu{font-size:8px;font-weight:700;color:rgba(255,255,255,.2);text-align:center;}
+.t-dish{font-size:15px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
+.t-stub-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);text-align:center;line-height:1.4;}
+.t-stub-wt{font-size:14px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.6);text-align:center;line-height:1.1;}
+.t-stub-wu{font-size:8px;font-weight:700;color:rgba(255,255,255,.28);text-align:center;}
 .tba{font-size:10px;color:rgba(255,255,255,.2);font-style:italic;padding:4px 0;}
 /* Bonus strip */
 .bonus-strip{background:#0d0d07;border:1px solid rgba(255,184,0,.12);border-radius:7px;padding:10px 12px;margin-top:6px;}
@@ -170,7 +172,9 @@ footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weigh
 
 <div class="xp-wrap" id="xp-wrap" style="display:none">
   <div class="xp-top"><span class="xp-lbl">Overall Progress</span><span class="xp-pct" id="xp-pct">0%</span></div>
-  <div class="px-track"><div class="px-fill" id="xp-fill"></div></div>
+  <div class="xp-bar-outer" id="xp-bar-outer">
+    <div class="px-track"><div class="px-fill" id="xp-fill"></div></div>
+  </div>
   <div class="xp-waypoints" id="xp-waypoints"></div>
   <div class="xp-ends">
     <span class="xp-e">125 kg</span>
@@ -346,16 +350,23 @@ async function loadData(){
       document.getElementById('xp-now').textContent=cw+' kg';
       document.getElementById('xp-goal').textContent=goal+' kg';
       setTimeout(()=>{ document.getElementById('xp-fill').style.width=pct+'%'; },80);
+      const barOuter=document.getElementById('xp-bar-outer');
       const wpc=document.getElementById('xp-waypoints');
       ms.forEach((m,i)=>{
         if(!m.targetWeight)return;
-        const wpPct=((START-m.targetWeight)/(START-goal))*100;
+        const wpPct=Math.min(((START-m.targetWeight)/(START-goal))*100,100);
         const isAct=m.status==='Active';
-        const el=document.createElement('div');
-        el.className='wp';
-        el.style.left=Math.min(wpPct,100).toFixed(1)+'%';
-        el.innerHTML=`<div class="wp-line${isAct?' wp-act':''}"></div><div class="wp-tag${isAct?' wp-act':''}">S${i+1}<br>${m.targetWeight}kg</div>`;
-        wpc.appendChild(el);
+        // Notch on bar
+        const notch=document.createElement('div');
+        notch.className='wp-notch'+(isAct?' wp-act':'');
+        notch.style.left=wpPct.toFixed(1)+'%';
+        barOuter.appendChild(notch);
+        // Label below — stagger even ones up
+        const lbl=document.createElement('div');
+        lbl.className='wp'+(i%2===1?' wp-up':'');
+        lbl.style.left=wpPct.toFixed(1)+'%';
+        lbl.innerHTML=`<div class="wp-tag${isAct?' wp-act':''}">S${i+1} ${m.targetWeight}kg</div>`;
+        wpc.appendChild(lbl);
       });
     }
 

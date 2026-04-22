@@ -37,22 +37,20 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
 .xp-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:rgba(255,255,255,.3);}
 .xp-pct{font-size:12px;font-weight:900;letter-spacing:-.04em;color:var(--g);}
+/* Bar zone — ticks poke 5px above + below the track */
+.xp-bar-zone{position:relative;padding:5px 0;margin-bottom:4px;}
 .px-track{height:6px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;}
 .px-fill{height:100%;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);
   background-image:repeating-linear-gradient(90deg,var(--g) 0,var(--g) 10px,rgba(0,0,0,.45) 10px,rgba(0,0,0,.45) 12px);
   background-size:12px 100%;box-shadow:0 0 6px rgba(170,255,0,.15);}
-/* Waypoints — notches ON the bar track */
-.xp-bar-outer{position:relative;margin-bottom:6px;}
-.wp-notch{position:absolute;top:0;width:2px;height:100%;background:rgba(255,255,255,.2);transform:translateX(-50%);pointer-events:none;z-index:2;}
-.wp-notch.wp-act{background:rgba(170,255,0,.7);}
-/* Labels row below bar */
-.xp-waypoints{position:relative;height:20px;margin-top:3px;}
-.wp{position:absolute;transform:translateX(-50%);}
-.wp-tag{font-size:7px;font-weight:700;color:rgba(255,255,255,.2);white-space:nowrap;text-align:center;line-height:1.3;}
-.wp-tag.wp-act{color:rgba(170,255,0,.6);}
-/* Stagger: even waypoints float up */
-.wp.wp-up .wp-tag{transform:translateY(-9px);}
-.xp-ends{display:flex;justify-content:space-between;margin-top:2px;}
+/* Tick markers — sit absolute inside .xp-bar-zone */
+.wp-tick{position:absolute;top:0;bottom:0;width:2px;transform:translateX(-50%);background:rgba(255,255,255,.18);border-radius:1px;pointer-events:none;}
+.wp-tick.wp-act{background:var(--g);box-shadow:0 0 5px rgba(170,255,0,.45);}
+/* Labels row */
+.xp-waypoints{position:relative;height:16px;}
+.wp-lbl{position:absolute;transform:translateX(-50%);font-size:8.5px;font-weight:700;color:rgba(255,255,255,.28);white-space:nowrap;}
+.wp-lbl.wp-act{color:rgba(170,255,0,.75);}
+.xp-ends{display:flex;justify-content:space-between;margin-top:6px;}
 .xp-e{font-size:8.5px;font-weight:700;color:rgba(255,255,255,.22);}
 .xp-e.now{color:rgba(170,255,0,.55);}
 /* Section label */
@@ -174,7 +172,7 @@ footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weigh
 
 <div class="xp-wrap" id="xp-wrap" style="display:none">
   <div class="xp-top"><span class="xp-lbl">Overall Progress</span><span class="xp-pct" id="xp-pct">0%</span></div>
-  <div class="xp-bar-outer" id="xp-bar-outer">
+  <div class="xp-bar-zone" id="xp-bar-zone">
     <div class="px-track"><div class="px-fill" id="xp-fill"></div></div>
   </div>
   <div class="xp-waypoints" id="xp-waypoints"></div>
@@ -358,22 +356,22 @@ async function loadData(){
       document.getElementById('xp-now').textContent=cw+' kg';
       document.getElementById('xp-goal').textContent=goal+' kg';
       setTimeout(()=>{ document.getElementById('xp-fill').style.width=pct+'%'; },80);
-      const barOuter=document.getElementById('xp-bar-outer');
+      const barZone=document.getElementById('xp-bar-zone');
       const wpc=document.getElementById('xp-waypoints');
       ms.forEach((m,i)=>{
         if(!m.targetWeight)return;
         const wpPct=Math.min(((START-m.targetWeight)/(START-goal))*100,100);
         const isAct=m.status==='Active';
-        // Notch on bar
-        const notch=document.createElement('div');
-        notch.className='wp-notch'+(isAct?' wp-act':'');
-        notch.style.left=wpPct.toFixed(1)+'%';
-        barOuter.appendChild(notch);
-        // Label below — stagger even ones up
+        // Tick pokes through the bar zone
+        const tick=document.createElement('div');
+        tick.className='wp-tick'+(isAct?' wp-act':'');
+        tick.style.left=wpPct.toFixed(1)+'%';
+        barZone.appendChild(tick);
+        // Clean label below
         const lbl=document.createElement('div');
-        lbl.className='wp'+(i%2===1?' wp-up':'');
+        lbl.className='wp-lbl'+(isAct?' wp-act':'');
         lbl.style.left=wpPct.toFixed(1)+'%';
-        lbl.innerHTML=`<div class="wp-tag${isAct?' wp-act':''}">S${i+1} ${m.targetWeight}kg</div>`;
+        lbl.textContent=m.targetWeight+' kg';
         wpc.appendChild(lbl);
       });
     }

@@ -250,14 +250,14 @@ function daysBadge(days,status){
 
 function ticketHtml(dish,cat,targetWeight,stageIdx,milestoneStatus){
   const catCls=CAT_CSS[cat]||'';
-  const isLocked=milestoneStatus==='Upcoming';
   const isEarned=milestoneStatus==='Achieved'||milestoneStatus==='Claimed';
-  const ticketCls=isLocked?'t-locked':isEarned?'t-earned':'';
+  const isUpcoming=milestoneStatus==='Upcoming';
+  // Active = working toward it (no blur, but still locked); Upcoming = hidden + locked
+  const isLocked=!isEarned;
+  const ticketCls=isUpcoming?'t-locked':isEarned?'t-earned':'';
   const badge=isEarned
     ?`<span class="t-badge-earned">✓ Earned</span>`
-    :isLocked
-    ?`<span class="t-badge-lock">🔒 Locked</span>`
-    :``;
+    :`<span class="t-badge-lock">🔒 Locked</span>`;
   return`<div class="ticket ${ticketCls}">
     <div class="ticket-main">
       <div class="t-hdr">

@@ -1037,8 +1037,8 @@ async function loadData(){
     const [jp,jd]=await Promise.all([rp.json(),rd.json()]);
     pipeData=jp; dealsData=jd;
 
-    // ── Auto-detect currency from dominant lead country ──────────────────────
-    const detected=detectCurrency(jp.countries||[]);
+    // ── Set base currency: Settings DB first, then country detection fallback ─
+    const detected=jp.baseCurrency||detectCurrency(jp.countries||[]);
     if(detected!==baseCurrency){
       baseCurrency=detected;
       curMode=detected;

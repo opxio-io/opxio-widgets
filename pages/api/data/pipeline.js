@@ -39,7 +39,16 @@ export default async function handler(req, res) {
     // When a specific month is selected, filter ALL data by Created On
     const monthFiltered = _qm !== null
 
-    const leads = await queryDB(LEADS_DB, null, notionToken)
+    const SETTINGS_DB = resolveDB(client, "SETTINGS", DB.SETTINGS)
+
+    const [leads, settingsPages] = await Promise.all([
+      queryDB(LEADS_DB, null, notionToken),
+      queryDB(SETTINGS_DB, null, notionToken).catch(() => []),
+    ])
+
+    // Read Base Currency from Settings DB
+    const bcRecord = settingsPages.find(p => plain(p.properties.Setting?.title || []) === "Base Currency")
+    const baseCurrency = bcRecord?.properties.Value?.rich_text?.[0]?.plain_text?.trim() || null
 
     const stages      = Object.fromEntries(ALL_STAGES.map(s => [s, 0]))
     const stageValues = Object.fromEntries(ALL_STAGES.map(s => [s, 0]))
@@ -176,6 +185,7 @@ export default async function handler(req, res) {
       followUpsDueToday,
       followUpsOverdue,
       stageValues,
+      baseCurrency,
       sources: Object.entries(sourceCounts)
         .sort((a, b) => b[1] - a[1])
         .map(([label, count]) => ({ label, count })),

@@ -306,6 +306,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
       <div class="panel-title" style="gap:6px;">
         <span id="funnel-title">Leads Funnel</span>
         <span class="panel-badge" id="fb">—</span>
+        <span id="funnel-val" style="display:none;font-size:10px;font-weight:900;color:var(--g);opacity:.85;letter-spacing:-.2px;"></span>
         <div style="margin-left:auto;display:flex;gap:3px;">
           <button class="ftab active" id="ftab-leads" onclick="setFunnelTab('leads')">Leads</button>
           <button class="ftab" id="ftab-deals" onclick="setFunnelTab('deals')">Deals</button>
@@ -676,6 +677,10 @@ function renderLeadsFunnel(){
   if(!pipeData) return;
   document.getElementById('funnel-title').textContent='Leads Funnel';
   renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',pipeData.stageValues);
+  // Show total active leads potential value in funnel sub-value
+  const potVal=pipeData.leadsPotentialValue||0;
+  const fv=document.getElementById('funnel-val');
+  if(fv){ if(potVal){ fv.textContent=fmtRM(potVal); fv.style.display=''; } else fv.style.display='none'; }
 }
 
 function renderDealsFunnelInline(){
@@ -683,34 +688,39 @@ function renderDealsFunnelInline(){
   document.getElementById('funnel-title').textContent='Deals Funnel';
   const ds=dealsData.stages||{}, sv=dealsData.stageValues||{};
   renderFunnelInto('funnel','fb',ds,dealsData.stageOrder,[dealsData.lostLabel||'Closed-Lost'],'deals',sv);
+  // Show total pre-win deal value in funnel sub-value
+  const potVal=dealsData.potentialValue||0;
+  const fv=document.getElementById('funnel-val');
+  if(fv){ if(potVal){ fv.textContent=fmtRM(potVal); fv.style.display=''; } else fv.style.display='none'; }
 }
 
 // ── Deals tab renders ─────────────────────────────────────────────────────────
+function setEl(id,val){ const el=document.getElementById(id); if(el) el.textContent=val; }
 function renderDeals(){
   if(!dealsData) return;
 
-  // Stat cards
+  // Stat cards — null-safe (elements may not exist if deals is inline-only)
   const ds=dealsData.stages||{}, sv=dealsData.stageValues||{};
   const prewinStages=dealsData.potentialStages||[];
   const prewinCount=prewinStages.reduce((s,st)=>s+(ds[st]||0),0);
   const prewinVal=prewinStages.reduce((s,st)=>s+(sv[st]||0),0);
-  document.getElementById('dd-prewin').textContent=prewinCount||'—';
+  setEl('dd-prewin',prewinCount||'—');
   showSub('dd-prewin-val',prewinVal,fmtRM);
 
   const buildingCount=ds['Building']||dealsData.deliveryCount||0;
   const buildingVal=sv['Building']||0;
-  document.getElementById('dd-building').textContent=buildingCount||0;
+  setEl('dd-building',buildingCount||0);
   showSub('dd-building-val',buildingVal,fmtRM);
 
   const balCount=ds['Balance Due']||dealsData.balanceCount||0;
   const balVal=sv['Balance Due']||0;
-  document.getElementById('dd-balance').textContent=balCount||0;
+  setEl('dd-balance',balCount||0);
   showSub('dd-balance-val',balVal,fmtRM);
 
   const lostLabel=dealsData.lostLabel||'Lost';
   const lostCount=ds[lostLabel]||dealsData.totalLostDeals||0;
   const lostVal=dealsData.lostValue||0;
-  if(document.getElementById('dd-lost')) document.getElementById('dd-lost').textContent=lostCount||0;
+  setEl('dd-lost',lostCount||0);
   showSub('dd-lost-val',lostVal,fmtRM);
 
   // Deals funnel (uses dm color, no lead-specific lostLabels)

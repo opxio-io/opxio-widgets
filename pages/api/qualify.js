@@ -152,11 +152,10 @@ async function createLead(form, companyId, personId, qualified) {
 
   // Select fields
   if (form.industry) props.Industry = { select: { name: form.industry } };
-  if (form.role) props.Role = { select: { name: form.role } };
   if (form.monthlyRevenue) props["Monthly Revenue Range"] = { select: { name: form.monthlyRevenue } };
   if (form.budget) props["Budget Range"] = { select: { name: form.budget } };
   if (form.osInterest?.length) {
-    props["OS Interest"] = { select: { name: form.osInterest[0] } };
+    props["OS Interest"] = { multi_select: form.osInterest.map(o => ({ name: o })) };
   }
 
   // Source

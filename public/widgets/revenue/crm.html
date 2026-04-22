@@ -255,7 +255,6 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 
 <div class="view-bar">
   <button class="view-btn active" onclick="switchView('pipeline')">Pipeline</button>
-  <button class="view-btn" onclick="switchView('deals')">Deals</button>
   <button class="view-btn" onclick="switchView('wl')">Win / Loss</button>
   <button class="view-btn" onclick="switchView('sources')">Sources</button>
 </div>
@@ -326,35 +325,8 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     </div>
   </div>
 
-</div>
-
-<!-- ══ DEALS TAB ═════════════════════════════════════════════════════════════ -->
-<div class="view-pane" id="pane-deals">
-
-  <div class="stat-row stat-row-3">
-    <div class="card stat">
-      <div class="s-dot"></div>
-      <span class="s-lbl">Pre-win Deals</span>
-      <div class="s-val" id="dd-prewin">—</div>
-      <div class="s-sub">Proposal → Awaiting Deposit</div>
-      <div class="s-sub val-g" id="dd-prewin-val" style="display:none;"></div>
-    </div>
-    <div class="card stat">
-      <div class="s-dot"></div>
-      <span class="s-lbl">In Build</span>
-      <div class="s-val" id="dd-building">—</div>
-      <div class="s-sub">Currently being built</div>
-      <div class="s-sub val-g" id="dd-building-val" style="display:none;"></div>
-    </div>
-    <div class="card stat">
-      <div class="s-dot"></div>
-      <span class="s-lbl">Balance Due</span>
-      <div class="s-val" id="dd-balance">—</div>
-      <div class="s-sub">Awaiting final payment</div>
-      <div class="s-sub val-g" id="dd-balance-val" style="display:none;"></div>
-    </div>
-  </div>
-
+  <!-- ── Deals Pipeline (inline) ── -->
+  <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.22);margin:18px 0 10px;">Deals Pipeline</div>
   <div class="grid-2">
     <div class="card panel">
       <div class="panel-title">
@@ -556,10 +528,9 @@ function switchView(v){
   document.querySelectorAll('.view-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.view-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('pane-'+v).classList.add('active');
-  const labels={pipeline:'Pipeline',deals:'Deals',wl:'Win / Loss',sources:'Sources'};
+  const labels={pipeline:'Pipeline',wl:'Win / Loss',sources:'Sources'};
   document.querySelectorAll('.view-btn').forEach(b=>{if(b.textContent===labels[v])b.classList.add('active');});
   if(v==='wl') renderWL();
-  if(v==='deals') renderDeals();
   if(v==='sources') renderSources();
   setTimeout(drawChart,50);
 }
@@ -1005,8 +976,7 @@ async function loadData(){
     sourcesData=jp.sources||[];
     renderDonut(sourcesData);
     renderLeadsFunnel();
-
-    if(currentView==='deals') renderDeals();
+    renderDeals();
     if(currentView==='wl') renderWL();
     if(currentView==='sources') renderSources();
 

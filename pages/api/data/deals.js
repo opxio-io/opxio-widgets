@@ -110,7 +110,7 @@ export default async function handler(req, res) {
     let propValue = 0
     for (const p of proposals) {
       const pr = p.properties
-      const s  = pr.Status?.select?.name || ""
+      const s  = pr.Status?.status?.name || pr.Status?.select?.name || ""
       if (s === "Draft")            propStats.Draft++
       else if (s === "Ready to Send") propStats["Ready to Send"]++
       else if (s === "Sent")        propStats.Sent++

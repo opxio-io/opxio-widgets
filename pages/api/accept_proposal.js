@@ -378,7 +378,7 @@ export default async function handler(req, res) {
 
     // ── 7. Mark Proposal → Accepted ──────────────────────────────────────
     await patchPage(proposalId, {
-      "Status": { select: { name: "Accepted" } },
+      "Status": { status: { name: "Accepted" } },
     }, process.env.NOTION_API_KEY)
 
     // ── 8. Advance Lead stage → Converted ────────────────────────────────

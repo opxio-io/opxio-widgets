@@ -667,7 +667,7 @@ function renderPropStats(){
   const el=document.getElementById('prop-stats');
   if(!dealsData){el.innerHTML='';return;}
   const p=dealsData.proposals||{}, q=dealsData.quotations||{};
-  const pRows=[['Draft',p.Draft||0],['Send Proposal',p['Send Proposal']||0],['Sent',p.Sent||0],['Accepted',p.Accepted||0],['Rejected',p.Rejected||0]];
+  const pRows=[['Draft',p.Draft||0],['Ready to Send',p['Ready to Send']||0],['Sent',p.Sent||0],['Accepted',p.Accepted||0],['Rejected',p.Rejected||0]];
   const qRows=[['Draft',q.Draft||0],['Issued',q.Issued||0],['Approved',q.Approved||0],['Rejected',q.Rejected||0]];
   function mkRows(rows,title){
     return `<div style="margin-bottom:16px;"><div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);margin-bottom:10px;">${title}</div>`+

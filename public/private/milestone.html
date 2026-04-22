@@ -122,6 +122,23 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .log-wv{font-size:15px;font-weight:900;letter-spacing:-.03em;color:var(--g);}
 .log-wu{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);}
 .log-bmi{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.28);margin-left:auto;}
+/* Log weight form */
+.log-btn{display:flex;align-items:center;gap:6px;background:var(--gm);border:1px solid var(--gb);border-radius:7px;padding:7px 12px;font-family:inherit;font-size:10px;font-weight:700;color:var(--g);cursor:pointer;letter-spacing:.06em;transition:all .15s;margin-bottom:14px;}
+.log-btn:hover{background:rgba(170,255,0,.14);border-color:rgba(170,255,0,.35);}
+.log-btn svg{width:11px;height:11px;flex-shrink:0;}
+.log-form{background:var(--card);border:1px solid rgba(170,255,0,.14);border-radius:10px;padding:14px 15px;margin-bottom:14px;}
+.log-form-row{display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;}
+.lf-group{display:flex;flex-direction:column;gap:4px;flex:1;min-width:80px;}
+.lf-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);}
+.lf-input{background:#1a1a1a;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:7px 10px;font-family:inherit;font-size:13px;font-weight:700;color:#fff;outline:none;transition:border-color .15s;width:100%;}
+.lf-input:focus{border-color:rgba(170,255,0,.4);}
+.lf-input::placeholder{color:rgba(255,255,255,.2);font-weight:500;}
+.lf-submit{background:var(--g);border:none;border-radius:6px;padding:7px 16px;font-family:inherit;font-size:11px;font-weight:900;color:#090909;cursor:pointer;letter-spacing:.04em;transition:opacity .15s;white-space:nowrap;flex-shrink:0;}
+.lf-submit:hover{opacity:.85;}
+.lf-submit:disabled{opacity:.4;cursor:not-allowed;}
+.lf-msg{font-size:9.5px;font-weight:600;margin-top:8px;}
+.lf-msg.ok{color:var(--g);}
+.lf-msg.fail{color:var(--red);}
 .err{background:rgba(255,50,50,.06);border:1px solid rgba(255,50,50,.12);border-radius:7px;padding:10px 13px;font-size:10px;color:rgba(255,100,100,.7);margin-bottom:12px;}
 .empty{font-size:10px;color:rgba(255,255,255,.22);font-style:italic;}
 footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.05);}
@@ -168,7 +185,25 @@ footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weigh
 <div class="sec" id="roadmap-sec" style="display:none"><span>Upcoming</span></div>
 <div class="roadmap" id="roadmap"></div>
 
-<div class="sec" id="log-sec" style="display:none"><span>Weight Log</span></div>
+<div class="sec"><span>Weight Log</span></div>
+<button class="log-btn" onclick="toggleLogForm()" id="log-btn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  Log Weight
+</button>
+<div class="log-form" id="log-form" style="display:none">
+  <div class="log-form-row">
+    <div class="lf-group" style="max-width:100px">
+      <label class="lf-lbl">Weight (kg)</label>
+      <input class="lf-input" type="number" id="lf-weight" step="0.01" min="30" max="200" placeholder="88.25"/>
+    </div>
+    <div class="lf-group" style="max-width:130px">
+      <label class="lf-lbl">Date</label>
+      <input class="lf-input" type="date" id="lf-date"/>
+    </div>
+    <button class="lf-submit" onclick="submitLog()" id="lf-sub">Save</button>
+  </div>
+  <div id="lf-msg" style="display:none"></div>
+</div>
 <div class="log-list" id="log-list"></div>
 
 <footer>Opxio.io</footer>
@@ -203,12 +238,10 @@ function daysBadge(days,status){
 function ticketHtml(dish,loc,cat,targetWeight,stageIdx,isUpcoming){
   const catCls=CAT_CSS[cat]||'';
   const cls=isUpcoming?'upcoming-ticket':'';
-  const locStr=shortLoc(loc);
   return`<div class="ticket ${cls}">
     <div class="ticket-main">
       ${cat?`<div class="t-cat ${catCls}">${cat}</div>`:''}
       <div class="t-dish">${strip(dish)||'TBA'}</div>
-      ${locStr?`<div class="t-loc">${locStr}</div>`:''}
     </div>
     <div class="ticket-stub">
       <div class="t-stub-lbl">Stage ${stageIdx+1}</div>
@@ -304,22 +337,23 @@ async function loadData(){
       document.getElementById('s-next-lbl').textContent=diff>0?`to ${active.targetWeight} kg`:'Target hit!';
     }
 
-    // Progress bar + waypoints
-    if(d.journeyProgress!==null&&cw&&d.lowestTarget){
+    // Progress bar + waypoints (goal = 60 kg)
+    const goal=d.goalWeight||60;
+    if(d.journeyProgress!==null&&cw){
       document.getElementById('xp-wrap').style.display='';
       const pct=Math.min(Math.max(d.journeyProgress,0),100);
       document.getElementById('xp-pct').textContent=pct.toFixed(1)+'%';
       document.getElementById('xp-now').textContent=cw+' kg';
-      document.getElementById('xp-goal').textContent=d.lowestTarget+' kg';
+      document.getElementById('xp-goal').textContent=goal+' kg';
       setTimeout(()=>{ document.getElementById('xp-fill').style.width=pct+'%'; },80);
       const wpc=document.getElementById('xp-waypoints');
       ms.forEach((m,i)=>{
         if(!m.targetWeight)return;
-        const wpPct=((START-m.targetWeight)/(START-d.lowestTarget))*100;
+        const wpPct=((START-m.targetWeight)/(START-goal))*100;
         const isAct=m.status==='Active';
         const el=document.createElement('div');
         el.className='wp';
-        el.style.left=wpPct.toFixed(1)+'%';
+        el.style.left=Math.min(wpPct,100).toFixed(1)+'%';
         el.innerHTML=`<div class="wp-line${isAct?' wp-act':''}"></div><div class="wp-tag${isAct?' wp-act':''}">S${i+1}<br>${m.targetWeight}kg</div>`;
         wpc.appendChild(el);
       });
@@ -342,7 +376,6 @@ async function loadData(){
     // Log
     const logs=(d.logs||[]).slice(0,5);
     if(logs.length){
-      document.getElementById('log-sec').style.display='';
       document.getElementById('log-list').innerHTML=logs.map(l=>{
         const ds=l.date?fmtDate(l.date,false):'—';
         return`<div class="log-row"><span class="log-date">${ds}</span><div class="log-w"><span class="log-wv">${l.weight??'—'}</span><span class="log-wu">kg</span></div>${l.bmi?`<span class="log-bmi">BMI ${l.bmi}</span>`:''}</div>`;
@@ -359,6 +392,48 @@ function doRefresh(){
   const b=document.getElementById('rb');
   if(b)b.classList.add('spinning');
   loadData().finally(()=>{ const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
+}
+
+function toggleLogForm(){
+  const f=document.getElementById('log-form');
+  const open=f.style.display==='none';
+  f.style.display=open?'':'none';
+  if(open){
+    // default date to today
+    const inp=document.getElementById('lf-date');
+    if(!inp.value) inp.value=new Date().toISOString().split('T')[0];
+    document.getElementById('lf-weight').focus();
+    document.getElementById('lf-msg').style.display='none';
+  }
+}
+
+async function submitLog(){
+  const wEl=document.getElementById('lf-weight');
+  const dEl=document.getElementById('lf-date');
+  const msgEl=document.getElementById('lf-msg');
+  const btn=document.getElementById('lf-sub');
+  const w=parseFloat(wEl.value);
+  if(!w||isNaN(w)){ msgEl.className='lf-msg fail'; msgEl.textContent='Enter a valid weight.'; msgEl.style.display=''; return; }
+  btn.disabled=true; btn.textContent='Saving…';
+  msgEl.style.display='none';
+  try{
+    const res=await fetch('/api/private/log-weight?token='+encodeURIComponent(_tok),{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({weight:w, date:dEl.value||undefined})
+    });
+    const data=await res.json();
+    if(data.success){
+      msgEl.className='lf-msg ok'; msgEl.textContent=`Logged ${w} kg on ${data.date}.`; msgEl.style.display='';
+      wEl.value='';
+      setTimeout(()=>{ document.getElementById('log-form').style.display='none'; loadData(); },1200);
+    } else {
+      msgEl.className='lf-msg fail'; msgEl.textContent=data.error||'Failed.'; msgEl.style.display='';
+    }
+  }catch(e){
+    msgEl.className='lf-msg fail'; msgEl.textContent='Network error.'; msgEl.style.display='';
+  }
+  btn.disabled=false; btn.textContent='Save';
 }
 
 loadData();

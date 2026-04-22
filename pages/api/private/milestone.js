@@ -9,6 +9,7 @@ const MILESTONES_DB  = "9ee6834c98d94ecc92ae38679fd65378"
 const REWARD_MENU_DB = "5c58fa3602e84878a320a15ec02e82f5"
 
 const START_WEIGHT = 125
+const GOAL_WEIGHT  = 60   // ultimate goal — drives overall progress bar
 const START_DATE   = "April 2024"
 
 export default async function handler(req, res) {
@@ -94,22 +95,19 @@ export default async function handler(req, res) {
     }))
 
     // ── Journey stats ───────────────────────────────────────────────────────
-    const lostTotal   = currentWeight !== null ? +(START_WEIGHT - currentWeight).toFixed(2) : null
-    const lowestTarget = milestoneList.length
-      ? Math.min(...milestoneList.map(m => m.targetWeight).filter(Boolean))
-      : null
-    const journeyProgress = (currentWeight !== null && lowestTarget !== null)
-      ? +( (START_WEIGHT - currentWeight) / (START_WEIGHT - lowestTarget) * 100 ).toFixed(1)
+    const lostTotal      = currentWeight !== null ? +(START_WEIGHT - currentWeight).toFixed(2) : null
+    const journeyProgress = currentWeight !== null
+      ? +( (START_WEIGHT - currentWeight) / (START_WEIGHT - GOAL_WEIGHT) * 100 ).toFixed(1)
       : null
 
     res.status(200).json({
-      startWeight: START_WEIGHT,
-      startDate:   START_DATE,
+      startWeight:  START_WEIGHT,
+      goalWeight:   GOAL_WEIGHT,
+      startDate:    START_DATE,
       currentWeight,
       currentBMI,
       lostTotal,
       journeyProgress,
-      lowestTarget,
       logs: logs.slice(0, 10),
       milestones: enrichedMilestones,
     })

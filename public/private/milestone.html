@@ -4,158 +4,127 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#fff;padding:22px 20px 48px;overflow-y:auto;}
-
+body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#fff;padding:20px 18px 48px;overflow-y:auto;}
 :root{
-  --g:#AAFF00;--gd:#77BB00;--gm:rgba(170,255,0,.09);--gb:rgba(170,255,0,.22);
+  --g:#AAFF00;--gm:rgba(170,255,0,.08);--gb:rgba(170,255,0,.2);
   --rose:#FF3E8F;--rosem:rgba(255,62,143,.08);--roseb:rgba(255,62,143,.18);
-  --gold:#FFB800;--goldm:rgba(255,184,0,.08);--goldb:rgba(255,184,0,.22);
-  --red:#FF4040;
-  --blue:#5BC4FF;
-  --card:#111;--card2:#171717;--border:rgba(255,255,255,.07);
+  --gold:#FFB800;--red:#FF4040;--blue:#5BC4FF;
+  --card:#111;--border:rgba(255,255,255,.07);
 }
-
-/* ── Pixel bar mixin ─────────────────────────────────────────── */
-/* Segmented bars: repeating blocks with gaps */
-.pixel-track{height:12px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;image-rendering:pixelated;}
-.pixel-fill{height:100%;width:0%;transition:width 1.1s cubic-bezier(.4,0,.2,1);
-  background-image:repeating-linear-gradient(90deg,var(--g) 0px,var(--g) 13px,rgba(0,0,0,.45) 13px,rgba(0,0,0,.45) 15px);
-  background-size:15px 100%;
-  box-shadow:0 0 14px rgba(170,255,0,.3);
-}
-.pixel-fill.gold{
-  background-image:repeating-linear-gradient(90deg,var(--gold) 0px,var(--gold) 13px,rgba(0,0,0,.45) 13px,rgba(0,0,0,.45) 15px);
-  box-shadow:0 0 14px rgba(255,184,0,.25);
-}
-/* Small variant */
-.pixel-track.sm{height:7px;}
-.pixel-track.sm .pixel-fill{
-  background-image:repeating-linear-gradient(90deg,var(--g) 0px,var(--g) 8px,rgba(0,0,0,.5) 8px,rgba(0,0,0,.5) 10px);
-  background-size:10px 100%;
-}
-
-/* ── Header ──────────────────────────────────── */
-.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;}
-.hdr h1{font-size:19px;font-weight:900;letter-spacing:-.04em;}
-.hdr-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);margin-top:3px;}
-.hdr-r{display:flex;align-items:center;gap:6px;}
+/* Header */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:18px;}
+.hdr h1{font-size:18px;font-weight:900;letter-spacing:-.04em;}
+.hdr-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);margin-top:2px;}
+.hdr-r{display:flex;align-items:center;gap:5px;}
 .ts{font-size:9px;color:rgba(255,255,255,.25);font-weight:500;}
-.icon-btn{width:28px;height:28px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
-.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
-.icon-btn svg{width:13px;height:13px;}
-.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+.ib{width:26px;height:26px;border-radius:6px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.ib:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.ib svg{width:12px;height:12px;}
+.ib.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ── Stat cards ──────────────────────────────── */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:14px;}
-@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
-.sc{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 14px 12px;}
-.sc-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.45);margin-bottom:8px;}
-.sc-num{display:flex;align-items:baseline;gap:5px;}
-.sc-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:#fff;}
-.sc-val.sm{font-size:22px;}
-.sc-unit{font-size:13px;font-weight:700;color:rgba(255,255,255,.35);}
-.sc-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.35);margin-top:5px;}
-
-/* ── XP bar card ─────────────────────────────── */
-.xp-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 18px 14px;margin-bottom:18px;}
-.xp-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px;}
-.xp-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.15em;color:rgba(255,255,255,.4);}
-.xp-pct{font-size:14px;font-weight:900;letter-spacing:-.04em;color:var(--g);}
-.xp-ends{display:flex;justify-content:space-between;margin-top:9px;}
-.xp-end{font-size:9.5px;font-weight:700;color:rgba(255,255,255,.35);}
-.xp-end.now{color:var(--g);}
-
-/* ── Section ─────────────────────────────────── */
-.sec{display:flex;align-items:center;gap:8px;margin:18px 0 9px;}
-.sec span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.35);}
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:14px;}
+@media(max-width:580px){.stats{grid-template-columns:repeat(2,1fr);}}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:11px 12px 10px;}
+.sc-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:6px;}
+.sc-row{display:flex;align-items:baseline;gap:4px;}
+.sc-v{font-size:24px;font-weight:900;letter-spacing:-1.2px;line-height:1;}
+.sc-v.sm{font-size:18px;}
+.sc-u{font-size:12px;font-weight:700;color:rgba(255,255,255,.3);}
+.sc-s{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.35);margin-top:3px;}
+/* Progress bar */
+.xp-wrap{margin-bottom:20px;}
+.xp-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.xp-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:rgba(255,255,255,.3);}
+.xp-pct{font-size:12px;font-weight:900;letter-spacing:-.04em;color:var(--g);}
+.px-track{height:6px;background:rgba(255,255,255,.04);border-radius:2px;overflow:hidden;}
+.px-fill{height:100%;width:0%;transition:width 1.2s cubic-bezier(.4,0,.2,1);
+  background-image:repeating-linear-gradient(90deg,var(--g) 0,var(--g) 10px,rgba(0,0,0,.45) 10px,rgba(0,0,0,.45) 12px);
+  background-size:12px 100%;box-shadow:0 0 6px rgba(170,255,0,.15);}
+/* Waypoints */
+.xp-waypoints{position:relative;height:28px;margin-top:4px;}
+.wp{position:absolute;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:2px;}
+.wp-line{width:1px;height:7px;background:rgba(255,255,255,.14);}
+.wp-line.wp-act{background:rgba(170,255,0,.6);}
+.wp-tag{font-size:7px;font-weight:700;color:rgba(255,255,255,.22);white-space:nowrap;text-align:center;line-height:1.4;}
+.wp-tag.wp-act{color:rgba(170,255,0,.65);}
+.xp-ends{display:flex;justify-content:space-between;margin-top:2px;}
+.xp-e{font-size:8.5px;font-weight:700;color:rgba(255,255,255,.22);}
+.xp-e.now{color:rgba(170,255,0,.55);}
+/* Section label */
+.sec{display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+.sec span{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.28);}
 .sec::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
-
-/* ── Stage card ──────────────────────────────── */
-.stage{border-radius:12px;overflow:hidden;margin-bottom:9px;border:1px solid var(--border);}
-.stage.st-upcoming{background:var(--card);}
-.stage.st-active{background:#0b1108;border-color:rgba(170,255,0,.2);box-shadow:0 0 0 1px rgba(170,255,0,.05) inset, 0 4px 24px rgba(170,255,0,.05);}
-.stage.st-achieved{background:#080c11;border-color:rgba(91,196,255,.14);}
-.stage.st-claimed{background:#0c0810;border-color:rgba(255,62,143,.1);}
-
-.stage-top{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 0;}
-.stage-num{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.35);}
-.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
-.badge.upcoming{background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);}
+/* Active milestone card */
+.active-card{background:var(--card);border:1px solid rgba(170,255,0,.13);border-radius:12px;padding:15px;margin-bottom:14px;position:relative;}
+.active-card::before{content:'';position:absolute;top:0;left:20px;right:20px;height:1px;background:linear-gradient(90deg,transparent,rgba(170,255,0,.3),transparent);}
+.ac-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px;}
+.ac-stage{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.18em;color:rgba(255,255,255,.27);margin-bottom:4px;}
+.ac-wt{display:flex;align-items:baseline;gap:5px;}
+.ac-wv{font-size:36px;font-weight:900;letter-spacing:-2px;line-height:1;color:var(--g);}
+.ac-wu{font-size:13px;font-weight:700;color:rgba(170,255,0,.42);}
+.ac-top-r{text-align:right;}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:4px;font-size:7.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;}
 .badge.active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.badge.achieved{background:rgba(91,196,255,.08);color:var(--blue);border:1px solid rgba(91,196,255,.16);}
-.badge.claimed{background:var(--rosem);color:var(--rose);border:1px solid var(--roseb);}
-.badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor;}
-.st-active .dot{animation:blink 1.8s ease-in-out infinite;}
+.badge .dot{width:4px;height:4px;border-radius:50%;background:currentColor;animation:blink 1.8s ease-in-out infinite;}
 @keyframes blink{0%,100%{opacity:1;}50%{opacity:.2;}}
-
-.stage-body{display:flex;align-items:flex-end;justify-content:space-between;padding:8px 16px 11px;}
-.stage-w{display:flex;align-items:baseline;gap:6px;}
-.stage-wval{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1;color:#fff;}
-.stage-wunit{font-size:16px;font-weight:700;color:rgba(255,255,255,.35);}
-.stage-meta{text-align:right;}
-.stage-dl{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.4);}
-.stage-cd{font-size:14px;font-weight:900;letter-spacing:-.03em;margin-top:2px;}
-.stage-cd.ok{color:var(--g);}
-.stage-cd.urgent{color:var(--red);}
-.stage-cd.done{color:var(--blue);}
-.stage-cd.past{color:rgba(255,255,255,.25);}
-
-.stage-bar{padding:0 16px 12px;}
-
-/* ── Rewards panel ───────────────────────────── */
-.rewards{border-top:1px solid rgba(255,255,255,.05);padding:13px 16px 15px;background:rgba(0,0,0,.22);}
-.rwd-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.4);margin-bottom:9px;}
-.rwd-lbl.bonus-lbl{color:var(--gold);}
-.rwd-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:7px;margin-bottom:8px;}
-
-/* Reward card */
-.rwd{border-radius:8px;padding:11px 12px 10px;border:1px solid var(--border);position:relative;overflow:hidden;}
-.rwd.locked{background:#0f0f0f;}
-.rwd.unlocked{background:#0c1209;border-color:rgba(170,255,0,.16);}
-.rwd.claimed{background:#0d080f;border-color:rgba(255,62,143,.14);}
-.rwd.bonus-rwd{background:#0e0d08;border-color:rgba(255,184,0,.16);}
-
-/* locked blur + overlay */
-.rwd.locked .rwd-dish,.rwd.locked .rwd-loc{filter:blur(4px);user-select:none;pointer-events:none;}
-.rwd.locked::after{content:'LOCKED';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:900;letter-spacing:.22em;color:rgba(255,255,255,.18);}
-
-.rwd-cat{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:7px;}
-.rwd-cat.main-meal{color:#FF7040;}
-.rwd-cat.dessert{color:var(--rose);}
-.rwd-cat.drinks{color:var(--blue);}
-.rwd-cat.fine-dining{color:var(--gold);}
-.rwd-cat.snack{color:#FFD232;}
-.rwd-dish{font-size:13px;font-weight:700;letter-spacing:-.02em;color:#fff;line-height:1.25;margin-bottom:4px;}
-.rwd-loc{font-size:9.5px;color:rgba(255,255,255,.38);margin-bottom:7px;}
-.rwd-tag{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
-.rwd-tag.locked{color:rgba(255,255,255,.2);}
-.rwd-tag.unlocked{color:var(--g);}
-.rwd-tag.claimed{color:var(--rose);}
-
+.ac-days{font-size:13px;font-weight:900;letter-spacing:-.02em;margin-top:5px;}
+.ac-days.ok{color:var(--g);}
+.ac-days.warn{color:var(--red);}
+.ac-dl{font-size:8.5px;color:rgba(255,255,255,.27);margin-top:2px;}
+.ac-bar{margin-bottom:12px;}
+.px-sm{height:4px;background:rgba(255,255,255,.05);border-radius:2px;overflow:hidden;}
+.px-sm-fill{height:100%;width:0%;transition:width 1.3s ease;
+  background-image:repeating-linear-gradient(90deg,var(--g) 0,var(--g) 6px,rgba(0,0,0,.5) 6px,rgba(0,0,0,.5) 8px);
+  background-size:8px 100%;box-shadow:0 0 4px rgba(170,255,0,.15);}
+.ac-bar-sub{font-size:8.5px;color:rgba(255,255,255,.27);margin-top:4px;}
+.rwd-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.27);margin-bottom:7px;}
+/* Ticket */
+.ticket{display:flex;background:#141414;border:1px solid rgba(255,255,255,.07);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
+.ticket::before,.ticket::after{content:'';position:absolute;right:calc(64px - 5.5px);width:11px;height:11px;background:var(--card);border-radius:50%;border:1px solid rgba(255,255,255,.06);}
+.ticket::before{top:-5.5px;}.ticket::after{bottom:-5.5px;}
+.ticket.upcoming-ticket .t-dish{filter:blur(5px);user-select:none;}
+.ticket.upcoming-ticket .t-loc{filter:blur(3px);user-select:none;}
+.ticket.upcoming-ticket::before,.ticket.upcoming-ticket::after{display:none;}
+.ticket-main{flex:1;padding:11px 13px;border-right:1.5px dashed rgba(255,255,255,.07);}
+.ticket-stub{width:64px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;}
+.t-cat{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px;}
+.t-cat.main-meal{color:#FF7040;}.t-cat.dessert{color:var(--rose);}.t-cat.drinks{color:var(--blue);}.t-cat.fine-dining{color:var(--gold);}.t-cat.snack{color:#FFD232;}
+.t-dish{font-size:14px;font-weight:700;letter-spacing:-.02em;color:#fff;line-height:1.25;margin-bottom:3px;}
+.t-loc{font-size:9px;color:rgba(255,255,255,.35);}
+.t-stub-lbl{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);text-align:center;line-height:1.4;}
+.t-stub-wt{font-size:13px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.48);text-align:center;line-height:1.1;}
+.t-stub-wu{font-size:8px;font-weight:700;color:rgba(255,255,255,.2);text-align:center;}
+.tba{font-size:10px;color:rgba(255,255,255,.2);font-style:italic;padding:4px 0;}
 /* Bonus strip */
-.bonus-strip{margin-top:8px;background:#0f0d07;border:1px solid var(--goldb);border-radius:8px;padding:12px 14px;}
-.bonus-strip.done{border-color:rgba(255,184,0,.45);background:#181300;}
-.bonus-strip-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:var(--gold);margin-bottom:4px;}
-.bonus-strip-tgt{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.35);margin-bottom:3px;}
-.bonus-strip-txt{font-size:13px;font-weight:700;color:#fff;}
-.bonus-strip-hint{font-size:9px;font-weight:600;color:rgba(255,184,0,.38);margin-top:5px;}
-
-/* ── Weight log ──────────────────────────────── */
+.bonus-strip{background:#0d0d07;border:1px solid rgba(255,184,0,.12);border-radius:7px;padding:10px 12px;margin-top:6px;}
+.bonus-strip.done{border-color:rgba(255,184,0,.4);background:#131100;}
+.bs-lbl{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.13em;color:var(--gold);margin-bottom:3px;}
+.bs-tgt{font-size:8.5px;font-weight:600;color:rgba(255,255,255,.3);margin-bottom:2px;}
+.bs-txt{font-size:12px;font-weight:700;color:#fff;}
+.bs-hint{font-size:8.5px;color:rgba(255,184,0,.3);margin-top:4px;}
+/* Roadmap */
+.roadmap{display:flex;flex-direction:column;gap:5px;margin-bottom:20px;}
+.rm-item{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 13px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.rm-l{display:flex;align-items:center;gap:9px;flex:1;min-width:0;}
+.rm-stage{font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);flex-shrink:0;}
+.rm-wt{font-size:15px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.48);flex-shrink:0;}
+.rm-wu{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-left:1px;flex-shrink:0;}
+.rm-rwd{font-size:8.5px;color:rgba(255,255,255,.18);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.rm-r{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;}
+.rm-days{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);}
+.rm-dl{font-size:8px;color:rgba(255,255,255,.18);margin-top:1px;}
+/* Log */
 .log-list{display:flex;flex-direction:column;gap:5px;}
-.log-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 14px;}
-.log-date{font-size:10px;font-weight:600;color:rgba(255,255,255,.4);min-width:80px;}
-.log-w{display:flex;align-items:baseline;gap:4px;}
-.log-wv{font-size:16px;font-weight:900;letter-spacing:-.03em;color:var(--g);}
-.log-wu{font-size:10px;font-weight:700;color:rgba(255,255,255,.35);}
-.log-bmi{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.3);margin-left:auto;}
-.log-note{font-size:9.5px;color:rgba(255,255,255,.25);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-
-.err{background:rgba(255,50,50,.06);border:1px solid rgba(255,50,50,.12);border-radius:8px;padding:11px 14px;font-size:10px;color:rgba(255,100,100,.7);margin-bottom:12px;}
-.empty{font-size:10px;color:rgba(255,255,255,.25);font-style:italic;}
-
-footer{display:block;text-align:center;padding:22px 0 0;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.06);}
+.log-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:7px;padding:9px 12px;}
+.log-date{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.35);min-width:75px;}
+.log-w{display:flex;align-items:baseline;gap:3px;}
+.log-wv{font-size:15px;font-weight:900;letter-spacing:-.03em;color:var(--g);}
+.log-wu{font-size:10px;font-weight:700;color:rgba(255,255,255,.3);}
+.log-bmi{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.28);margin-left:auto;}
+.err{background:rgba(255,50,50,.06);border:1px solid rgba(255,50,50,.12);border-radius:7px;padding:10px 13px;font-size:10px;color:rgba(255,100,100,.7);margin-bottom:12px;}
+.empty{font-size:10px;color:rgba(255,255,255,.22);font-style:italic;}
+footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.05);}
 ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:99px;}
 </style>
 </head><body>
@@ -167,7 +136,7 @@ footer{display:block;text-align:center;padding:22px 0 0;font-size:8px;font-weigh
   </div>
   <div class="hdr-r">
     <span class="ts" id="ts"></span>
-    <button class="icon-btn" onclick="doRefresh()" id="rb">
+    <button class="ib" onclick="doRefresh()" id="rb">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     </button>
   </div>
@@ -176,43 +145,28 @@ footer{display:block;text-align:center;padding:22px 0 0;font-size:8px;font-weigh
 <div id="err-wrap"></div>
 
 <div class="stats">
-  <div class="sc">
-    <div class="sc-lbl">Current Weight</div>
-    <div class="sc-num"><div class="sc-val" id="s-cw">—</div><div class="sc-unit">kg</div></div>
-    <div class="sc-sub">current</div>
-  </div>
-  <div class="sc">
-    <div class="sc-lbl">Total Lost</div>
-    <div class="sc-num"><div class="sc-val" id="s-lost">—</div><div class="sc-unit">kg</div></div>
-    <div class="sc-sub">from 125 kg</div>
-  </div>
-  <div class="sc">
-    <div class="sc-lbl">BMI</div>
-    <div class="sc-num"><div class="sc-val sm" id="s-bmi">—</div></div>
-    <div class="sc-sub" id="s-bmi-lbl">—</div>
-  </div>
-  <div class="sc">
-    <div class="sc-lbl">To Next Target</div>
-    <div class="sc-num"><div class="sc-val sm" id="s-next">—</div><div class="sc-unit" id="s-next-unit">kg</div></div>
-    <div class="sc-sub" id="s-next-lbl">to go</div>
-  </div>
+  <div class="sc"><div class="sc-lbl">Current Weight</div><div class="sc-row"><div class="sc-v" id="s-cw">—</div><div class="sc-u">kg</div></div><div class="sc-s">current</div></div>
+  <div class="sc"><div class="sc-lbl">Total Lost</div><div class="sc-row"><div class="sc-v" id="s-lost">—</div><div class="sc-u">kg</div></div><div class="sc-s">from 125 kg</div></div>
+  <div class="sc"><div class="sc-lbl">BMI</div><div class="sc-row"><div class="sc-v sm" id="s-bmi">—</div></div><div class="sc-s" id="s-bmi-lbl">—</div></div>
+  <div class="sc"><div class="sc-lbl">To Next Target</div><div class="sc-row"><div class="sc-v sm" id="s-next">—</div><div class="sc-u" id="s-next-u">kg</div></div><div class="sc-s" id="s-next-lbl">—</div></div>
 </div>
 
-<div class="xp-card" id="xp-card" style="display:none">
-  <div class="xp-head">
-    <span class="xp-lbl">Overall Progress</span>
-    <span class="xp-pct" id="xp-pct">0%</span>
-  </div>
-  <div class="pixel-track"><div class="pixel-fill" id="xp-fill"></div></div>
+<div class="xp-wrap" id="xp-wrap" style="display:none">
+  <div class="xp-top"><span class="xp-lbl">Overall Progress</span><span class="xp-pct" id="xp-pct">0%</span></div>
+  <div class="px-track"><div class="px-fill" id="xp-fill"></div></div>
+  <div class="xp-waypoints" id="xp-waypoints"></div>
   <div class="xp-ends">
-    <span class="xp-end">125 kg</span>
-    <span class="xp-end now" id="xp-now"></span>
-    <span class="xp-end" id="xp-goal"></span>
+    <span class="xp-e">125 kg</span>
+    <span class="xp-e now" id="xp-now"></span>
+    <span class="xp-e" id="xp-goal"></span>
   </div>
 </div>
 
-<div class="sec"><span>Stages</span></div>
-<div id="stages-wrap"></div>
+<div class="sec" id="active-sec" style="display:none"><span>Current Milestone</span></div>
+<div id="active-wrap"></div>
+
+<div class="sec" id="roadmap-sec" style="display:none"><span>Upcoming</span></div>
+<div class="roadmap" id="roadmap"></div>
 
 <div class="sec" id="log-sec" style="display:none"><span>Weight Log</span></div>
 <div class="log-list" id="log-list"></div>
@@ -220,188 +174,194 @@ footer{display:block;text-align:center;padding:22px 0 0;font-size:8px;font-weigh
 <footer>Opxio.io</footer>
 
 <script>
-const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl() { return '/api/private/milestone' + (_tok ? '?token=' + encodeURIComponent(_tok) : ''); }
-const CAT_CSS = {'Main Meal':'main-meal','Dessert':'dessert','Drinks':'drinks','Fine Dining':'fine-dining','Snack':'snack'};
-const START = 125;
+const _tok = new URLSearchParams(location.search).get('token')||'';
+function apiUrl(){ return '/api/private/milestone'+(_tok?'?token='+encodeURIComponent(_tok):''); }
+const CAT_CSS={'Main Meal':'main-meal','Dessert':'dessert','Drinks':'drinks','Fine Dining':'fine-dining','Snack':'snack'};
+const START=125;
 
-function bmiLabel(v) {
-  if (!v) return '';
-  if (v < 18.5) return 'Underweight';
-  if (v < 25)   return 'Healthy Range';
-  if (v < 30)   return 'Overweight';
-  return 'Obese';
+function strip(s){ return s?s.replace(/[\u{1F000}-\u{1FFFF}]|[\u{2600}-\u{27BF}]|\uFE0F/gu,'').trim():s; }
+function bmiLabel(v){ if(!v)return''; if(v<18.5)return'Underweight'; if(v<25)return'Healthy Range'; if(v<30)return'Overweight'; return'Obese'; }
+function daysLeft(ds){ if(!ds)return null; const n=new Date();n.setHours(0,0,0,0); const d=new Date(ds);d.setHours(0,0,0,0); return Math.round((d-n)/86400000); }
+function fmtDate(ds,sh){ if(!ds)return''; return new Date(ds).toLocaleDateString('en-MY',sh?{day:'numeric',month:'short'}:{day:'numeric',month:'short',year:'numeric'}); }
+function shortLoc(loc){
+  if(!loc)return'';
+  if(loc.length<=28)return loc;
+  const parts=loc.split(',').map(p=>p.trim()).filter(p=>p.length>0);
+  if(parts.length>=2){ const city=parts[parts.length-2].replace(/^\d+\s*/,''); if(city.length>2&&city.length<=20)return city; }
+  if(parts.length>=1&&parts[parts.length-1].length<=15)return parts[parts.length-1];
+  return loc.substring(0,26)+'…';
+}
+function daysBadge(days,status){
+  if(status==='Achieved'||status==='Claimed') return '<div class="ac-days ok">Completed</div>';
+  if(days===null)return'';
+  if(days<0)  return`<div class="ac-days warn">${Math.abs(days)}d overdue</div>`;
+  if(days===0)return'<div class="ac-days warn">Due today</div>';
+  if(days<=10)return`<div class="ac-days warn">${days} days left</div>`;
+  return`<div class="ac-days ok">${days} days left</div>`;
 }
 
-function daysLeft(ds) {
-  if (!ds) return null;
-  const n = new Date(); n.setHours(0,0,0,0);
-  const d = new Date(ds); d.setHours(0,0,0,0);
-  return Math.round((d - n) / 86400000);
-}
-
-function cdHtml(days, status) {
-  if (status === 'Achieved' || status === 'Claimed')
-    return '<div class="stage-cd done">Completed</div>';
-  if (days === null) return '';
-  if (days < 0)   return `<div class="stage-cd urgent">${Math.abs(days)}d overdue</div>`;
-  if (days === 0) return '<div class="stage-cd urgent">Due today</div>';
-  if (days <= 7)  return `<div class="stage-cd urgent">${days}d left</div>`;
-  return `<div class="stage-cd ok">${days} days left</div>`;
-}
-
-function stageBarHtml(current, target) {
-  if (!current || !target) return '';
-  const pct = Math.min(100, Math.max(0, (START - current) / (START - target) * 100));
-  const id  = 'sb-' + Math.random().toString(36).slice(2, 7);
-  setTimeout(() => {
-    const el = document.getElementById(id);
-    if (el) el.style.width = pct.toFixed(1) + '%';
-  }, 120);
-  return `<div class="stage-bar">
-    <div class="pixel-track sm"><div class="pixel-fill" id="${id}" style="width:0%"></div></div>
-  </div>`;
-}
-
-function rwdCardHtml(r) {
-  const sc = (r.status || 'locked').toLowerCase();
-  const cc = CAT_CSS[r.category] || '';
-  const isBonus = r.type === 'Bonus Reward';
-  return `<div class="rwd ${sc}${isBonus?' bonus-rwd':''}">
-    ${r.category ? `<div class="rwd-cat ${cc}">${r.category}</div>` : ''}
-    <div class="rwd-dish">${r.dish || 'Reward TBA'}</div>
-    ${r.location ? `<div class="rwd-loc">${r.location}</div>` : ''}
-    <div class="rwd-tag ${sc}">${sc === 'locked' ? 'Locked' : sc === 'unlocked' ? 'Unlocked' : 'Claimed'}</div>
-  </div>`;
-}
-
-function bonusHtml(m) {
-  if (!m.bonusTarget) return '';
-  const done = m.bonusAchieved;
-  return `<div class="bonus-strip${done?' done':''}">
-    <div class="bonus-strip-lbl">Bonus Reward${done ? (m.bonusClaimed ? ' — Claimed' : ' — Unlocked!') : ''}</div>
-    <div class="bonus-strip-tgt">Reach ${m.bonusTarget} kg</div>
-    <div class="bonus-strip-txt">${m.bonusReward || 'TBA'}</div>
-    ${!done ? `<div class="bonus-strip-hint">Unlock by dropping below ${m.bonusTarget} kg</div>` : ''}
-  </div>`;
-}
-
-function stageHtml(m, idx, cw) {
-  const stKey = (m.status || 'upcoming').toLowerCase();
-  const days  = daysLeft(m.deadline);
-  const dateStr = m.deadline
-    ? new Date(m.deadline).toLocaleDateString('en-MY', {day:'numeric', month:'short', year:'numeric'})
-    : 'No deadline';
-
-  const mainRwds  = m.rewards.filter(r => r.type !== 'Bonus Reward');
-  const hasLegacy = !mainRwds.length && m.foodReward;
-
-  return `<div class="stage st-${stKey}">
-    <div class="stage-top">
-      <span class="stage-num">Stage ${idx + 1}</span>
-      <span class="badge ${stKey}"><span class="dot"></span>${m.status}</span>
+function ticketHtml(dish,loc,cat,targetWeight,stageIdx,isUpcoming){
+  const catCls=CAT_CSS[cat]||'';
+  const cls=isUpcoming?'upcoming-ticket':'';
+  const locStr=shortLoc(loc);
+  return`<div class="ticket ${cls}">
+    <div class="ticket-main">
+      ${cat?`<div class="t-cat ${catCls}">${cat}</div>`:''}
+      <div class="t-dish">${strip(dish)||'TBA'}</div>
+      ${locStr?`<div class="t-loc">${locStr}</div>`:''}
     </div>
-    <div class="stage-body">
-      <div class="stage-w">
-        <div class="stage-wval">${m.targetWeight ?? '—'}</div>
-        <div class="stage-wunit">kg</div>
+    <div class="ticket-stub">
+      <div class="t-stub-lbl">Stage ${stageIdx+1}</div>
+      <div class="t-stub-wt">${targetWeight??'—'}</div>
+      <div class="t-stub-wu">kg</div>
+    </div>
+  </div>`;
+}
+
+function renderTickets(m,idx,isUpcoming){
+  const main=m.rewards.filter(r=>r.type!=='Bonus Reward');
+  if(main.length) return main.map(r=>ticketHtml(r.dish,r.location,r.category,m.targetWeight,idx,isUpcoming)).join('');
+  if(m.foodReward) return ticketHtml(m.foodReward,m.rewardLocation,null,m.targetWeight,idx,isUpcoming);
+  return'<div class="tba">Reward TBA</div>';
+}
+
+function bonusHtml(m){
+  if(!m.bonusTarget)return'';
+  const done=m.bonusAchieved;
+  return`<div class="bonus-strip${done?' done':''}">
+    <div class="bs-lbl">Bonus Reward${done?(m.bonusClaimed?' — Claimed':' — Unlocked!'):''}</div>
+    <div class="bs-tgt">Drop below ${m.bonusTarget} kg</div>
+    <div class="bs-txt">${strip(m.bonusReward)||'TBA'}</div>
+    ${!done?`<div class="bs-hint">Reach ${m.bonusTarget} kg to unlock</div>`:''}
+  </div>`;
+}
+
+function activeCardHtml(m,idx,cw){
+  const days=daysLeft(m.deadline);
+  const barPct=cw&&m.targetWeight?Math.min(100,Math.max(0,(START-cw)/(START-m.targetWeight)*100)):0;
+  const toGo=cw&&m.targetWeight?(cw-m.targetWeight).toFixed(2):null;
+  return`<div class="active-card">
+    <div class="ac-top">
+      <div>
+        <div class="ac-stage">Stage ${idx+1}</div>
+        <div class="ac-wt"><div class="ac-wv">${m.targetWeight??'—'}</div><div class="ac-wu">kg</div></div>
       </div>
-      <div class="stage-meta">
-        <div class="stage-dl">${dateStr}</div>
-        ${cdHtml(days, m.status)}
+      <div class="ac-top-r">
+        <span class="badge active"><span class="dot"></span>Active</span>
+        ${daysBadge(days,m.status)}
+        ${m.deadline?`<div class="ac-dl">${fmtDate(m.deadline,false)}</div>`:''}
       </div>
     </div>
-    ${stageBarHtml(cw, m.targetWeight)}
-    <div class="rewards">
-      <div class="rwd-lbl">Reward</div>
-      ${mainRwds.length
-        ? `<div class="rwd-grid">${mainRwds.map(rwdCardHtml).join('')}</div>`
-        : hasLegacy
-          ? `<div class="rwd-grid">${rwdCardHtml({dish:m.foodReward,location:m.rewardLocation,category:null,type:'Main Reward',status:m.status==='Claimed'?'Claimed':m.status==='Achieved'?'Unlocked':'Locked'})}</div>`
-          : `<div class="empty">No reward added yet</div>`
-      }
-      ${bonusHtml(m)}
+    <div class="ac-bar">
+      <div class="px-sm"><div class="px-sm-fill" style="width:${barPct.toFixed(1)}%"></div></div>
+      ${toGo!==null?`<div class="ac-bar-sub">${toGo} kg to go</div>`:''}
+    </div>
+    <div class="rwd-lbl">Reward</div>
+    ${renderTickets(m,idx,false)}
+    ${bonusHtml(m)}
+  </div>`;
+}
+
+function roadmapHtml(m,idx){
+  const days=daysLeft(m.deadline);
+  const dStr=days===null?'':days>0?`${days}d left`:days===0?'Today':`${Math.abs(days)}d late`;
+  const rwdName=m.rewards.find(r=>r.type!=='Bonus Reward')?.dish||m.foodReward||'';
+  return`<div class="rm-item">
+    <div class="rm-l">
+      <span class="rm-stage">Stage ${idx+1}</span>
+      <span class="rm-wt">${m.targetWeight??'—'}</span><span class="rm-wu">kg</span>
+      ${rwdName?`<span class="rm-rwd">· ${strip(rwdName)}</span>`:''}
+    </div>
+    <div class="rm-r">
+      ${dStr?`<div class="rm-days">${dStr}</div>`:''}
+      ${m.deadline?`<div class="rm-dl">${fmtDate(m.deadline,true)}</div>`:''}
     </div>
   </div>`;
 }
 
-async function loadData() {
-  try {
-    const res = await fetch(apiUrl());
-    const d   = await res.json();
+async function loadData(){
+  try{
+    const res=await fetch(apiUrl());
+    const d=await res.json();
+    if(d.error){ document.getElementById('err-wrap').innerHTML=`<div class="err">Error — ${d.error}</div>`; return; }
+    document.getElementById('err-wrap').innerHTML='';
 
-    if (d.error) {
-      document.getElementById('err-wrap').innerHTML =
-        `<div class="err">Could not load data — ${d.error}</div>`;
-      return;
-    }
-    document.getElementById('err-wrap').innerHTML = '';
+    const cw=d.currentWeight;
+    document.getElementById('sub').textContent=`Started at ${d.startWeight} kg · ${d.startDate}`;
+    document.getElementById('s-cw').textContent=cw??'—';
+    document.getElementById('s-lost').textContent=d.lostTotal??'—';
+    document.getElementById('s-bmi').textContent=d.currentBMI??'—';
+    document.getElementById('s-bmi-lbl').textContent=bmiLabel(d.currentBMI);
 
-    const cw = d.currentWeight;
-    document.getElementById('sub').textContent = `Started at ${d.startWeight} kg · ${d.startDate}`;
-    document.getElementById('s-cw').textContent   = cw ?? '—';
-    document.getElementById('s-lost').textContent = d.lostTotal ?? '—';
-    document.getElementById('s-bmi').textContent  = d.currentBMI ?? '—';
-    document.getElementById('s-bmi-lbl').textContent = bmiLabel(d.currentBMI);
+    const ms=d.milestones||[];
+    const active=ms.find(m=>m.status==='Active');
+    const upcoming=ms.filter(m=>m.status==='Upcoming');
 
-    const pending = (d.milestones || []).filter(m => m.status === 'Active' || m.status === 'Upcoming');
-    const next = pending[0];
-    if (next && cw) {
-      const diff = +(cw - next.targetWeight).toFixed(2);
-      if (diff > 0) {
-        document.getElementById('s-next').textContent     = diff;
-        document.getElementById('s-next-unit').textContent = 'kg';
-        document.getElementById('s-next-lbl').textContent = `to ${next.targetWeight} kg`;
-      } else {
-        document.getElementById('s-next').textContent     = 'Done';
-        document.getElementById('s-next-unit').textContent = '';
-        document.getElementById('s-next-lbl').textContent = 'Target hit!';
-      }
+    if(active&&cw){
+      const diff=+(cw-active.targetWeight).toFixed(2);
+      document.getElementById('s-next').textContent=diff>0?diff:'Done';
+      document.getElementById('s-next-u').textContent=diff>0?'kg':'';
+      document.getElementById('s-next-lbl').textContent=diff>0?`to ${active.targetWeight} kg`:'Target hit!';
     }
 
-    if (d.journeyProgress !== null && cw) {
-      document.getElementById('xp-card').style.display = '';
-      const pct = Math.min(Math.max(d.journeyProgress, 0), 100);
-      document.getElementById('xp-pct').textContent = pct.toFixed(1) + '%';
-      setTimeout(() => { document.getElementById('xp-fill').style.width = pct + '%'; }, 80);
-      document.getElementById('xp-now').textContent  = cw + ' kg (now)';
-      document.getElementById('xp-goal').textContent = (d.lowestTarget ?? '—') + ' kg';
+    // Progress bar + waypoints
+    if(d.journeyProgress!==null&&cw&&d.lowestTarget){
+      document.getElementById('xp-wrap').style.display='';
+      const pct=Math.min(Math.max(d.journeyProgress,0),100);
+      document.getElementById('xp-pct').textContent=pct.toFixed(1)+'%';
+      document.getElementById('xp-now').textContent=cw+' kg';
+      document.getElementById('xp-goal').textContent=d.lowestTarget+' kg';
+      setTimeout(()=>{ document.getElementById('xp-fill').style.width=pct+'%'; },80);
+      const wpc=document.getElementById('xp-waypoints');
+      ms.forEach((m,i)=>{
+        if(!m.targetWeight)return;
+        const wpPct=((START-m.targetWeight)/(START-d.lowestTarget))*100;
+        const isAct=m.status==='Active';
+        const el=document.createElement('div');
+        el.className='wp';
+        el.style.left=wpPct.toFixed(1)+'%';
+        el.innerHTML=`<div class="wp-line${isAct?' wp-act':''}"></div><div class="wp-tag${isAct?' wp-act':''}">S${i+1}<br>${m.targetWeight}kg</div>`;
+        wpc.appendChild(el);
+      });
     }
 
-    const ms = d.milestones || [];
-    document.getElementById('stages-wrap').innerHTML = ms.length
-      ? ms.map((m, i) => stageHtml(m, i, cw)).join('')
-      : '<div class="empty">No stages set yet.</div>';
+    // Active milestone
+    if(active){
+      document.getElementById('active-sec').style.display='';
+      document.getElementById('active-wrap').innerHTML=activeCardHtml(active,ms.indexOf(active),cw);
+    } else {
+      document.getElementById('active-wrap').innerHTML='<div class="empty" style="margin-bottom:16px">No active milestone.</div>';
+    }
 
-    const logs = (d.logs || []).slice(0, 5);
-    if (logs.length) {
-      document.getElementById('log-sec').style.display = '';
-      document.getElementById('log-list').innerHTML = logs.map(l => {
-        const ds = l.date
-          ? new Date(l.date).toLocaleDateString('en-MY', {day:'numeric', month:'short', year:'numeric'})
-          : '—';
-        return `<div class="log-row">
-          <span class="log-date">${ds}</span>
-          <div class="log-w"><span class="log-wv">${l.weight ?? '—'}</span><span class="log-wu">kg</span></div>
-          ${l.bmi ? `<span class="log-bmi">BMI ${l.bmi}</span>` : ''}
-          ${l.notes ? `<span class="log-note">${l.notes}</span>` : ''}
-        </div>`;
+    // Roadmap
+    if(upcoming.length){
+      document.getElementById('roadmap-sec').style.display='';
+      document.getElementById('roadmap').innerHTML=upcoming.map(m=>roadmapHtml(m,ms.indexOf(m))).join('');
+    }
+
+    // Log
+    const logs=(d.logs||[]).slice(0,5);
+    if(logs.length){
+      document.getElementById('log-sec').style.display='';
+      document.getElementById('log-list').innerHTML=logs.map(l=>{
+        const ds=l.date?fmtDate(l.date,false):'—';
+        return`<div class="log-row"><span class="log-date">${ds}</span><div class="log-w"><span class="log-wv">${l.weight??'—'}</span><span class="log-wu">kg</span></div>${l.bmi?`<span class="log-bmi">BMI ${l.bmi}</span>`:''}</div>`;
       }).join('');
     }
 
-    document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-  } catch(e) {
-    document.getElementById('err-wrap').innerHTML = `<div class="err">Load failed — ${e.message}</div>`;
+    document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  }catch(e){
+    document.getElementById('err-wrap').innerHTML=`<div class="err">Load failed — ${e.message}</div>`;
   }
 }
 
-function doRefresh() {
-  const b = document.getElementById('rb');
-  if (b) b.classList.add('spinning');
-  loadData().finally(() => { const b2 = document.getElementById('rb'); if(b2) b2.classList.remove('spinning'); });
+function doRefresh(){
+  const b=document.getElementById('rb');
+  if(b)b.classList.add('spinning');
+  loadData().finally(()=>{ const b2=document.getElementById('rb'); if(b2)b2.classList.remove('spinning'); });
 }
 
 loadData();
-setInterval(loadData, 5 * 60 * 1000);
+setInterval(loadData,5*60*1000);
 </script>
 </body></html>

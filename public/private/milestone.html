@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Journey Tracker</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;background:#111;color:#fff;padding:24px 20px 40px;min-height:100%;overflow-y:auto;}
+
+:root{
+  --g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.2);
+  --rose:#FF7FAB;--rosem:rgba(255,127,171,.1);--roseb:rgba(255,127,171,.22);
+  --purple:#B47AFF;--purplem:rgba(180,122,255,.1);
+  --orange:#FF9D3D;--orangem:rgba(255,157,61,.1);
+  --blue:#5BC4FF;--bluem:rgba(91,196,255,.1);
+  --card:#1A1A1A;--border:rgba(255,255,255,.07);
+}
+
+/* ── Header ─────────────────────────────────── */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;}
+.hdr-left h1{font-size:26px;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.hdr-left p{font-size:11px;font-weight:500;color:rgba(255,255,255,.3);margin-top:4px;letter-spacing:.02em;}
+.hdr-right{display:flex;gap:6px;align-items:center;}
+.ts{font-size:9px;color:rgba(255,255,255,.15);font-weight:500;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Stats row ───────────────────────────────── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:20px;}
+@media(max-width:600px){.stats{grid-template-columns:repeat(2,1fr);}}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 14px 12px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent,var(--g)),transparent);opacity:.6;}
+.stat-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:8px;}
+.stat-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--accent,var(--g));}
+.stat-val.sm{font-size:22px;}
+.stat-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:4px;}
+
+/* ── Journey progress bar ────────────────────── */
+.progress-wrap{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 20px 16px;margin-bottom:24px;}
+.progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.progress-label span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.25);}
+.progress-label strong{font-size:11px;font-weight:700;color:var(--g);}
+.bar-track{position:relative;height:10px;background:rgba(255,255,255,.06);border-radius:99px;overflow:visible;}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,#AAFF00,#77DD00);transition:width .8s ease;position:relative;}
+.bar-fill::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:16px;height:16px;border-radius:50%;background:var(--g);border:3px solid #111;box-shadow:0 0 0 2px var(--g);z-index:2;}
+.bar-markers{display:flex;justify-content:space-between;margin-top:10px;}
+.bar-marker{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);}
+.bar-marker.active{color:var(--g);}
+
+/* ── Section label ───────────────────────────── */
+.sec{display:flex;align-items:center;gap:8px;margin:20px 0 10px;}
+.sec-bar{width:3px;height:12px;border-radius:99px;background:var(--g);opacity:.5;flex-shrink:0;}
+.sec span{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);}
+.sec::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.05);}
+
+/* ── Milestone cards ─────────────────────────── */
+.milestone-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:10px;transition:border-color .2s;}
+.milestone-card:hover{border-color:rgba(255,255,255,.12);}
+.milestone-card.is-active{border-color:rgba(170,255,0,.2);}
+.milestone-card.is-achieved{border-color:rgba(91,196,255,.15);}
+.milestone-card.is-claimed{border-color:rgba(180,122,255,.15);}
+
+.mc-top{display:flex;align-items:center;justify-content:space-between;padding:16px 18px 0;}
+.mc-left{display:flex;align-items:center;gap:10px;}
+.mc-status{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:5px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;}
+.mc-status.upcoming{background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);}
+.mc-status.active{background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.mc-status.achieved{background:var(--bluem);color:var(--blue);border:1px solid rgba(91,196,255,.2);}
+.mc-status.claimed{background:var(--purplem);color:var(--purple);border:1px solid rgba(180,122,255,.2);}
+.mc-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:.02em;}
+
+.mc-body{display:flex;align-items:flex-end;justify-content:space-between;padding:10px 18px 14px;}
+.mc-weight{font-size:48px;font-weight:900;letter-spacing:-3px;line-height:1;color:#fff;}
+.mc-weight span{font-size:16px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:0;}
+.mc-meta{text-align:right;}
+.mc-deadline{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);}
+.mc-countdown{font-size:13px;font-weight:900;letter-spacing:-.03em;margin-top:2px;}
+.mc-countdown.urgent{color:var(--orange);}
+.mc-countdown.ok{color:var(--g);}
+.mc-countdown.done{color:var(--blue);}
+.mc-countdown.past{color:rgba(255,255,255,.2);}
+
+/* ── Reward section inside milestone card ────── */
+.mc-rewards{border-top:1px solid rgba(255,255,255,.05);padding:14px 18px 16px;}
+.reward-group-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;margin-bottom:8px;}
+.reward-group-lbl.main{color:rgba(255,255,255,.3);}
+.reward-group-lbl.bonus{color:var(--rose);}
+
+.reward-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px;}
+.reward-card{background:#222;border:1px solid rgba(255,255,255,.06);border-radius:12px;padding:12px 12px 10px;transition:all .15s;cursor:default;}
+.reward-card:hover{background:#272727;border-color:rgba(255,255,255,.1);}
+.reward-card.is-bonus{border-color:var(--roseb);background:var(--rosem);}
+.reward-card.is-claimed{border-color:rgba(180,122,255,.2);background:var(--purplem);}
+.rc-cat{display:inline-flex;align-items:center;gap:4px;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;padding:2px 6px;border-radius:4px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);margin-bottom:8px;}
+.rc-cat.main-meal{background:rgba(255,157,61,.1);color:var(--orange);}
+.rc-cat.dessert{background:var(--rosem);color:var(--rose);}
+.rc-cat.drinks{background:var(--bluem);color:var(--blue);}
+.rc-cat.fine-dining{background:var(--purplem);color:var(--purple);}
+.rc-cat.snack{background:rgba(255,220,50,.08);color:#FFD700;}
+.rc-dish{font-size:13px;font-weight:700;color:#fff;letter-spacing:-.02em;margin-bottom:4px;line-height:1.2;}
+.rc-location{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.28);display:flex;align-items:center;gap:3px;}
+.rc-location svg{width:9px;height:9px;opacity:.6;flex-shrink:0;}
+.rc-status{margin-top:6px;}
+.rc-status-badge{display:inline-flex;align-items:center;gap:3px;font-size:7.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;padding:2px 6px;border-radius:4px;}
+.rc-status-badge.locked{background:rgba(255,255,255,.04);color:rgba(255,255,255,.2);}
+.rc-status-badge.unlocked{background:var(--gm);color:var(--g);}
+.rc-status-badge.claimed{background:var(--purplem);color:var(--purple);}
+
+.rc-empty{font-size:10px;color:rgba(255,255,255,.15);font-style:italic;padding:4px 0;}
+
+/* bonus special styling */
+.bonus-inline{display:flex;align-items:flex-start;gap:10px;background:var(--rosem);border:1px solid var(--roseb);border-radius:12px;padding:12px 14px;}
+.bonus-icon{font-size:20px;line-height:1;flex-shrink:0;}
+.bonus-body{}
+.bonus-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--rose);margin-bottom:4px;}
+.bonus-target{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:3px;}
+.bonus-reward-text{font-size:12px;font-weight:700;color:#fff;}
+.bonus-tick{margin-left:auto;color:var(--rose);flex-shrink:0;}
+
+/* ── Weight log section ──────────────────────── */
+.log-list{display:flex;flex-direction:column;gap:6px;}
+.log-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:10px 14px;}
+.log-date{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);}
+.log-weight{font-size:16px;font-weight:900;letter-spacing:-.03em;color:var(--g);}
+.log-bmi{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);}
+.log-notes{font-size:9.5px;color:rgba(255,255,255,.2);max-width:180px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ── Empty state ─────────────────────────────── */
+.empty{font-size:10px;color:rgba(255,255,255,.15);font-style:italic;padding:4px 0 6px;}
+
+/* ── Footer ──────────────────────────────────── */
+.footer{text-align:center;padding:24px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.08);}
+
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:99px;}
+</style>
+</head><body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <h1>🏆 Weight Loss Journey</h1>
+    <p id="sub">Loading…</p>
+  </div>
+  <div class="hdr-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- Stats row -->
+<div class="stats">
+  <div class="stat-card" style="--accent:var(--g)">
+    <div class="stat-lbl">Current Weight</div>
+    <div class="stat-val" id="s-current">—</div>
+    <div class="stat-sub">kg</div>
+  </div>
+  <div class="stat-card" style="--accent:var(--rose)">
+    <div class="stat-lbl">Total Lost</div>
+    <div class="stat-val" id="s-lost">—</div>
+    <div class="stat-sub">kg since April 2024</div>
+  </div>
+  <div class="stat-card" style="--accent:var(--blue)">
+    <div class="stat-lbl">Current BMI</div>
+    <div class="stat-val sm" id="s-bmi">—</div>
+    <div class="stat-sub" id="s-bmi-label">—</div>
+  </div>
+  <div class="stat-card" style="--accent:var(--orange)">
+    <div class="stat-lbl">To Next Target</div>
+    <div class="stat-val sm" id="s-tonext">—</div>
+    <div class="stat-sub" id="s-tonext-label">kg to go</div>
+  </div>
+</div>
+
+<!-- Progress bar -->
+<div class="progress-wrap" id="progress-wrap" style="display:none">
+  <div class="progress-label">
+    <span>Journey Progress</span>
+    <strong id="progress-pct">0%</strong>
+  </div>
+  <div class="bar-track">
+    <div class="bar-fill" id="bar-fill" style="width:0%"></div>
+  </div>
+  <div class="bar-markers">
+    <span class="bar-marker active" id="bm-start">125 kg</span>
+    <span class="bar-marker" id="bm-current"></span>
+    <span class="bar-marker" id="bm-end">Goal</span>
+  </div>
+</div>
+
+<!-- Milestones -->
+<div class="sec"><div class="sec-bar"></div><span>Milestones & Rewards</span></div>
+<div id="milestones-wrap"></div>
+
+<!-- Weight Log -->
+<div class="sec" id="log-sec" style="display:none"><div class="sec-bar" style="background:var(--blue);"></div><span>Weight Log</span></div>
+<div class="log-list" id="log-list"></div>
+
+<div class="footer">Built with ♥ · Opxio.io</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+function apiUrl() { return _tok ? '/api/private/milestone?token=' + encodeURIComponent(_tok) : '/api/private/milestone'; }
+
+const CAT_CLASS = {
+  'Main Meal':   'main-meal',
+  'Dessert':     'dessert',
+  'Drinks':      'drinks',
+  'Fine Dining': 'fine-dining',
+  'Snack':       'snack',
+};
+const CAT_EMOJI = {
+  'Main Meal':   '🍽',
+  'Dessert':     '🍰',
+  'Drinks':      '🥤',
+  'Fine Dining': '✨',
+  'Snack':       '🍟',
+};
+const STATUS_ORDER = ['Upcoming','Active','Achieved','Claimed'];
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const now  = new Date(); now.setHours(0,0,0,0);
+  const due  = new Date(dateStr); due.setHours(0,0,0,0);
+  return Math.round((due - now) / 86400000);
+}
+
+function countdownHtml(days, status) {
+  if (status === 'Achieved' || status === 'Claimed') return `<div class="mc-countdown done">✓ Done</div>`;
+  if (days === null) return '';
+  if (days < 0)   return `<div class="mc-countdown past">${Math.abs(days)}d overdue</div>`;
+  if (days === 0) return `<div class="mc-countdown urgent">Due today!</div>`;
+  if (days <= 7)  return `<div class="mc-countdown urgent">${days}d left</div>`;
+  return `<div class="mc-countdown ok">${days}d left</div>`;
+}
+
+function bmiLabel(bmi) {
+  if (!bmi) return '';
+  if (bmi < 18.5) return 'Underweight';
+  if (bmi < 25)   return 'Healthy';
+  if (bmi < 30)   return 'Overweight';
+  return 'Obese';
+}
+
+function rewardCardHtml(r, forceBonus) {
+  const catClass = CAT_CLASS[r.category] || '';
+  const catEmoji = CAT_EMOJI[r.category] || '🍴';
+  const catLabel = r.category || 'Food';
+  const statusClass = (r.status || '').toLowerCase();
+  const isBonus = forceBonus || r.type === 'Bonus Reward';
+  const dishName = r.dish || 'Reward TBA';
+  const loc = r.location || '';
+
+  return `
+  <div class="reward-card${isBonus ? ' is-bonus' : ''}${r.status==='Claimed'?' is-claimed':''}">
+    <div class="rc-cat ${catClass}">${catEmoji} ${catLabel}</div>
+    <div class="rc-dish">${dishName}</div>
+    ${loc ? `<div class="rc-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>${loc}</div>` : ''}
+    <div class="rc-status">
+      <span class="rc-status-badge ${statusClass}">${r.status==='Locked'?'🔒 Locked':r.status==='Unlocked'?'🔓 Unlocked':'✓ Claimed'}</span>
+    </div>
+  </div>`;
+}
+
+function bonusInlineHtml(m) {
+  if (!m.bonusTarget) return '';
+  const achieved = m.bonusAchieved;
+  const claimed  = m.bonusClaimed;
+  const label    = achieved ? (claimed ? '✓ Bonus Claimed!' : '🎉 Bonus Unlocked!') : `Reach ${m.bonusTarget} kg to unlock`;
+  return `
+  <div style="margin-top:10px;">
+    <div class="reward-group-lbl bonus">🎁 Bonus Reward</div>
+    <div class="bonus-inline">
+      <div class="bonus-icon">🎁</div>
+      <div class="bonus-body">
+        <div class="bonus-label">${label}</div>
+        <div class="bonus-target">Target: ${m.bonusTarget} kg</div>
+        <div class="bonus-reward-text">${m.bonusReward || 'Bonus reward TBA'}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function milestoneCardHtml(m) {
+  const statusKey = (m.status || 'upcoming').toLowerCase();
+  const days = daysUntil(m.deadline);
+  const deadlineStr = m.deadline
+    ? new Date(m.deadline).toLocaleDateString('en-MY', { day:'numeric', month:'short', year:'numeric' })
+    : 'No deadline set';
+
+  const mainRewards  = m.rewards.filter(r => r.type !== 'Bonus Reward');
+  const bonusRewards = m.rewards.filter(r => r.type === 'Bonus Reward');
+
+  const hasOldFoodReward = m.foodReward && mainRewards.length === 0;
+  const hasOldRewardLoc  = m.rewardLocation && mainRewards.length === 0;
+
+  return `
+  <div class="milestone-card is-${statusKey}">
+    <div class="mc-top">
+      <div class="mc-left">
+        <span class="mc-status ${statusKey}">${m.status}</span>
+        <span class="mc-name">${m.name}</span>
+      </div>
+    </div>
+    <div class="mc-body">
+      <div class="mc-weight">${m.targetWeight ?? '—'}<span> kg</span></div>
+      <div class="mc-meta">
+        <div class="mc-deadline">📅 ${deadlineStr}</div>
+        ${countdownHtml(days, m.status)}
+      </div>
+    </div>
+    <div class="mc-rewards">
+      <div class="reward-group-lbl main">🍽 Main Reward</div>
+      ${mainRewards.length > 0
+        ? `<div class="reward-grid">${mainRewards.map(r => rewardCardHtml(r, false)).join('')}</div>`
+        : hasOldFoodReward
+          ? `<div class="reward-grid">${rewardCardHtml({dish: m.foodReward, location: m.rewardLocation, category: null, type: 'Main Reward', status: m.status === 'Claimed' ? 'Claimed' : m.status === 'Achieved' ? 'Unlocked' : 'Locked'}, false)}</div>`
+          : `<div class="empty">Reward not added yet</div>`
+      }
+      ${bonusRewards.length > 0
+        ? `<div style="margin-top:8px;"><div class="reward-group-lbl bonus">🎁 Bonus Reward</div><div class="reward-grid">${bonusRewards.map(r => rewardCardHtml(r, true)).join('')}</div></div>`
+        : bonusInlineHtml(m)
+      }
+    </div>
+  </div>`;
+}
+
+async function loadData() {
+  try {
+    const r = await fetch(apiUrl());
+    const d = await r.json();
+
+    // ── Stats ──
+    const cw = d.currentWeight;
+    document.getElementById('s-current').textContent = cw ?? '—';
+    document.getElementById('s-lost').textContent    = d.lostTotal !== null ? d.lostTotal : '—';
+    document.getElementById('s-bmi').textContent     = d.currentBMI ?? '—';
+    document.getElementById('s-bmi-label').textContent = bmiLabel(d.currentBMI);
+    document.getElementById('sub').textContent = `Started at ${d.startWeight} kg · ${d.startDate}`;
+
+    // to-next
+    const activeMs = (d.milestones || []).filter(m => m.status === 'Active' || m.status === 'Upcoming');
+    const nextMs   = activeMs[0];
+    if (nextMs && cw) {
+      const diff = +(cw - nextMs.targetWeight).toFixed(2);
+      document.getElementById('s-tonext').textContent = diff > 0 ? diff : '✓';
+      document.getElementById('s-tonext-label').textContent = diff > 0 ? `kg to ${nextMs.targetWeight} kg` : 'Milestone reached!';
+    }
+
+    // ── Progress bar ──
+    if (d.journeyProgress !== null && d.lowestTarget !== null) {
+      document.getElementById('progress-wrap').style.display = '';
+      const pct = Math.min(Math.max(d.journeyProgress, 0), 100);
+      document.getElementById('progress-pct').textContent = pct + '%';
+      setTimeout(() => {
+        document.getElementById('bar-fill').style.width = pct + '%';
+      }, 100);
+      document.getElementById('bm-current').textContent = cw ? cw + ' kg' : '';
+      document.getElementById('bm-end').textContent     = d.lowestTarget + ' kg';
+    }
+
+    // ── Milestones ──
+    const wrap = document.getElementById('milestones-wrap');
+    const ms   = (d.milestones || []);
+    if (ms.length === 0) {
+      wrap.innerHTML = '<div class="empty">No milestones set yet.</div>';
+    } else {
+      wrap.innerHTML = ms.map(milestoneCardHtml).join('');
+    }
+
+    // ── Weight log ──
+    const logs = (d.logs || []).slice(0, 5);
+    if (logs.length > 0) {
+      document.getElementById('log-sec').style.display = '';
+      document.getElementById('log-list').innerHTML = logs.map(l => {
+        const dateStr = l.date ? new Date(l.date).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'}) : '—';
+        return `
+        <div class="log-row">
+          <span class="log-date">${dateStr}</span>
+          <span class="log-weight">${l.weight ?? '—'} kg</span>
+          <span class="log-bmi">${l.bmi ? 'BMI '+l.bmi : ''}</span>
+          ${l.notes ? `<span class="log-notes">${l.notes}</span>` : ''}
+        </div>`;
+      }).join('');
+    }
+
+    document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  } catch(e) {
+    console.error('milestone:', e);
+  }
+}
+
+function doRefresh() {
+  const b = document.getElementById('rb');
+  if (b) b.classList.add('spinning');
+  loadData().finally(() => { const b2 = document.getElementById('rb'); if(b2) b2.classList.remove('spinning'); });
+}
+
+loadData();
+setInterval(loadData, 5 * 60 * 1000);
+</script>
+<div class="footer">Built with ♥ · Opxio.io</div>
+</body></html>

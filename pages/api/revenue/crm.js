@@ -17,7 +17,11 @@ export default async function handler(req, res) {
   const client = await getClientByToken(token)
   if (!client) return res.status(403).json({ error: 'Invalid token' })
   const NOTION_KEY = getNotionToken(client)
-  const CRM_DB = resolveDB(client, 'CRM_DB', '3188b289e31a81da8939cb08d15be667')
+  // Two separate DBs: Leads and Deals
+  const LEADS_DB = resolveDB(client, 'LEADS_DB', '340fe60097f6810091cfe204a1c13f5f')
+  const DEALS_DB = resolveDB(client, 'DEALS_DB', 'caafe60097f683398df40197eeedbffe')
+  // Legacy fallback: some clients use a single CRM_DB
+  const CRM_DB = resolveDB(client, 'CRM_DB', DEALS_DB)
 
   try {
 
@@ -35,7 +39,7 @@ export default async function handler(req, res) {
 
     // --- DEALS VIEW ---
     if (view === 'deals') {
-      return await handleDealsView(req, res, headers, CRM_DB, client);
+      return await handleDealsView(req, res, headers, DEALS_DB, client);
     }
 
     // Determine month label
@@ -57,7 +61,7 @@ export default async function handler(req, res) {
         const body = { page_size: 100 };
         if (filter) body.filter = filter;
         if (cursor) body.start_cursor = cursor;
-        const r = await fetch(`https://api.notion.com/v1/databases/${CRM_DB}/query`, {
+        const r = await fetch(`https://api.notion.com/v1/databases/${DEALS_DB}/query`, {
           method: 'POST', headers, body: JSON.stringify(body),
         });
         if (!r.ok) throw new Error(`DB query error (${r.status}): ${await r.text()}`);

@@ -95,7 +95,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 <div class="grid5">
   <div class="card">
     <div class="stat"><div class="s-dot"></div>
-      <div class="s-lbl">Incoming</div>
+      <div class="s-lbl">Proposal</div>
       <div class="s-val" id="v-incoming">—</div>
       <div class="s-sub">New deals</div>
       <div class="s-tag">New</div>
@@ -103,10 +103,10 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
   </div>
   <div class="card">
     <div class="stat"><div class="s-dot"></div>
-      <div class="s-lbl">Discovery Done</div>
+      <div class="s-lbl">Negotiation</div>
       <div class="s-val" id="v-discovery">—</div>
-      <div class="s-sub">Call done</div>
-      <div class="s-tag">Scoped</div>
+      <div class="s-sub">In discussion</div>
+      <div class="s-tag">Active</div>
     </div>
   </div>
   <div class="card">
@@ -139,7 +139,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 <div class="grid3">
   <div class="card">
     <div class="stat"><div class="s-dot"></div>
-      <div class="s-lbl">Building</div>
+      <div class="s-lbl">Closed-Won</div>
       <div class="s-val" id="v-building">—</div>
       <div class="s-sub">Active installs</div>
       <div class="s-tag">In Build</div>
@@ -167,7 +167,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 <div class="grid1">
   <div class="card is-lost">
     <div class="stat"><div class="s-dot is-lost"></div>
-      <div class="s-lbl">Lost</div>
+      <div class="s-lbl">Closed-Lost</div>
       <div class="s-val is-lost" id="v-lost">—</div>
       <div class="s-sub">Did not proceed</div>
       <div class="s-tag is-lost">Closed</div>
@@ -186,15 +186,15 @@ async function loadData(){
     const r=await fetch(apiUrl('/api/data/deals'));
     const j=await r.json();
     const s=j.stages||{};
-    document.getElementById('v-incoming').textContent  = s['Incoming']         ??0;
-    document.getElementById('v-discovery').textContent = s['Discovery Done']   ??0;
+    document.getElementById('v-incoming').textContent  = s['Proposal']         ??0;
+    document.getElementById('v-discovery').textContent = s['Negotiation']      ??0;
     document.getElementById('v-proposal').textContent  = s['Proposal Sent']    ??0;
     document.getElementById('v-quotation').textContent = s['Quotation Issued'] ??0;
     document.getElementById('v-awaiting').textContent  = s['Awaiting Deposit'] ??0;
-    document.getElementById('v-building').textContent  = s['Building']         ??0;
+    document.getElementById('v-building').textContent  = s['Closed-Won']       ??0;
     document.getElementById('v-balance').textContent   = s['Balance Due']      ??0;
     document.getElementById('v-delivered').textContent = s['Delivered']        ??0;
-    document.getElementById('v-lost').textContent      = s['Lost']             ??0;
+    document.getElementById('v-lost').textContent      = s['Closed-Lost']      ??0;
     setTs();
   }catch(e){console.error('deals:',e);}
 }

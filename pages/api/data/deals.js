@@ -42,14 +42,14 @@ export default async function handler(req, res) {
     ])
 
     // ── Deals stage breakdown — dynamic via client.labels ─────────────────
-    const DEFAULT_LOST_LABEL  = "Lost"
+    const DEFAULT_LOST_LABEL  = "Closed-Lost"
 
     const DEFAULT_ALL_STAGES = [
-      "Incoming","Discovery Done","Proposal Sent","Quotation Issued","Awaiting Deposit","Building","Balance Due","Delivered","Lost",
+      "Proposal","Negotiation","Proposal Sent","Quotation Issued","Awaiting Deposit","Closed-Won","Balance Due","Delivered","Closed-Lost",
     ]
-    const DEFAULT_POTENTIAL = ["Incoming","Discovery Done","Proposal Sent","Quotation Issued","Awaiting Deposit"]
-    const DEFAULT_WON       = ["Building", "Balance Due", "Delivered"]
-    const DEFAULT_WON_LABEL  = "Building"
+    const DEFAULT_POTENTIAL = ["Proposal","Negotiation","Proposal Sent","Quotation Issued","Awaiting Deposit"]
+    const DEFAULT_WON       = ["Closed-Won", "Balance Due", "Delivered"]
+    const DEFAULT_WON_LABEL  = "Closed-Won"
     const DEFAULT_DEL_LABEL  = "Delivered"
 
     const ALL_STAGES       = client.labels?.dealAllStages       || DEFAULT_ALL_STAGES

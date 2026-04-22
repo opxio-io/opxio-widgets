@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Settings</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#191919;color:#fff;overflow-y:auto;height:100%;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.2);--muted:rgba(255,255,255,.35);}
+.top-bar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.top-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+.h-title{font-size:22px;font-weight:900;letter-spacing:-.03em;color:#fff;}
+.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Category tabs */
+.tab-bar{display:flex;gap:3px;background:rgba(255,255,255,.04);border-radius:10px;padding:4px;width:fit-content;margin-bottom:16px;flex-wrap:wrap;}
+.tab{background:transparent;border:1px solid transparent;color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:6px 16px;border-radius:7px;cursor:pointer;transition:all .15s;}
+.tab.active{background:#2d2d2d;color:#fff;border-color:rgba(255,255,255,.08);}
+.tab:hover:not(.active){color:rgba(255,255,255,.65);}
+
+/* Settings table */
+.settings-card{background:#222;border:1px solid rgba(255,255,255,.06);border-radius:16px;overflow:hidden;}
+.s-row{display:grid;grid-template-columns:220px 1fr 1fr;align-items:center;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;}
+.s-row:last-child{border-bottom:none;}
+.s-row:hover{background:rgba(255,255,255,.015);}
+.s-header{background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06)!important;}
+.s-cell{padding:14px 18px;font-size:12px;}
+.s-cell.label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.3);}
+.s-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.75);}
+.s-notes{font-size:11px;font-weight:500;color:rgba(255,255,255,.28);line-height:1.5;}
+
+/* Inline editable value */
+.s-val-wrap{position:relative;display:flex;align-items:center;gap:8px;}
+.s-input{background:transparent;border:1px solid transparent;border-radius:7px;color:#fff;font-family:'Satoshi',sans-serif;font-size:13px;font-weight:600;padding:6px 10px;width:100%;transition:all .15s;outline:none;}
+.s-input:hover{border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04);}
+.s-input:focus{border-color:var(--gb);background:rgba(170,255,0,.05);box-shadow:0 0 0 3px rgba(170,255,0,.06);}
+.s-save{display:none;background:var(--gm);border:1px solid var(--gb);color:var(--g);font-family:'Satoshi',sans-serif;font-size:10px;font-weight:700;padding:4px 10px;border-radius:6px;cursor:pointer;white-space:nowrap;transition:all .15s;flex-shrink:0;}
+.s-save:hover{background:rgba(170,255,0,.18);}
+.s-input:focus ~ .s-save,.s-input.dirty ~ .s-save{display:block;}
+
+/* Status pill */
+.s-status{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;white-space:nowrap;flex-shrink:0;}
+.s-status.saving{background:rgba(170,255,0,.1);color:var(--g);border:1px solid var(--gb);}
+.s-status.saved{background:rgba(170,255,0,.08);color:rgba(170,255,0,.7);border:1px solid rgba(170,255,0,.15);}
+.s-status.error{background:rgba(255,80,80,.1);color:#FF5050;border:1px solid rgba(255,80,80,.2);}
+
+/* Empty/loading */
+.empty{padding:48px;text-align:center;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
+
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+</style></head><body>
+
+<div class="top-bar">
+  <div>
+    <p class="eyebrow">ADMIN</p>
+    <h1 class="h-title">Settings & Configuration</h1>
+  </div>
+  <div class="top-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="tab-bar" id="tab-bar"></div>
+<div id="settings-wrap"></div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+let allData = null;
+let activeTab = null;
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function setTs(){ document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); }
+
+async function loadData(){
+  try{
+    const r = await fetch('/api/data/settings?token='+encodeURIComponent(_tok));
+    if(!r.ok) throw new Error(await r.text());
+    allData = await r.json();
+    buildTabs();
+    renderTab(activeTab || allData.categories[0]?.name);
+    setTs();
+  }catch(e){
+    document.getElementById('settings-wrap').innerHTML = `<div class="settings-card"><div class="empty">Failed to load — ${esc(e.message)}</div></div>`;
+  }
+}
+
+function buildTabs(){
+  if(!allData?.categories) return;
+  const bar = document.getElementById('tab-bar');
+  bar.innerHTML = allData.categories.map(c =>
+    `<button class="tab ${c.name===activeTab?'active':''}" onclick="renderTab('${esc(c.name)}')">${esc(c.name)}</button>`
+  ).join('');
+}
+
+function renderTab(name){
+  activeTab = name;
+  // Update tab active state
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.textContent === name));
+
+  const cat = allData?.categories?.find(c => c.name === name);
+  const wrap = document.getElementById('settings-wrap');
+  if(!cat){ wrap.innerHTML = '<div class="settings-card"><div class="empty">No settings</div></div>'; return; }
+
+  wrap.innerHTML = `
+    <div class="settings-card">
+      <div class="s-row s-header">
+        <div class="s-cell label">Setting</div>
+        <div class="s-cell label">Value</div>
+        <div class="s-cell label">Notes</div>
+      </div>
+      ${cat.settings.map(s => `
+        <div class="s-row" data-id="${esc(s.id)}">
+          <div class="s-cell"><div class="s-name">${esc(s.setting)}</div></div>
+          <div class="s-cell">
+            <div class="s-val-wrap">
+              <input class="s-input" type="text" value="${esc(s.value)}" data-original="${esc(s.value)}"
+                oninput="markDirty(this)"
+                onkeydown="handleKey(event,this)"
+                onblur="handleBlur(event,this)"/>
+              <button class="s-save" onclick="saveRow(this.closest('.s-row'))">Save</button>
+              <span class="s-status" style="display:none;"></span>
+            </div>
+          </div>
+          <div class="s-cell"><div class="s-notes">${esc(s.notes)}</div></div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function markDirty(input){
+  const orig = input.dataset.original;
+  if(input.value !== orig) input.classList.add('dirty');
+  else input.classList.remove('dirty');
+}
+
+function handleKey(e, input){
+  if(e.key === 'Enter'){ e.preventDefault(); saveRow(input.closest('.s-row')); }
+  if(e.key === 'Escape'){ input.value = input.dataset.original; input.classList.remove('dirty'); input.blur(); }
+}
+
+function handleBlur(e, input){
+  // Small delay so Save button click fires first
+  setTimeout(() => {
+    if(input.value !== input.dataset.original) saveRow(input.closest('.s-row'));
+  }, 150);
+}
+
+async function saveRow(row){
+  const input  = row.querySelector('.s-input');
+  const status = row.querySelector('.s-status');
+  const pageId = row.dataset.id.replace(/-/g,'');
+  const value  = input.value.trim();
+
+  if(value === input.dataset.original){ input.classList.remove('dirty'); return; }
+
+  // Show saving
+  status.style.display = '';
+  status.className = 's-status saving';
+  status.textContent = 'Saving…';
+
+  try{
+    const r = await fetch('/api/data/settings-update?token='+encodeURIComponent(_tok), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pageId, value }),
+    });
+    if(!r.ok) throw new Error(await r.text());
+
+    input.dataset.original = value;
+    input.classList.remove('dirty');
+    status.className = 's-status saved';
+    status.textContent = 'Saved';
+    setTimeout(() => { status.style.display = 'none'; }, 2000);
+  }catch(e){
+    status.className = 's-status error';
+    status.textContent = 'Error';
+    setTimeout(() => { status.style.display = 'none'; }, 3000);
+    console.error('settings-update:', e);
+  }
+}
+
+function doRefresh(){
+  const b = document.getElementById('rb');
+  if(b) b.classList.add('spinning');
+  loadData().finally(() => { const b2=document.getElementById('rb'); if(b2) b2.classList.remove('spinning'); });
+}
+
+loadData();
+</script>
+
+<div class="wgt-footer">Widgets by Opxio.io</div>
+</body></html>

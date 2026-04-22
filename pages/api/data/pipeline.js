@@ -47,7 +47,7 @@ export default async function handler(req, res) {
     ])
 
     // Read Base Currency from Settings DB
-    const bcRecord = settingsPages.find(p => plain(p.properties.Setting?.title || []) === "Base Currency")
+    const bcRecord = settingsPages.find(p => plain(p.properties.Setting?.title || []) === "Default Currency")
     const baseCurrency = bcRecord?.properties.Value?.rich_text?.[0]?.plain_text?.trim() || null
 
     const stages      = Object.fromEntries(ALL_STAGES.map(s => [s, 0]))

@@ -625,11 +625,12 @@ function renderFunnelInto(elId, badgeId, stages, stageOrder, lostLabels, label, 
     const isLost=(lostLabels||[]).includes(key);
     const cls=isLost?'lm-lost':'lm';
     const valStr=stageValues&&stageValues[key]?fmtRM(stageValues[key]):'';
+    const valSpan=stageValues!==null?`<span class="f-val">${valStr}</span>`:'';
     return `<div class="f-row">
       <span class="f-lbl">${esc(key)}</span>
       <div class="f-bg"><div class="f-fill ${cls}" style="width:${pct}%;"></div></div>
       <span class="f-n">${n||''}</span>
-      <span class="f-val">${valStr}</span>
+      ${valSpan}
     </div>`;
   }).join('');
 }
@@ -677,10 +678,8 @@ function renderLeadsFunnel(){
   if(!pipeData) return;
   document.getElementById('funnel-title').textContent='Leads Funnel';
   renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',null);
-  // Show pipeline value: leads potential first, fallback to deals potential value
-  const potVal=pipeData.leadsPotentialValue||(dealsData&&dealsData.potentialValue)||0;
   const fv=document.getElementById('funnel-val');
-  if(fv){ if(potVal){ fv.textContent=fmtRM(potVal); fv.style.display=''; } else fv.style.display='none'; }
+  if(fv) fv.style.display='none';
 }
 
 function renderDealsFunnelInline(){

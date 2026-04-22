@@ -677,8 +677,8 @@ function renderLeadsFunnel(){
   if(!pipeData) return;
   document.getElementById('funnel-title').textContent='Leads Funnel';
   renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',pipeData.stageValues);
-  // Show total active leads potential value in funnel sub-value
-  const potVal=pipeData.leadsPotentialValue||0;
+  // Show pipeline value: leads potential first, fallback to deals potential value
+  const potVal=pipeData.leadsPotentialValue||(dealsData&&dealsData.potentialValue)||0;
   const fv=document.getElementById('funnel-val');
   if(fv){ if(potVal){ fv.textContent=fmtRM(potVal); fv.style.display=''; } else fv.style.display='none'; }
 }

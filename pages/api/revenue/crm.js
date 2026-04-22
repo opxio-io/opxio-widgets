@@ -3,7 +3,7 @@
 // Supports ?from=YYYY-MM-DD&to=YYYY-MM-DD date filtering for revenue
 // Environment variables: NOTION_API_KEY
 
-import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
+import { getClientByToken, getNotionToken, resolveDB, resolveLabel } from "../../../lib/supabase"
 
 
 export default async function handler(req, res) {
@@ -35,7 +35,7 @@ export default async function handler(req, res) {
 
     // --- DEALS VIEW ---
     if (view === 'deals') {
-      return await handleDealsView(req, res, headers, CRM_DB);
+      return await handleDealsView(req, res, headers, CRM_DB, client);
     }
 
     // Determine month label
@@ -94,8 +94,11 @@ export default async function handler(req, res) {
       rangeEnd = `${y}-${String(m + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
     }
 
-    // Funnel stages order
-    const FUNNEL_ORDER = ['Lead', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiation'];
+    // Funnel stages — driven by client labels (dealPotentialStages)
+    const FUNNEL_ORDER = resolveLabel(client, 'dealPotentialStages', ['Lead', 'Contacted', 'Qualified', 'Proposal Sent', 'Negotiation']);
+    const WON_LABEL  = resolveLabel(client, 'dealWonLabel',  'Closed-Won');
+    const WON_STAGES = resolveLabel(client, 'dealWonStages', [WON_LABEL]);
+    const LOST_LABEL = resolveLabel(client, 'dealLostLabel', 'Closed-Lost');
     const funnelMap = {};
     FUNNEL_ORDER.forEach(s => { funnelMap[s] = { stage: s, count: 0, value: 0 }; });
 
@@ -126,20 +129,23 @@ export default async function handler(req, res) {
 
     for (const page of deals) {
       const props = page.properties;
-      const funnel     = getStatus(props['Funnel']);
+      const funnel     = getStatus(props['Funnel']) || getSelect(props['Stage']) || getSelect(props['Status']);
       const name       = getTitle(props['Name']);
-      const value      = getNumber(props['Estimated Value']);
+      const value      = getNumber(props['Estimated Value']) || getNumber(props['Deal Value (MYR)']);
       const source     = getSelect(props['Source']);
-      const followUp   = getDate(props['Next Follow-up']);
-      const lastContact = getDate(props['Last Contacted']);
-      const company    = getText(props['PIC Name']) || '';
+      const followUp   = getDate(props['Next Follow-up']) || getDate(props['Follow-up Date']);
+      const lastContact = getDate(props['Last Contacted']) || getDate(props['Last Contact']);
+      const company    = getText(props['Primary Contact']) || getText(props['PIC Name']) || '';
       const retainerPaid = getCheckbox(props['Retainer Paid (100%)']);
       const kolPaid      = getCheckbox(props['KOL/Ads Deposit Paid (50%)']);
 
       if (!funnel) continue;
 
-      // Active leads (not closed)
-      if (funnel !== 'Closed-Won' && funnel !== 'Closed-Lost') {
+      // Active deals (not won/lost)
+      const isWon  = WON_STAGES.includes(funnel);
+      const isLost = funnel === LOST_LABEL;
+
+      if (!isWon && !isLost) {
         totalActiveLeads++;
         totalPipelineValue += value;
 
@@ -176,8 +182,8 @@ export default async function handler(req, res) {
         }
       }
 
-      // Closed-Won
-      if (funnel === 'Closed-Won') {
+      // Won
+      if (isWon) {
         totalWonAllTime++;
         // Check if created/won within date range
         const created = page.created_time.slice(0, 10);
@@ -194,8 +200,8 @@ export default async function handler(req, res) {
         }
       }
 
-      // Closed-Lost
-      if (funnel === 'Closed-Lost') {
+      // Lost
+      if (isLost) {
         totalLostAllTime++;
         const created = page.created_time.slice(0, 10);
         if (created >= rangeStart && created <= rangeEnd) {
@@ -251,7 +257,7 @@ export default async function handler(req, res) {
 };
 
 // --- Deals Won/Lost handler (merged from deals.js) ---
-async function handleDealsView(req, res, headers, dbId) {
+async function handleDealsView(req, res, headers, dbId, client) {
   async function queryAll(filter) {
     let all = [], hasMore = true, cursor;
     while (hasMore) {
@@ -277,6 +283,9 @@ async function handleDealsView(req, res, headers, dbId) {
   const getText        = p => p?.type === 'rich_text' ? (p.rich_text || []).map(t => t.plain_text).join('') : '';
   const getMultiSelect = p => p?.type === 'multi_select' ? (p.multi_select || []).map(s => s.name) : [];
 
+  const WON_STAGES_D  = resolveLabel(client, 'dealWonStages',  ['Closed-Won']);
+  const LOST_LABEL_D  = resolveLabel(client, 'dealLostLabel',  'Closed-Lost');
+
   const deals = await queryAll();
   const now = new Date();
   const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
@@ -293,18 +302,18 @@ async function handleDealsView(req, res, headers, dbId) {
 
   for (const page of deals) {
     const props = page.properties;
-    const funnel = getStatus(props['Funnel']);
+    const funnel = getStatus(props['Funnel']) || getSelect(props['Stage']) || getSelect(props['Status']);
     if (!funnel) continue;
 
     const name    = getTitle(props['Name']);
-    const value   = getNumber(props['Estimated Value']);
+    const value   = getNumber(props['Estimated Value']) || getNumber(props['Deal Value (MYR)']);
     const source  = getSelect(props['Source']);
-    const company = getText(props['PIC Name']) || '';
+    const company = getText(props['Primary Contact']) || getText(props['PIC Name']) || '';
     const reasons = getMultiSelect(props['Why Not Closing?']);
     const created = new Date(page.created_time);
     const isThisMonth = created.getMonth() === currentMonth && created.getFullYear() === currentYear;
 
-    if (funnel === 'Closed-Won') {
+    if (WON_STAGES_D.includes(funnel)) {
       wonTotal++;
       wonTotalValue += value;
       if (isThisMonth) { wonThisMonth++; wonThisMonthValue += value; }
@@ -316,7 +325,7 @@ async function handleDealsView(req, res, headers, dbId) {
       }
     }
 
-    if (funnel === 'Closed-Lost') {
+    if (funnel === LOST_LABEL_D) {
       lostTotal++;
       lostTotalValue += value;
       if (isThisMonth) { lostThisMonth++; lostThisMonthValue += value; }

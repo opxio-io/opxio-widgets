@@ -254,7 +254,7 @@ async function findQuotationFromLead(leadProps, maxAgeSeconds = 180) {
 // ── Patch quotation properties (parallel) ─────────────────────────────────
 // All patches run in parallel via Promise.allSettled for speed.
 // Pass leadId OR dealId depending on source — sets the right back-relation.
-async function patchQuotationProps(quotId, { companyIds, picIds, quoteType, leadId, dealId, packageName }) {
+async function patchQuotationProps(quotId, { companyIds, picIds, quoteType, leadId, dealId, packageName, packageId }) {
   const today = new Date().toISOString().split("T")[0]
   const validUntilD = new Date(); validUntilD.setDate(validUntilD.getDate() + 30)
   const validUntil  = validUntilD.toISOString().split("T")[0]
@@ -266,7 +266,7 @@ async function patchQuotationProps(quotId, { companyIds, picIds, quoteType, lead
     "Payment Terms": { select: { name: "50% Deposit" } },
     "Status":        { select: { name: "Draft" } },
     ...(quoteType         ? { "Quote Type":   { select: { name: quoteType } } } : {}),
-    ...(packageName       ? { "Packages":     { multi_select: [{ name: packageName }] } } : {}),
+    ...(packageId         ? { "Packages":     { relation: [{ id: packageId }] } } : {}),
     ...(companyIds.length ? { "Company":      { relation: [{ id: companyIds[0] }] } } : {}),
     ...(picIds?.length    ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
   }
@@ -537,7 +537,7 @@ export default async function handler(req, res) {
         quotId = recent.id; quotUrl = recent.url; foundViaNotion = true
         console.log("[create_quotation] found quotation via lead relation:", quotId)
         const [, liDbId] = await Promise.all([
-          patchQuotationProps(quotId, { companyIds, picIds, quoteType, leadId, packageName: product?.name }),
+          patchQuotationProps(quotId, { companyIds, picIds, quoteType, leadId, packageId: product?.id, packageName: product?.name }),
           findLineItemsDB(quotId),
         ])
         await buildLineItems(quotId, liDbId)
@@ -558,7 +558,7 @@ export default async function handler(req, res) {
         quotId = recent.id; quotUrl = recent.url; foundViaNotion = true
         console.log("[create_quotation] found quotation via deal relation:", quotId)
         const [, liDbId] = await Promise.all([
-          patchQuotationProps(quotId, { companyIds, picIds, quoteType, dealId, packageName: product?.name }),
+          patchQuotationProps(quotId, { companyIds, picIds, quoteType, dealId, packageId: product?.id, packageName: product?.name }),
           findLineItemsDB(quotId),
         ])
         await buildLineItems(quotId, liDbId)

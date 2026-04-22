@@ -152,7 +152,7 @@ export default async function handler(req, res) {
       if (!isTM) continue
       leadsThisMonth++
       if (stage === "Converted") leadsConverted++
-      if (["Lost", "Ghosted", "Disqualified"].includes(stage)) leadsLost++
+      if (["Lost", "Ghosted", "Unqualified"].includes(stage)) leadsLost++
     }
 
     const convTotal = leadsConverted + leadsLost

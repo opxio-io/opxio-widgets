@@ -138,7 +138,7 @@ async function createPerson(form, companyId) {
 }
 
 async function createLead(form, companyId, personId, qualified) {
-  const stage = qualified ? "Incoming" : "Disqualified";
+  const stage = qualified ? "Incoming" : "Unqualified";
 
   const props = {
     "Lead Name": { title: [{ text: { content: form.name + " — " + form.company } }] },

@@ -70,7 +70,7 @@ body.light .s-sub.val-o{color:rgba(255,255,255,.95);opacity:1;}
 body.light .panel-title{color:rgba(255,255,255,.85);}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 .ftab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;cursor:pointer;transition:all .15s;}
-.ftab.active{background:#2d2d2d;color:#fff;border-color:rgba(255,255,255,.12);}
+.ftab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 .ftab:hover:not(.active){color:rgba(255,255,255,.6);}
 /* Funnel */
 .f-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
@@ -615,9 +615,14 @@ function refreshPipeStats(){
   if(!pipeData||!dealsData) return;
   const jp=pipeData, jd=dealsData;
   document.getElementById('d-incoming').textContent=jp.stages?.['Incoming']??jp.totalActive??'—';
-  const qualCount=jp.stages?.['Qualified']||0, qualValue=jp.stageValues?.['Qualified']||0;
+  const qualCount=jp.stages?.['Qualified']||0;
+  const totalLeads=Object.values(jp.stages||{}).reduce((s,v)=>s+v,0);
   document.getElementById('d-qualified').textContent=qualCount;
-  showSub('d-qualified-val',qualValue,fmtRM);
+  if(qualCount&&totalLeads){
+    const pct=Math.round(qualCount/totalLeads*100);
+    const el=document.getElementById('d-qualified-val');
+    el.textContent=pct+'% of all leads'; el.style.display='';
+  }
   const pipeVal=jd.potentialValue||jp.leadsPotentialValue||0;
   document.getElementById('d-pipeline').textContent=pipeVal?fmtRM(pipeVal):'—';
   document.getElementById('d-pipeline-sub').textContent=jd.potentialValue?'Pre-win deal potential':'Active lead potential';

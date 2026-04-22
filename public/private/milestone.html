@@ -47,7 +47,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .wp-tick{position:absolute;top:0;bottom:0;width:2px;transform:translateX(-50%);background:rgba(255,255,255,.18);border-radius:1px;pointer-events:none;}
 .wp-tick.wp-act{background:var(--g);box-shadow:0 0 5px rgba(170,255,0,.45);}
 /* Labels row */
-.xp-waypoints{position:relative;height:30px;}
+.xp-waypoints{position:relative;height:22px;}
 .wp-lbl{position:absolute;transform:translateX(-50%);font-size:10px;font-weight:700;color:rgba(255,255,255,.52);white-space:nowrap;background:rgba(255,255,255,.07);border-radius:3px;padding:2px 6px;line-height:1.4;}
 .wp-lbl.wp-act{color:var(--g);background:rgba(170,255,0,.1);}
 .xp-ends{display:flex;justify-content:space-between;margin-top:6px;}
@@ -372,7 +372,7 @@ async function loadData(){
         const lbl=document.createElement('div');
         lbl.className='wp-lbl'+(isAct?' wp-act':'');
         lbl.style.left=wpPct.toFixed(1)+'%';
-        lbl.style.top=(i%2===0?'0':'16px');
+        lbl.style.top='2px';
         lbl.textContent=m.targetWeight+' kg';
         wpc.appendChild(lbl);
       });

@@ -502,32 +502,55 @@ function apiUrl(p){
   const qs=params.toString(); return qs?p+'?'+qs:p;
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-let USD_RATE = 4.47; // MYR per USD — updated on load from live rate
-let curMode = 'MYR';
-async function fetchExchangeRate(){
+// ── Currency config ───────────────────────────────────────────────────────────
+const COUNTRY_CURRENCY={
+  'Malaysia':'MYR','Singapore':'SGD','Indonesia':'IDR','Philippines':'PHP',
+  'Thailand':'THB','Vietnam':'VND','Bangladesh':'BDT','India':'INR',
+  'UK':'GBP','United Kingdom':'GBP','Australia':'AUD','USA':'USD',
+  'United States':'USD','Japan':'JPY','China':'CNY','South Korea':'KRW',
+  'UAE':'AED','Saudi Arabia':'SAR','Germany':'EUR','France':'EUR',
+  'Netherlands':'EUR','Canada':'CAD','Brazil':'BRL','South Africa':'ZAR',
+};
+const CURRENCY_SYMBOL={
+  'MYR':'RM ','SGD':'S$ ','IDR':'Rp ','PHP':'₱','THB':'฿',
+  'VND':'₫','BDT':'৳','INR':'₹','GBP':'£','AUD':'A$',
+  'USD':'USD ','JPY':'¥','CNY':'¥','KRW':'₩','AED':'AED ',
+  'SAR':'SAR ','EUR':'€','CAD':'C$','BRL':'R$','ZAR':'R ',
+};
+
+let baseCurrency='MYR'; // auto-detected from dominant lead country
+let BASE_RATE=4.47;      // units of baseCurrency per 1 USD (MYR default)
+let curMode='MYR';
+
+function detectCurrency(countries){
+  if(!countries||!countries.length) return 'MYR';
+  return COUNTRY_CURRENCY[countries[0].label]||'MYR';
+}
+
+async function fetchExchangeRate(currency){
+  if(!currency||currency==='USD'){ BASE_RATE=1; return; }
   try{
-    const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=MYR');
+    const r=await fetch(`https://api.frankfurter.app/latest?from=USD&to=${currency}`);
     const d=await r.json();
-    if(d.rates?.MYR){ USD_RATE=d.rates.MYR; }
+    if(d.rates?.[currency]) BASE_RATE=d.rates[currency];
   }catch(e){ /* use fallback */ }
 }
+
 function toggleCurrency(){
-  curMode = curMode==='MYR'?'USD':'MYR';
+  curMode = curMode==='USD' ? baseCurrency : 'USD';
   document.getElementById('cur-btn').textContent=curMode;
-  // Re-render all value displays
   if(pipeData||dealsData){
     if(funnelTab==='leads') renderLeadsFunnel(); else renderDealsFunnelInline();
     renderDeals();
     if(currentView==='wl') renderWL();
     if(currentView==='sources') renderSources();
-    // Refresh pipeline stats
     refreshPipeStats();
   }
 }
 function fmtRM(n){
   if(!n) return '—';
-  const v = curMode==='USD' ? n/USD_RATE : n;
-  const sym = curMode==='USD' ? 'USD ' : 'RM ';
+  const v = curMode==='USD' ? n/BASE_RATE : n;
+  const sym = curMode==='USD' ? 'USD ' : (CURRENCY_SYMBOL[baseCurrency]||baseCurrency+' ');
   if(v>=1000000) return sym+(v/1000000).toFixed(1).replace(/\.0$/,'')+'M';
   if(v>=1000)    return sym+(v/1000).toFixed(1).replace(/\.0$/,'')+'K';
   return sym+Math.round(v).toLocaleString();
@@ -1005,6 +1028,15 @@ async function loadData(){
     const [jp,jd]=await Promise.all([rp.json(),rd.json()]);
     pipeData=jp; dealsData=jd;
 
+    // ── Auto-detect currency from dominant lead country ──────────────────────
+    const detected=detectCurrency(jp.countries||[]);
+    if(detected!==baseCurrency){
+      baseCurrency=detected;
+      curMode=detected;
+      document.getElementById('cur-btn').textContent=detected;
+      await fetchExchangeRate(detected);
+    }
+
     // ── Pipeline tab stats ──────────────────────────────────────────────────
     refreshPipeStats();
 
@@ -1026,7 +1058,7 @@ async function loadData(){
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 
 updateMonthNav();
-fetchExchangeRate().then(()=>loadData());
+loadData();
 setInterval(loadData,5*60*1000);
 
 // ── Line chart ────────────────────────────────────────────────────────────────

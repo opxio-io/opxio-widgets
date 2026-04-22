@@ -676,7 +676,7 @@ function setFunnelTab(t){
 function renderLeadsFunnel(){
   if(!pipeData) return;
   document.getElementById('funnel-title').textContent='Leads Funnel';
-  renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',pipeData.stageValues);
+  renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',null);
   // Show pipeline value: leads potential first, fallback to deals potential value
   const potVal=pipeData.leadsPotentialValue||(dealsData&&dealsData.potentialValue)||0;
   const fv=document.getElementById('funnel-val');

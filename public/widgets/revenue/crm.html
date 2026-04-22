@@ -68,7 +68,10 @@ body.light .s-sub.val-o{color:rgba(255,255,255,.95);opacity:1;}
 .panel{padding:18px 20px;display:flex;flex-direction:column;}
 .panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;}
 body.light .panel-title{color:rgba(255,255,255,.85);}
-.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);margin-left:auto;}
+.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.ftab{background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);font-family:'Satoshi',sans-serif;font-size:10px;font-weight:700;padding:3px 10px;border-radius:5px;cursor:pointer;transition:all .15s;}
+.ftab.active{background:#2d2d2d;color:#fff;border-color:rgba(255,255,255,.12);}
+.ftab:hover:not(.active){color:rgba(255,255,255,.6);}
 /* Funnel */
 .f-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;}
 .f-row:last-child{margin-bottom:0;}
@@ -248,6 +251,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
       <span class="mn-lbl" id="mn-lbl">This Month</span>
       <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>›</button>
     </div>
+    <button class="btn" id="cur-btn" onclick="toggleCurrency()" style="font-size:10px;padding:4px 10px;">MYR</button>
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg></button>
     <button class="icon-btn" onclick="toggleLight()" id="lb" title="Toggle light/dark"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></button>
   </div>
@@ -299,9 +303,13 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 
   <div class="grid-2">
     <div class="card panel">
-      <div class="panel-title">
-        Leads Funnel
+      <div class="panel-title" style="gap:6px;">
+        <span id="funnel-title">Leads Funnel</span>
         <span class="panel-badge" id="fb">—</span>
+        <div style="margin-left:auto;display:flex;gap:3px;">
+          <button class="ftab active" id="ftab-leads" onclick="setFunnelTab('leads')">Leads</button>
+          <button class="ftab" id="ftab-deals" onclick="setFunnelTab('deals')">Deals</button>
+        </div>
       </div>
       <div id="funnel"></div>
     </div>
@@ -325,21 +333,8 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
     </div>
   </div>
 
-  <!-- ── Deals Pipeline (inline) ── -->
-  <div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.22);margin:18px 0 10px;">Deals Pipeline</div>
-  <div class="grid-2">
-    <div class="card panel">
-      <div class="panel-title">
-        Deals Funnel
-        <span class="panel-badge" id="dfb">—</span>
-      </div>
-      <div id="deals-funnel"></div>
-    </div>
-    <div class="card panel">
-      <div class="panel-title">Proposals &amp; Quotations</div>
-      <div id="prop-stats"></div>
-    </div>
-  </div>
+  <!-- deals-funnel and prop-stats kept hidden for data rendering -->
+  <div style="display:none"><div id="deals-funnel"></div><div id="prop-stats"></div><span id="dfb"></span></div>
 
 </div>
 
@@ -507,11 +502,28 @@ function apiUrl(p){
   const qs=params.toString(); return qs?p+'?'+qs:p;
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+const USD_RATE = 4.47; // MYR per USD
+let curMode = 'MYR';
+function toggleCurrency(){
+  curMode = curMode==='MYR'?'USD':'MYR';
+  document.getElementById('cur-btn').textContent=curMode;
+  // Re-render all value displays
+  if(pipeData||dealsData){
+    if(funnelTab==='leads') renderLeadsFunnel(); else renderDealsFunnelInline();
+    renderDeals();
+    if(currentView==='wl') renderWL();
+    if(currentView==='sources') renderSources();
+    // Refresh pipeline stats
+    refreshPipeStats();
+  }
+}
 function fmtRM(n){
   if(!n) return '—';
-  if(n>=1000000) return 'RM '+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M';
-  if(n>=1000)    return 'RM '+(n/1000).toFixed(1).replace(/\.0$/,'')+'K';
-  return 'RM '+Math.round(n).toLocaleString();
+  const v = curMode==='USD' ? n/USD_RATE : n;
+  const sym = curMode==='USD' ? 'USD ' : 'RM ';
+  if(v>=1000000) return sym+(v/1000000).toFixed(1).replace(/\.0$/,'')+'M';
+  if(v>=1000)    return sym+(v/1000).toFixed(1).replace(/\.0$/,'')+'K';
+  return sym+Math.round(v).toLocaleString();
 }
 function showSub(id,val,fmt){
   const el=document.getElementById(id); if(!el) return;
@@ -591,10 +603,51 @@ function renderFunnelInto(elId, badgeId, stages, stageOrder, lostLabels, label, 
   }).join('');
 }
 
+// ── Pipeline stat cards (currency-aware, re-callable) ─────────────────────────
+function refreshPipeStats(){
+  if(!pipeData||!dealsData) return;
+  const jp=pipeData, jd=dealsData;
+  document.getElementById('d-incoming').textContent=jp.stages?.['Incoming']??jp.totalActive??'—';
+  const qualCount=jp.stages?.['Qualified']||0, qualValue=jp.stageValues?.['Qualified']||0;
+  document.getElementById('d-qualified').textContent=qualCount;
+  showSub('d-qualified-val',qualValue,fmtRM);
+  const pipeVal=jd.potentialValue||jp.leadsPotentialValue||0;
+  document.getElementById('d-pipeline').textContent=pipeVal?fmtRM(pipeVal):'—';
+  document.getElementById('d-pipeline-sub').textContent=jd.potentialValue?'Pre-win deal potential':'Active lead potential';
+  document.getElementById('d-deals').textContent=jd.activeDealsCount??'—';
+  document.getElementById('d-deals-sub').textContent=jd.activeWonStages?.length?jd.activeWonStages.join(' · '):'In deal pipeline';
+  showSub('d-deals-val',jd.wonValue,fmtRM);
+  const lostLeadsN=jp.thisMonthLost??0, lostDealsN=jd.lostThisMonth??0;
+  if(document.getElementById('d-lost')) document.getElementById('d-lost').textContent=lostLeadsN+lostDealsN;
+  if(document.getElementById('d-lost-sub')) document.getElementById('d-lost-sub').textContent=lostLeadsN+' lead'+(lostLeadsN!==1?'s':'')+' · '+lostDealsN+' deal'+(lostDealsN!==1?'s':'');
+  showSub('d-lost-val',(jp.lostLeadsValueThisMonth||0)+(jd.lostValueThisMonth||0),fmtRM);
+  const convLeads=jp.thisMonthLeads||0, convWon=jp.thisMonthConverted||0;
+  const convRate=convLeads>0?Math.round((convWon/convLeads)*100):null;
+  document.getElementById('d-conv').textContent=convRate!=null?convRate+'%':'—';
+  document.getElementById('d-conv-sub').textContent=convLeads>0?`${convWon}/${convLeads} leads · ${fmtMonthLbl(filterMonth)}`:fmtMonthLbl(filterMonth)+' · no leads yet';
+}
+
 // ── Pipeline tab renders ───────────────────────────────────────────────────────
+let funnelTab='leads';
+function setFunnelTab(t){
+  funnelTab=t;
+  document.getElementById('ftab-leads').classList.toggle('active',t==='leads');
+  document.getElementById('ftab-deals').classList.toggle('active',t==='deals');
+  if(t==='leads') renderLeadsFunnel();
+  else renderDealsFunnelInline();
+}
+
 function renderLeadsFunnel(){
   if(!pipeData) return;
+  document.getElementById('funnel-title').textContent='Leads Funnel';
   renderFunnelInto('funnel','fb',pipeData.stages||{},pipeData.stageOrder,pipeData.lostLabels||[pipeData.lostLabel],'leads',pipeData.stageValues);
+}
+
+function renderDealsFunnelInline(){
+  if(!dealsData) return;
+  document.getElementById('funnel-title').textContent='Deals Funnel';
+  const ds=dealsData.stages||{}, sv=dealsData.stageValues||{};
+  renderFunnelInto('funnel','fb',ds,dealsData.stageOrder,[dealsData.lostLabel||'Closed-Lost'],'deals',sv);
 }
 
 // ── Deals tab renders ─────────────────────────────────────────────────────────
@@ -941,41 +994,12 @@ async function loadData(){
     pipeData=jp; dealsData=jd;
 
     // ── Pipeline tab stats ──────────────────────────────────────────────────
-    // Incoming Leads
-    document.getElementById('d-incoming').textContent=jp.stages?.['Incoming']??jp.totalActive??'—';
-
-    // Qualified Leads (uses "Qualified" stage now)
-    const qualCount=jp.stages?.['Qualified']||0;
-    const qualValue=jp.stageValues?.['Qualified']||0;
-    document.getElementById('d-qualified').textContent=qualCount;
-    showSub('d-qualified-val',qualValue,fmtRM);
-
-    // Pipeline Value
-    const pipeVal=jd.potentialValue||jp.leadsPotentialValue||0;
-    document.getElementById('d-pipeline').textContent=pipeVal?fmtRM(pipeVal):'—';
-    document.getElementById('d-pipeline-sub').textContent=jd.potentialValue?'Pre-win deal potential':'Active lead potential';
-
-    // Active Deals
-    document.getElementById('d-deals').textContent=jd.activeDealsCount??'—';
-    document.getElementById('d-deals-sub').textContent=jd.activeWonStages?.length?jd.activeWonStages.join(' · '):'In deal pipeline';
-    showSub('d-deals-val',jd.wonValue,fmtRM);
-
-    // Lost (this month)
-    const lostLeadsN=jp.thisMonthLost??0, lostDealsN=jd.lostThisMonth??0;
-    if(document.getElementById('d-lost')) document.getElementById('d-lost').textContent=lostLeadsN+lostDealsN;
-    if(document.getElementById('d-lost-sub')) document.getElementById('d-lost-sub').textContent=lostLeadsN+' lead'+(lostLeadsN!==1?'s':'')+' · '+lostDealsN+' deal'+(lostDealsN!==1?'s':'');
-    showSub('d-lost-val',(jp.lostLeadsValueThisMonth||0)+(jd.lostValueThisMonth||0),fmtRM);
-
-    // Conv. Rate
-    const convLeads=jp.thisMonthLeads||0, convWon=jp.thisMonthConverted||0;
-    const convRate=convLeads>0?Math.round((convWon/convLeads)*100):null;
-    document.getElementById('d-conv').textContent=convRate!=null?convRate+'%':'—';
-    document.getElementById('d-conv-sub').textContent=convLeads>0?`${convWon}/${convLeads} leads · ${fmtMonthLbl(filterMonth)}`:fmtMonthLbl(filterMonth)+' · no leads yet';
+    refreshPipeStats();
 
     // ── Render all panels ───────────────────────────────────────────────────
     sourcesData=jp.sources||[];
     renderDonut(sourcesData);
-    renderLeadsFunnel();
+    if(funnelTab==='leads') renderLeadsFunnel(); else renderDealsFunnelInline();
     renderDeals();
     if(currentView==='wl') renderWL();
     if(currentView==='sources') renderSources();

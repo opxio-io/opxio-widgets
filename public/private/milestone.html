@@ -85,21 +85,27 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#090909;color:#ff
 .ac-bar-sub{font-size:8.5px;color:rgba(255,255,255,.27);margin-top:4px;}
 .rwd-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.16em;color:rgba(255,255,255,.27);margin-bottom:7px;}
 /* Ticket */
-.ticket{display:flex;background:#181818;border:1px solid rgba(255,255,255,.13);border-radius:8px;overflow:visible;position:relative;margin-bottom:7px;}
-.ticket::before,.ticket::after{content:'';position:absolute;right:calc(62px - 5.5px);width:11px;height:11px;background:#111;border-radius:50%;border:1px solid rgba(255,255,255,.1);}
-.ticket::before{top:-5.5px;}.ticket::after{bottom:-5.5px;}
-.ticket.upcoming-ticket .t-dish{filter:blur(5px);user-select:none;}
-.ticket.upcoming-ticket::before,.ticket.upcoming-ticket::after{display:none;}
-.ticket-main{flex:1;padding:9px 12px;border-right:1.5px dashed rgba(255,255,255,.11);}
-.ticket-stub{width:62px;padding:8px 7px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0;}
-.t-cat{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;margin-bottom:3px;}
+.ticket{display:flex;background:#181818;border:1px solid rgba(255,255,255,.12);border-radius:10px;overflow:visible;position:relative;margin-bottom:8px;min-height:70px;}
+.ticket::before,.ticket::after{content:'';position:absolute;right:calc(74px - 6px);width:12px;height:12px;background:#0f0f0f;border-radius:50%;border:1px solid rgba(255,255,255,.08);z-index:2;}
+.ticket::before{top:-6px;}.ticket::after{bottom:-6px;}
+.ticket.t-locked{border-color:rgba(255,50,50,.15);}
+.ticket.t-earned{border-color:rgba(170,255,0,.2);box-shadow:0 0 12px rgba(170,255,0,.06);}
+/* Locked diagonal hatching */
+.ticket.t-locked .ticket-main::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(-45deg,transparent,transparent 9px,rgba(255,40,40,.03) 9px,rgba(255,40,40,.03) 10px);pointer-events:none;}
+.ticket-main{flex:1;padding:11px 14px;border-right:2px dashed rgba(255,255,255,.08);display:flex;flex-direction:column;gap:7px;position:relative;overflow:hidden;}
+.ticket-stub{width:74px;padding:10px 8px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;flex-shrink:0;background:#131313;border-radius:0 9px 9px 0;}
+.t-hdr{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.t-cat{font-size:7px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;}
 .t-cat.main-meal{color:#FF7040;}.t-cat.dessert{color:var(--rose);}.t-cat.drinks{color:var(--blue);}.t-cat.fine-dining{color:var(--gold);}.t-cat.snack{color:#FFD232;}
-.t-dish{font-size:14px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
-.t-stub-lbl{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.28);text-align:center;line-height:1.4;}
-.t-stub-wt{font-size:13px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.58);text-align:center;line-height:1.1;}
-.t-stub-wu{font-size:7.5px;font-weight:700;color:rgba(255,255,255,.25);text-align:center;}
-.t-stub-lock{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.25);text-align:center;border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 4px;margin-top:1px;}
-.t-stub-earned{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(170,255,0,.5);text-align:center;border:1px solid rgba(170,255,0,.2);border-radius:3px;padding:1px 4px;margin-top:1px;}
+/* Status badges — on the ticket body */
+.t-badge-lock{display:inline-flex;align-items:center;gap:3px;background:rgba(255,40,40,.13);border:1px solid rgba(255,40,40,.32);border-radius:4px;padding:3px 8px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#FF4040;flex-shrink:0;}
+.t-badge-earned{display:inline-flex;align-items:center;gap:3px;background:rgba(170,255,0,.11);border:1px solid rgba(170,255,0,.32);border-radius:4px;padding:3px 8px;font-size:8px;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:var(--g);flex-shrink:0;}
+.t-dish{font-size:17px;font-weight:900;letter-spacing:-.03em;color:#fff;line-height:1.2;}
+.ticket.t-locked .t-dish{filter:blur(6px);user-select:none;opacity:.65;}
+.t-stub-lbl{font-size:6.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
+.t-stub-wt{font-size:22px;font-weight:900;letter-spacing:-.04em;color:rgba(255,255,255,.6);text-align:center;line-height:1;}
+.t-stub-wu{font-size:8px;font-weight:700;color:rgba(255,255,255,.2);text-align:center;}
+.t-stub-lock,.t-stub-earned{display:none;}
 .tba{font-size:10px;color:rgba(255,255,255,.2);font-style:italic;padding:4px 0;}
 /* Bonus strip */
 .bonus-strip{background:#0d0d07;border:1px solid rgba(255,184,0,.12);border-radius:7px;padding:10px 12px;margin-top:6px;}
@@ -244,22 +250,26 @@ function daysBadge(days,status){
 
 function ticketHtml(dish,cat,targetWeight,stageIdx,milestoneStatus){
   const catCls=CAT_CSS[cat]||'';
-  const isUpcoming=milestoneStatus==='Upcoming';
+  const isLocked=milestoneStatus==='Upcoming';
   const isEarned=milestoneStatus==='Achieved'||milestoneStatus==='Claimed';
-  const cls=isUpcoming?'upcoming-ticket':'';
-  const stubStatus=isEarned
-    ?`<div class="t-stub-earned">Earned</div>`
-    :`<div class="t-stub-lock">Locked</div>`;
-  return`<div class="ticket ${cls}">
+  const ticketCls=isLocked?'t-locked':isEarned?'t-earned':'';
+  const badge=isEarned
+    ?`<span class="t-badge-earned">✓ Earned</span>`
+    :isLocked
+    ?`<span class="t-badge-lock">🔒 Locked</span>`
+    :``;
+  return`<div class="ticket ${ticketCls}">
     <div class="ticket-main">
-      ${cat?`<div class="t-cat ${catCls}">${cat}</div>`:''}
+      <div class="t-hdr">
+        ${cat?`<span class="t-cat ${catCls}">${cat}</span>`:`<span></span>`}
+        ${badge}
+      </div>
       <div class="t-dish">${strip(dish)||'TBA'}</div>
     </div>
     <div class="ticket-stub">
       <div class="t-stub-lbl">Stage ${stageIdx+1}</div>
       <div class="t-stub-wt">${targetWeight??'—'}</div>
       <div class="t-stub-wu">kg</div>
-      ${stubStatus}
     </div>
   </div>`;
 }

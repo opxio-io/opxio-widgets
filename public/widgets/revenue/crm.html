@@ -502,8 +502,15 @@ function apiUrl(p){
   const qs=params.toString(); return qs?p+'?'+qs:p;
 }
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-const USD_RATE = 4.47; // MYR per USD
+let USD_RATE = 4.47; // MYR per USD — updated on load from live rate
 let curMode = 'MYR';
+async function fetchExchangeRate(){
+  try{
+    const r=await fetch('https://api.frankfurter.app/latest?from=USD&to=MYR');
+    const d=await r.json();
+    if(d.rates?.MYR){ USD_RATE=d.rates.MYR; }
+  }catch(e){ /* use fallback */ }
+}
 function toggleCurrency(){
   curMode = curMode==='MYR'?'USD':'MYR';
   document.getElementById('cur-btn').textContent=curMode;
@@ -1014,7 +1021,7 @@ async function loadData(){
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 
 updateMonthNav();
-loadData();
+fetchExchangeRate().then(()=>loadData());
 setInterval(loadData,5*60*1000);
 
 // ── Line chart ────────────────────────────────────────────────────────────────

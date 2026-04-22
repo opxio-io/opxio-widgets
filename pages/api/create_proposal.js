@@ -534,13 +534,8 @@ async function processProposal(sourceId) {
   const validUntil  = validUntilD.toISOString().split("T")[0]
   const situation  = plain(sourceProps.Situation?.rich_text || [])
 
-  // Add-Ons multi_select: addon names only (OS goes to OS Type, not here)
-  const addonsList = addonNames.map(n => ({ name: n }))
-
-  const VALID_OS_TYPES = new Set([
-    "Revenue OS", "Operations OS", "Marketing OS", "Finance OS",
-    "Team OS", "Retention OS", "Sales OS"
-  ])
+  // Add-Ons: relation to Catalogue (addonProducts already have .id from Catalogue lookup)
+  const addonRelIds = addonProducts.filter(Boolean).map(p => ({ id: p.id }))
 
   await patchPage(propId, {
     "Status":        { select: { name: "Draft" } },
@@ -548,13 +543,12 @@ async function processProposal(sourceId) {
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },
     "Currency":      { select: { name: currency } },
-    ...(addonsList.length                     ? { "Add-Ons":         { multi_select: addonsList } } : {}),
+    ...(addonRelIds.length                    ? { "Add-Ons":         { relation: addonRelIds } } : {}),
     ...(mainProduct?.quote_type               ? { "Quote Type":      { select:   { name: mainProduct.quote_type } } } : {}),
-    ...(VALID_OS_TYPES.has(osName)            ? { "OS Type":         { select:   { name: osName } } } : {}),
+    ...(mainProduct?.id                       ? { "OS Packages":     { relation: [{ id: mainProduct.id }] } } : {}),
     ...(companyIds.length                     ? { "Company":         { relation: [{ id: companyIds[0] }] } } : {}),
     ...(picIds.length                         ? { "Primary Contact": { relation: [{ id: picIds[0] }] } } : {}),
     ...(dealId                                ? { "Deal Source":     { relation: [{ id: dealId }] } } : {}),
-    ...(leadId                                ? { "Lead Source":     { relation: [{ id: leadId }] } } : {}),
     ...(situation                             ? { "Situation":       { rich_text: [{ text: { content: situation.slice(0, 2000) } }] } } : {}),
   }, token)
 

@@ -106,13 +106,13 @@ export default async function handler(req, res) {
     }
 
     // ── Proposals ──────────────────────────────────────────────────────────
-    const propStats = { total: proposals.length, Draft: 0, "Send Proposal": 0, Sent: 0, Accepted: 0, Rejected: 0 }
+    const propStats = { total: proposals.length, Draft: 0, "Ready to Send": 0, Sent: 0, Accepted: 0, Rejected: 0 }
     let propValue = 0
     for (const p of proposals) {
       const pr = p.properties
       const s  = pr.Status?.select?.name || ""
       if (s === "Draft")            propStats.Draft++
-      else if (s === "Send Proposal") propStats["Send Proposal"]++
+      else if (s === "Ready to Send") propStats["Ready to Send"]++
       else if (s === "Sent")        propStats.Sent++
       else if (s === "Accepted")    propStats.Accepted++
       else if (s === "Rejected")    propStats.Rejected++

@@ -13,6 +13,13 @@ function getStage(taskName) {
   return null;
 }
 
+function extractAvatar(icon) {
+  if (!icon) return null;
+  if (icon.type === 'external') return icon.external?.url || null;
+  if (icon.type === 'file')     return icon.file?.url || null;
+  return null;
+}
+
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -22,8 +29,8 @@ export default async function handler(req, res) {
   if (!token) return res.status(401).json({ error: 'Missing token' });
   const client = await getClientByToken(token);
   if (!client) return res.status(403).json({ error: 'Invalid token' });
-  const NOTION_KEY = getNotionToken(client);
-  const TASKS_DB   = resolveDB(client, 'TASKS_DB',   '3348b289e31a80dc89e1eb7ba5b49b1a');
+  const NOTION_KEY  = getNotionToken(client);
+  const TASKS_DB    = resolveDB(client, 'TASKS_DB',   '3348b289e31a80dc89e1eb7ba5b49b1a');
   const EMPLOYEE_DB = resolveDB(client, 'EMPLOYEE_DB', 'bc5b99b59468498e8a294149d6f03134');
 
   try {
@@ -47,7 +54,7 @@ export default async function handler(req, res) {
       cursor = d.has_more ? d.next_cursor : undefined;
     } while (cursor);
 
-    // 2. Load employees from Employee Hub
+    // 2. Load employees from Employee Hub (includes icon for avatar)
     const empMap = {};
     const empIdSet = new Set();
 
@@ -61,47 +68,49 @@ export default async function handler(req, res) {
           const p = emp.properties;
           empIdSet.add(emp.id);
           empMap[emp.id] = {
-            name:   p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
-            role:   p['Role']?.select?.name || '',
-            status: p['Status']?.select?.name || 'Active',
+            name:      p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
+            role:      p['Role']?.select?.name || '',
+            status:    p['Status']?.select?.name || 'Active',
+            avatarUrl: extractAvatar(emp.icon),
           };
         });
       }
     } catch (_) {}
 
-    // Collect any extra employee IDs from tasks
+    // Collect extra employee IDs from tasks
     allTasks.forEach(task => {
       (task.properties['Assigned To']?.relation || []).forEach(r => empIdSet.add(r.id));
     });
 
-    // 3. Fetch each employee page (for those not in Employee Hub)
+    // 3. Fetch individual pages for employees not in Employee Hub
     await Promise.all([...empIdSet].map(async empId => {
       if (empMap[empId]) return;
       try {
         const r = await fetch('https://api.notion.com/v1/pages/' + empId, { headers });
-        if (!r.ok) { empMap[empId] = { name: 'Unknown', role: '', status: 'Active' }; return; }
-        const p = (await r.json()).properties;
+        if (!r.ok) { empMap[empId] = { name: 'Unknown', role: '', status: 'Active', avatarUrl: null }; return; }
+        const pg = await r.json();
+        const p  = pg.properties;
         empMap[empId] = {
-          name:   p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
-          role:   p['Role']?.select?.name || '',
-          status: p['Status']?.select?.name || 'Active',
+          name:      p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
+          role:      p['Role']?.select?.name || '',
+          status:    p['Status']?.select?.name || 'Active',
+          avatarUrl: extractAvatar(pg.icon),
         };
-      } catch { empMap[empId] = { name: 'Unknown', role: '', status: 'Active' }; }
+      } catch { empMap[empId] = { name: 'Unknown', role: '', status: 'Active', avatarUrl: null }; }
     }));
 
-    // 4. Build compact task list per employee (doneDate + stage + mins)
-    // This is what the widget uses to slice any week client-side
+    // 4. Build compact task list per employee
     const empTasks = {};
     [...empIdSet].forEach(id => { empTasks[id] = []; });
 
     allTasks.forEach(task => {
-      const tp       = task.properties;
-      const status   = tp['Task Status']?.status?.name || '';
-      const taskName = tp['Task List']?.title?.map(t => t.plain_text).join('') || '';
-      const doneRaw  = tp['Task Done On']?.date?.start || null;
-      const mins     = tp['Accumulated Mins']?.number || 0;
-      const stage    = getStage(taskName);
-      if (!stage) return; // only track content stage tasks
+      const tp        = task.properties;
+      const status    = tp['Task Status']?.status?.name || '';
+      const taskName  = tp['Task List']?.title?.map(t => t.plain_text).join('') || '';
+      const doneRaw   = tp['Task Done On']?.date?.start || null;
+      const mins      = tp['Accumulated Mins']?.number || 0;
+      const stage     = getStage(taskName);
+      if (!stage) return;
       const doneDate    = doneRaw ? doneRaw.slice(0, 10) : null;
       const createdDate = (task.created_time || '').slice(0, 10);
       const isDone      = status === 'Done';
@@ -112,16 +121,25 @@ export default async function handler(req, res) {
       });
     });
 
-    // 5. Compute all-time stats (month computed server-side as reference)
+    // 5. Compute stats
     const today = new Date(); today.setHours(0,0,0,0);
-    const monthStart = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-01';
-    const lastDay    = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
-    const monthEnd   = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(lastDay).padStart(2,'0');
+    const yr = today.getFullYear(), mo = today.getMonth();
+
+    const monthStart = yr + '-' + String(mo+1).padStart(2,'0') + '-01';
+    const lastDay    = new Date(yr, mo+1, 0).getDate();
+    const monthEnd   = yr + '-' + String(mo+1).padStart(2,'0') + '-' + String(lastDay).padStart(2,'0');
+
+    const lastMo  = mo === 0 ? 11 : mo - 1;
+    const lastYr  = mo === 0 ? yr - 1 : yr;
+    const prevStart = lastYr + '-' + String(lastMo+1).padStart(2,'0') + '-01';
+    const prevLD    = new Date(lastYr, lastMo+1, 0).getDate();
+    const prevEnd   = lastYr + '-' + String(lastMo+1).padStart(2,'0') + '-' + String(prevLD).padStart(2,'0');
 
     const employees = [...empIdSet].map(id => {
       const tasks = empTasks[id];
-      const allStats    = { planning:0, shooting:0, editing:0, posting:0, totalMins:0 };
-      const monthStats  = { planning:0, shooting:0, editing:0, posting:0, mins:0 };
+      const allStats   = { planning:0, shooting:0, editing:0, posting:0, totalMins:0 };
+      const monthStats = { planning:0, shooting:0, editing:0, posting:0, mins:0 };
+      let prevTotal = 0;
 
       tasks.forEach(t => {
         if (!t.isDone) return;
@@ -131,20 +149,24 @@ export default async function handler(req, res) {
           monthStats[t.stage]++;
           monthStats.mins += t.mins;
         }
+        if (t.doneDate && t.doneDate >= prevStart && t.doneDate <= prevEnd) {
+          prevTotal++;
+        }
       });
 
       return {
         id,
         ...empMap[id],
-        tasks, // raw task list for client-side week slicing
-        allStats: { ...allStats, totalHrs: Math.round((allStats.totalMins/60)*10)/10 },
+        tasks,
+        allStats:   { ...allStats,   totalHrs: Math.round((allStats.totalMins/60)*10)/10 },
         monthStats: { ...monthStats, hrs: Math.round((monthStats.mins/60)*10)/10 },
+        prevMonthTotal: prevTotal,
       };
     }).sort((a, b) => a.name.localeCompare(b.name));
 
     return res.status(200).json({
       employees,
-      monthLabel: today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
+      monthLabel:  today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
       generatedAt: new Date().toISOString(),
     });
 

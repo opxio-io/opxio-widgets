@@ -109,11 +109,17 @@ export default async function handler(req, res) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Week boundaries (Monday to Sunday)
-    const dayOfWeek = today.getDay();
-    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const weekStart = new Date(today);
-    weekStart.setDate(today.getDate() + mondayOffset);
+    // Week boundaries — honour optional ?week_start=YYYY-MM-DD param
+    const weekStartParam = req.query.week_start;
+    let weekStart;
+    if (weekStartParam && /^\d{4}-\d{2}-\d{2}$/.test(weekStartParam)) {
+      weekStart = new Date(weekStartParam + 'T00:00:00');
+    } else {
+      const dayOfWeek = today.getDay();
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+      weekStart = new Date(today);
+      weekStart.setDate(today.getDate() + mondayOffset);
+    }
     const weekStartStr = weekStart.toISOString().slice(0, 10);
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
@@ -236,12 +242,4 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       employees,
-      weekLabel: `${weekStartStr} – ${weekEndStr}`,
-      monthLabel: `${today.toLocaleString('en', { month: 'long' })} ${today.getFullYear()}`,
-      generatedAt: new Date().toISOString(),
-    });
-
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-};
+      weekLabel: `${weekStartStr} 

@@ -1,12 +1,9 @@
-// Vercel Serverless Function — Employee Stats
-// Queries Tasks DB only (already shared with integration),
-// fetches individual employee pages by ID, groups stats per employee.
-// Groups task counts by content stage (Planning / Shooting / Editing / Posting)
-// based on the Task List name property.
+// Vercel Serverless Function - Employee Stats
+// Returns per-employee task data with raw task list so the widget
+// can slice any week client-side without re-fetching.
 
 import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
 
-// Stage detection — match against Task List name
 function getStage(taskName) {
   const n = (taskName || '').toLowerCase();
   if (n.includes('planning'))  return 'planning';
@@ -21,42 +18,41 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  const token = req.query.token || req.headers['x-widget-token']
-  if (!token) return res.status(401).json({ error: 'Missing token' })
-  const client = await getClientByToken(token)
-  if (!client) return res.status(403).json({ error: 'Invalid token' })
-  const NOTION_KEY = getNotionToken(client)
-  const TASKS_DB = resolveDB(client, 'TASKS_DB', '3348b289e31a80dc89e1eb7ba5b49b1a')
-  const EMPLOYEE_DB = resolveDB(client, 'EMPLOYEE_DB', 'bc5b99b59468498e8a294149d6f03134')
+  const token = req.query.token || req.headers['x-widget-token'];
+  if (!token) return res.status(401).json({ error: 'Missing token' });
+  const client = await getClientByToken(token);
+  if (!client) return res.status(403).json({ error: 'Invalid token' });
+  const NOTION_KEY = getNotionToken(client);
+  const TASKS_DB   = resolveDB(client, 'TASKS_DB',   '3348b289e31a80dc89e1eb7ba5b49b1a');
+  const EMPLOYEE_DB = resolveDB(client, 'EMPLOYEE_DB', 'bc5b99b59468498e8a294149d6f03134');
 
   try {
-
     const headers = {
-      'Authorization': `Bearer ${NOTION_KEY}`,
+      'Authorization': 'Bearer ' + NOTION_KEY,
       'Notion-Version': '2022-06-28',
       'Content-Type': 'application/json',
     };
 
-    // ── 1. Fetch all tasks (paginate) ──────────────────────────────
+    // 1. Fetch all tasks (paginated)
     let allTasks = [], cursor;
     do {
       const body = { page_size: 100 };
       if (cursor) body.start_cursor = cursor;
-      const r = await fetch(`https://api.notion.com/v1/databases/${TASKS_DB}/query`, {
+      const r = await fetch('https://api.notion.com/v1/databases/' + TASKS_DB + '/query', {
         method: 'POST', headers, body: JSON.stringify(body),
       });
-      if (!r.ok) throw new Error(`Tasks query failed: ${await r.text()}`);
+      if (!r.ok) throw new Error('Tasks query failed: ' + await r.text());
       const d = await r.json();
       allTasks = allTasks.concat(d.results);
       cursor = d.has_more ? d.next_cursor : undefined;
     } while (cursor);
 
-    // ── 2. Try to load all employees from Employee Hub ──────────────
+    // 2. Load employees from Employee Hub
     const empMap = {};
     const empIdSet = new Set();
 
     try {
-      const empRes = await fetch(`https://api.notion.com/v1/databases/${EMPLOYEE_DB}/query`, {
+      const empRes = await fetch('https://api.notion.com/v1/databases/' + EMPLOYEE_DB + '/query', {
         method: 'POST', headers, body: JSON.stringify({ page_size: 100 }),
       });
       if (empRes.ok) {
@@ -67,182 +63,86 @@ export default async function handler(req, res) {
           empMap[emp.id] = {
             name:   p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
             role:   p['Role']?.select?.name || '',
-            dept:   p['Department']?.select?.name || '',
             status: p['Status']?.select?.name || 'Active',
-            email:  p['Email']?.email || '',
-            phone:  p['Phone']?.phone_number || '',
           };
         });
       }
-    } catch (_) { /* Fall back to task-derived list */ }
+    } catch (_) {}
 
-    // Also collect any employee IDs found in tasks
+    // Collect any extra employee IDs from tasks
     allTasks.forEach(task => {
-      const assigned = task.properties['Assigned To']?.relation || [];
-      assigned.forEach(r => empIdSet.add(r.id));
+      (task.properties['Assigned To']?.relation || []).forEach(r => empIdSet.add(r.id));
     });
 
-    // ── 3. Fetch each employee page ────────────────────────────────
+    // 3. Fetch each employee page (for those not in Employee Hub)
     await Promise.all([...empIdSet].map(async empId => {
+      if (empMap[empId]) return;
       try {
-        const r = await fetch(`https://api.notion.com/v1/pages/${empId}`, { headers });
-        if (!r.ok) {
-          empMap[empId] = { name: 'Unknown', role: '', dept: '', status: 'Active', email: '', phone: '' };
-          return;
-        }
+        const r = await fetch('https://api.notion.com/v1/pages/' + empId, { headers });
+        if (!r.ok) { empMap[empId] = { name: 'Unknown', role: '', status: 'Active' }; return; }
         const p = (await r.json()).properties;
         empMap[empId] = {
           name:   p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
           role:   p['Role']?.select?.name || '',
-          dept:   p['Department']?.select?.name || '',
           status: p['Status']?.select?.name || 'Active',
-          email:  p['Email']?.email || '',
-          phone:  p['Phone']?.phone_number || '',
-          tasks:  [],
         };
-      } catch {
-        empMap[empId] = { name: 'Unknown', role: '', dept: '', status: 'Active', email: '', phone: '', tasks: [] };
-      }
+      } catch { empMap[empId] = { name: 'Unknown', role: '', status: 'Active' }; }
     }));
 
-    // ── 4. Bucket tasks per employee ───────────────────────────────
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    // Week boundaries — honour optional ?week_start=YYYY-MM-DD param
-    const weekStartParam = req.query.week_start;
-    let weekStart;
-    if (weekStartParam && /^\d{4}-\d{2}-\d{2}$/.test(weekStartParam)) {
-      weekStart = new Date(weekStartParam + 'T00:00:00');
-    } else {
-      const dayOfWeek = today.getDay();
-      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-      weekStart = new Date(today);
-      weekStart.setDate(today.getDate() + mondayOffset);
-    }
-    const weekStartStr = weekStart.toISOString().slice(0, 10);
-    const weekEnd = new Date(weekStart);
-    weekEnd.setDate(weekStart.getDate() + 6);
-    const weekEndStr = weekEnd.toISOString().slice(0, 10);
-
-    // Month boundaries
-    const monthStart = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-01`;
-    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
-    const monthEnd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
-
-    const emptyStages = () => ({ planning: 0, shooting: 0, editing: 0, posting: 0 });
-    const emptyStats = () => ({
-      done: 0, inProgress: 0, pendingQC: 0, reviewNeeded: 0,
-      notStarted: 0, overdue: 0, dueToday: 0, totalMins: 0, total: 0,
-      ...emptyStages(),
-    });
-
-    const statsMap = {};
-    [...empIdSet].forEach(id => {
-      statsMap[id] = {
-        all:   emptyStats(),
-        week:  { done: 0, total: 0, mins: 0, ...emptyStages() },
-        month: { done: 0, total: 0, mins: 0, ...emptyStages() },
-      };
-    });
+    // 4. Build compact task list per employee (doneDate + stage + mins)
+    // This is what the widget uses to slice any week client-side
+    const empTasks = {};
+    [...empIdSet].forEach(id => { empTasks[id] = []; });
 
     allTasks.forEach(task => {
-      const tp = task.properties;
-      const taskStatus  = tp['Task Status']?.status?.name || '';
-      const taskName    = tp['Task List']?.title?.map(t => t.plain_text).join('') || '';
-      const dueRaw      = tp['Task Due']?.date?.start || null;
-      const accMins     = tp['Accumulated Mins']?.number || 0;
-      const doneRaw     = tp['Task Done On']?.date?.start || null;
-      const assigned    = tp['Assigned To']?.relation || [];
-      const stage       = getStage(taskName);
-
+      const tp       = task.properties;
+      const status   = tp['Task Status']?.status?.name || '';
+      const taskName = tp['Task List']?.title?.map(t => t.plain_text).join('') || '';
+      const doneRaw  = tp['Task Done On']?.date?.start || null;
+      const mins     = tp['Accumulated Mins']?.number || 0;
+      const stage    = getStage(taskName);
+      if (!stage) return; // only track content stage tasks
       const doneDate = doneRaw ? doneRaw.slice(0, 10) : null;
+      const isDone   = status === 'Done';
 
-      assigned.forEach(({ id: empId }) => {
-        if (!statsMap[empId]) return;
-        const s = statsMap[empId].all;
-        const w = statsMap[empId].week;
-        const m = statsMap[empId].month;
-
-        // All-time stats
-        s.total++;
-        s.totalMins += accMins;
-
-        if      (taskStatus === 'Done')               s.done++;
-        else if (taskStatus === 'In progress')        s.inProgress++;
-        else if (taskStatus === 'Pending QC Review')  s.pendingQC++;
-        else if (taskStatus === 'Review Needed')      s.reviewNeeded++;
-        else                                          s.notStarted++;
-
-        if (dueRaw && taskStatus !== 'Done') {
-          const due = new Date(dueRaw); due.setHours(0,0,0,0);
-          if      (due < today)                       s.overdue++;
-          else if (due.getTime() === today.getTime()) s.dueToday++;
-        }
-
-        // All-time content stage counts (done tasks only)
-        if (taskStatus === 'Done' && stage) s[stage]++;
-
-        // Weekly content stage counts (by done date)
-        if (doneDate && doneDate >= weekStartStr && doneDate <= weekEndStr) {
-          w.done++;
-          w.mins += accMins;
-          if (stage) w[stage]++;
-        }
-        if (dueRaw) {
-          const dueStr = dueRaw.slice(0, 10);
-          if (dueStr >= weekStartStr && dueStr <= weekEndStr) w.total++;
-        }
-
-        // Monthly content stage counts (by done date)
-        if (doneDate && doneDate >= monthStart && doneDate <= monthEnd) {
-          m.done++;
-          m.mins += accMins;
-          if (stage) m[stage]++;
-        }
-        if (dueRaw) {
-          const dueStr = dueRaw.slice(0, 10);
-          if (dueStr >= monthStart && dueStr <= monthEnd) m.total++;
-        }
+      (tp['Assigned To']?.relation || []).forEach(({ id: empId }) => {
+        if (!empTasks[empId]) return;
+        empTasks[empId].push({ stage, doneDate, mins, isDone });
       });
     });
 
-    // ── 5. Build result array ──────────────────────────────────────
+    // 5. Compute all-time stats (month computed server-side as reference)
+    const today = new Date(); today.setHours(0,0,0,0);
+    const monthStart = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-01';
+    const lastDay    = new Date(today.getFullYear(), today.getMonth()+1, 0).getDate();
+    const monthEnd   = today.getFullYear() + '-' + String(today.getMonth()+1).padStart(2,'0') + '-' + String(lastDay).padStart(2,'0');
+
     const employees = [...empIdSet].map(id => {
-      const s = statsMap[id].all;
-      const w = statsMap[id].week;
-      const m = statsMap[id].month;
+      const tasks = empTasks[id];
+      const allStats    = { planning:0, shooting:0, editing:0, posting:0, totalMins:0 };
+      const monthStats  = { planning:0, shooting:0, editing:0, posting:0, mins:0 };
+
+      tasks.forEach(t => {
+        if (!t.isDone) return;
+        allStats[t.stage]++;
+        allStats.totalMins += t.mins;
+        if (t.doneDate && t.doneDate >= monthStart && t.doneDate <= monthEnd) {
+          monthStats[t.stage]++;
+          monthStats.mins += t.mins;
+        }
+      });
+
       return {
         id,
         ...empMap[id],
-        stats: {
-          ...s,
-          totalHrs: Math.round((s.totalMins / 60) * 10) / 10,
-        },
-        week: {
-          done:     w.done,
-          due:      w.total,
-          hrs:      Math.round((w.mins / 60) * 10) / 10,
-          planning: w.planning,
-          shooting: w.shooting,
-          editing:  w.editing,
-          posting:  w.posting,
-        },
-        month: {
-          done:     m.done,
-          due:      m.total,
-          hrs:      Math.round((m.mins / 60) * 10) / 10,
-          planning: m.planning,
-          shooting: m.shooting,
-          editing:  m.editing,
-          posting:  m.posting,
-        },
+        tasks, // raw task list for client-side week slicing
+        allStats: { ...allStats, totalHrs: Math.round((allStats.totalMins/60)*10)/10 },
+        monthStats: { ...monthStats, hrs: Math.round((monthStats.mins/60)*10)/10 },
       };
     }).sort((a, b) => a.name.localeCompare(b.name));
 
     return res.status(200).json({
       employees,
-      weekLabel: weekStartStr + ' - ' + weekEndStr,
       monthLabel: today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
       generatedAt: new Date().toISOString(),
     });
@@ -250,4 +150,4 @@ export default async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
-};
+}

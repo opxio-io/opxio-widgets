@@ -57,8 +57,10 @@ export default async function handler(req, res) {
     const taskPage = await taskRes.json();
     const props = taskPage.properties;
 
-    const taskName    = props['Task List']?.title?.map(t => t.plain_text).join('') || '';
-    const now         = new Date().toISOString();
+    const taskName     = props['Task List']?.title?.map(t => t.plain_text).join('') || '';
+    const now          = new Date().toISOString();
+    const isEditing    = /editing/i.test(taskName);
+    const isPosting    = /posting/i.test(taskName);
 
     // ── START TASK ────────────────────────────────────────────────────────────
     if (action === 'start') {
@@ -130,8 +132,16 @@ export default async function handler(req, res) {
 
     // ── SUBMIT QC ─────────────────────────────────────────────────────────────
     if (action === 'submit_qc') {
-      if (/posting/i.test(taskName)) {
+      if (isPosting) {
         return actionError(taskPageId, 'Content Posting does not need to submit for review. Use Complete Task instead.');
+      }
+
+      // Content Editing requires Telegram Preview link before submitting QC
+      if (isEditing) {
+        const telegramLink = props['Telegram Preview']?.url || '';
+        if (!telegramLink.trim()) {
+          return actionError(taskPageId, `Cannot submit QC for "${taskName}" — Telegram Preview link is required. Please add the link before submitting.`);
+        }
       }
 
       const startedOnRaw  = props['Task Started On']?.date?.start || null;
@@ -167,6 +177,18 @@ export default async function handler(req, res) {
         return actionError(taskPageId, `"${taskName}" is not in Pending QC Review (currently: "${currentStatus}"). Cannot approve.`);
       }
 
+      // Content Editing: QC approved → Upload Link (not Done yet — upload required first)
+      if (isEditing) {
+        await patch(taskPageId, { 'Task Status': { status: { name: 'Upload Link' } } });
+        await clearActionMessage(taskPageId);
+        return res.status(200).json({
+          success: true, action,
+          message: `"${taskName}" QC approved — status set to Upload Link. Add the Post-Production link to complete the task.`,
+          task: taskName, approvedAt: now, newStatus: 'Upload Link',
+        });
+      }
+
+      // All other tasks: proceed with normal cascade
       let nextTask = null;
       if (contentId && currentOrder !== null) {
         try {
@@ -181,7 +203,7 @@ export default async function handler(req, res) {
         } catch (e) { console.error('Cascade check (non-fatal):', e.message); }
       }
 
-      const isLastTask   = contentId && currentOrder !== null && nextTask === null;
+      const isLastTask    = contentId && currentOrder !== null && nextTask === null;
       const newTaskStatus = isLastTask ? 'Ready for Posting' : 'Done';
 
       await patch(taskPageId, { 'Task Status': { status: { name: newTaskStatus } } });
@@ -213,17 +235,26 @@ export default async function handler(req, res) {
 
     // ── COMPLETE TASK ─────────────────────────────────────────────────────────
     if (action === 'complete') {
-      const isPostingTask = /posting/i.test(taskName);
+      const currentStatus = props['Task Status']?.status?.name || '';
 
-      // Non-posting tasks must go through QC — block direct completion
-      if (!isPostingTask) {
+      // Content Editing: must be in Upload Link status and have Post-Production link
+      if (isEditing) {
+        if (currentStatus !== 'Upload Link') {
+          return actionError(taskPageId, `"${taskName}" cannot be completed yet — it must go through QC review and be approved first.`);
+        }
+        const postProdLink = props['Post-Production']?.url || '';
+        if (!postProdLink.trim()) {
+          return actionError(taskPageId, `Cannot complete "${taskName}" — Post-Production link is required. Please add the upload link before marking as done.`);
+        }
+      } else if (!isPosting) {
+        // Non-posting, non-editing tasks must go through QC
         return actionError(taskPageId, `"${taskName}" cannot be completed directly. All tasks must go through QC review first — use Submit for QC.`);
-      }
-
-      // Posting task: require posting link before completing
-      const postingLink = props['Posting Link']?.url || null;
-      if (!postingLink?.trim()) {
-        return actionError(taskPageId, `Cannot complete "${taskName}" — make sure the Posting Link has been filled before marking as done.`);
+      } else {
+        // Posting task: require posting link
+        const postingLink = props['Posting Link']?.url || null;
+        if (!postingLink?.trim()) {
+          return actionError(taskPageId, `Cannot complete "${taskName}" — make sure the Posting Link has been filled before marking as done.`);
+        }
       }
 
       const startedOnRaw     = props['Task Started On']?.date?.start || null;
@@ -304,7 +335,6 @@ export default async function handler(req, res) {
     });
   }
 
-  // Write error to Action Message field and return 200 (Notion shows success, user sees message on page)
   async function actionError(pageId, message) {
     try {
       await patch(pageId, {
@@ -314,7 +344,6 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: false, message });
   }
 
-  // Clear Action Message on successful action so it doesn't linger
   async function clearActionMessage(pageId) {
     try {
       await patch(pageId, { 'Action Message': { rich_text: [] } });

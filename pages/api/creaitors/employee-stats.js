@@ -1,16 +1,26 @@
 // Vercel Serverless Function — Employee Stats
 // Queries Tasks DB only (already shared with integration),
 // fetches individual employee pages by ID, groups stats per employee.
+// Groups task counts by content stage (Planning / Shooting / Editing / Posting)
+// based on the Task List name property.
 
 import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
 
+// Stage detection — match against Task List name
+function getStage(taskName) {
+  const n = (taskName || '').toLowerCase();
+  if (n.includes('planning'))  return 'planning';
+  if (n.includes('shooting'))  return 'shooting';
+  if (n.includes('editing'))   return 'editing';
+  if (n.includes('posting'))   return 'posting';
+  return null;
+}
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   if (req.method === 'OPTIONS') return res.status(200).end();
 
-  // Token auth: resolves per-client Notion key from Supabase (no env var per client)
   const token = req.query.token || req.headers['x-widget-token']
   if (!token) return res.status(401).json({ error: 'Missing token' })
   const client = await getClientByToken(token)
@@ -41,7 +51,7 @@ export default async function handler(req, res) {
       cursor = d.has_more ? d.next_cursor : undefined;
     } while (cursor);
 
-    // ── 2. Try to load all employees from Employee Hub (if shared) ──
+    // ── 2. Try to load all employees from Employee Hub ──────────────
     const empMap = {};
     const empIdSet = new Set();
 
@@ -64,9 +74,9 @@ export default async function handler(req, res) {
           };
         });
       }
-    } catch (_) { /* Employee Hub not shared yet — will fall back to task-derived list */ }
+    } catch (_) { /* Fall back to task-derived list */ }
 
-    // Also collect any employee IDs found in tasks (catches employees not in hub)
+    // Also collect any employee IDs found in tasks
     allTasks.forEach(task => {
       const assigned = task.properties['Assigned To']?.relation || [];
       assigned.forEach(r => empIdSet.add(r.id));
@@ -100,12 +110,11 @@ export default async function handler(req, res) {
     today.setHours(0, 0, 0, 0);
 
     // Week boundaries (Monday to Sunday)
-    const dayOfWeek = today.getDay(); // 0=Sun, 1=Mon...
+    const dayOfWeek = today.getDay();
     const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
     const weekStart = new Date(today);
     weekStart.setDate(today.getDate() + mondayOffset);
     const weekStartStr = weekStart.toISOString().slice(0, 10);
-
     const weekEnd = new Date(weekStart);
     weekEnd.setDate(weekStart.getDate() + 6);
     const weekEndStr = weekEnd.toISOString().slice(0, 10);
@@ -115,31 +124,33 @@ export default async function handler(req, res) {
     const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
     const monthEnd = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
 
+    const emptyStages = () => ({ planning: 0, shooting: 0, editing: 0, posting: 0 });
     const emptyStats = () => ({
       done: 0, inProgress: 0, pendingQC: 0, reviewNeeded: 0,
       notStarted: 0, overdue: 0, dueToday: 0, totalMins: 0, total: 0,
+      ...emptyStages(),
     });
 
     const statsMap = {};
     [...empIdSet].forEach(id => {
       statsMap[id] = {
-        all: emptyStats(),
-        week: { done: 0, started: 0, total: 0, mins: 0 },
-        month: { done: 0, started: 0, total: 0, mins: 0 },
+        all:   emptyStats(),
+        week:  { done: 0, total: 0, mins: 0, ...emptyStages() },
+        month: { done: 0, total: 0, mins: 0, ...emptyStages() },
       };
     });
 
     allTasks.forEach(task => {
       const tp = task.properties;
-      const taskStatus = tp['Task Status']?.status?.name || '';
-      const dueRaw     = tp['Task Due']?.date?.start || null;
-      const accMins    = tp['Accumulated Mins']?.number || 0;
-      const doneRaw    = tp['Task Done On']?.date?.start || null;
-      const startedRaw = tp['Task Started On']?.date?.start || null;
-      const assigned   = tp['Assigned To']?.relation || [];
+      const taskStatus  = tp['Task Status']?.status?.name || '';
+      const taskName    = tp['Task List']?.title?.map(t => t.plain_text).join('') || '';
+      const dueRaw      = tp['Task Due']?.date?.start || null;
+      const accMins     = tp['Accumulated Mins']?.number || 0;
+      const doneRaw     = tp['Task Done On']?.date?.start || null;
+      const assigned    = tp['Assigned To']?.relation || [];
+      const stage       = getStage(taskName);
 
-      const doneDate    = doneRaw ? doneRaw.slice(0, 10) : null;
-      const startedDate = startedRaw ? startedRaw.slice(0, 10) : null;
+      const doneDate = doneRaw ? doneRaw.slice(0, 10) : null;
 
       assigned.forEach(({ id: empId }) => {
         if (!statsMap[empId]) return;
@@ -147,6 +158,7 @@ export default async function handler(req, res) {
         const w = statsMap[empId].week;
         const m = statsMap[empId].month;
 
+        // All-time stats
         s.total++;
         s.totalMins += accMins;
 
@@ -158,31 +170,29 @@ export default async function handler(req, res) {
 
         if (dueRaw && taskStatus !== 'Done') {
           const due = new Date(dueRaw); due.setHours(0,0,0,0);
-          if      (due < today)                      s.overdue++;
+          if      (due < today)                       s.overdue++;
           else if (due.getTime() === today.getTime()) s.dueToday++;
         }
 
-        // Weekly stats (tasks done or started this week)
+        // All-time content stage counts (done tasks only)
+        if (taskStatus === 'Done' && stage) s[stage]++;
+
+        // Weekly content stage counts (by done date)
         if (doneDate && doneDate >= weekStartStr && doneDate <= weekEndStr) {
           w.done++;
           w.mins += accMins;
+          if (stage) w[stage]++;
         }
-        if (startedDate && startedDate >= weekStartStr && startedDate <= weekEndStr) {
-          w.started++;
-        }
-        // Count tasks due this week as "this week's total"
         if (dueRaw) {
           const dueStr = dueRaw.slice(0, 10);
           if (dueStr >= weekStartStr && dueStr <= weekEndStr) w.total++;
         }
 
-        // Monthly stats
+        // Monthly content stage counts (by done date)
         if (doneDate && doneDate >= monthStart && doneDate <= monthEnd) {
           m.done++;
           m.mins += accMins;
-        }
-        if (startedDate && startedDate >= monthStart && startedDate <= monthEnd) {
-          m.started++;
+          if (stage) m[stage]++;
         }
         if (dueRaw) {
           const dueStr = dueRaw.slice(0, 10);
@@ -204,16 +214,22 @@ export default async function handler(req, res) {
           totalHrs: Math.round((s.totalMins / 60) * 10) / 10,
         },
         week: {
-          done: w.done,
-          started: w.started,
-          due: w.total,
-          hrs: Math.round((w.mins / 60) * 10) / 10,
+          done:     w.done,
+          due:      w.total,
+          hrs:      Math.round((w.mins / 60) * 10) / 10,
+          planning: w.planning,
+          shooting: w.shooting,
+          editing:  w.editing,
+          posting:  w.posting,
         },
         month: {
-          done: m.done,
-          started: m.started,
-          due: m.total,
-          hrs: Math.round((m.mins / 60) * 10) / 10,
+          done:     m.done,
+          due:      m.total,
+          hrs:      Math.round((m.mins / 60) * 10) / 10,
+          planning: m.planning,
+          shooting: m.shooting,
+          editing:  m.editing,
+          posting:  m.posting,
         },
       };
     }).sort((a, b) => a.name.localeCompare(b.name));

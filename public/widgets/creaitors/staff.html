@@ -49,7 +49,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 .tbl tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;}
 .tbl tbody tr:last-child{border-bottom:none;}
 .tbl tbody tr:hover{background:rgba(255,255,255,.02);}
-.tbl td{padding:8px 14px;text-align:center;vertical-align:middle;}
+.tbl td{padding:8px 14px;text-align:center;vertical-align:top;}
 .tbl td:first-child{text-align:left;}
 .tbl tfoot tr{border-top:1px solid rgba(255,255,255,.06);}
 .tbl tfoot td{padding:8px 14px;text-align:center;font-size:15px;font-weight:900;color:rgba(255,255,255,.5);}
@@ -131,6 +131,36 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 .mc.team-card .wkf-tot{color:var(--g);}
 .wkf-tasks{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-right:2px;}
 .wkf-time{font-size:10px;font-weight:700;color:rgba(255,255,255,.25);margin-left:auto;}
+
+/* Yearly card - self-proportion bars */
+.yr-body{padding:12px 14px 8px;}
+.yr-row{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.yr-row:last-child{margin-bottom:0;}
+.yr-lbl{font-size:9px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;width:52px;flex-shrink:0;}
+.yr-lbl.pln{color:rgba(96,165,250,.8);}
+.yr-lbl.sht{color:rgba(245,158,11,.8);}
+.yr-lbl.edt{color:rgba(192,132,252,.8);}
+.yr-lbl.pst{color:rgba(170,255,0,.8);}
+.yr-track{flex:1;height:3px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;}
+.yr-fill{height:100%;border-radius:999px;transition:width .5s ease;}
+.yr-fill.pln{background:#60A5FA;}.yr-fill.sht{background:#F59E0B;}.yr-fill.edt{background:#C084FC;}.yr-fill.pst{background:#AAFF00;}
+.yr-val{font-size:14px;font-weight:900;letter-spacing:-.5px;width:24px;text-align:right;flex-shrink:0;}
+.yv-pln{color:#60A5FA;}.yv-sht{color:#F59E0B;}.yv-edt{color:#C084FC;}.yv-pst{color:#AAFF00;}.yv-zero{color:rgba(255,255,255,.1);font-size:12px;}
+.yr-foot{display:flex;align-items:center;gap:5px;padding:8px 14px;border-top:1px solid rgba(255,255,255,.05);}
+.yr-year{font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.yr-tot{font-size:20px;font-weight:900;letter-spacing:-.8px;color:rgba(255,255,255,.8);margin-left:4px;line-height:1;}
+.mc.team-card .yr-tot{color:var(--g);}
+.yr-tasks{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);}
+.yr-hrs{font-size:10px;font-weight:700;color:rgba(255,255,255,.25);margin-left:auto;}
+
+/* Monthly compact stage breakdown pills */
+.stg-break{margin-top:3px;display:flex;flex-wrap:wrap;gap:2px;justify-content:center;line-height:1.3;}
+.stg-pip{font-size:8px;font-weight:800;letter-spacing:.02em;}
+.sp-pln{color:rgba(96,165,250,.65);}
+.sp-sht{color:rgba(245,158,11,.65);}
+.sp-edt{color:rgba(192,132,252,.65);}
+.sp-pst{color:rgba(170,255,0,.65);}
+.sp-sep{color:rgba(255,255,255,.12);}
 
 /* Team week 2x2 grid */
 .team-wk-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04);flex:1;}
@@ -273,6 +303,37 @@ function mkWeekCard(e,wkS,lastS,maxV,kc){
     +'</div></div>';
 }
 
+/* ── YEARLY CARD (self-proportion bars) ── */
+function mkYearCard(e,ys,teamAvg,isTeam){
+  var tot=(ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0);
+  var kc=isTeam?'':kpiClass(tot,teamAvg||0);
+  var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
+  var rows='';
+  STAGES.forEach(function(st){
+    var v=ys[st.k]||0;
+    var pct=tot>0?Math.min(100,Math.round((v/tot)*100)):0;
+    rows+='<div class="yr-row">'
+      +'<span class="yr-lbl '+st.c+'">'+st.l+'</span>'
+      +'<div class="yr-track"><div class="yr-fill '+st.c+'" style="width:'+pct+'%"></div></div>'
+      +'<span class="yr-val '+(v?'yv-'+st.c:'yv-zero')+'">'+(v||'&mdash;')+'</span>'
+      +'</div>';
+  });
+  var cls='mc'+(isTeam?' team-card':'');
+  return '<div class="'+cls+'">'
+    +'<div class="mc-hdr">'+avHtml(e,kc,36)
+    +'<div class="mc-info"><div class="mc-name">'+esc(e.name||'')+'</div>'
+    +(e.role?'<div class="mc-role">'+esc(e.role)+'</div>':'')
+    +(kc&&!isTeam?'<div class="kpi-tag '+kc+'" style="margin-top:3px">'+kpiLabel(tot,teamAvg||0)+'</div>':'')
+    +'</div></div>'
+    +'<div class="yr-body">'+rows+'</div>'
+    +'<div class="yr-foot">'
+    +'<span class="yr-year">'+new Date().getFullYear()+'</span>'
+    +'<span class="yr-tot">'+tot+'</span>'
+    +'<span class="yr-tasks">tasks</span>'
+    +(ys.hrs?'<span class="yr-hrs">'+fmtH(ys.hrs)+'</span>':'')
+    +'</div></div>';
+}
+
 /* ── TEAM WEEK CARD ── */
 function mkTeamWeekCard(wkS,lastS,wkLabel,activeCount,teamHrs){
   var thisTot=(wkS.planning||0)+(wkS.shooting||0)+(wkS.editing||0)+(wkS.posting||0);
@@ -392,7 +453,17 @@ function renderCompact(emps,data){
       +'<div class="kpi-tag '+kc+'">'+kpiLabel(dispTot,teamAvg)+'</div>'
       +'</div></div></td>';
     if(hasMth){
-      weeks.forEach(function(wk){var s=sliceWeek(e.tasks||[],wk.off);var wt=(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);h+='<td><span class="cn '+(wt?'cn-tot':'cn-zero')+'">'+(wt||'&mdash;')+'</span></td>';});
+      weeks.forEach(function(wk){
+        var s=sliceWeek(e.tasks||[],wk.off);
+        var wt=(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);
+        var brk='';
+        if(wt>0){
+          var SMAP=[{k:'planning',c:'pln',a:'PLN'},{k:'shooting',c:'sht',a:'SHT'},{k:'editing',c:'edt',a:'EDT'},{k:'posting',c:'pst',a:'PST'}];
+          var parts=SMAP.filter(function(x){return(s[x.k]||0)>0;});
+          brk='<div class="stg-break">'+parts.map(function(x,i){return(i>0?'<span class="stg-pip sp-sep"> · </span>':'')+'<span class="stg-pip sp-'+x.c+'">'+x.a+' '+s[x.k]+'</span>';}).join('')+'</div>';
+        }
+        h+='<td><span class="cn '+(wt?'cn-tot':'cn-zero')+'">'+(wt||'&mdash;')+'</span>'+brk+'</td>';
+      });
       var mHrs=ms.hrs||0;
       h+='<td class="mth"><span class="cn cn-mth '+(mthTot?'cn-tot':'cn-zero')+'">'+(mthTot||'&mdash;')+'</span>'+moBadge(mthTot,e.prevMonthTotal||0)+'</td>';
       h+='<td><span style="font-size:12px;font-weight:800;color:'+(mHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(mHrs)+'</span></td>';
@@ -461,61 +532,4 @@ function renderCards(emps,data){
         :_tab==='year'?((ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0)):0;
     });
     var ac2=tots2.filter(function(v){return v>0;}).length;
-    var teamAvg2=ac2>0?tots2.reduce(function(a,b){return a+b;},0)/ac2:0;
-    var sorted2=emps.slice().sort(function(a,b){return tots2[emps.indexOf(b)]-tots2[emps.indexOf(a)];});
-    sorted2.forEach(function(e){
-      if(_tab==='year'){
-        var ys=sliceYear(e.tasks||[]);
-        h+=mkStdCard(e,[],[],false,false,teamAvg2,ys,'This Year');
-      } else {
-        var wksData=weeks?weeks.map(function(wk){return sliceWeek(e.tasks||[],wk.off);}):[];
-        h+=mkStdCard(e,wksData,wkLabels,true,false,teamAvg2);
-      }
-    });
-    if(_tab==='month'){
-      var teamMs={planning:0,shooting:0,editing:0,posting:0,hrs:0};
-      emps.forEach(function(e){var ms=e.monthStats||{};teamMs.planning+=ms.planning||0;teamMs.shooting+=ms.shooting||0;teamMs.editing+=ms.editing||0;teamMs.posting+=ms.posting||0;teamMs.hrs+=(ms.hrs||0);});
-      var tEmp={name:'Team Total',role:data.monthLabel||'',avatarUrl:null,_sigma:true,monthStats:teamMs,allStats:teamMs,prevMonthTotal:0};
-      h+=mkStdCard(tEmp,weeks.map(function(wk){var o={planning:0,shooting:0,editing:0,posting:0};emps.forEach(function(e){var s=sliceWeek(e.tasks||[],wk.off);o.planning+=s.planning||0;o.shooting+=s.shooting||0;o.editing+=s.editing||0;o.posting+=s.posting||0;});return o;}),wkLabels,true,true,0);
-    }
-    if(_tab==='year'){
-      var teamYs={planning:0,shooting:0,editing:0,posting:0,mins:0};
-      emps.forEach(function(e){var ys=sliceYear(e.tasks||[]);teamYs.planning+=ys.planning||0;teamYs.shooting+=ys.shooting||0;teamYs.editing+=ys.editing||0;teamYs.posting+=ys.posting||0;teamYs.mins+=ys.mins||0;});
-      teamYs.hrs=Math.round((teamYs.mins/60)*10)/10;teamYs.totalHrs=teamYs.hrs;
-      var tEmpY={name:'Team Total',role:new Date().getFullYear()+'',avatarUrl:null,_sigma:true,monthStats:{},allStats:teamYs,prevMonthTotal:0};
-      h+=mkStdCard(tEmpY,[],[],false,true,0,teamYs,'This Year');
-    }
-  }
-  h+='</div>';
-  return h;
-}
-
-function render(data){
-  if(!data||!data.employees)return;
-  var emps=data.employees.filter(function(e){
-    var r=(e.role||'').toLowerCase(),n=(e.name||'').toLowerCase();
-    return !XROLES.some(function(x){return r.includes(x);})&&!XNAMES.some(function(x){return n.includes(x);});
-  });
-  function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
-  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+'</div>';
-  var isCur=_wkOff===0;
-  var ctrlLeft=_tab==='week'
-    ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
-    :('<span class="period-lbl">'+esc(_tab==='month'?(data.monthLabel||''):new Date().getFullYear()+'')+'</span>');
-  var h='<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
-  h+=_view==='compact'?renderCompact(emps,data):renderCards(emps,data);
-  document.getElementById('dash').innerHTML=h;
-  document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-
-function doRefresh(){var b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(function(){var b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-function loadData(){
-  return fetch('/api/creaitors/employee-stats?token='+_tok)
-    .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
-    .then(function(d){_data=d;render(d);})
-    .catch(function(e){document.getElementById('dash').innerHTML='<div class="loading"><div class="err-text">Failed to load</div><div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';});
-}
-loadData();
-setInterval(loadData,300000);
-</script>
-<div class="wgt-footer">Widgets by Opxio.io</di
+    var teamAvg2=ac2>0

@@ -143,7 +143,7 @@ export default async function handler(req, res) {
     } catch (_) {}
 
     // 5. Fetch issues log — keyed by normalised staff name
-    const issuesByName = {}; // normName → [{date, summary, description, actionTaken, status, stage}]
+    const issuesByEmpId = {}; // empId → [{date, summary, description, actionTaken, status, stage}]
     try {
       let issueCursor;
       do {
@@ -164,11 +164,12 @@ export default async function handler(req, res) {
           const rawDate     = ip['Date']?.date?.start || issue.created_time || null;
           const date        = rawDate ? rawDate.slice(0, 10) : null;
 
-          const staff = ip['Staff']?.people || [];
-          staff.forEach(person => {
-            const key = normName(person.name);
-            if (!issuesByName[key]) issuesByName[key] = [];
-            issuesByName[key].push({ date, summary, description, actionTaken, status, stage });
+          // Staff is a Relation to Employee DB — match by employee page ID
+          const staffRels = ip['Staff']?.relation || [];
+          staffRels.forEach(rel => {
+            const empId = rel.id;
+            if (!issuesByEmpId[empId]) issuesByEmpId[empId] = [];
+            issuesByEmpId[empId].push({ date, summary, description, actionTaken, status, stage });
           });
         });
         issueCursor = id2.has_more ? id2.next_cursor : undefined;
@@ -232,7 +233,7 @@ export default async function handler(req, res) {
 
       const empName      = empMap[id]?.name || '';
       const liveSessions = liveByName[normName(empName)] || [];
-      const issues       = issuesByName[normName(empName)] || [];
+      const issues       = issuesByEmpId[id] || [];
 
       return {
         id,

@@ -293,6 +293,16 @@ function avHtml(e,kc,size){
 var PREV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
 var NEXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
+function sortEmps(arr){
+  var regular=arr.filter(function(e){return !isLiveHost(e);});
+  var live=arr.filter(function(e){return isLiveHost(e);});
+  live.sort(function(a,b){
+    var ai=(a.name||'').toLowerCase().includes('intan')?0:1;
+    var bi=(b.name||'').toLowerCase().includes('intan')?0:1;
+    return ai-bi;
+  });
+  return regular.concat(live);
+}
 window.toggleView=function(){
   _view=_view==='compact'?'card':'compact';
   var vb=document.getElementById('vb');if(vb)vb.classList.toggle('active',_view==='card');
@@ -588,10 +598,18 @@ function renderCards(emps,data){
       teamWkS.planning+=s.planning||0;teamWkS.shooting+=s.shooting||0;teamWkS.editing+=s.editing||0;teamWkS.posting+=s.posting||0;
       teamLastS.planning+=ls.planning||0;teamLastS.shooting+=ls.shooting||0;teamLastS.editing+=ls.editing||0;teamLastS.posting+=ls.posting||0;
     });
-    var sorted=active.slice().sort(function(a,b){
+    var activeRegular=active.filter(function(e){return !isLiveHost(e);});
+    var activeLive=active.filter(function(e){return isLiveHost(e);});
+    activeRegular.sort(function(a,b){
       var sa=sliceWeek(a.tasks||[],_wkOff),sb=sliceWeek(b.tasks||[],_wkOff);
       return((sb.planning||0)+(sb.shooting||0)+(sb.editing||0)+(sb.posting||0))-((sa.planning||0)+(sa.shooting||0)+(sa.editing||0)+(sa.posting||0));
     });
+    activeLive.sort(function(a,b){
+      var ai=(a.name||'').toLowerCase().includes('intan')?0:1;
+      var bi=(b.name||'').toLowerCase().includes('intan')?0:1;
+      return ai-bi;
+    });
+    var sorted=activeRegular.concat(activeLive);
     sorted.forEach(function(e){
       var wkS=sliceWeek(e.tasks||[],_wkOff);
       var lastS=sliceWeek(e.tasks||[],_wkOff-1);
@@ -607,7 +625,15 @@ function renderCards(emps,data){
     var tots2=emps.map(function(e){var ms=e.monthStats||{};return(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);});
     var ac2=tots2.filter(function(v){return v>0;}).length;
     var teamAvg2=ac2>0?tots2.reduce(function(a,b){return a+b;},0)/ac2:0;
-    var sorted2=emps.slice().sort(function(a,b){return tots2[emps.indexOf(b)]-tots2[emps.indexOf(a)];});
+    var regular2=emps.filter(function(e){return !isLiveHost(e);});
+    var live2=emps.filter(function(e){return isLiveHost(e);});
+    regular2.sort(function(a,b){return tots2[emps.indexOf(b)]-tots2[emps.indexOf(a)];});
+    live2.sort(function(a,b){
+      var ai=(a.name||'').toLowerCase().includes('intan')?0:1;
+      var bi=(b.name||'').toLowerCase().includes('intan')?0:1;
+      return ai-bi;
+    });
+    var sorted2=regular2.concat(live2);
     sorted2.forEach(function(e){
       var wksData=weeks.map(function(wk){return sliceWeek(e.tasks||[],wk.off);});
       h+=isLiveHost(e)?mkLiveHostCard(e,'month',0):mkStdCard(e,wksData,wkLabels,false,teamAvg2);
@@ -621,7 +647,15 @@ function renderCards(emps,data){
     var tots3=emps.map(function(e){var ys=sliceYear(e.tasks||[]);return(ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0);});
     var ac3=tots3.filter(function(v){return v>0;}).length;
     var teamAvg3=ac3>0?tots3.reduce(function(a,b){return a+b;},0)/ac3:0;
-    var sorted3=emps.slice().sort(function(a,b){return tots3[emps.indexOf(b)]-tots3[emps.indexOf(a)];});
+    var regular3=emps.filter(function(e){return !isLiveHost(e);});
+    var live3=emps.filter(function(e){return isLiveHost(e);});
+    regular3.sort(function(a,b){return tots3[emps.indexOf(b)]-tots3[emps.indexOf(a)];});
+    live3.sort(function(a,b){
+      var ai=(a.name||'').toLowerCase().includes('intan')?0:1;
+      var bi=(b.name||'').toLowerCase().includes('intan')?0:1;
+      return ai-bi;
+    });
+    var sorted3=regular3.concat(live3);
     sorted3.forEach(function(e){
       var ys=sliceYear(e.tasks||[]);
       h+=isLiveHost(e)?mkLiveHostCard(e,'year',0):mkYearCard(e,ys,teamAvg3,false);
@@ -640,7 +674,9 @@ function render(data){
   if(!data||!data.employees)return;
   var emps=data.employees.filter(function(e){
     var r=(e.role||'').toLowerCase(),n=(e.name||'').toLowerCase();
-    return !XROLES.some(function(x){return r.includes(x);})&&!XNAMES.some(function(x){return n.includes(x);});
+    var isLive=r.includes('live');
+    var excluded=XROLES.some(function(x){return r.includes(x);})||XNAMES.some(function(x){return n.includes(x);});
+    return !excluded||isLive;
   });
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
   var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+'</div>';

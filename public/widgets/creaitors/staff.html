@@ -38,9 +38,13 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .col-hdr{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
 .ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
 .ch:first-child{text-align:left;}
-.staff-row{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);gap:8px;transition:background .15s;}
+.staff-row{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.04);gap:8px;transition:background .15s;}
 .staff-row:last-child{border-bottom:none;}
 .staff-row:hover{background:rgba(255,255,255,.02);}
+.week-sep{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:9px 20px;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
+.week-sep-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.35);}
+.week-sep-tot{font-size:10px;font-weight:700;color:rgba(170,255,0,.5);text-align:center;}
+.week-sep-empty{color:rgba(255,255,255,.1);font-size:10px;font-weight:600;text-align:center;}
 .s-name{display:flex;align-items:center;gap:8px;min-width:0;}
 .s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .s-dot-on{background:#AAFF00;box-shadow:0 0 5px rgba(170,255,0,.5);}
@@ -50,7 +54,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .s-role{font-size:11px;font-weight:600;color:rgba(255,255,255,.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .stat-cell{text-align:center;}
 .stat-num{font-size:20px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.num-zero{color:rgba(255,255,255,.12);}
+.num-zero{color:rgba(255,255,255,.1);}
 .num-plan{color:#60A5FA;}
 .num-shoot{color:#F59E0B;}
 .num-edit{color:#C084FC;}
@@ -63,7 +67,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .loading{display:flex;align-items:center;justify-content:center;min-height:160px;flex-direction:column;gap:8px;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
-@media(max-width:860px){.col-hdr,.staff-row{grid-template-columns:130px repeat(4,1fr) 52px 60px;padding-left:14px;padding-right:14px;}}
+@media(max-width:860px){.col-hdr,.staff-row,.week-sep{grid-template-columns:120px repeat(4,1fr) 48px 56px;padding-left:14px;padding-right:14px;}}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 </style>
 </head>
@@ -81,50 +85,39 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 </div>
 <div id="dash"><div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div></div>
 <script>
-var _tok = new URLSearchParams(location.search).get('token') || '';
-var _tab = 'week', _data = null, _weekOffset = 0;
-var EXCLUDE_ROLES = ['part time','live host','part-time','freelance'];
-var EXCLUDE_NAMES = ['danil husaini'];
-var MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var _tok=new URLSearchParams(location.search).get('token')||'';
+var _tab='week',_data=null,_weekOffset=0;
+var XROLES=['part time','live host','part-time','freelance'];
+var XNAMES=['danil husaini'];
+var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-function esc(s){return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function fmtHrs(h){
-  if(!h) return '-';
-  if(h<1) return Math.round(h*60)+'m';
-  var w=Math.floor(h),f=Math.round((h-w)*60);
-  return f>0 ? w+'h '+f+'m' : w+'h';
-}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function fmtHrs(h){if(!h)return'-';if(h<1)return Math.round(h*60)+'m';var w=Math.floor(h),f=Math.round((h-w)*60);return f>0?w+'h '+f+'m':w+'h';}
 function sdot(s){return s==='Active'?'s-dot-on':s==='Inactive'?'s-dot-off':'s-dot-lv';}
-
-function getMonday(offset){
-  var t=new Date(); t.setHours(0,0,0,0);
-  var dow=t.getDay(), diff=dow===0?-6:1-dow;
-  var m=new Date(t); m.setDate(t.getDate()+diff+offset*7);
-  return m;
-}
+function getMonday(off){var t=new Date();t.setHours(0,0,0,0);var dow=t.getDay(),diff=dow===0?-6:1-dow,m=new Date(t);m.setDate(t.getDate()+diff+off*7);return m;}
 function toStr(d){return d.toISOString().slice(0,10);}
-function wkLabel(mon){
-  var sun=new Date(mon); sun.setDate(mon.getDate()+6);
-  return mon.getMonth()===sun.getMonth()
-    ? mon.getDate()+' - '+sun.getDate()+' '+MON[mon.getMonth()]
-    : mon.getDate()+' '+MON[mon.getMonth()]+' - '+sun.getDate()+' '+MON[sun.getMonth()];
+function wkLbl(mon){var sun=new Date(mon);sun.setDate(mon.getDate()+6);return mon.getMonth()===sun.getMonth()?mon.getDate()+' - '+sun.getDate()+' '+MON[mon.getMonth()]:mon.getDate()+' '+MON[mon.getMonth()]+' - '+sun.getDate()+' '+MON[sun.getMonth()];}
+
+function sliceWeek(tasks,off){
+  var m=getMonday(off),sun=new Date(m);sun.setDate(m.getDate()+6);
+  var s=toStr(m),e=toStr(sun),out={planning:0,shooting:0,editing:0,posting:0,mins:0};
+  (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate>=s&&t.doneDate<=e){out[t.stage]++;out.mins+=t.mins;}});
+  out.hrs=Math.round((out.mins/60)*10)/10;return out;
 }
 
-// Client-side week slice — instant, no API call needed
-function sliceWeek(tasks, offset){
-  var mon = getMonday(offset);
-  var sun = new Date(mon); sun.setDate(mon.getDate()+6);
-  var s = toStr(mon), e = toStr(sun);
-  var out = { planning:0, shooting:0, editing:0, posting:0, mins:0 };
-  tasks.forEach(function(t){
-    if(!t.isDone || !t.doneDate) return;
-    if(t.doneDate >= s && t.doneDate <= e){
-      out[t.stage]++;
-      out.mins += t.mins;
-    }
-  });
-  out.hrs = Math.round((out.mins/60)*10)/10;
-  return out;
+function getWeeksInMonth(){
+  var t=new Date();t.setHours(0,0,0,0);
+  var yr=t.getFullYear(),mo=t.getMonth();
+  var first=new Date(yr,mo,1),last=new Date(yr,mo+1,0);
+  var dow=first.getDay(),diff=dow===0?-6:1-dow,mon=new Date(first);
+  mon.setDate(first.getDate()+diff);
+  var curMon=getMonday(0),weeks=[];
+  while(mon<=last){
+    var off=Math.round((mon-curMon)/604800000);
+    weeks.push({mon:new Date(mon),off:off});
+    mon.setDate(mon.getDate()+7);
+  }
+  return weeks.reverse(); // newest first
 }
 
 var PREV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
@@ -135,23 +128,37 @@ var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width
 function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON:SUN;}
 function doRefresh(){var b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(function(){var b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 
+function memberRow(e,s){
+  var pl=s.planning||0,sh=s.shooting||0,ed=s.editing||0,po=s.posting||0,tot=pl+sh+ed+po;
+  var hrs=s.hrs||0;
+  return '<div class="staff-row">'
+    +'<div class="s-name"><div class="s-dot '+sdot(e.status)+'"></div>'
+    +'<div style="min-width:0"><div class="s-label">'+esc(e.name)+'</div>'
+    +(e.role?'<div class="s-role">'+esc(e.role)+'</div>':'')+'</div></div>'
+    +'<div class="stat-cell"><div class="stat-num '+(pl?'num-plan':'num-zero')+'">'+(pl||'-')+'</div></div>'
+    +'<div class="stat-cell"><div class="stat-num '+(sh?'num-shoot':'num-zero')+'">'+(sh||'-')+'</div></div>'
+    +'<div class="stat-cell"><div class="stat-num '+(ed?'num-edit':'num-zero')+'">'+(ed||'-')+'</div></div>'
+    +'<div class="stat-cell"><div class="stat-num '+(po?'num-post':'num-zero')+'">'+(po||'-')+'</div></div>'
+    +'<div class="stat-cell"><div class="stat-num '+(tot?'num-total':'num-zero')+'">'+(tot||'-')+'</div></div>'
+    +'<div class="time-cell"><div class="time-val '+(hrs?'time-has':'num-zero')+'">'+fmtHrs(hrs)+'</div></div>'
+    +'</div>';
+}
+
 function render(data){
-  if(!data||!data.employees) return;
+  if(!data||!data.employees)return;
   var emps=data.employees.filter(function(e){
     var r=(e.role||'').toLowerCase(),n=(e.name||'').toLowerCase();
-    return !EXCLUDE_ROLES.some(function(x){return r.includes(x);})&&!EXCLUDE_NAMES.some(function(x){return n.includes(x);});
+    return !XROLES.some(function(x){return r.includes(x);})&&!XNAMES.some(function(x){return n.includes(x);});
   });
 
   var isCur=_weekOffset===0;
-  var lbl=wkLabel(getMonday(_weekOffset));
-
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
 
   var ctrl='';
   if(_tab==='week'){
     ctrl='<div class="wk-nav">'
       +'<button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button>'
-      +'<span class="wk-label'+(isCur?' is-current':'')+'" >'+esc(lbl)+'</span>'
+      +'<span class="wk-label'+(isCur?' is-current':'')+'" >'+esc(wkLbl(getMonday(_weekOffset)))+'</span>'
       +'<button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button>'
       +'</div>';
   } else if(_tab==='month'){
@@ -160,46 +167,53 @@ function render(data){
     ctrl='<span class="period-lbl">All Time</span>';
   }
 
+  var colHdr='<div class="col-hdr"><div class="ch">Team</div><div class="ch">Planning</div>'
+    +'<div class="ch">Shooting</div><div class="ch">Editing</div><div class="ch">Posting</div>'
+    +'<div class="ch">Total</div><div class="ch">Time</div></div>';
+
   var h='<div class="card">'
     +'<div class="card-hdr"><span class="card-title">Content Output by Team Member</span>'
     +'<div class="card-right">'+ctrl
     +'<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('all','All Time')+'</div>'
-    +'</div></div>'
-    +'<div class="col-hdr"><div class="ch">Team</div><div class="ch">Planning</div>'
-    +'<div class="ch">Shooting</div><div class="ch">Editing</div><div class="ch">Posting</div>'
-    +'<div class="ch">Total</div><div class="ch">Time</div></div>';
+    +'</div></div>'+colHdr;
 
   if(!emps.length){
     h+='<div class="empty-row">No team data found</div>';
-  } else {
-    // Get stats for current view — week is client-side, others from API
-    var empStats = emps.map(function(e){
-      var s;
-      if(_tab==='week')        s = sliceWeek(e.tasks||[], _weekOffset);
-      else if(_tab==='month')  s = e.monthStats || {};
-      else                     s = e.allStats || {};
-      return { emp:e, s:s, tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0) };
-    });
-
-    // Sort by total desc
-    empStats.sort(function(a,b){return b.tot-a.tot;});
-
-    empStats.forEach(function(item){
-      var e=item.emp, s=item.s, tot=item.tot;
-      var pl=s.planning||0, sh=s.shooting||0, ed=s.editing||0, po=s.posting||0;
-      var hrs=_tab==='all'?((e.allStats&&e.allStats.totalHrs)||0):(s.hrs||0);
-      h+='<div class="staff-row">'
-        +'<div class="s-name"><div class="s-dot '+sdot(e.status)+'"></div>'
-        +'<div style="min-width:0"><div class="s-label">'+esc(e.name)+'</div>'
-        +(e.role?'<div class="s-role">'+esc(e.role)+'</div>':'')+'</div></div>'
-        +'<div class="stat-cell"><div class="stat-num '+(pl?'num-plan':'num-zero')+'">'+(pl||'-')+'</div></div>'
-        +'<div class="stat-cell"><div class="stat-num '+(sh?'num-shoot':'num-zero')+'">'+(sh||'-')+'</div></div>'
-        +'<div class="stat-cell"><div class="stat-num '+(ed?'num-edit':'num-zero')+'">'+(ed||'-')+'</div></div>'
-        +'<div class="stat-cell"><div class="stat-num '+(po?'num-post':'num-zero')+'">'+(po||'-')+'</div></div>'
-        +'<div class="stat-cell"><div class="stat-num '+(tot?'num-total':'num-zero')+'">'+(tot||'-')+'</div></div>'
-        +'<div class="time-cell"><div class="time-val '+(hrs?'time-has':'num-zero')+'">'+fmtHrs(hrs)+'</div></div>'
+  } else if(_tab==='month'){
+    // Month view: grouped by week sections
+    var weeks=getWeeksInMonth();
+    weeks.forEach(function(wk){
+      var empStats=emps.map(function(e){
+        var s=sliceWeek(e.tasks||[],wk.off);
+        return{emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
+      });
+      var wkTotal=empStats.reduce(function(a,b){return a+b.tot;},0);
+      // Week separator row — shows week label + per-stage totals
+      var sp={planning:0,shooting:0,editing:0,posting:0};
+      empStats.forEach(function(x){sp.planning+=x.s.planning||0;sp.shooting+=x.s.shooting||0;sp.editing+=x.s.editing||0;sp.posting+=x.s.posting||0;});
+      h+='<div class="week-sep">'
+        +'<div class="week-sep-lbl">'+esc(wkLbl(wk.mon))+'</div>'
+        +'<div class="week-sep-tot">'+(sp.planning||'-')+'</div>'
+        +'<div class="week-sep-tot">'+(sp.shooting||'-')+'</div>'
+        +'<div class="week-sep-tot">'+(sp.editing||'-')+'</div>'
+        +'<div class="week-sep-tot">'+(sp.posting||'-')+'</div>'
+        +'<div class="week-sep-tot">'+(wkTotal||'-')+'</div>'
+        +'<div></div>'
         +'</div>';
+      // Member rows sorted by total desc, only show those with any output
+      empStats.sort(function(a,b){return b.tot-a.tot;});
+      empStats.forEach(function(item){
+        if(item.tot>0) h+=memberRow(item.emp,item.s);
+      });
     });
+  } else {
+    // Week or All Time view
+    var empStats=emps.map(function(e){
+      var s=_tab==='week'?sliceWeek(e.tasks||[],_weekOffset):e.allStats||{};
+      return{emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
+    });
+    empStats.sort(function(a,b){return b.tot-a.tot;});
+    empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
   }
 
   h+='</div>';
@@ -207,7 +221,6 @@ function render(data){
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 
-// Week nav is now instant — just re-render from cached data
 window.switchTab=function(t){_tab=t;if(_data)render(_data);};
 window.shiftWeek=function(d){if(d===1&&_weekOffset===0)return;_weekOffset+=d;if(_data)render(_data);};
 
@@ -227,11 +240,9 @@ setInterval(loadData,300000);
 <div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
-  var el=document.getElementById('_eyebrow');
-  if(!el) return;
+  var el=document.getElementById('_eyebrow');if(!el)return;
   el.textContent=el.dataset.os.toUpperCase();
-  var tok=new URLSearchParams(location.search).get('token');
-  if(!tok) return;
+  var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
   fetch('/api/client/info?token='+tok)
     .then(function(r){return r.ok?r.json():null;})
     .then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();})

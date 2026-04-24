@@ -182,6 +182,20 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 .issue-stat.Escalated{background:rgba(255,165,0,.15);color:#ffaa44;}
 .issue-desc{font-size:11px;color:rgba(255,255,255,.35);margin-top:3px;line-height:1.4;}
 .issue-act{font-size:11px;color:rgba(170,255,0,.45);margin-top:2px;line-height:1.4;}
+/* Issues tab view */
+.issues-view{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.issues-summary{display:flex;align-items:center;gap:0;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 20px;}
+.iss-sum-item{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.iss-sum-num{font-size:24px;font-weight:900;letter-spacing:-.5px;color:rgba(255,255,255,.75);}
+.iss-sum-num.iss-open{color:#ff7070;}
+.iss-sum-num.iss-res{color:#aaff00;}
+.iss-sum-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);}
+.iss-sum-div{width:1px;height:32px;background:rgba(255,255,255,.06);flex-shrink:0;}
+.issues-staff-group{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;}
+.issues-staff-hdr{display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.iss-emp-name{font-size:13px;font-weight:800;color:rgba(255,255,255,.85);flex:1;}
+.issue-date{font-size:10px;font-weight:600;color:rgba(255,255,255,.22);flex-shrink:0;}
+.issues-empty{text-align:center;padding:48px 20px;font-size:12px;font-weight:600;color:rgba(255,255,255,.18);}
 /* Loading */
 .loading{display:flex;align-items:center;justify-content:center;min-height:160px;flex-direction:column;gap:8px;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
@@ -569,14 +583,7 @@ function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
   var momH=isTeam?'':moBadge(mthTot,dynPrevTotal);
   tfoot+='<td class="mth">'+(mthTot?'<span class="tot-val">'+mthTot+'</span>'+(hrs?'<div class="st-time">'+fmtH(hrs)+'</div>':'')+momH:'<span class="no-act-sm">No activity</span>')+'</td></tr>';
   var cls='mc'+(isTeam?' team-card':'');
-  var issueHtml='';
-  if(!isTeam&&(e.issues||[]).length){
-    var iStart,iEnd,iLabel;
-    if(_tab==='week'){var im=getMonday(_wkOff),is2=new Date(im);is2.setDate(im.getDate()+6);iStart=toStr(im);iEnd=toStr(is2);iLabel='Issues This Week';}
-    else if(_tab==='month'){iStart=mb.s;iEnd=mb.e;iLabel='Issues This Month';}
-    else{var iy=new Date().getFullYear();iStart=iy+'-01-01';iEnd=iy+'-12-31';iLabel='Issues This Year';}
-    issueHtml=mkIssueLog(sliceIssues(e.issues,iStart,iEnd),iLabel);
-  }
+
   return '<div class="'+cls+'">'
     +'<div class="mc-hdr">'+avHtml(e,kc,36)
     +'<div class="mc-info"><div class="mc-name">'+esc(e.name||'')+'</div>'
@@ -584,7 +591,6 @@ function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
     +(kc&&!isTeam?'<div class="kpi-tag '+kc+'" style="margin-top:3px">'+kpiLabel(mthTot,teamAvg||0)+'</div>':'')
     +'</div></div>'
     +'<table class="ct"><thead>'+thead+'</thead><tbody>'+stRows+'</tbody><tfoot>'+tfoot+'</tfoot></table>'
-    +issueHtml
     +'</div>';
 }
 
@@ -758,6 +764,49 @@ function renderCards(emps,data){
   return h;
 }
 
+function renderIssues(data){
+  var emps=data.employees||[];
+  var allIssues=[];
+  emps.forEach(function(e){(e.issues||[]).forEach(function(is){allIssues.push({emp:e,issue:is});});});
+  if(!allIssues.length)return'<div class="issues-empty">No issues logged yet.</div>';
+  var total=allIssues.length;
+  var open=allIssues.filter(function(x){return x.issue.status!=='Resolved';}).length;
+  var resolved=allIssues.filter(function(x){return x.issue.status==='Resolved';}).length;
+  var h='<div class="issues-view">'
+    +'<div class="issues-summary">'
+    +'<div class="iss-sum-item"><span class="iss-sum-num">'+total+'</span><span class="iss-sum-lbl">Total</span></div>'
+    +'<div class="iss-sum-div"></div>'
+    +'<div class="iss-sum-item"><span class="iss-sum-num iss-open">'+open+'</span><span class="iss-sum-lbl">Open</span></div>'
+    +'<div class="iss-sum-div"></div>'
+    +'<div class="iss-sum-item"><span class="iss-sum-num iss-res">'+resolved+'</span><span class="iss-sum-lbl">Resolved</span></div>'
+    +'</div>';
+  emps.forEach(function(e){
+    var iss=e.issues||[];
+    if(!iss.length)return;
+    var empOpen=iss.filter(function(i){return i.status!=='Resolved';}).length;
+    h+='<div class="issues-staff-group">'
+      +'<div class="issues-staff-hdr">'+avHtml(e,'',28)
+      +'<span class="iss-emp-name">'+esc(e.name)+'</span>'
+      +(empOpen?'<span class="issue-cnt issue-cnt-open">'+empOpen+' open</span>':'<span class="issue-cnt issue-cnt-ok">all resolved</span>')
+      +'</div>';
+    iss.forEach(function(is){
+      var cls='issue-item'+(is.status==='Resolved'?' resolved':'');
+      h+='<div class="'+cls+'">'
+        +'<div class="issue-row1">'
+        +'<span class="issue-stg">'+esc(is.stage||'General')+'</span>'
+        +'<span class="issue-date">'+esc(is.date||'')+'</span>'
+        +'<span class="issue-sum">'+esc(is.summary||'Untitled issue')+'</span>'
+        +'<span class="issue-stat '+esc(is.status||'Open')+'">'+esc(is.status||'Open')+'</span>'
+        +'</div>';
+      if(is.description)h+='<div class="issue-desc">'+esc(is.description)+'</div>';
+      if(is.actionTaken)h+='<div class="issue-act">&#8627; '+esc(is.actionTaken)+'</div>';
+      h+='</div>';
+    });
+    h+='</div>';
+  });
+  h+='</div>';
+  return h;
+}
 function render(data){
   if(!data||!data.employees)return;
   var emps=data.employees.filter(function(e){
@@ -767,7 +816,7 @@ function render(data){
     return !excluded||isLive;
   });
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
-  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+'</div>';
+  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+mkTab('issues','Issues')+'</div>';
   var isCur=_wkOff===0;
   var mb=getMonthBoundsOff(_mthOff);
   var isMthCur=_mthOff===0;
@@ -777,9 +826,9 @@ function render(data){
     ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
     :_tab==='month'
     ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftMonth(-1)">'+PREV+'</button><span class="wk-lbl'+(isMthCur?' cur':'')+'">'+esc(mb.lbl)+'</span><button class="wk-arrow" onclick="shiftMonth(1)"'+(isMthCur?' disabled':'')+'>'+NEXT+'</button></div>')
-    :('<div class="wk-nav"><button class="wk-arrow" onclick="shiftYear(-1)">'+PREV+'</button><span class="wk-lbl'+(isYrCur?' cur':'')+'">'+yrNum+'</span><button class="wk-arrow" onclick="shiftYear(1)"'+(isYrCur?' disabled':'')+'>'+NEXT+'</button></div>');
+    :_tab==='issues'?'':('<div class="wk-nav"><button class="wk-arrow" onclick="shiftYear(-1)">'+PREV+'</button><span class="wk-lbl'+(isYrCur?' cur':'')+'">'+yrNum+'</span><button class="wk-arrow" onclick="shiftYear(1)"'+(isYrCur?' disabled':'')+'>'+NEXT+'</button></div>');
   var h='<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
-  h+=_view==='compact'?renderCompact(emps,data):renderCards(emps,data);
+  h+=_tab==='issues'?renderIssues(data):(_view==='compact'?renderCompact(emps,data):renderCards(emps,data));
   document.getElementById('dash').innerHTML=h;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }

@@ -61,6 +61,7 @@ export default async function handler(req, res) {
     const now          = new Date().toISOString();
     const isEditing    = /editing/i.test(taskName);
     const isPosting    = /posting/i.test(taskName);
+    const isShooting   = /shooting/i.test(taskName);
 
     // ── START TASK ────────────────────────────────────────────────────────────
     if (action === 'start') {
@@ -132,8 +133,8 @@ export default async function handler(req, res) {
 
     // ── SUBMIT QC ─────────────────────────────────────────────────────────────
     if (action === 'submit_qc') {
-      if (isPosting) {
-        return actionError(taskPageId, 'Content Posting does not need to submit for review. Use Complete Task instead.');
+      if (isPosting || isShooting) {
+        return actionError(taskPageId, `${isPosting ? 'Content Posting' : 'Content Shooting'} does not require QC review. Use Complete Task instead.`);
       }
 
       // Content Editing requires Telegram Preview link before submitting QC
@@ -246,8 +247,10 @@ export default async function handler(req, res) {
         if (!postProdLink.trim()) {
           return actionError(taskPageId, `Cannot complete "${taskName}" — Post-Production link is required. Please add the upload link before marking as done.`);
         }
+      } else if (isShooting) {
+        // Content Shooting: completes directly, no QC or link required
       } else if (!isPosting) {
-        // Non-posting, non-editing tasks must go through QC
+        // Non-posting, non-editing, non-shooting tasks must go through QC
         return actionError(taskPageId, `"${taskName}" cannot be completed directly. All tasks must go through QC review first — use Submit for QC.`);
       } else {
         // Posting task: require posting link

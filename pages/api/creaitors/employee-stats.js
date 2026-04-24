@@ -123,10 +123,11 @@ export default async function handler(req, res) {
           // Duration: formula → number (minutes). Try number type first, then formula.
           const durProp = sp['Duration'];
           let mins = 0;
-          if (durProp?.type === 'number')  mins = durProp.number || 0;
-          if (durProp?.type === 'formula') mins = durProp.formula?.number || 0;
+          // Formula: dateBetween(..., "minutes") / 60 → result is hours, convert to mins
+          if (durProp?.type === 'number')  mins = (durProp.number || 0) * 60;
+          if (durProp?.type === 'formula') mins = (durProp.formula?.number || 0) * 60;
 
-          // Date: look for a Date property, fall back to created_time
+          // Date is a date range — use start of range
           const dateProp = sp['Date'] || sp['Session Date'] || sp['Live Date'];
           const rawDate = dateProp?.date?.start || session.created_time || null;
           const date = rawDate ? rawDate.slice(0, 10) : null;

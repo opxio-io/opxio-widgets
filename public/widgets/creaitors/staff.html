@@ -155,6 +155,14 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
 .err-text{font-size:11px;color:#FF6B35;font-weight:700;}
 .wgt-footer{text-align:center;padding:16px 0 2px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.ct th.mth{border-left:2px solid rgba(170,255,0,.2);background:rgba(170,255,0,.05);color:rgba(170,255,0,.8);font-size:10px;}
+.ct td.mth{border-left:2px solid rgba(170,255,0,.1);background:rgba(170,255,0,.025);}
+.ct td.mth .n{font-size:18px;}
+.ct td.mth .n-zero{font-size:14px;}
+.st-time{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);margin-top:2px;line-height:1;}
+.mom-stk{font-size:9px;font-weight:800;letter-spacing:.04em;margin-top:2px;}
+.mom-up{color:#AAFF00;}.mom-dn{color:#FF6B35;}.mom-fl{color:rgba(255,255,255,.3);}
+.no-act-sm{font-size:9px;font-weight:600;color:rgba(255,255,255,.18);font-style:italic;}
 .mom-stk{font-size:9px;font-weight:800;letter-spacing:.04em;margin-top:2px;}
 .mom-up{color:#AAFF00;}.mom-dn{color:#FF6B35;}.mom-fl{color:rgba(255,255,255,.3);}
 .no-act-sm{font-size:9px;font-weight:600;color:rgba(255,255,255,.18);font-style:italic;}
@@ -189,6 +197,19 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function avColor(n){var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))&0xFFFFFF;return AV_COLORS[h%AV_COLORS.length];}
 function initials(n){var p=(n||'').trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():(n||'??').slice(0,2).toUpperCase();}
 function fmtH(h){if(!h)return '';if(h<1)return Math.round(h*60)+'m';var w=Math.floor(h),f=Math.round((h%1)*60);return w+'h'+(f?' '+f+'m':'');}
+function getMonthBounds(){
+  var t=new Date();t.setHours(0,0,0,0);var yr=t.getFullYear(),mo=t.getMonth();
+  var s=yr+'-'+String(mo+1).padStart(2,'0')+'-01';
+  var ld=new Date(yr,mo+1,0).getDate();
+  var e=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(ld).padStart(2,'0');
+  return{s:s,e:e};
+}
+function monthStageMins(tasks){
+  var mb=getMonthBounds();
+  var o={planning:0,shooting:0,editing:0,posting:0};
+  (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate>=mb.s&&t.doneDate<=mb.e&&o.hasOwnProperty(t.stage))o[t.stage]+=(t.mins||0);});
+  return o;
+}
 function getMonday(off){var t=new Date();t.setHours(0,0,0,0);var d=t.getDay(),df=d===0?-6:1-d,m=new Date(t);m.setDate(t.getDate()+df+off*7);return m;}
 function toStr(d){return d.toISOString().slice(0,10);}
 function wkLbl(mon){var sun=new Date(mon);sun.setDate(mon.getDate()+6);return mon.getMonth()===sun.getMonth()?mon.getDate()+' - '+sun.getDate()+' '+MON[mon.getMonth()]:mon.getDate()+' '+MON[mon.getMonth()]+' - '+sun.getDate()+' '+MON[sun.getMonth()];}
@@ -309,6 +330,7 @@ function mkYearCard(e,ys,teamAvg,isTeam){
   var tot=(ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0);
   var kc=isTeam?'':kpiClass(tot,teamAvg||0);
   var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
+  var stageMins=monthStageMins(e.tasks||[]);
   var rows='';
   STAGES.forEach(function(st){
     var v=ys[st.k]||0;
@@ -339,26 +361,27 @@ function mkYearCard(e,ys,teamAvg,isTeam){
 function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
   var ms=e.monthStats||{};
   var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
+  var stageMins=monthStageMins(e.tasks||[]);
   var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
   var kc=isTeam?'':kpiClass(mthTot,teamAvg||0);
   var thead='<tr><th></th>';
   wkLabels.forEach(function(l){thead+='<th>'+l+'</th>';});
-  thead+='<th class="mth">MTH</th><th>Time</th></tr>';
+  thead+='<th class="mth">MTH</th></tr>';
   var stRows='';
   STAGES.forEach(function(st){
     stRows+='<tr class="ct-row"><td class="lbl-'+st.c+'">'+st.l+'</td>';
     wksData.forEach(function(w){var v=w[st.k]||0;stRows+='<td><span class="n '+(v?'n-'+st.c:'n-zero')+'">'+(v||'&mdash;')+'</span></td>';});
     var mv=ms[st.k]||0;
-    stRows+='<td class="mth"><span class="n n-mth '+(mv?'n-'+st.c:'n-zero')+'">'+(mv||'&mdash;')+'</span></td>';
-    stRows+='<td></td></tr>';
+    var smins=stageMins[st.k]||0;
+    var stimeH=smins?'<div class="st-time">'+fmtH(smins/60)+'</div>':'';\ 
+    stRows+='<td class="mth">'+(mv?'<span class="n n-mth n-'+st.c+'">'+mv+'</span>'+stimeH:'<span class="n n-zero">&mdash;</span>')+'</td></tr>';
   });
   var wkTots=(wksData||[]).map(function(w){return(w.planning||0)+(w.shooting||0)+(w.editing||0)+(w.posting||0);});
   var hrs=ms.hrs||0;
   var tfoot='<tr class="tot-row ct-foot"><td class="tot-lbl">'+(isTeam?'Team Output':'Total Output')+'</td>';
   wkTots.forEach(function(v){tfoot+='<td><span class="tot-val">'+(v||'&mdash;')+'</span></td>';});
   var momH=isTeam?'':moBadge(mthTot,e.prevMonthTotal||0);
-  tfoot+='<td class="mth">'+(mthTot?'<span class="tot-val">'+mthTot+'</span>'+momH:'<span class="no-act-sm">No activity</span>')+'</td>';
-  tfoot+='<td style="font-size:12px;font-weight:800;color:'+(hrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(hrs)+'</td></tr>';
+  tfoot+='<td class="mth">'+(mthTot?'<span class="tot-val">'+mthTot+'</span>'+(hrs?'<div class="st-time">'+fmtH(hrs)+'</div>':'')+momH:'<span class="no-act-sm">No activity</span>')+'</td></tr>';
   var cls='mc'+(isTeam?' team-card':'');
   return '<div class="'+cls+'">'
     +'<div class="mc-hdr">'+avHtml(e,kc,36)
@@ -386,7 +409,7 @@ function renderCompact(emps,data){
   var teamAvg=ac>0?teamTot/ac:0;
   var colLabel=_tab==='week'?'This Week':_tab==='year'?'This Year':'';
   var h='<div class="compact-card"><table class="tbl"><thead><tr><th>Team</th>';
-  if(hasMth){wkLabels.forEach(function(l){h+='<th>'+l+'</th>';});h+='<th class="mth">MTH</th><th>Time</th>';}
+  if(hasMth){wkLabels.forEach(function(l){h+='<th>'+l+'</th>';});h+='<th class="mth">MTH</th>';}
   else{h+='<th>'+colLabel+'</th><th>Time</th>';}
   h+='</tr></thead><tbody>';
   var sorted=emps.slice().sort(function(a,b){
@@ -429,8 +452,7 @@ function renderCompact(emps,data){
         h+='<td>'+(wt?'<span class="cn cn-tot">'+wt+'</span>':'<span class="no-act-sm">No activity</span>')+brk+'</td>';
       });
       var mHrs=ms.hrs||0;
-      h+='<td class="mth">'+(mthTot?'<span class="cn cn-mth cn-tot">'+mthTot+'</span>'+moBadge(mthTot,e.prevMonthTotal||0):'<span class="no-act-sm">No activity</span>')+'</td>';
-      h+='<td><span style="font-size:12px;font-weight:800;color:'+(mHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(mHrs)+'</span></td>';
+      h+='<td class="mth">'+(mthTot?'<span class="cn cn-mth cn-tot">'+mthTot+'</span>'+(mHrs?'<div class="st-time">'+fmtH(mHrs)+'</div>':'')+moBadge(mthTot,e.prevMonthTotal||0):'<span class="no-act-sm">No activity</span>')+'</td>';
     } else {
       var v=_tab==='week'?wkTot:yrTot;
       var tHrs=_tab==='week'?(wkS?wkS.hrs:0):(ys?ys.hrs:0);
@@ -444,8 +466,7 @@ function renderCompact(emps,data){
     weeks.forEach(function(wk){var wt=emps.reduce(function(acc,e){var s=sliceWeek(e.tasks||[],wk.off);return acc+(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);},0);h+='<td>'+(wt||'&mdash;')+'</td>';});
     var gTot=emps.reduce(function(acc,e){var ms=e.monthStats||{};return acc+(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);},0);
     var gHrs=emps.reduce(function(acc,e){return acc+((e.monthStats&&e.monthStats.hrs)||0);},0);
-    h+='<td class="mth">'+(gTot||'&mdash;')+'</td>';
-    h+='<td style="font-size:13px;font-weight:900;color:'+(gHrs?'rgba(170,255,0,.6)':'rgba(255,255,255,.12)')+'">'+fmtH(gHrs)+'</td></tr></tfoot>';
+    h+='<td class="mth">'+(gTot||'&mdash;')+(gHrs?'<div class="st-time">'+fmtH(gHrs)+'</div>':'')+'</td></tr></tfoot>';
   }
   h+='</table></div>';
   return h;

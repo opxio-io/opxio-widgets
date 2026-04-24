@@ -52,6 +52,17 @@ body.light .tab{color:rgba(255,255,255,.55);}
 .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 body.light .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 
+/* Week navigator */
+.wk-nav{display:flex;align-items:center;gap:6px;}
+.wk-arrow{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.wk-arrow:hover{background:rgba(170,255,0,.08);border-color:rgba(170,255,0,.2);color:var(--g);}
+.wk-arrow:disabled{opacity:.25;cursor:default;pointer-events:none;}
+.wk-arrow svg{width:12px;height:12px;}
+.wk-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);white-space:nowrap;min-width:120px;text-align:center;}
+.wk-label.is-current{color:var(--g);}
+body.light .wk-arrow{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);color:rgba(0,0,0,.35);}
+body.light .wk-label{color:rgba(0,0,0,.4);}
+
 /* Column headers — 7 cols: name + 4 stages + total + time */
 .col-hdr{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
 .ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
@@ -128,20 +139,12 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
-let _tab = 'week', _data = null;
+let _tab = 'week', _data = null, _weekOffset = 0;
 
-// Roles to exclude from team view
 const EXCLUDE_ROLES = ['part time', 'live host', 'part-time', 'freelance'];
-// Names to exclude (management/leadership not in production)
 const EXCLUDE_NAMES = ['danil husaini'];
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-
-function fmtRange(label){
-  if(!label) return '';
-  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  return label.replace(/(\d{4})-(\d{2})-(\d{2})/g,(_,y,m,d)=>`${parseInt(d)} ${M[parseInt(m)-1]} ${y}`);
-}
 function fmtHrs(h){
   if(!h) return '—';
   if(h<1) return Math.round(h*60)+'m';
@@ -150,34 +153,66 @@ function fmtHrs(h){
 }
 function sdot(s){return s==='Active'?'s-dot-on':s==='Inactive'?'s-dot-off':'s-dot-lv';}
 
+// Returns Monday date for a given week offset (0 = current week)
+function getMondayForOffset(offset){
+  const today = new Date(); today.setHours(0,0,0,0);
+  const dow = today.getDay();
+  const diff = dow === 0 ? -6 : 1 - dow;
+  const mon = new Date(today); mon.setDate(today.getDate() + diff + offset * 7);
+  return mon;
+}
+function toDateStr(d){ return d.toISOString().slice(0,10); }
+function fmtWeekLabel(mon){
+  const sun = new Date(mon); sun.setDate(mon.getDate()+6);
+  const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const s=`${mon.getDate()} ${M[mon.getMonth()]}`;
+  const e=`${sun.getDate()} ${M[sun.getMonth()]}`;
+  return mon.getMonth()===sun.getMonth() ? `${mon.getDate()} – ${sun.getDate()} ${M[mon.getMonth()]}` : `${s} – ${e}`;
+}
+
 const SUN_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
 const MOON_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+const PREV_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
+const NEXT_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
 
 function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON_ICON:SUN_ICON;}
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 
 function render(data){
   if(!data?.employees) return;
-
-  const emps = data.employees.filter(e => {
-    const r = (e.role||'').toLowerCase();
-    const n = (e.name||'').toLowerCase();
-    return !EXCLUDE_ROLES.some(x => r.includes(x)) && !EXCLUDE_NAMES.some(x => n.includes(x));
+  const emps = data.employees.filter(e=>{
+    const r=(e.role||'').toLowerCase(), n=(e.name||'').toLowerCase();
+    return !EXCLUDE_ROLES.some(x=>r.includes(x)) && !EXCLUDE_NAMES.some(x=>n.includes(x));
   });
 
-  const periodText = _tab==='week' ? fmtRange(data.weekLabel||'') :
-                     _tab==='month' ? (data.monthLabel||'') : 'All Time';
+  const isCurrentWeek = _weekOffset === 0;
+  const wkLabel = fmtWeekLabel(getMondayForOffset(_weekOffset));
+  const monthLabel = data.monthLabel || '';
 
   const switchBtn=(tab,lbl)=>`<button class="tab${_tab===tab?' active':''}" onclick="switchTab('${tab}')">${lbl}</button>`;
+
+  // Right-side control: week nav when on week tab, plain label otherwise
+  let rightControl = '';
+  if(_tab==='week'){
+    rightControl = `<div class="wk-nav">
+      <button class="wk-arrow" onclick="shiftWeek(-1)" title="Previous week">${PREV_ICON}</button>
+      <span class="wk-label${isCurrentWeek?' is-current':''}">${esc(wkLabel)}</span>
+      <button class="wk-arrow" onclick="shiftWeek(1)" ${isCurrentWeek?'disabled':''} title="Next week">${NEXT_ICON}</button>
+    </div>`;
+  } else if(_tab==='month'){
+    rightControl = `<span class="period-lbl">${esc(monthLabel)}</span>`;
+  } else {
+    rightControl = `<span class="period-lbl">All Time</span>`;
+  }
 
   let html = `<div class="card">
     <div class="card-hdr">
       <span class="card-title">Content Output by Team Member</span>
       <div class="card-right">
-        ${periodText?`<span class="period-lbl">${esc(periodText)}</span>`:''}
+        ${rightControl}
         <div class="tabs">
-          ${switchBtn('week','This Week')}
-          ${switchBtn('month','This Month')}
+          ${switchBtn('week','Week')}
+          ${switchBtn('month','Month')}
           ${switchBtn('all','All Time')}
         </div>
       </div>
@@ -195,25 +230,22 @@ function render(data){
   if(!emps.length){
     html += `<div class="empty-row">No team data found</div>`;
   } else {
-    // Sort: most total output in period first
-    const sorted = [...emps].sort((a,b)=>{
-      const getPeriodTotal = e => {
-        if(_tab==='all') return (e.stats?.planning||0)+(e.stats?.shooting||0)+(e.stats?.editing||0)+(e.stats?.posting||0);
-        return (e[_tab]?.planning||0)+(e[_tab]?.shooting||0)+(e[_tab]?.editing||0)+(e[_tab]?.posting||0);
-      };
-      return getPeriodTotal(b) - getPeriodTotal(a);
+    const sorted=[...emps].sort((a,b)=>{
+      const tot=e=>_tab==='all'
+        ? (e.stats?.planning||0)+(e.stats?.shooting||0)+(e.stats?.editing||0)+(e.stats?.posting||0)
+        : (e[_tab]?.planning||0)+(e[_tab]?.shooting||0)+(e[_tab]?.editing||0)+(e[_tab]?.posting||0);
+      return tot(b)-tot(a);
     });
 
     for(const emp of sorted){
-      const isAll = _tab==='all';
-      const plan  = isAll ? (emp.stats?.planning||0)  : (emp[_tab]?.planning||0);
-      const shoot = isAll ? (emp.stats?.shooting||0)  : (emp[_tab]?.shooting||0);
-      const edit  = isAll ? (emp.stats?.editing||0)   : (emp[_tab]?.editing||0);
-      const post  = isAll ? (emp.stats?.posting||0)   : (emp[_tab]?.posting||0);
-      const total = plan + shoot + edit + post;
-      const hrs   = isAll ? (emp.stats?.totalHrs||0)  : (emp[_tab]?.hrs||0);
+      const isAll=_tab==='all';
+      const src=isAll?emp.stats:emp[_tab];
+      const plan=src?.planning||0, shoot=src?.shooting||0,
+            edit=src?.editing||0,  post=src?.posting||0;
+      const total=plan+shoot+edit+post;
+      const hrs=isAll?(emp.stats?.totalHrs||0):(emp[_tab]?.hrs||0);
 
-      html += `<div class="staff-row">
+      html+=`<div class="staff-row">
         <div class="s-name">
           <div class="s-dot ${sdot(emp.status)}"></div>
           <div style="min-width:0;">
@@ -224,54 +256,4 @@ function render(data){
         <div class="stat-cell"><div class="stat-num ${plan?'num-plan':'num-zero'}">${plan||'—'}</div></div>
         <div class="stat-cell"><div class="stat-num ${shoot?'num-shoot':'num-zero'}">${shoot||'—'}</div></div>
         <div class="stat-cell"><div class="stat-num ${edit?'num-edit':'num-zero'}">${edit||'—'}</div></div>
-        <div class="stat-cell"><div class="stat-num ${post?'num-post':'num-zero'}">${post||'—'}</div></div>
-        <div class="stat-cell"><div class="stat-num ${total?'num-total':'num-zero'}">${total||'—'}</div></div>
-        <div class="time-cell">
-          <div class="time-val ${hrs?'time-has':'num-zero'}">${fmtHrs(hrs)}</div>
-        </div>
-      </div>`;
-    }
-  }
-
-  html += `</div>`;
-  document.getElementById('dash').innerHTML = html;
-  document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-
-window.switchTab = function(tab){ _tab=tab; if(_data) render(_data); };
-
-async function loadData(){
-  try{
-    const r = await fetch('/api/creaitors/employee-stats?token='+_tok);
-    if(!r.ok) throw new Error('API '+r.status);
-    _data = await r.json();
-    render(_data);
-  }catch(e){
-    document.getElementById('dash').innerHTML = `<div class="loading">
-      <div style="font-size:11px;color:#FF6B35;font-weight:700;">Failed to load</div>
-      <div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">${esc(e.message)}</div>
-    </div>`;
-  }
-}
-
-loadData();
-setInterval(loadData, 5*60*1000);
-</script>
-
-<div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  const el=document.getElementById('_eyebrow');
-  if(!el) return;
-  el.textContent=el.dataset.os.toUpperCase();
-  const tok=new URLSearchParams(location.search).get('token');
-  if(!tok) return;
-  fetch('/api/client/info?token='+tok)
-    .then(r=>r.ok?r.json():null)
-    .then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · '+el.dataset.os.toUpperCase();})
-    .catch(()=>{});
-})();
-</script>
-</body>
-</html>
-                                                                                                                                                                                                                                                                                                                     
+        <div class="stat-cell"><div class="

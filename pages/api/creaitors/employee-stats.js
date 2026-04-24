@@ -165,7 +165,7 @@ export default async function handler(req, res) {
           const date        = rawDate ? rawDate.slice(0, 10) : null;
 
           // Staff is a Relation to Employee DB — match by employee page ID
-          const staffRels = ip['Staff']?.relation || [];
+          const staffRels = ip['Team Member']?.relation || [];
           staffRels.forEach(rel => {
             const empId = rel.id;
             if (!issuesByEmpId[empId]) issuesByEmpId[empId] = [];

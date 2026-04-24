@@ -390,46 +390,64 @@ function mkYearCard(e,ys,teamAvg,isTeam){
 
 /* LIVE HOST CARD */
 function mkLiveHostCard(e,tab,wkOff){
-  var tasks=e.tasks||[];
+  var sessions=e.liveSessions||[];
   var kc='';
   var body='';
+
+  function liveInRange(s,end){
+    return sessions.filter(function(x){return x.date&&x.date>=s&&x.date<=end;});
+  }
+  function totalHrs(arr){
+    var m=arr.reduce(function(a,x){return a+(x.mins||0);},0);
+    return Math.round((m/60)*10)/10;
+  }
+
   if(tab==='week'){
-    var ls=sliceLiveWeek(tasks,wkOff);
-    kc=ls.hrs>0?'kpi-good':'kpi-none';
+    var m=getMonday(wkOff),sun=new Date(m);sun.setDate(m.getDate()+6);
+    var wkSess=liveInRange(toStr(m),toStr(sun));
+    var hrs=totalHrs(wkSess);
+    kc=hrs>0?'kpi-good':'kpi-none';
     body='<div class="lh-body">'
-      +'<div><span class="lh-big">'+(ls.hrs||'0')+'</span><span class="lh-unit">hrs</span></div>'
-      +'<div class="lh-sub">'+ls.sessions+' live session'+(ls.sessions!==1?'s':'')+' this week</div>'
-      +(ls.hrs?'<div class="lh-badge">&#9679; Live</div>':'')
+      +'<div><span class="lh-big">'+(hrs||'0')+'</span><span class="lh-unit">hrs</span></div>'
+      +'<div class="lh-sub">'+wkSess.length+' live session'+(wkSess.length!==1?'s':'')+' this week</div>'
+      +(hrs?'<div class="lh-badge">&#9679; Live</div>':'')
       +'</div>';
+
   } else if(tab==='month'){
-    var mls=monthLiveStats(tasks);
-    kc=mls.hrs>0?'kpi-good':'kpi-none';
+    var mb=getMonthBoundsOff(_mthOff);
+    var mthSess=liveInRange(mb.s,mb.e);
+    var mthHrs=totalHrs(mthSess);
+    kc=mthHrs>0?'kpi-good':'kpi-none';
     var weeks=getMonthWeeks();
     var wkCells=weeks.map(function(wk,i){
-      var ws=sliceLiveWeek(tasks,wk.off);
+      var m2=getMonday(wk.off),sun2=new Date(m2);sun2.setDate(m2.getDate()+6);
+      var ws=liveInRange(toStr(m2),toStr(sun2));
+      var wh=totalHrs(ws);
       return '<div class="lh-wk">'
         +'<div class="lh-wk-lbl">W'+(i+1)+'</div>'
-        +'<div class="lh-wk-hrs'+(ws.hrs?'':' zero')+'">'+(ws.hrs||'—')+'</div>'
-        +(ws.hrs?'<div class="lh-wk-ses">'+ws.sessions+'ses</div>':'')
+        +'<div class="lh-wk-hrs'+(wh?'':' zero')+'">'+(wh||'&mdash;')+'</div>'
+        +(ws.length?'<div class="lh-wk-ses">'+ws.length+'ses</div>':'')
         +'</div>';
     }).join('');
     body='<div class="lh-body">'
-      +'<div><span class="lh-big">'+(mls.hrs||'0')+'</span><span class="lh-unit">hrs</span></div>'
-      +'<div class="lh-sub">'+mls.sessions+' session'+(mls.sessions!==1?'s':'')+' · '+esc(e.monthStats&&e.monthStats.monthLabel||'this month')+'</div>'
-      +(mls.hrs?'<div class="lh-badge">&#9679; Live</div>':'')
+      +'<div><span class="lh-big">'+(mthHrs||'0')+'</span><span class="lh-unit">hrs</span></div>'
+      +'<div class="lh-sub">'+mthSess.length+' session'+(mthSess.length!==1?'s':'')+' · '+esc(mb.lbl)+'</div>'
+      +(mthHrs?'<div class="lh-badge">&#9679; Live</div>':'')
       +'</div>'
       +'<div class="lh-wks">'+wkCells+'</div>';
+
   } else {
-    var yrT=(e.allStats&&e.allStats.live)||0;
-    var yrMins=(e.tasks||[]).filter(function(t){return t.isDone&&t.stage==='live'&&t.doneDate&&t.doneDate.slice(0,4)===new Date().getFullYear()+'';}).reduce(function(a,t){return a+(t.mins||0);},0);
-    var yrHrs=Math.round((yrMins/60)*10)/10;
+    var yrStr=(new Date().getFullYear()+_yrOff)+'';
+    var yrSess=sessions.filter(function(x){return x.date&&x.date.slice(0,4)===yrStr;});
+    var yrHrs=totalHrs(yrSess);
     kc=yrHrs>0?'kpi-good':'kpi-none';
     body='<div class="lh-body">'
       +'<div><span class="lh-big">'+(yrHrs||'0')+'</span><span class="lh-unit">hrs</span></div>'
-      +'<div class="lh-sub">'+yrT+' live session'+(yrT!==1?'s':'')+' · '+new Date().getFullYear()+'</div>'
+      +'<div class="lh-sub">'+yrSess.length+' live session'+(yrSess.length!==1?'s':'')+' · '+yrStr+'</div>'
       +(yrHrs?'<div class="lh-badge">&#9679; Live</div>':'')
       +'</div>';
   }
+
   return '<div class="mc">'
     +'<div class="mc-hdr">'+avHtml(e,kc,36)
     +'<div class="mc-info"><div class="mc-name">'+esc(e.name||'')+'</div>'

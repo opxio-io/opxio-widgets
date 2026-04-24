@@ -102,12 +102,13 @@ export default async function handler(req, res) {
       const mins     = tp['Accumulated Mins']?.number || 0;
       const stage    = getStage(taskName);
       if (!stage) return; // only track content stage tasks
-      const doneDate = doneRaw ? doneRaw.slice(0, 10) : null;
-      const isDone   = status === 'Done';
+      const doneDate    = doneRaw ? doneRaw.slice(0, 10) : null;
+      const createdDate = (task.created_time || '').slice(0, 10);
+      const isDone      = status === 'Done';
 
       (tp['Assigned To']?.relation || []).forEach(({ id: empId }) => {
         if (!empTasks[empId]) return;
-        empTasks[empId].push({ stage, doneDate, mins, isDone });
+        empTasks[empId].push({ stage, doneDate, createdDate, mins, isDone });
       });
     });
 
@@ -145,9 +146,4 @@ export default async function handler(req, res) {
       employees,
       monthLabel: today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
       generatedAt: new Date().toISOString(),
-    });
-
-  } catch (err) {
-    return res.status(500).json({ error: err.message });
-  }
-}
+    }

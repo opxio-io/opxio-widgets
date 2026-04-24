@@ -146,4 +146,9 @@ export default async function handler(req, res) {
       employees,
       monthLabel: today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
       generatedAt: new Date().toISOString(),
-    }
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+}

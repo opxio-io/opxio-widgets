@@ -245,7 +245,7 @@ export default async function handler(req, res) {
         }
         const postProdLink = props['Post-Production']?.url || '';
         if (!postProdLink.trim()) {
-          return actionError(taskPageId, `Cannot complete "${taskName}" — Post-Production link is required. Please add the upload link before marking as done.`);
+          return actionError(taskPageId, `Cannot complete "${taskName}" — Google Drive link is required. Please add the Google Drive link to Post-Production before marking as done.`);
         }
       } else if (isShooting) {
         // Content Shooting: completes directly, no QC or link required

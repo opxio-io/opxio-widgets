@@ -130,6 +130,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 .wkf-tot{font-size:22px;font-weight:900;letter-spacing:-.8px;color:rgba(255,255,255,.8);margin-left:5px;line-height:1;}
 .mc.team-card .wkf-tot{color:var(--g);}
 .wkf-tasks{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-right:2px;}
+.wkf-time{font-size:10px;font-weight:700;color:rgba(255,255,255,.25);margin-left:auto;}
 
 /* Team week 2x2 grid */
 .team-wk-grid{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:rgba(255,255,255,.04);flex:1;}
@@ -193,6 +194,12 @@ function sliceWeek(tasks,off){
   var s=toStr(m),e=toStr(sun),o={planning:0,shooting:0,editing:0,posting:0,mins:0};
   (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate>=s&&t.doneDate<=e){o[t.stage]++;o.mins+=t.mins;}});
   o.hrs=Math.round((o.mins/60)*10)/10;return o;
+}
+function sliceYear(tasks){
+  var yr=new Date().getFullYear()+'';
+  var o={planning:0,shooting:0,editing:0,posting:0,mins:0};
+  (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate.slice(0,4)===yr){o[t.stage]++;o.mins+=t.mins;}});
+  o.hrs=Math.round((o.mins/60)*10)/10;o.totalHrs=o.hrs;return o;
 }
 function getMonthWeeks(){
   var t=new Date();t.setHours(0,0,0,0);var yr=t.getFullYear(),mo=t.getMonth();
@@ -262,11 +269,12 @@ function mkWeekCard(e,wkS,lastS,maxV,kc){
     +'<span class="wkf-tot">'+thisTot+'</span>'
     +'<span class="wkf-tasks">tasks</span>'
     +wkBadge(thisTot,lastTot)
+    +(wkS.hrs?'<span class="wkf-time">'+fmtH(wkS.hrs)+'</span>':'')
     +'</div></div>';
 }
 
 /* ── TEAM WEEK CARD ── */
-function mkTeamWeekCard(wkS,lastS,wkLabel,activeCount){
+function mkTeamWeekCard(wkS,lastS,wkLabel,activeCount,teamHrs){
   var thisTot=(wkS.planning||0)+(wkS.shooting||0)+(wkS.editing||0)+(wkS.posting||0);
   var lastTot=(lastS.planning||0)+(lastS.shooting||0)+(lastS.editing||0)+(lastS.posting||0);
   return '<div class="mc team-card">'
@@ -286,19 +294,20 @@ function mkTeamWeekCard(wkS,lastS,wkLabel,activeCount){
     +'<span class="wkf-tasks">tasks</span>'
     +'<span class="badge bdg-fl">'+activeCount+' active</span>'
     +wkBadge(thisTot,lastTot)
+    +(teamHrs?'<span class="wkf-time">'+fmtH(teamHrs)+'</span>':'')
     +'</div></div>';
 }
 
-/* ── MONTH/ALLTIME CARD ── */
-function mkStdCard(e,wksData,wkLabels,isMth,isTeam,teamAvg){
-  var ms=e.monthStats||{},as=e.allStats||{};
+/* ── MONTH/YEARLY CARD ── */
+function mkStdCard(e,wksData,wkLabels,isMth,isTeam,teamAvg,customStats,colLabel){
+  var ms=e.monthStats||{},as=customStats||e.allStats||{};
   var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
   var hasMth=isMth;
   var dispTot=hasMth?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0):(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
   var kc=isTeam?'':kpiClass(dispTot,teamAvg||0);
   var thead='<tr><th></th>';
   if(hasMth){wkLabels.forEach(function(l){thead+='<th>'+l+'</th>';});thead+='<th class="mth">MTH</th><th>Time</th>';}
-  else{thead+='<th>All Time</th><th>Time</th>';}
+  else{thead+='<th>'+(colLabel||'This Year')+'</th><th>Time</th>';}
   thead+='</tr>';
   var stRows='';
   STAGES.forEach(function(st){
@@ -315,7 +324,7 @@ function mkStdCard(e,wksData,wkLabels,isMth,isTeam,teamAvg){
   var wkTots=(wksData||[]).map(function(w){return(w.planning||0)+(w.shooting||0)+(w.editing||0)+(w.posting||0);});
   var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
   var allTot=(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
-  var hrs=hasMth?(ms.hrs||0):(as.totalHrs||0);
+  var hrs=hasMth?(ms.hrs||0):(as.totalHrs||as.hrs||0);
   var tfoot='<tr class="tot-row ct-foot"><td class="tot-lbl">'+(isTeam?'Team Output':'Total Output')+'</td>';
   if(hasMth){
     wkTots.forEach(function(v){tfoot+='<td><span class="tot-val">'+(v||'&mdash;')+'</span></td>';});
@@ -344,27 +353,37 @@ function renderCompact(emps,data){
   var hasMth=_tab==='month';
   var teamTot=0,ac=0;
   emps.forEach(function(e){
-    var ms=e.monthStats||{},as=e.allStats||{};
+    var ms=e.monthStats||{};
+    var ys=_tab==='year'?sliceYear(e.tasks||[]):null;
     var t=hasMth?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
         :_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})()
-        :(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+        :_tab==='year'?((ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0))
+        :0;
     teamTot+=t;if(t>0)ac++;
   });
   var teamAvg=ac>0?teamTot/ac:0;
   var h='<div class="compact-card"><table class="tbl"><thead><tr><th>Team</th>';
   if(hasMth){wkLabels.forEach(function(l){h+='<th>'+l+'</th>';});h+='<th class="mth">MTH</th><th>Time</th>';}
-  else{h+='<th>'+((_tab==='week')?'This Week':'All Time')+'</th><th>Time</th>';}
+  else{h+='<th>'+(_tab==='week'?'This Week':'This Year')+'</th><th>Time</th>';}
   h+='</tr></thead><tbody>';
   var sorted=emps.slice().sort(function(a,b){
-    function g(e){var ms=e.monthStats||{},as=e.allStats||{};return hasMth?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0):_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})():(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);}
+    function g(e){
+      var ms=e.monthStats||{};
+      var ys=_tab==='year'?sliceYear(e.tasks||[]):null;
+      return hasMth?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
+        :_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})()
+        :_tab==='year'?((ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0)):0;
+    }
     return g(b)-g(a);
   });
   sorted.forEach(function(e){
-    var ms=e.monthStats||{},as=e.allStats||{};
+    var ms=e.monthStats||{};
+    var ys=_tab==='year'?sliceYear(e.tasks||[]):null;
     var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
     var wkS=_tab==='week'?sliceWeek(e.tasks||[],_wkOff):null;
     var wkTot=wkS?(wkS.planning||0)+(wkS.shooting||0)+(wkS.editing||0)+(wkS.posting||0):0;
-    var dispTot=hasMth?mthTot:_tab==='week'?wkTot:(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+    var yrTot=ys?(ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0):0;
+    var dispTot=hasMth?mthTot:_tab==='week'?wkTot:yrTot;
     var kc=kpiClass(dispTot,teamAvg);
     if(_tab==='week'){var mon=getMonday(_wkOff),sun=new Date(mon);sun.setDate(mon.getDate()+6);if(!isActiveInRange(e.tasks||[],toStr(mon),toStr(sun)))return;}
     h+='<tr><td><div class="c-emp">'+avHtml(e,kc,28)
@@ -378,8 +397,8 @@ function renderCompact(emps,data){
       h+='<td class="mth"><span class="cn cn-mth '+(mthTot?'cn-tot':'cn-zero')+'">'+(mthTot||'&mdash;')+'</span>'+moBadge(mthTot,e.prevMonthTotal||0)+'</td>';
       h+='<td><span style="font-size:12px;font-weight:800;color:'+(mHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(mHrs)+'</span></td>';
     } else {
-      var v=_tab==='week'?wkTot:((as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0));
-      var tHrs=_tab==='week'?(wkS?wkS.hrs:0):(as.totalHrs||0);
+      var v=_tab==='week'?wkTot:yrTot;
+      var tHrs=_tab==='week'?(wkS?wkS.hrs:0):(ys?ys.hrs:0);
       h+='<td><span class="cn '+(v?'cn-tot':'cn-zero')+'">'+(v||'&mdash;')+'</span></td>';
       h+='<td><span style="font-size:12px;font-weight:800;color:'+(tHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(tHrs)+'</span></td>';
     }
@@ -428,23 +447,43 @@ function renderCards(emps,data){
       var kc=kpiClass(thisTot,teamAvg);
       h+=mkWeekCard(e,wkS,lastS,teamAvg,kc);
     });
-    h+=mkTeamWeekCard(teamWkS,teamLastS,wkLblFull(mon),ac);
+    // compute team week time total
+    var teamWkHrs=emps.reduce(function(acc,e){var s=sliceWeek(e.tasks||[],_wkOff);return acc+(s.hrs||0);},0);
+    teamWkHrs=Math.round(teamWkHrs*10)/10;
+    h+=mkTeamWeekCard(teamWkS,teamLastS,wkLblFull(mon),ac,teamWkHrs);
   } else {
     var weeks=_tab==='month'?getMonthWeeks():null;
     var wkLabels=weeks?weeks.map(function(_,i){return 'W'+(i+1);}):null;
-    var tots2=emps.map(function(e){var ms=e.monthStats||{},as=e.allStats||{};return _tab==='month'?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0):(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);});
+    var tots2=emps.map(function(e){
+      var ms=e.monthStats||{};
+      var ys=_tab==='year'?sliceYear(e.tasks||[]):null;
+      return _tab==='month'?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
+        :_tab==='year'?((ys.planning||0)+(ys.shooting||0)+(ys.editing||0)+(ys.posting||0)):0;
+    });
     var ac2=tots2.filter(function(v){return v>0;}).length;
     var teamAvg2=ac2>0?tots2.reduce(function(a,b){return a+b;},0)/ac2:0;
     var sorted2=emps.slice().sort(function(a,b){return tots2[emps.indexOf(b)]-tots2[emps.indexOf(a)];});
     sorted2.forEach(function(e){
-      var wksData=weeks?weeks.map(function(wk){return sliceWeek(e.tasks||[],wk.off);}):[];
-      h+=mkStdCard(e,wksData,wkLabels,_tab==='month',false,teamAvg2);
+      if(_tab==='year'){
+        var ys=sliceYear(e.tasks||[]);
+        h+=mkStdCard(e,[],[],false,false,teamAvg2,ys,'This Year');
+      } else {
+        var wksData=weeks?weeks.map(function(wk){return sliceWeek(e.tasks||[],wk.off);}):[];
+        h+=mkStdCard(e,wksData,wkLabels,true,false,teamAvg2);
+      }
     });
     if(_tab==='month'){
       var teamMs={planning:0,shooting:0,editing:0,posting:0,hrs:0};
       emps.forEach(function(e){var ms=e.monthStats||{};teamMs.planning+=ms.planning||0;teamMs.shooting+=ms.shooting||0;teamMs.editing+=ms.editing||0;teamMs.posting+=ms.posting||0;teamMs.hrs+=(ms.hrs||0);});
       var tEmp={name:'Team Total',role:data.monthLabel||'',avatarUrl:null,_sigma:true,monthStats:teamMs,allStats:teamMs,prevMonthTotal:0};
       h+=mkStdCard(tEmp,weeks.map(function(wk){var o={planning:0,shooting:0,editing:0,posting:0};emps.forEach(function(e){var s=sliceWeek(e.tasks||[],wk.off);o.planning+=s.planning||0;o.shooting+=s.shooting||0;o.editing+=s.editing||0;o.posting+=s.posting||0;});return o;}),wkLabels,true,true,0);
+    }
+    if(_tab==='year'){
+      var teamYs={planning:0,shooting:0,editing:0,posting:0,mins:0};
+      emps.forEach(function(e){var ys=sliceYear(e.tasks||[]);teamYs.planning+=ys.planning||0;teamYs.shooting+=ys.shooting||0;teamYs.editing+=ys.editing||0;teamYs.posting+=ys.posting||0;teamYs.mins+=ys.mins||0;});
+      teamYs.hrs=Math.round((teamYs.mins/60)*10)/10;teamYs.totalHrs=teamYs.hrs;
+      var tEmpY={name:'Team Total',role:new Date().getFullYear()+'',avatarUrl:null,_sigma:true,monthStats:{},allStats:teamYs,prevMonthTotal:0};
+      h+=mkStdCard(tEmpY,[],[],false,true,0,teamYs,'This Year');
     }
   }
   h+='</div>';
@@ -458,11 +497,11 @@ function render(data){
     return !XROLES.some(function(x){return r.includes(x);})&&!XNAMES.some(function(x){return n.includes(x);});
   });
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
-  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('all','All Time')+'</div>';
+  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+'</div>';
   var isCur=_wkOff===0;
   var ctrlLeft=_tab==='week'
     ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
-    :('<span class="period-lbl">'+esc(_tab==='month'?(data.monthLabel||''):'All Time')+'</span>');
+    :('<span class="period-lbl">'+esc(_tab==='month'?(data.monthLabel||''):new Date().getFullYear()+'')+'</span>');
   var h='<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
   h+=_view==='compact'?renderCompact(emps,data):renderCards(emps,data);
   document.getElementById('dash').innerHTML=h;
@@ -479,14 +518,4 @@ function loadData(){
 loadData();
 setInterval(loadData,300000);
 </script>
-<div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  var el=document.getElementById('_eyebrow');if(!el)return;
-  el.textContent=el.dataset.os.toUpperCase();
-  var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api/client/info?token='+tok).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();}).catch(function(){});
-})();
-</script>
-</body>
-</html>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+<div class="wgt-footer">Widgets by Opxio.io</di

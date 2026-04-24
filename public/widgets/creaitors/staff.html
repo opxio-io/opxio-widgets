@@ -415,14 +415,14 @@ function renderCompact(emps,data){
       +'<div class="kpi-tag '+kc+'">'+kpiLabel(dispTot,teamAvg)+'</div>'
       +'</div></div></td>';
     if(hasMth){
-      var SMAP=[{k:'planning',c:'pln'},{k:'shooting',c:'sht'},{k:'editing',c:'edt'},{k:'posting',c:'pst'}];
+      var SMAP=[{k:'planning',c:'pln',a:'Planning'},{k:'shooting',c:'sht',a:'Shooting'},{k:'editing',c:'edt',a:'Editing'},{k:'posting',c:'pst',a:'Posting'}];
       weeks.forEach(function(wk){
         var s=sliceWeek(e.tasks||[],wk.off);
         var wt=(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);
         var brk='';
         if(wt>0){
           var parts=SMAP.filter(function(x){return(s[x.k]||0)>0;});
-          brk='<div class="stg-break">'+parts.map(function(x,i){return(i>0?'<span class="stg-pip sp-sep"> &middot; </span>':'')+'<span class="stg-pip sp-'+x.c+'">'+s[x.k]+'</span>';}).join('')+'</div>';
+          brk='<div class="stg-break">'+parts.map(function(x,i){return(i>0?'<span class="stg-pip sp-sep"> &middot; </span>':'')+'<span class="stg-pip sp-'+x.c+'">'+s[x.k]+' '+x.a+'</span>';}).join('')+'</div>';
         }
         h+='<td><span class="cn '+(wt?'cn-tot':'cn-zero')+'">'+(wt||'&mdash;')+'</span>'+brk+'</td>';
       });
@@ -550,7 +550,4 @@ setInterval(loadData,300000);
   var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
   fetch('/api/client/info?token='+tok).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();}).catch(function(){});
 })();
-</script>
-</body>
-</html>
-                                        
+</script

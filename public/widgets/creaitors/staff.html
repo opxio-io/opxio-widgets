@@ -209,6 +209,25 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function avColor(n){var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))&0xFFFFFF;return AV_COLORS[h%AV_COLORS.length];}
 function initials(n){var p=(n||'').trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():(n||'??').slice(0,2).toUpperCase();}
 function fmtH(h){if(!h)return '';if(h<1)return Math.round(h*60)+'m';var w=Math.floor(h),f=Math.round((h%1)*60);return w+'h'+(f?' '+f+'m':'');}
+function sliceMonthStats(tasks, mb){
+  var o={planning:0,shooting:0,editing:0,posting:0,mins:0};
+  (tasks||[]).forEach(function(t){
+    if(!t.isDone||!t.doneDate||t.doneDate<mb.s||t.doneDate>mb.e)return;
+    if(o.hasOwnProperty(t.stage)){o[t.stage]++;o.mins+=t.mins;}
+  });
+  o.hrs=Math.round((o.mins/60)*10)/10;
+  return o;
+}
+function prevMonthTotal(tasks, mb){
+  // count done tasks in month before mb
+  var t=new Date(mb.yr,mb.mo,0); // last day of prev month
+  var yr2=t.getFullYear(),mo2=t.getMonth();
+  var ps=yr2+'-'+String(mo2+1).padStart(2,'0')+'-01';
+  var pe=yr2+'-'+String(mo2+1).padStart(2,'0')+'-'+String(t.getDate()).padStart(2,'0');
+  var tot=0;
+  (tasks||[]).forEach(function(t2){if(t2.isDone&&t2.doneDate&&t2.doneDate>=ps&&t2.doneDate<=pe)tot++;});
+  return tot;
+}
 function getMonthBoundsOff(off){
   var t=new Date();t.setHours(0,0,0,0);
   var yr=t.getFullYear(),mo=t.getMonth()+off;
@@ -284,8 +303,9 @@ function moBadge(cur,prev){
   return p>0?'<div class="mom-stk mom-up">+'+p+'%</div>':'<div class="mom-stk mom-dn">'+p+'%</div>';
 }
 function avHtml(e,kc,size){
-  var inner=e.avatarUrl?'<img src="'+esc(e.avatarUrl)+'" onerror="this.style.display=\'none\'">':(e._sigma?'&Sigma;':initials(e.name||''));
-  var bg=e._sigma?'background:rgba(170,255,0,.15);color:#AAFF00;font-size:18px':(e.avatarUrl?'background:#333':'background:'+avColor(e.name||''));
+  var TEAM_ICON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:60%;height:60%"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>';
+  var inner=e.avatarUrl?'<img src="'+esc(e.avatarUrl)+'" onerror="this.style.display=\'none\'">':(e._sigma?TEAM_ICON:initials(e.name||''));
+  var bg=e._sigma?'background:rgba(170,255,0,.1);color:#AAFF00':(e.avatarUrl?'background:#333':'background:'+avColor(e.name||''));
   var cls=size>=34?'mc-av':'c-av';var wrapCls=size>=34?'mc-av-wrap':'c-av-wrap';var ringCls=size>=34?'mc-av-ring':'c-av-ring';
   return '<div class="'+wrapCls+'"><div class="'+cls+'" style="'+bg+';width:'+size+'px;height:'+size+'px;font-size:'+(size<=28?10:e._sigma?18:12)+'px">'+inner+'</div>'+(kc?'<div class="'+ringCls+' '+kc+'"></div>':'')+'</div>';
 }
@@ -468,7 +488,9 @@ function mkLiveHostCard(e,tab,wkOff){
 
 /* MONTH CARD */
 function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
-  var ms=e.monthStats||{};
+  var mb=getMonthBoundsOff(_mthOff);
+  var ms=_mthOff===0?(e.monthStats||{}):sliceMonthStats(e.tasks||[],mb);
+  var dynPrevTotal=_mthOff===0?(e.prevMonthTotal||0):prevMonthTotal(e.tasks||[],mb);
   var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
   var stageMins=monthStageMins(e.tasks||[]);
   var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
@@ -489,7 +511,7 @@ function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
   var hrs=ms.hrs||0;
   var tfoot='<tr class="tot-row ct-foot"><td class="tot-lbl">'+(isTeam?'Team Output':'Total Output')+'</td>';
   wkTots.forEach(function(v){tfoot+='<td><span class="tot-val">'+(v||'&mdash;')+'</span></td>';});
-  var momH=isTeam?'':moBadge(mthTot,e.prevMonthTotal||0);
+  var momH=isTeam?'':moBadge(mthTot,dynPrevTotal);
   tfoot+='<td class="mth">'+(mthTot?'<span class="tot-val">'+mthTot+'</span>'+(hrs?'<div class="st-time">'+fmtH(hrs)+'</div>':'')+momH:'<span class="no-act-sm">No activity</span>')+'</td></tr>';
   var cls='mc'+(isTeam?' team-card':'');
   return '<div class="'+cls+'">'
@@ -531,7 +553,8 @@ function renderCompact(emps,data){
     return g(b)-g(a);
   });
   sorted.forEach(function(e){
-    var ms=e.monthStats||{};
+    var mb_c=getMonthBoundsOff(_mthOff);
+    var ms=_mthOff===0?(e.monthStats||{}):sliceMonthStats(e.tasks||[],mb_c);
     var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
     var wkS=_tab==='week'?sliceWeek(e.tasks||[],_wkOff):null;
     var wkTot=wkS?(wkS.planning||0)+(wkS.shooting||0)+(wkS.editing||0)+(wkS.posting||0):0;
@@ -561,7 +584,7 @@ function renderCompact(emps,data){
         h+='<td>'+(wt?'<span class="cn cn-tot">'+wt+'</span>':'<span class="no-act-sm">No activity</span>')+brk+'</td>';
       });
       var mHrs=ms.hrs||0;
-      h+='<td class="mth">'+(mthTot?'<span class="cn cn-mth cn-tot">'+mthTot+'</span>'+(mHrs?'<div class="st-time">'+fmtH(mHrs)+'</div>':'')+moBadge(mthTot,e.prevMonthTotal||0):'<span class="no-act-sm">No activity</span>')+'</td>';
+      h+='<td class="mth">'+(mthTot?'<span class="cn cn-mth cn-tot">'+mthTot+'</span>'+(mHrs?'<div class="st-time">'+fmtH(mHrs)+'</div>':'')+moBadge(mthTot,_mthOff===0?(e.prevMonthTotal||0):prevMonthTotal(e.tasks||[],mb_c)):'<span class="no-act-sm">No activity</span>')+'</td>';
     } else {
       var v=_tab==='week'?wkTot:yrTot;
       var tHrs=_tab==='week'?(wkS?wkS.hrs:0):(ys?ys.hrs:0);
@@ -622,7 +645,8 @@ function renderCards(emps,data){
   } else if(_tab==='month'){
     var weeks=getMonthWeeks();
     var wkLabels=weeks.map(function(_,i){return 'W'+(i+1);});
-    var tots2=emps.map(function(e){var ms=e.monthStats||{};return(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);});
+    var mb_m=getMonthBoundsOff(_mthOff);
+    var tots2=emps.map(function(e){var ms2=_mthOff===0?(e.monthStats||{}):sliceMonthStats(e.tasks||[],mb_m);return(ms2.planning||0)+(ms2.shooting||0)+(ms2.editing||0)+(ms2.posting||0);});
     var ac2=tots2.filter(function(v){return v>0;}).length;
     var teamAvg2=ac2>0?tots2.reduce(function(a,b){return a+b;},0)/ac2:0;
     var regular2=emps.filter(function(e){return !isLiveHost(e);});
@@ -639,7 +663,7 @@ function renderCards(emps,data){
       h+=isLiveHost(e)?mkLiveHostCard(e,'month',0):mkStdCard(e,wksData,wkLabels,false,teamAvg2);
     });
     var teamMs={planning:0,shooting:0,editing:0,posting:0,hrs:0};
-    emps.forEach(function(e){var ms=e.monthStats||{};teamMs.planning+=ms.planning||0;teamMs.shooting+=ms.shooting||0;teamMs.editing+=ms.editing||0;teamMs.posting+=ms.posting||0;teamMs.hrs+=(ms.hrs||0);});
+    emps.forEach(function(e){var ms_t=_mthOff===0?(e.monthStats||{}):sliceMonthStats(e.tasks||[],mb_m);teamMs.planning+=ms_t.planning||0;teamMs.shooting+=ms_t.shooting||0;teamMs.editing+=ms_t.editing||0;teamMs.posting+=ms_t.posting||0;teamMs.hrs+=(ms_t.hrs||0);});
     var tEmp={name:'Team Total',role:data.monthLabel||'',avatarUrl:null,_sigma:true,monthStats:teamMs,allStats:teamMs,prevMonthTotal:0};
     var teamWksData=weeks.map(function(wk){var o={planning:0,shooting:0,editing:0,posting:0};emps.forEach(function(e){var s=sliceWeek(e.tasks||[],wk.off);o.planning+=s.planning||0;o.shooting+=s.shooting||0;o.editing+=s.editing||0;o.posting+=s.posting||0;});return o;});
     h+=mkStdCard(tEmp,teamWksData,wkLabels,true,0);

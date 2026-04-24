@@ -38,6 +38,7 @@ export default async function handler(req, res) {
   const TASKS_DB    = resolveDB(client, 'TASKS_DB',    '3348b289e31a80dc89e1eb7ba5b49b1a');
   const EMPLOYEE_DB = resolveDB(client, 'EMPLOYEE_DB',  'bc5b99b59468498e8a294149d6f03134');
   const LIVE_DB     = resolveDB(client, 'LIVE_DB',      '8db736ebbe3483bd84290153e8252101');
+  const ISSUES_DB   = resolveDB(client, 'ISSUES_DB',    '34c736ebbe34815fb0b0d4dcef5ca373');
 
   try {
     const headers = {
@@ -120,19 +121,16 @@ export default async function handler(req, res) {
         const ld = await lr.json();
         ld.results.forEach(session => {
           const sp = session.properties;
-          // Duration: formula → number (minutes). Try number type first, then formula.
           const durProp = sp['Duration'];
           let mins = 0;
           // Formula: dateBetween(..., "minutes") / 60 → result is hours, convert to mins
           if (durProp?.type === 'number')  mins = (durProp.number || 0) * 60;
           if (durProp?.type === 'formula') mins = (durProp.formula?.number || 0) * 60;
 
-          // Date is a date range — use start of range
           const dateProp = sp['Date'] || sp['Session Date'] || sp['Live Date'];
           const rawDate = dateProp?.date?.start || session.created_time || null;
           const date = rawDate ? rawDate.slice(0, 10) : null;
 
-          // Live Host: People property
           const hosts = sp['Live Host']?.people || [];
           hosts.forEach(person => {
             const key = normName(person.name);
@@ -144,7 +142,40 @@ export default async function handler(req, res) {
       } while (liveCursor);
     } catch (_) {}
 
-    // 5. Build compact task list per employee
+    // 5. Fetch issues log — keyed by normalised staff name
+    const issuesByName = {}; // normName → [{date, summary, description, actionTaken, status, stage}]
+    try {
+      let issueCursor;
+      do {
+        const ibody = { page_size: 100, sorts: [{ property: 'Date', direction: 'descending' }] };
+        if (issueCursor) ibody.start_cursor = issueCursor;
+        const ir = await fetch('https://api.notion.com/v1/databases/' + ISSUES_DB + '/query', {
+          method: 'POST', headers, body: JSON.stringify(ibody),
+        });
+        if (!ir.ok) break;
+        const id2 = await ir.json();
+        id2.results.forEach(issue => {
+          const ip = issue.properties;
+          const summary     = ip['Issue Summary']?.title?.map(t => t.plain_text).join('') || '';
+          const description = ip['Issue Description']?.rich_text?.map(t => t.plain_text).join('') || '';
+          const actionTaken = ip['Action Taken']?.rich_text?.map(t => t.plain_text).join('') || '';
+          const status      = ip['Status']?.select?.name || 'Open';
+          const stage       = ip['Stage']?.select?.name || 'General';
+          const rawDate     = ip['Date']?.date?.start || issue.created_time || null;
+          const date        = rawDate ? rawDate.slice(0, 10) : null;
+
+          const staff = ip['Staff']?.people || [];
+          staff.forEach(person => {
+            const key = normName(person.name);
+            if (!issuesByName[key]) issuesByName[key] = [];
+            issuesByName[key].push({ date, summary, description, actionTaken, status, stage });
+          });
+        });
+        issueCursor = id2.has_more ? id2.next_cursor : undefined;
+      } while (issueCursor);
+    } catch (_) {}
+
+    // 6. Build compact task list per employee
     const empTasks = {};
     [...empIdSet].forEach(id => { empTasks[id] = []; });
 
@@ -166,7 +197,7 @@ export default async function handler(req, res) {
       });
     });
 
-    // 6. Compute stats
+    // 7. Compute stats
     const today = new Date(); today.setHours(0,0,0,0);
     const yr = today.getFullYear(), mo = today.getMonth();
 
@@ -199,15 +230,16 @@ export default async function handler(req, res) {
         }
       });
 
-      // Attach live sessions by name match
-      const empName  = empMap[id]?.name || '';
+      const empName      = empMap[id]?.name || '';
       const liveSessions = liveByName[normName(empName)] || [];
+      const issues       = issuesByName[normName(empName)] || [];
 
       return {
         id,
         ...empMap[id],
         tasks,
         liveSessions,
+        issues,
         allStats:   { ...allStats,   totalHrs: Math.round((allStats.totalMins/60)*10)/10 },
         monthStats: { ...monthStats, hrs: Math.round((monthStats.mins/60)*10)/10 },
         prevMonthTotal: prevTotal,

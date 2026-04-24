@@ -10,6 +10,7 @@ function getStage(taskName) {
   if (n.includes('shooting'))  return 'shooting';
   if (n.includes('editing'))   return 'editing';
   if (n.includes('posting'))   return 'posting';
+  if (n.includes('live'))      return 'live';
   return null;
 }
 
@@ -138,8 +139,8 @@ export default async function handler(req, res) {
 
     const employees = [...empIdSet].map(id => {
       const tasks = empTasks[id];
-      const allStats   = { planning:0, shooting:0, editing:0, posting:0, totalMins:0 };
-      const monthStats = { planning:0, shooting:0, editing:0, posting:0, mins:0 };
+      const allStats   = { planning:0, shooting:0, editing:0, posting:0, live:0, totalMins:0 };
+      const monthStats = { planning:0, shooting:0, editing:0, posting:0, live:0, liveMins:0, mins:0 };
       let prevTotal = 0;
 
       tasks.forEach(t => {
@@ -149,6 +150,7 @@ export default async function handler(req, res) {
         if (t.doneDate && t.doneDate >= monthStart && t.doneDate <= monthEnd) {
           monthStats[t.stage]++;
           monthStats.mins += t.mins;
+          if (t.stage === 'live') monthStats.liveMins += t.mins;
         }
         if (t.doneDate && t.doneDate >= prevStart && t.doneDate <= prevEnd) {
           prevTotal++;

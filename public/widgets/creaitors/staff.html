@@ -199,7 +199,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 <div id="dash"><div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div></div>
 <script>
 var _tok=new URLSearchParams(location.search).get('token')||'';
-var _tab='week',_data=null,_wkOff=0,_view='card';
+var _tab='week',_data=null,_wkOff=0,_mthOff=0,_yrOff=0,_view='card';
 var XROLES=['part time','part-time','freelance'];
 var XNAMES=['danil husaini'];
 var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -209,15 +209,19 @@ function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace
 function avColor(n){var h=0;for(var i=0;i<n.length;i++)h=(h*31+n.charCodeAt(i))&0xFFFFFF;return AV_COLORS[h%AV_COLORS.length];}
 function initials(n){var p=(n||'').trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():(n||'??').slice(0,2).toUpperCase();}
 function fmtH(h){if(!h)return '';if(h<1)return Math.round(h*60)+'m';var w=Math.floor(h),f=Math.round((h%1)*60);return w+'h'+(f?' '+f+'m':'');}
-function getMonthBounds(){
-  var t=new Date();t.setHours(0,0,0,0);var yr=t.getFullYear(),mo=t.getMonth();
+function getMonthBoundsOff(off){
+  var t=new Date();t.setHours(0,0,0,0);
+  var yr=t.getFullYear(),mo=t.getMonth()+off;
+  while(mo<0){mo+=12;yr--;}while(mo>11){mo-=12;yr++;}
   var s=yr+'-'+String(mo+1).padStart(2,'0')+'-01';
   var ld=new Date(yr,mo+1,0).getDate();
   var e=yr+'-'+String(mo+1).padStart(2,'0')+'-'+String(ld).padStart(2,'0');
-  return{s:s,e:e};
+  var lbl=new Date(yr,mo,1).toLocaleString('en',{month:'long'})+' '+yr;
+  return{s:s,e:e,lbl:lbl,yr:yr,mo:mo};
 }
+function getMonthBounds(){return getMonthBoundsOff(0);}
 function monthStageMins(tasks){
-  var mb=getMonthBounds();
+  var mb=getMonthBoundsOff(_mthOff);
   var o={planning:0,shooting:0,editing:0,posting:0};
   (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate>=mb.s&&t.doneDate<=mb.e&&o.hasOwnProperty(t.stage))o[t.stage]+=(t.mins||0);});
   return o;
@@ -237,7 +241,7 @@ function sliceWeek(tasks,off){
   o.hrs=Math.round((o.mins/60)*10)/10;return o;
 }
 function sliceYear(tasks){
-  var yr=new Date().getFullYear()+'';
+  var yr=(new Date().getFullYear()+_yrOff)+'';
   var o={planning:0,shooting:0,editing:0,posting:0,mins:0};
   (tasks||[]).forEach(function(t){if(t.isDone&&t.doneDate&&t.doneDate.slice(0,4)===yr){o[t.stage]++;o.mins+=t.mins;}});
   o.hrs=Math.round((o.mins/60)*10)/10;o.totalHrs=o.hrs;return o;
@@ -250,12 +254,13 @@ function sliceLiveWeek(tasks,off){
   return{sessions:sessions,hrs:Math.round((mins/60)*10)/10};
 }
 function monthLiveStats(tasks){
-  var mb=getMonthBounds(),mins=0,sessions=0;
+  var mb=getMonthBoundsOff(_mthOff),mins=0,sessions=0;
   (tasks||[]).forEach(function(t){if(t.isDone&&t.stage==='live'&&t.doneDate&&t.doneDate>=mb.s&&t.doneDate<=mb.e){sessions++;mins+=t.mins;}});
   return{sessions:sessions,hrs:Math.round((mins/60)*10)/10};
 }
 function getMonthWeeks(){
-  var t=new Date();t.setHours(0,0,0,0);var yr=t.getFullYear(),mo=t.getMonth();
+  var mb2=getMonthBoundsOff(_mthOff);var yr=mb2.yr,mo=mb2.mo;
+  var t=new Date();t.setHours(0,0,0,0);
   var first=new Date(yr,mo,1),last=new Date(yr,mo+1,0);
   var dow=first.getDay(),diff=dow===0?-6:1-dow,mon=new Date(first);
   mon.setDate(first.getDate()+diff);
@@ -297,6 +302,8 @@ window.toggleView=function(){
 };
 window.switchTab=function(t){_tab=t;if(_data)render(_data);};
 window.shiftWeek=function(d){if(d===1&&_wkOff===0)return;_wkOff+=d;if(_data)render(_data);};
+window.shiftMonth=function(d){_mthOff+=d;if(_data)render(_data);};
+window.shiftYear=function(d){_yrOff+=d;if(_data)render(_data);};
 
 /* WEEK CARD - 2x2 stage count grid */
 function mkWeekCard(e,wkS,lastS,teamAvg,kc){
@@ -620,9 +627,15 @@ function render(data){
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
   var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+'</div>';
   var isCur=_wkOff===0;
+  var mb=getMonthBoundsOff(_mthOff);
+  var isMthCur=_mthOff===0;
+  var yrNum=new Date().getFullYear()+_yrOff;
+  var isYrCur=_yrOff===0;
   var ctrlLeft=_tab==='week'
     ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
-    :('<span class="period-lbl">'+esc(_tab==='month'?(data.monthLabel||''):new Date().getFullYear()+'')+'</span>');
+    :_tab==='month'
+    ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftMonth(-1)">'+PREV+'</button><span class="wk-lbl'+(isMthCur?' cur':'')+'">'+esc(mb.lbl)+'</span><button class="wk-arrow" onclick="shiftMonth(1)"'+(isMthCur?' disabled':'')+'>'+NEXT+'</button></div>')
+    :('<div class="wk-nav"><button class="wk-arrow" onclick="shiftYear(-1)">'+PREV+'</button><span class="wk-lbl'+(isYrCur?' cur':'')+'">'+yrNum+'</span><button class="wk-arrow" onclick="shiftYear(1)"'+(isYrCur?' disabled':'')+'>'+NEXT+'</button></div>');
   var h='<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
   h+=_view==='compact'?renderCompact(emps,data):renderCards(emps,data);
   document.getElementById('dash').innerHTML=h;

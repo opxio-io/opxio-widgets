@@ -472,7 +472,7 @@ function mkStdCard(e,wksData,wkLabels,isTeam,teamAvg){
     wksData.forEach(function(w){var v=w[st.k]||0;stRows+='<td><span class="n '+(v?'n-'+st.c:'n-zero')+'">'+(v||'&mdash;')+'</span></td>';});
     var mv=ms[st.k]||0;
     var smins=stageMins[st.k]||0;
-    var stimeH=smins?'<div class="st-time">'+fmtH(smins/60)+'</div>':'';\ 
+    var stimeH=smins?'<div class="st-time">'+fmtH(smins/60)+'</div>':'';
     stRows+='<td class="mth">'+(mv?'<span class="n n-mth n-'+st.c+'">'+mv+'</span>'+stimeH:'<span class="n n-zero">&mdash;</span>')+'</td></tr>';
   });
   var wkTots=(wksData||[]).map(function(w){return(w.planning||0)+(w.shooting||0)+(w.editing||0)+(w.posting||0);});

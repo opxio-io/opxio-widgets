@@ -171,4 +171,7 @@ export default async function handler(req, res) {
       generatedAt: new Date().toISOString(),
     });
 
-  } 
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+}

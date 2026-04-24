@@ -52,14 +52,14 @@ body.light .tab{color:rgba(255,255,255,.55);}
 .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 body.light .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 
-/* Column headers — 6 cols: name + 4 stages + total */
-.col-hdr{display:grid;grid-template-columns:180px repeat(4,1fr) 72px;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
+/* Column headers — 7 cols: name + 4 stages + total + time */
+.col-hdr{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:10px 20px;border-bottom:1px solid rgba(255,255,255,.05);gap:8px;}
 .ch{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.25);text-align:center;}
 body.light .ch{color:rgba(255,255,255,.55);}
 .ch:first-child{text-align:left;}
 
 /* Team member row */
-.staff-row{display:grid;grid-template-columns:180px repeat(4,1fr) 72px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);gap:8px;transition:background .15s;}
+.staff-row{display:grid;grid-template-columns:180px repeat(4,1fr) 64px 72px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);gap:8px;transition:background .15s;}
 .staff-row:last-child{border-bottom:none;}
 .staff-row:hover{background:rgba(255,255,255,.02);}
 
@@ -94,8 +94,15 @@ body.light .num-total{color:rgba(255,255,255,.85);}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
 
-@media(max-width:780px){
-  .col-hdr,.staff-row{grid-template-columns:130px repeat(4,1fr) 56px;padding-left:14px;padding-right:14px;}
+/* Time cell */
+.time-cell{text-align:center;}
+.time-val{font-size:15px;font-weight:800;letter-spacing:-.3px;line-height:1;}
+.time-has{color:rgba(255,255,255,.6);}
+body.light .time-has{color:rgba(255,255,255,.85);}
+.time-unit{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-top:3px;}
+
+@media(max-width:860px){
+  .col-hdr,.staff-row{grid-template-columns:130px repeat(4,1fr) 52px 60px;padding-left:14px;padding-right:14px;}
 }
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 body.light .wgt-footer{color:rgba(0,0,0,.25);}
@@ -134,6 +141,12 @@ function fmtRange(label){
   if(!label) return '';
   const M=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   return label.replace(/(\d{4})-(\d{2})-(\d{2})/g,(_,y,m,d)=>`${parseInt(d)} ${M[parseInt(m)-1]} ${y}`);
+}
+function fmtHrs(h){
+  if(!h) return '—';
+  if(h<1) return Math.round(h*60)+'m';
+  const whole=Math.floor(h),frac=Math.round((h-whole)*60);
+  return frac>0?`${whole}h ${frac}m`:`${whole}h`;
 }
 function sdot(s){return s==='Active'?'s-dot-on':s==='Inactive'?'s-dot-off':'s-dot-lv';}
 
@@ -176,6 +189,7 @@ function render(data){
       <div class="ch">Editing</div>
       <div class="ch">Posting</div>
       <div class="ch">Total</div>
+      <div class="ch">Time</div>
     </div>`;
 
   if(!emps.length){
@@ -192,11 +206,12 @@ function render(data){
 
     for(const emp of sorted){
       const isAll = _tab==='all';
-      const plan  = isAll ? (emp.stats?.planning||0) : (emp[_tab]?.planning||0);
-      const shoot = isAll ? (emp.stats?.shooting||0) : (emp[_tab]?.shooting||0);
-      const edit  = isAll ? (emp.stats?.editing||0)  : (emp[_tab]?.editing||0);
-      const post  = isAll ? (emp.stats?.posting||0)  : (emp[_tab]?.posting||0);
+      const plan  = isAll ? (emp.stats?.planning||0)  : (emp[_tab]?.planning||0);
+      const shoot = isAll ? (emp.stats?.shooting||0)  : (emp[_tab]?.shooting||0);
+      const edit  = isAll ? (emp.stats?.editing||0)   : (emp[_tab]?.editing||0);
+      const post  = isAll ? (emp.stats?.posting||0)   : (emp[_tab]?.posting||0);
       const total = plan + shoot + edit + post;
+      const hrs   = isAll ? (emp.stats?.totalHrs||0)  : (emp[_tab]?.hrs||0);
 
       html += `<div class="staff-row">
         <div class="s-name">
@@ -211,6 +226,9 @@ function render(data){
         <div class="stat-cell"><div class="stat-num ${edit?'num-edit':'num-zero'}">${edit||'—'}</div></div>
         <div class="stat-cell"><div class="stat-num ${post?'num-post':'num-zero'}">${post||'—'}</div></div>
         <div class="stat-cell"><div class="stat-num ${total?'num-total':'num-zero'}">${total||'—'}</div></div>
+        <div class="time-cell">
+          <div class="time-val ${hrs?'time-has':'num-zero'}">${fmtHrs(hrs)}</div>
+        </div>
       </div>`;
     }
   }
@@ -256,4 +274,4 @@ setInterval(loadData, 5*60*1000);
 </script>
 </body>
 </html>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
+                                                                                                                                                                                                                                                                                                                     

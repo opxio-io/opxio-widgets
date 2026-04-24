@@ -8,106 +8,129 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#fff;padding:14px 14px 24px;overflow-y:auto;}
+body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#fff;padding:14px 14px 20px;overflow-y:auto;}
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.2);}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
 
-/* ── Header ── */
-.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
 .hdr-left .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:2px;}
 .hdr-left .title{font-size:20px;font-weight:900;letter-spacing:-.03em;}
-.hdr-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.hdr-right{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
 .ts{font-size:10px;color:rgba(255,255,255,.15);}
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.icon-btn{width:28px;height:28px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
-.icon-btn svg{width:14px;height:14px;}
+.icon-btn.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* ── Tabs + nav ── */
-.ctrl-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.ctrl-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
 .ctrl-left{display:flex;align-items:center;gap:8px;}
 .period-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.04em;}
 .tabs{display:flex;gap:3px;background:rgba(255,255,255,.06);border-radius:8px;padding:3px;}
-.tab{font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 14px;border-radius:6px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,.3);cursor:pointer;transition:all .18s;}
+.tab{font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;border:1px solid transparent;background:transparent;color:rgba(255,255,255,.3);cursor:pointer;transition:all .18s;}
 .tab.active{background:var(--gm);color:var(--g);border-color:var(--gb);}
 .wk-nav{display:flex;align-items:center;gap:6px;}
-.wk-arrow{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.wk-arrow{width:24px;height:24px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
 .wk-arrow:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .wk-arrow:disabled{opacity:.2;cursor:default;pointer-events:none;}
-.wk-arrow svg{width:12px;height:12px;}
-.wk-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);white-space:nowrap;min-width:130px;text-align:center;}
+.wk-arrow svg{width:11px;height:11px;}
+.wk-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);white-space:nowrap;min-width:128px;text-align:center;}
 .wk-lbl.cur{color:var(--g);}
 
-/* ── Card grid ── */
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:560px){.grid{grid-template-columns:1fr;}}
+/* ── COMPACT VIEW ── */
+.compact-card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;}
+.tbl{width:100%;border-collapse:collapse;}
+.tbl thead th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);padding:9px 14px 7px;text-align:center;border-bottom:1px solid rgba(255,255,255,.05);}
+.tbl thead th:first-child{text-align:left;}
+.tbl thead th.mth{color:rgba(170,255,0,.5);}
+.tbl tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:background .12s;}
+.tbl tbody tr:last-child{border-bottom:none;}
+.tbl tbody tr:hover{background:rgba(255,255,255,.02);}
+.tbl td{padding:8px 14px;text-align:center;vertical-align:middle;}
+.tbl td:first-child{text-align:left;}
+.tbl tfoot tr{border-top:1px solid rgba(255,255,255,.06);}
+.tbl tfoot td{padding:8px 14px;text-align:center;font-size:15px;font-weight:900;color:rgba(255,255,255,.5);}
+.tbl tfoot td:first-child{text-align:left;}
+.tbl tfoot td.mth{color:var(--g);}
 
-/* ── Member card ── */
-.mc{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;}
-.mc.team-card{border-color:rgba(170,255,0,.15);background:rgba(170,255,0,.03);}
+/* compact name cell */
+.c-emp{display:flex;align-items:center;gap:8px;}
+.c-av-wrap{position:relative;flex-shrink:0;}
+.c-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;overflow:hidden;letter-spacing:-.3px;}
+.c-av img{width:100%;height:100%;object-fit:cover;}
+.c-av-ring{position:absolute;inset:-2px;border-radius:50%;border:2px solid transparent;}
+.c-av-ring.kpi-good{border-color:#AAFF00;}
+.c-av-ring.kpi-low{border-color:#F59E0B;}
+.c-av-ring.kpi-none{border-color:#FF6B35;}
+.c-name{font-size:12px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;}
+.c-role{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:110px;}
+.kpi-tag{display:inline-flex;align-items:center;font-size:8px;font-weight:800;letter-spacing:.05em;padding:1px 5px;border-radius:4px;margin-top:2px;}
+.kpi-tag.kpi-good{background:rgba(170,255,0,.1);color:rgba(170,255,0,.8);}
+.kpi-tag.kpi-low{background:rgba(245,158,11,.1);color:rgba(245,158,11,.9);}
+.kpi-tag.kpi-none{background:rgba(255,80,80,.1);color:rgba(255,107,53,.9);}
 
-/* ── Card header ── */
-.mc-hdr{display:flex;align-items:center;gap:10px;padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
-.mc.team-card .mc-hdr{border-bottom-color:rgba(170,255,0,.1);}
-.av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;overflow:hidden;letter-spacing:-.5px;}
-.av img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
-.mc-info{min-width:0;}
-.mc-name{font-size:13px;font-weight:800;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2;}
-.mc-role{font-size:10px;font-weight:600;color:rgba(255,255,255,.28);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.mc.team-card .mc-name{color:var(--g);}
-.mc.team-card .mc-role{color:rgba(170,255,0,.45);}
-
-/* ── Stats table ── */
-.ct{width:100%;border-collapse:collapse;}
-.ct th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);padding:8px 10px 5px;text-align:center;}
-.ct th:first-child{text-align:left;padding-left:14px;}
-.ct th.mth{color:rgba(170,255,0,.5);}
-.ct td{padding:4px 10px;text-align:center;line-height:1;}
-.ct td:first-child{text-align:left;padding-left:14px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
-.ct td.mth{font-weight:900;}
-.ct tr:last-child td{padding-bottom:6px;}
-
-/* Stage label colors */
-.lbl-pln{color:rgba(96,165,250,.6);}
-.lbl-sht{color:rgba(245,158,11,.6);}
-.lbl-edt{color:rgba(192,132,252,.6);}
-.lbl-pst{color:rgba(170,255,0,.6);}
-
-/* Number colors */
-.n{font-size:16px;font-weight:900;letter-spacing:-.5px;}
-.n-zero{color:rgba(255,255,255,.1);}
-.n-pln{color:#60A5FA;}
-.n-sht{color:#F59E0B;}
-.n-edt{color:#C084FC;}
-.n-pst{color:#AAFF00;}
-.n-mth{font-size:17px;}
-.n-tot{color:rgba(255,255,255,.7);}
-.n-gtot{color:var(--g);font-size:18px;}
-
-/* Total row */
-.ct-foot{border-top:1px solid rgba(255,255,255,.05);}
-.mc.team-card .ct-foot{border-top-color:rgba(170,255,0,.1);}
-.tot-lbl{font-size:8px!important;font-weight:700!important;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25)!important;}
-.tot-val{font-size:18px;font-weight:900;color:rgba(255,255,255,.6);}
-.mc.team-card .tot-val{color:var(--g);}
-.tot-row td{padding-top:8px!important;padding-bottom:10px!important;}
-
-/* Badge */
-.badge{display:inline-flex;align-items:center;font-size:9px;font-weight:800;letter-spacing:.04em;padding:2px 7px;border-radius:999px;vertical-align:middle;}
+/* compact number cells */
+.cn{font-size:15px;font-weight:900;letter-spacing:-.5px;}
+.cn-zero{color:rgba(255,255,255,.1);}
+.cn-pln{color:#60A5FA;}
+.cn-sht{color:#F59E0B;}
+.cn-edt{color:#C084FC;}
+.cn-pst{color:#AAFF00;}
+.cn-tot{color:rgba(255,255,255,.65);}
+.cn-mth{font-size:16px;}
+.badge{display:inline-flex;align-items:center;font-size:8px;font-weight:800;letter-spacing:.04em;padding:2px 6px;border-radius:999px;vertical-align:middle;margin-left:4px;}
 .bdg-up{background:rgba(170,255,0,.12);color:#AAFF00;}
 .bdg-dn{background:rgba(255,80,80,.12);color:#FF6B35;}
 .bdg-na{background:rgba(255,80,80,.1);color:rgba(255,107,53,.8);}
 .bdg-fl{background:rgba(255,255,255,.06);color:rgba(255,255,255,.3);}
 
-/* Loading / empty */
-.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:8px;}
+/* ── CARD VIEW ── */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.grid{grid-template-columns:1fr;}}
+.mc{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;overflow:hidden;}
+.mc.team-card{border-color:rgba(170,255,0,.15);background:rgba(170,255,0,.03);}
+.mc-hdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.05);}
+.mc.team-card .mc-hdr{border-bottom-color:rgba(170,255,0,.1);}
+.mc-av-wrap{position:relative;flex-shrink:0;}
+.mc-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;overflow:hidden;letter-spacing:-.5px;}
+.mc-av img{width:100%;height:100%;object-fit:cover;}
+.mc-av-ring{position:absolute;inset:-2px;border-radius:50%;border:2px solid transparent;}
+.mc-av-ring.kpi-good{border-color:#AAFF00;}
+.mc-av-ring.kpi-low{border-color:#F59E0B;}
+.mc-av-ring.kpi-none{border-color:#FF6B35;}
+.mc-info{min-width:0;}
+.mc-name{font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc-role{font-size:9px;font-weight:600;color:rgba(255,255,255,.28);margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.mc.team-card .mc-name{color:var(--g);}
+.mc.team-card .mc-role{color:rgba(170,255,0,.45);}
+.ct{width:100%;border-collapse:collapse;}
+.ct th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.2);padding:7px 10px 4px;text-align:center;}
+.ct th:first-child{text-align:left;padding-left:14px;}
+.ct th.mth{color:rgba(170,255,0,.5);}
+.ct td{padding:3px 10px;text-align:center;line-height:1;}
+.ct td:first-child{text-align:left;padding-left:14px;font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;}
+.ct-foot{border-top:1px solid rgba(255,255,255,.05);}
+.mc.team-card .ct-foot{border-top-color:rgba(170,255,0,.1);}
+.tot-lbl{font-size:8px!important;font-weight:700!important;text-transform:uppercase!important;letter-spacing:.1em!important;color:rgba(255,255,255,.2)!important;}
+.tot-val{font-size:16px;font-weight:900;color:rgba(255,255,255,.6);}
+.mc.team-card .tot-val{color:var(--g);}
+.tot-row td{padding-top:7px!important;padding-bottom:9px!important;}
+.lbl-pln{color:rgba(96,165,250,.6);}
+.lbl-sht{color:rgba(245,158,11,.6);}
+.lbl-edt{color:rgba(192,132,252,.6);}
+.lbl-pst{color:rgba(170,255,0,.6);}
+.n{font-size:15px;font-weight:900;letter-spacing:-.5px;}
+.n-zero{color:rgba(255,255,255,.1);}
+.n-pln{color:#60A5FA;}.n-sht{color:#F59E0B;}.n-edt{color:#C084FC;}.n-pst{color:#AAFF00;}
+.n-mth{font-size:16px;}
+
+.loading{display:flex;align-items:center;justify-content:center;min-height:160px;flex-direction:column;gap:8px;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
 .err-text{font-size:11px;color:#FF6B35;font-weight:700;}
-
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.wgt-footer{text-align:center;padding:16px 0 2px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
@@ -121,13 +144,15 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
     <button class="icon-btn" onclick="doRefresh()" id="rb" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     </button>
+    <button class="icon-btn" id="vb" onclick="toggleView()" title="Toggle view">
+      <svg id="view-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+    </button>
   </div>
 </div>
 <div id="dash"><div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div></div>
-
 <script>
 var _tok=new URLSearchParams(location.search).get('token')||'';
-var _tab='month',_data=null,_wkOff=0;
+var _tab='month',_data=null,_wkOff=0,_view='compact';
 var XROLES=['part time','live host','part-time','freelance'];
 var XNAMES=['danil husaini'];
 var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -135,17 +160,13 @@ var AV_COLORS=['#4F46E5','#7C3AED','#DB2777','#D97706','#059669','#2563EB','#DC2
 
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 function avColor(name){var h=0;for(var i=0;i<name.length;i++)h=(h*31+name.charCodeAt(i))&0xFFFFFF;return AV_COLORS[h%AV_COLORS.length];}
-function initials(name){var p=(name||'').trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():(name||'??').slice(0,2).toUpperCase();}
-function fmtHrs(h){if(!h)return '-';if(h<1)return Math.round(h*60)+'m';var w=Math.floor(h),f=Math.round((h-w)*60);return f?w+'h '+f+'m':w+'h';}
-
-function getMonday(off){var t=new Date();t.setHours(0,0,0,0);var dow=t.getDay(),diff=dow===0?-6:1-dow;var m=new Date(t);m.setDate(t.getDate()+diff+off*7);return m;}
+function initials(n){var p=(n||'').trim().split(/\s+/);return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():(n||'??').slice(0,2).toUpperCase();}
+function getMonday(off){var t=new Date();t.setHours(0,0,0,0);var d=t.getDay(),df=d===0?-6:1-d,m=new Date(t);m.setDate(t.getDate()+df+off*7);return m;}
 function toStr(d){return d.toISOString().slice(0,10);}
 function wkLbl(mon){var sun=new Date(mon);sun.setDate(mon.getDate()+6);return mon.getMonth()===sun.getMonth()?mon.getDate()+' - '+sun.getDate()+' '+MON[mon.getMonth()]:mon.getDate()+' '+MON[mon.getMonth()]+' - '+sun.getDate()+' '+MON[sun.getMonth()];}
 
 function isActiveInRange(tasks,s,e){
-  return (tasks||[]).some(function(t){
-    return (t.doneDate&&t.doneDate>=s&&t.doneDate<=e)||(t.createdDate&&t.createdDate>=s&&t.createdDate<=e);
-  });
+  return (tasks||[]).some(function(t){return(t.doneDate&&t.doneDate>=s&&t.doneDate<=e)||(t.createdDate&&t.createdDate>=s&&t.createdDate<=e);});
 }
 function sliceWeek(tasks,off){
   var m=getMonday(off),sun=new Date(m);sun.setDate(m.getDate()+6);
@@ -155,206 +176,275 @@ function sliceWeek(tasks,off){
 }
 function getMonthWeeks(){
   var t=new Date();t.setHours(0,0,0,0);
-  var yr=t.getFullYear(),mo=t.getMonth();
-  var first=new Date(yr,mo,1),last=new Date(yr,mo+1,0);
+  var yr=t.getFullYear(),mo=t.getMonth(),first=new Date(yr,mo,1),last=new Date(yr,mo+1,0);
   var dow=first.getDay(),diff=dow===0?-6:1-dow,mon=new Date(first);
   mon.setDate(first.getDate()+diff);
   var cur=getMonday(0),weeks=[];
-  while(mon<=last){
-    var off=Math.round((mon-cur)/604800000);
-    weeks.push({mon:new Date(mon),off:off});
-    mon.setDate(mon.getDate()+7);
-  }
-  return weeks; // oldest first = W1, W2...
+  while(mon<=last){weeks.push({mon:new Date(mon),off:Math.round((mon-cur)/604800000)});mon.setDate(mon.getDate()+7);}
+  return weeks;
 }
-function badge(thisTotal, prevTotal){
-  if(thisTotal===0) return '<span class="badge bdg-na">No activity</span>';
-  if(prevTotal===0) return '<span class="badge bdg-up">New</span>';
-  var pct=Math.round(((thisTotal-prevTotal)/prevTotal)*100);
-  if(pct===0) return '<span class="badge bdg-fl">+0%</span>';
-  return pct>0?'<span class="badge bdg-up">+'+pct+'%</span>':'<span class="badge bdg-dn">'+pct+'%</span>';
+function kpiClass(tot,avg){if(tot===0)return 'kpi-none';if(tot>=avg)return 'kpi-good';return 'kpi-low';}
+function kpiLabel(tot,avg){if(tot===0)return 'No Activity';if(tot>=avg)return 'On Track';return 'Below Avg';}
+function bdg(cur,prev){
+  if(cur===0)return '<span class="badge bdg-na">No activity</span>';
+  if(prev===0)return '<span class="badge bdg-up">New</span>';
+  var p=Math.round(((cur-prev)/prev)*100);
+  if(p===0)return '<span class="badge bdg-fl">+0%</span>';
+  return p>0?'<span class="badge bdg-up">+'+p+'%</span>':'<span class="badge bdg-dn">'+p+'%</span>';
 }
-function avatarHtml(e){
-  if(e.avatarUrl) return '<div class="av"><img src="'+esc(e.avatarUrl)+'" onerror="this.parentNode.innerHTML=\''+initials(e.name||'')+'\'"></div>';
-  return '<div class="av" style="background:'+avColor(e.name||'')+'">'+initials(e.name||'')+'</div>';
+function avHtml(e,kc,size){
+  size=size||28;
+  var inner=e.avatarUrl
+    ?'<img src="'+esc(e.avatarUrl)+'" onerror="this.style.display=\'none\'">'
+    :'';
+  var bg=e.avatarUrl?'background:#333':'background:'+avColor(e.name||'');
+  var text=e.avatarUrl?'':initials(e.name||'');
+  var cls=size>=34?'mc-av':'c-av';
+  var ringCls=size>=34?'mc-av-ring':'c-av-ring';
+  var wrapCls=size>=34?'mc-av-wrap':'c-av-wrap';
+  return '<div class="'+wrapCls+'">'
+    +'<div class="'+cls+'" style="'+bg+';width:'+size+'px;height:'+size+'px;font-size:'+(size<=28?10:12)+'px">'+inner+text+'</div>'
+    +(kc?'<div class="'+ringCls+' '+kc+'"></div>':'')
+    +'</div>';
 }
 
 var PREV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
 var NEXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
+var ICON_TABLE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>';
+var ICON_GRID='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>';
 
-function mkCard(e, wksData, wkLabels, isMth, isTeam){
-  // wksData: array of {planning,shooting,editing,posting} per week (or single for week tab)
-  // wkLabels: array of strings e.g. ['W1','W2','W3','W4'] or ['This Week']
-  var ms = e.monthStats||{};
-  var as = e.allStats||{};
-  var STAGES=[
-    {key:'planning', lbl:'Planning', lc:'pln'},
-    {key:'shooting', lbl:'Shooting', lc:'sht'},
-    {key:'editing',  lbl:'Editing',  lc:'edt'},
-    {key:'posting',  lbl:'Posting',  lc:'pst'},
-  ];
-  var hasMthCol = isMth;
-  var colCount = wkLabels.length + (hasMthCol ? 1 : 0);
+window.toggleView=function(){
+  _view=_view==='compact'?'card':'compact';
+  document.getElementById('vb').classList.toggle('active',_view==='card');
+  document.getElementById('view-icon').parentNode.innerHTML=_view==='card'?ICON_TABLE:ICON_GRID;
+  if(_data)render(_data);
+};
+window.switchTab=function(t){_tab=t;if(_data)render(_data);};
+window.shiftWeek=function(d){if(d===1&&_wkOff===0)return;_wkOff+=d;if(_data)render(_data);};
 
-  // Header row
-  var thRow = '<tr class="ct-head"><th></th>';
-  wkLabels.forEach(function(l){ thRow += '<th>'+esc(l)+'</th>'; });
-  if(hasMthCol) thRow += '<th class="mth">MTH</th>';
-  thRow += '</tr>';
+/* ── COMPACT RENDER ── */
+function renderCompact(emps,data){
+  var weeks=_tab==='month'?getMonthWeeks():null;
+  var wkLabels=weeks?weeks.map(function(_,i){return 'W'+(i+1);}):null;
 
-  // Stage rows
-  var stageRows = '';
-  STAGES.forEach(function(st){
-    stageRows += '<tr class="ct-row"><td class="lbl-'+st.lc+'">'+st.lbl+'</td>';
-    wksData.forEach(function(w){
-      var v=w[st.key]||0;
-      stageRows += '<td><span class="n '+(v?'n-'+st.lc:'n-zero')+'">'+(v||'&mdash;')+'</span></td>';
-    });
-    if(hasMthCol){
-      var mv = (isMth?(ms[st.key]||0):(as[st.key]||0));
-      stageRows += '<td class="mth"><span class="n n-mth '+(mv?'n-'+st.lc:'n-zero')+'">'+(mv||'&mdash;')+'</span></td>';
-    }
-    stageRows += '</tr>';
+  // Compute team avg for KPI
+  var teamTotal=0,activeCount=0;
+  emps.forEach(function(e){
+    var ms=e.monthStats||{},as=e.allStats||{};
+    var tot=_tab==='month'?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
+           :_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})()
+           :(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+    teamTotal+=tot;if(tot>0)activeCount++;
   });
+  var teamAvg=activeCount>0?teamTotal/activeCount:0;
 
-  // Totals per week column
-  var wkTots = wksData.map(function(w){return (w.planning||0)+(w.shooting||0)+(w.editing||0)+(w.posting||0);});
-  var mthTot = isMth ? (ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
-                     : (as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
-  var grandTot = hasMthCol ? mthTot : wkTots.reduce(function(a,b){return a+b;},0);
+  var hasMth=_tab==='month';
+  var colSpan=hasMth?(weeks.length+2):2; // name + weeks + mth (or name + value)
 
-  // Total row
-  var totRow = '<tr class="tot-row ct-foot"><td class="tot-lbl">'+(isTeam?'Team Output':'Total Output')+'</td>';
-  wkTots.forEach(function(v){
-    totRow += '<td><span class="tot-val">'+(v||'&mdash;')+'</span></td>';
-  });
-  if(hasMthCol){
-    var bdg = isTeam ? '<span class="badge bdg-fl">'+Object.keys(e._members||{}).length+' staff</span>'
-                     : badge(mthTot, e.prevMonthTotal||0);
-    totRow += '<td class="mth"><span class="tot-val" style="margin-right:6px;">'+(mthTot||'&mdash;')+'</span>'+bdg+'</td>';
+  // Build header
+  var h='<div class="compact-card"><table class="tbl"><thead><tr><th>Team</th>';
+  if(hasMth){
+    wkLabels.forEach(function(l){h+='<th>'+l+'</th>';});
+    h+='<th class="mth">MTH</th><th>Time</th>';
   } else {
-    totRow += '<td><span class="tot-val">'+(grandTot||'&mdash;')+'</span></td>';
+    h+='<th>'+((_tab==="week")?'This Week':'All Time')+'</th><th>Time</th>';
   }
-  totRow += '</tr>';
+  h+='</tr></thead><tbody>';
 
-  var cls = 'mc'+(isTeam?' team-card':'');
-  return '<div class="'+cls+'">'
-    +'<div class="mc-hdr">'+avatarHtml(e)
-    +'<div class="mc-info"><div class="mc-name">'+esc(e.name||'')+'</div>'
-    +(e.role?'<div class="mc-role">'+esc(e.role)+'</div>':'')
-    +'</div></div>'
-    +'<table class="ct"><thead>'+thRow+'</thead>'
-    +'<tbody>'+stageRows+'</tbody>'
-    +'<tfoot>'+totRow+'</tfoot>'
-    +'</table></div>';
+  // Rows
+  var sorted=emps.slice().sort(function(a,b){
+    function tot(e){
+      var ms=e.monthStats||{},as=e.allStats||{};
+      return _tab==='month'?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)
+            :_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})()
+            :(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+    }
+    return tot(b)-tot(a);
+  });
+
+  sorted.forEach(function(e){
+    var ms=e.monthStats||{},as=e.allStats||{};
+    var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
+    var wkStat=_tab==='week'?sliceWeek(e.tasks||[],_wkOff):null;
+    var wkTot=wkStat?(wkStat.planning||0)+(wkStat.shooting||0)+(wkStat.editing||0)+(wkStat.posting||0):0;
+    var dispTot=_tab==='month'?mthTot:_tab==='week'?wkTot:(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+    var kc=kpiClass(dispTot,teamAvg);
+    var kl=kpiLabel(dispTot,teamAvg);
+
+    // Skip inactive in week view
+    if(_tab==='week'){
+      var mon=getMonday(_wkOff),sun=new Date(mon);sun.setDate(mon.getDate()+6);
+      if(!isActiveInRange(e.tasks||[],toStr(mon),toStr(sun)))return;
+    }
+
+    h+='<tr><td><div class="c-emp">'+avHtml(e,kc,28)
+      +'<div style="min-width:0"><div class="c-name">'+esc(e.name||'')+'</div>'
+      +(e.role?'<div class="c-role">'+esc(e.role)+'</div>':'')
+      +'<div class="kpi-tag '+kc+'">'+kl+'</div>'
+      +'</div></div></td>';
+
+    if(hasMth){
+      weeks.forEach(function(wk){
+        var s=sliceWeek(e.tasks||[],wk.off);
+        var wt=(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);
+        h+='<td><span class="cn '+(wt?'cn-tot':'cn-zero')+'">'+(wt||'&mdash;')+'</span></td>';
+      });
+      h+='<td class="mth"><span class="cn cn-mth '+(mthTot?'cn-tot':'cn-zero')+'">'+(mthTot||'&mdash;')+'</span>'
+      h+='<td class="mth"><span class="cn cn-mth '+(mthTot?'cn-tot':'cn-zero')+'">'
+        +(mthTot||'&mdash;')+'</span>'
+        +bdg(mthTot,e.prevMonthTotal||0)+'</td>';
+      var _mHrs=e.monthStats&&e.monthStats.hrs?e.monthStats.hrs:0;
+      h+='<td><span style="font-size:12px;font-weight:800;color:'+(  _mHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+(_mHrs?(_mHrs<1?Math.round(_mHrs*60)+'m':Math.floor(_mHrs)+'h'+(Math.round((_mHrs%1)*60)?' '+Math.round((_mHrs%1)*60)+'m':''))   :'&mdash;')+'</span></td>';
+      var v=_tab==='week'?wkTot:((as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0));
+      var v=_tab==='week'?wkTot:((as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0));
+      var _tHrs=_tab==='week'?(sliceWeek(e.tasks||[],_wkOff).hrs||0):((e.allStats&&e.allStats.totalHrs)||0);
+      h+='<td><span class="cn '+(v?'cn-tot':'cn-zero')+'">'+( v||'&mdash;')+'</span></td>';
+      h+='<td><span style="font-size:12px;font-weight:800;color:'+(_tHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+(_tHrs?(_tHrs<1?Math.round(_tHrs*60)+'m':Math.floor(_tHrs)+'h'+(Math.round((_tHrs%1)*60)?' '+Math.round((_tHrs%1)*60)+'m':''))  :'&mdash;')+'</span></td>';
+    }
+    h+='</tr>';
+  });
+
+  // Team total foot
+  if(hasMth){
+    h+='</tbody><tfoot><tr><td style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.2);">Team Total</td>';
+    weeks.forEach(function(wk){
+      var wt=emps.reduce(function(acc,e){var s=sliceWeek(e.tasks||[],wk.off);return acc+(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);},0);
+      h+='<td>'+(wt||'&mdash;')+'</td>';
+    });
+    var grandTot=emps.reduce(function(acc,e){var ms=e.monthStats||{};return acc+(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);},0);
+    var grandTot=emps.reduce(function(acc,e){var ms=e.monthStats||{};return acc+(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);},0);
+    var teamHrs=emps.reduce(function(acc,e){return acc+((e.monthStats&&e.monthStats.hrs)||0);},0);
+    h+='<td class="mth">'+(grandTot||'&mdash;')+'</td>';
+    h+='<td style="font-size:13px;font-weight:900;color:'+(teamHrs?'rgba(170,255,0,.6)':'rgba(255,255,255,.12)')+'">'+( teamHrs?(teamHrs<1?Math.round(teamHrs*60)+'m':Math.floor(teamHrs)+'h'+(Math.round((teamHrs%1)*60)?' '+Math.round((teamHrs%1)*60)+'m':''))   :'&mdash;')+'</td></tr></tfoot>';
+  }
+
+  h+='</table></div>';
+  return h;
 }
 
-function render(data){
-  if(!data||!data.employees) return;
-  var emps = data.employees.filter(function(e){
-    var r=(e.role||'').toLowerCase(), n=(e.name||'').toLowerCase();
-    return !XROLES.some(function(x){return r.includes(x);}) && !XNAMES.some(function(x){return n.includes(x);});
-  });
+/* ── CARD RENDER ── */
+function renderCards(emps,data){
+  var weeks=_tab==='month'?getMonthWeeks():null;
+  var wkLabels=weeks?weeks.map(function(_,i){return 'W'+(i+1);}):null;
+  var STAGES=[{k:'planning',l:'Planning',c:'pln'},{k:'shooting',l:'Shooting',c:'sht'},{k:'editing',l:'Editing',c:'edt'},{k:'posting',l:'Posting',c:'pst'}];
 
-  function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
-  var tabBar = '<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('all','All Time')+'</div>';
+  var teamAvg=0;
+  var tots=emps.map(function(e){var ms=e.monthStats||{},as=e.allStats||{};return _tab==='month'?(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0):_tab==='week'?(function(){var s=sliceWeek(e.tasks||[],_wkOff);return(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0);})():(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);});
+  var ac=tots.filter(function(v){return v>0;}).length;
+  if(ac>0)teamAvg=tots.reduce(function(a,b){return a+b;},0)/ac;
 
-  var ctrlLeft = '';
-  if(_tab==='week'){
-    var isCur=_wkOff===0;
-    ctrlLeft = '<div class="wk-nav">'
-      +'<button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button>'
-      +'<span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span>'
-      +'<button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button>'
+  var sorted=emps.slice().sort(function(a,b){return tots[emps.indexOf(b)]-tots[emps.indexOf(a)];});
+
+  function mkCard(e,wksData,isTeam){
+    var ms=e.monthStats||{},as=e.allStats||{};
+    var hasMth=_tab==='month';
+    var dispTot=tots[emps.indexOf(e)]||0;
+    var kc=isTeam?'':kpiClass(dispTot,teamAvg);
+
+    var hdr='<div class="mc-hdr">'+avHtml(e,kc,36)
+      +'<div class="mc-info"><div class="mc-name">'+esc(e.name||'')+'</div>'
+      +(e.role?'<div class="mc-role">'+esc(e.role)+'</div>':'')
+      +(kc&&!isTeam?'<div class="kpi-tag '+kc+'" style="margin-top:3px">'+kpiLabel(dispTot,teamAvg)+'</div>':'')
+      +'</div></div>';
+
+    var thead='<tr><th></th>';
+    if(hasMth){wkLabels.forEach(function(l){thead+='<th>'+l+'</th>';});thead+='<th class="mth">MTH</th>';}
+    else{thead+='<th>'+((_tab==='week')?'Week':'All Time')+'</th>';}
+    thead+='</tr>';
+
+    var stRows='';
+    STAGES.forEach(function(st){
+      stRows+='<tr class="ct-row"><td class="lbl-'+st.c+'">'+st.l+'</td>';
+      if(hasMth){
+        wksData.forEach(function(w){var v=w[st.k]||0;stRows+='<td><span class="n '+(v?'n-'+st.c:'n-zero')+'">'+(v||'&mdash;')+'</span></td>';});
+        var mv=ms[st.k]||0;stRows+='<td class="mth"><span class="n n-mth '+(mv?'n-'+st.c:'n-zero')+'">'+(mv||'&mdash;')+'</span></td>';
+      } else {
+        var sv=(_tab==='week'?(wksData[0]||{})[st.k]||0:(as[st.k]||0));
+        stRows+='<td><span class="n '+(sv?'n-'+st.c:'n-zero')+'">'+(sv||'&mdash;')+'</span></td>';
+      }
+      stRows+='</tr>';
+    });
+
+    var wkTots=(wksData||[]).map(function(w){return(w.planning||0)+(w.shooting||0)+(w.editing||0)+(w.posting||0);});
+    var mthTot=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
+    var allTot=(as.planning||0)+(as.shooting||0)+(as.editing||0)+(as.posting||0);
+
+    var tfoot='<tr class="tot-row ct-foot"><td class="tot-lbl">'+(isTeam?'Team Output':'Total Output')+'</td>';
+    if(hasMth){
+      wkTots.forEach(function(v){tfoot+='<td><span class="tot-val">'+(v||'&mdash;')+'</span></td>';});
+      var bdgHtml=isTeam?('<span class="badge bdg-fl">'+emps.length+' staff</span>'):bdg(mthTot,e.prevMonthTotal||0);
+      tfoot+='<td class="mth"><span class="tot-val" style="margin-right:4px">'+(mthTot||'&mdash;')+'</span>'+bdgHtml+'</td>';
+    } else {
+      var tv=_tab==='week'?wkTots[0]||0:allTot;
+      tfoot+='<td><span class="tot-val">'+(tv||'&mdash;')+'</span></td>';
+    }
+    tfoot+='</tr>';
+
+    var cls='mc'+(isTeam?' team-card':'');
+    return '<div class="'+cls+'">'+hdr
+      +'<table class="ct"><thead>'+thead+'</thead><tbody>'+stRows+'</tbody><tfoot>'+tfoot+'</tfoot></table>'
       +'</div>';
-  } else if(_tab==='month'){
-    ctrlLeft = '<span class="period-lbl">'+esc(data.monthLabel||'')+'</span>';
-  } else {
-    ctrlLeft = '<span class="period-lbl">All Time</span>';
   }
 
-  var h = '<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
-  h += '<div class="grid">';
+  var h='<div class="grid">';
 
   if(_tab==='month'){
-    var weeks = getMonthWeeks(); // oldest first
-    var wkLabels = weeks.map(function(_,i){return 'W'+(i+1);});
-
-    // Sort emps by monthStats total desc
-    var sorted = emps.slice().sort(function(a,b){
-      var ta=a.monthStats||{}, tb=b.monthStats||{};
-      return ((tb.planning||0)+(tb.shooting||0)+(tb.editing||0)+(tb.posting||0))
-            -((ta.planning||0)+(ta.shooting||0)+(ta.editing||0)+(ta.posting||0));
-    });
-
     sorted.forEach(function(e){
-      var wksData = weeks.map(function(wk){ return sliceWeek(e.tasks||[], wk.off); });
-      h += mkCard(e, wksData, wkLabels, true, false);
+      var wksData=weeks.map(function(wk){return sliceWeek(e.tasks||[],wk.off);});
+      h+=mkCard(e,wksData,false);
     });
-
-    // Team Total card
-    var teamWks = weeks.map(function(wk){
+    // Team Total
+    var teamWks=weeks.map(function(wk){
       var o={planning:0,shooting:0,editing:0,posting:0};
       emps.forEach(function(e){var s=sliceWeek(e.tasks||[],wk.off);o.planning+=s.planning||0;o.shooting+=s.shooting||0;o.editing+=s.editing||0;o.posting+=s.posting||0;});
       return o;
     });
-    var teamMth={planning:0,shooting:0,editing:0,posting:0,hrs:0};
-    emps.forEach(function(e){var ms=e.monthStats||{};teamMth.planning+=ms.planning||0;teamMth.shooting+=ms.shooting||0;teamMth.editing+=ms.editing||0;teamMth.posting+=ms.posting||0;});
-    var teamEmp={name:'Team Total',role:data.monthLabel||'',avatarUrl:null,_sigma:true,monthStats:teamMth,prevMonthTotal:0,_members:emps};
-    teamEmp.avatarUrl=null;
-    var teamCard=mkCard(teamEmp, teamWks, wkLabels, true, true);
-    // Replace avatar for team card with sigma
-    teamCard=teamCard.replace(avatarHtml(teamEmp),'<div class="av" style="background:rgba(170,255,0,.15);color:#AAFF00;font-size:18px;">&Sigma;</div>');
-    h += teamCard;
-
+    var teamMs={planning:0,shooting:0,editing:0,posting:0,hrs:0};
+    emps.forEach(function(e){var ms=e.monthStats||{};teamMs.planning+=ms.planning||0;teamMs.shooting+=ms.shooting||0;teamMs.editing+=ms.editing||0;teamMs.posting+=ms.posting||0;});
+    var tEmp={name:'Team Total',role:data.monthLabel||'',avatarUrl:null,monthStats:teamMs,allStats:teamMs,prevMonthTotal:0};
+    var tc=mkCard(tEmp,teamWks,true);
+    tc=tc.replace(avHtml(tEmp,'',36),'<div class="mc-av-wrap"><div class="mc-av" style="background:rgba(170,255,0,.15);color:#AAFF00;font-size:18px;width:36px;height:36px;">&Sigma;</div></div>');
+    h+=tc;
   } else if(_tab==='week'){
     var mon=getMonday(_wkOff),sun=new Date(mon);sun.setDate(mon.getDate()+6);
     var ws=toStr(mon),we=toStr(sun);
-    var active=emps.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);});
-    var sorted=active.slice().sort(function(a,b){
-      var sa=sliceWeek(a.tasks||[],_wkOff),sb=sliceWeek(b.tasks||[],_wkOff);
-      return ((sb.planning||0)+(sb.shooting||0)+(sb.editing||0)+(sb.posting||0))
-            -((sa.planning||0)+(sa.shooting||0)+(sa.editing||0)+(sa.posting||0));
+    sorted.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);}).forEach(function(e){
+      h+=mkCard(e,[sliceWeek(e.tasks||[],_wkOff)],false);
     });
-    sorted.forEach(function(e){
-      var s=sliceWeek(e.tasks||[],_wkOff);
-      h += mkCard(e,[s],['Tasks'],false,false);
-    });
-
   } else {
-    // All Time
-    var sorted=emps.slice().sort(function(a,b){
-      var ta=a.allStats||{},tb=b.allStats||{};
-      return ((tb.planning||0)+(tb.shooting||0)+(tb.editing||0)+(tb.posting||0))
-            -((ta.planning||0)+(ta.shooting||0)+(ta.editing||0)+(ta.posting||0));
-    });
-    sorted.forEach(function(e){
-      var as=e.allStats||{};
-      h += mkCard(e,[as],['Tasks'],false,false);
-    });
+    sorted.forEach(function(e){h+=mkCard(e,[e.allStats||{}],false);});
   }
-
-  h += '</div>';
-
-  document.getElementById('dash').innerHTML = h;
-  document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+  h+='</div>';
+  return h;
 }
 
-window.switchTab = function(t){_tab=t;if(_data)render(_data);};
-window.shiftWeek = function(d){if(d===1&&_wkOff===0)return;_wkOff+=d;if(_data)render(_data);};
+function render(data){
+  if(!data||!data.employees)return;
+  var emps=data.employees.filter(function(e){
+    var r=(e.role||'').toLowerCase(),n=(e.name||'').toLowerCase();
+    return !XROLES.some(function(x){return r.includes(x);})&&!XNAMES.some(function(x){return n.includes(x);});
+  });
+
+  function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
+  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('all','All Time')+'</div>';
+  var isCur=_wkOff===0;
+  var ctrlLeft=_tab==='week'
+    ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
+    :('<span class="period-lbl">'+esc(_tab==='month'?(data.monthLabel||''):'All Time')+'</span>');
+
+  var h='<div class="ctrl-bar"><div class="ctrl-left">'+ctrlLeft+'</div>'+tabBar+'</div>';
+  h+=_view==='compact'?renderCompact(emps,data):renderCards(emps,data);
+  document.getElementById('dash').innerHTML=h;
+  document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
 
 function doRefresh(){var b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(function(){var b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-
 function loadData(){
   return fetch('/api/creaitors/employee-stats?token='+_tok)
     .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
     .then(function(d){_data=d;render(d);})
-    .catch(function(e){
-      document.getElementById('dash').innerHTML='<div class="loading"><div class="err-text">Failed to load</div>'
-        +'<div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';
-    });
+    .catch(function(e){document.getElementById('dash').innerHTML='<div class="loading"><div class="err-text">Failed to load</div><div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';});
 }
-
 loadData();
 setInterval(loadData,300000);
 </script>
@@ -364,10 +454,7 @@ setInterval(loadData,300000);
   var el=document.getElementById('_eyebrow');if(!el)return;
   el.textContent=el.dataset.os.toUpperCase();
   var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api/client/info?token='+tok)
-    .then(function(r){return r.ok?r.json():null;})
-    .then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();})
-    .catch(function(){});
+  fetch('/api/client/info?token='+tok).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();}).catch(function(){});
 })();
 </script>
 </body>

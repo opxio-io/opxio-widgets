@@ -242,4 +242,12 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       employees,
-      weekLabel: weekStartStr + ' 
+      weekLabel: weekStartStr + ' - ' + weekEndStr,
+      monthLabel: today.toLocaleString('en', { month: 'long' }) + ' ' + today.getFullYear(),
+      generatedAt: new Date().toISOString(),
+    });
+
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+};

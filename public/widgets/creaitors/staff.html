@@ -100,6 +100,12 @@ function getMonday(off){var t=new Date();t.setHours(0,0,0,0);var dow=t.getDay(),
 function toStr(d){return d.toISOString().slice(0,10);}
 function wkLbl(mon){var sun=new Date(mon);sun.setDate(mon.getDate()+6);return mon.getMonth()===sun.getMonth()?mon.getDate()+' - '+sun.getDate()+' '+MON[mon.getMonth()]:mon.getDate()+' '+MON[mon.getMonth()]+' - '+sun.getDate()+' '+MON[sun.getMonth()];}
 
+function isActiveInRange(tasks,s,e){
+  return (tasks||[]).some(function(t){
+    return (t.doneDate&&t.doneDate>=s&&t.doneDate<=e)||(t.createdDate&&t.createdDate>=s&&t.createdDate<=e);
+  });
+}
+
 function sliceWeek(tasks,off){
   var m=getMonday(off),sun=new Date(m);sun.setDate(m.getDate()+6);
   var s=toStr(m),e=toStr(sun),out={planning:0,shooting:0,editing:0,posting:0,mins:0};
@@ -182,20 +188,23 @@ function render(data){
   if(!emps.length){
     h+='<div class="empty-row">No team data found</div>';
   } else if(_tab==='month'){
-    // Month view: grouped by week sections
+    // Month view: grouped by week sections — only show staff active in each week
     var weeks=getWeeksInMonth();
+    function stagePill(label,n){return '<span class="week-sep-stage'+(n?' has':'')+'">'+(n?n+' ':'')+label+'</span>';}
     weeks.forEach(function(wk){
-      var empStats=emps.map(function(e){
+      var mon=wk.mon,sun=new Date(mon);sun.setDate(mon.getDate()+6);
+      var ws=toStr(mon),we=toStr(sun);
+      // Only include staff active in this week (task created or done within range)
+      var empStats=emps.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);}).map(function(e){
         var s=sliceWeek(e.tasks||[],wk.off);
         return{emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
       });
+      if(!empStats.length) return; // skip weeks with no active staff
       var wkTotal=empStats.reduce(function(a,b){return a+b.tot;},0);
-      // Week separator row — label (full width) + compact stage pills
       var sp={planning:0,shooting:0,editing:0,posting:0};
       empStats.forEach(function(x){sp.planning+=x.s.planning||0;sp.shooting+=x.s.shooting||0;sp.editing+=x.s.editing||0;sp.posting+=x.s.posting||0;});
-      function stagePill(label,n){return '<span class="week-sep-stage'+(n?' has':'')+'">'+(n?n+' ':'')+label+'</span>';}
       h+='<div class="week-sep">'
-        +'<div class="week-sep-lbl">'+esc(wkLbl(wk.mon))+'</div>'
+        +'<div class="week-sep-lbl">'+esc(wkLbl(mon))+'</div>'
         +'<div class="week-sep-pill">'
         +stagePill('PLN',sp.planning)
         +stagePill('SHT',sp.shooting)
@@ -204,46 +213,20 @@ function render(data){
         +(wkTotal?'<span class="week-sep-tot-lbl">'+wkTotal+' total</span>':'')
         +'</div>'
         +'</div>';
-      // Member rows sorted by total desc — show all staff even with 0
+      // Sort: those with output first, zeros at bottom
       empStats.sort(function(a,b){return b.tot-a.tot;});
       empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
     });
-  } else {
-    // Week or All Time view
-    var empStats=emps.map(function(e){
-      var s=_tab==='week'?sliceWeek(e.tasks||[],_weekOffset):e.allStats||{};
-      return{emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
-    });
-    empStats.sort(function(a,b){return b.tot-a.tot;});
-    empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
-  }
-
-  h+='</div>';
-  document.getElementById('dash').innerHTML=h;
-  document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-
-window.switchTab=function(t){_tab=t;if(_data)render(_data);};
-window.shiftWeek=function(d){if(d===1&&_weekOffset===0)return;_weekOffset+=d;if(_data)render(_data);};
-
-function loadData(){
-  return fetch('/api/creaitors/employee-stats?token='+_tok)
-    .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
-    .then(function(d){_data=d;render(d);})
-    .catch(function(e){
-      document.getElementById('dash').innerHTML='<div class="loading"><div style="font-size:11px;color:#FF6B35;font-weight:700;">Failed to load</div>'
-        +'<div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';
-    });
-}
-
-loadData();
-setInterval(loadData,300000);
-</script>
-<div class="wgt-footer">Widgets by Opxio.io</div>
-<script>
-(function(){
-  var el=document.getElementById('_eyebrow');if(!el)return;
-  el.textContent=el.dataset.os.toUpperCase();
-  var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api/client/info?token='+tok)
-    .th
+    // Monthly total section
+    var monthActive=emps.filter(function(e){var ms=e.monthStats||{};return (ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)>0;});
+    if(monthActive.length){
+      var mTot={planning:0,shooting:0,editing:0,posting:0};
+      monthActive.forEach(function(e){var ms=e.monthStats||{};mTot.planning+=ms.planning||0;mTot.shooting+=ms.shooting||0;mTot.editing+=ms.editing||0;mTot.posting+=ms.posting||0;});
+      var mGrand=mTot.planning+mTot.shooting+mTot.editing+mTot.posting;
+      h+='<div class="week-sep" style="background:rgba(170,255,0,.06);border-color:rgba(170,255,0,.15);">'
+        +'<div class="week-sep-lbl" style="color:rgba(170,255,0,.7);">'+esc(data.monthLabel||'Month')+' Total</div>'
+        +'<div class="week-sep-pill">'
+        +'<span class="week-sep-stage'+(mTot.planning?' has':'')+'">'+( mTot.planning||0)+' PLN</span>'
+        +'<span class="week-sep-stage'+(mTot.shooting?' has':'')+'">'+( mTot.shooting||0)+' SHT</span>'
+        +'<span class="week-sep-stage'+(mTot.editing?' has':'')+'">'+( mTot.editing||0)+' EDT</span>'
+        +'<span class="week-sep-stage'+(mTo

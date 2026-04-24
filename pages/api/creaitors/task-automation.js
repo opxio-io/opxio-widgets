@@ -248,7 +248,11 @@ export default async function handler(req, res) {
           return actionError(taskPageId, `Cannot complete "${taskName}" — Google Drive link is required. Please add the Google Drive link to Post-Production before marking as done.`);
         }
       } else if (isShooting) {
-        // Content Shooting: completes directly, no QC or link required
+        // Content Shooting: requires Pre-Production link before completing
+        const preProdLink = props['Pre-Production']?.url || '';
+        if (!preProdLink.trim()) {
+          return actionError(taskPageId, `Cannot complete "${taskName}" — Pre-Production link is required. Please add the Pre-Production link before marking as done.`);
+        }
       } else if (!isPosting) {
         // Non-posting, non-editing, non-shooting tasks must go through QC
         return actionError(taskPageId, `"${taskName}" cannot be completed directly. All tasks must go through QC review first — use Submit for QC.`);

@@ -47,6 +47,8 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .week-sep-stage{font-size:9px;font-weight:700;letter-spacing:.04em;padding:2px 7px;border-radius:999px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.35);}
 .week-sep-stage.has{background:rgba(170,255,0,.08);color:rgba(170,255,0,.6);}
 .week-sep-tot-lbl{font-size:10px;font-weight:800;color:rgba(170,255,0,.5);}
+.month-total-sep{display:flex;align-items:center;gap:10px;padding:8px 20px;background:rgba(170,255,0,.05);border-top:1px solid rgba(170,255,0,.15);border-bottom:1px solid rgba(170,255,0,.15);margin-top:2px;}
+.month-total-lbl{font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:rgba(170,255,0,.7);flex:1;white-space:nowrap;}
 .s-name{display:flex;align-items:center;gap:8px;min-width:0;}
 .s-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
 .s-dot-on{background:#AAFF00;box-shadow:0 0 5px rgba(170,255,0,.5);}
@@ -69,7 +71,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 20px;backg
 .loading{display:flex;align-items:center;justify-content:center;min-height:160px;flex-direction:column;gap:8px;}
 .spinner{width:16px;height:16px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
-@media(max-width:860px){.col-hdr,.staff-row,.week-sep{grid-template-columns:120px repeat(4,1fr) 48px 56px;padding-left:14px;padding-right:14px;}}
+@media(max-width:860px){.col-hdr,.staff-row{grid-template-columns:120px repeat(4,1fr) 48px 56px;padding-left:14px;padding-right:14px;}}
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.12);}
 </style>
 </head>
@@ -125,13 +127,15 @@ function getWeeksInMonth(){
     weeks.push({mon:new Date(mon),off:off});
     mon.setDate(mon.getDate()+7);
   }
-  return weeks.reverse(); // newest first
+  return weeks.reverse();
 }
+
+function pill(label,n){return '<span class="week-sep-stage'+(n?' has':'')+'">'+(n?n+' ':'')+label+'</span>';}
 
 var PREV='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>';
 var NEXT='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>';
-var MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 var SUN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+var MOON='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
 
 function toggleMode(){document.body.classList.toggle('light');document.getElementById('mb').innerHTML=document.body.classList.contains('light')?MOON:SUN;}
 function doRefresh(){var b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(function(){var b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
@@ -188,45 +192,109 @@ function render(data){
   if(!emps.length){
     h+='<div class="empty-row">No team data found</div>';
   } else if(_tab==='month'){
-    // Month view: grouped by week sections — only show staff active in each week
     var weeks=getWeeksInMonth();
-    function stagePill(label,n){return '<span class="week-sep-stage'+(n?' has':'')+'">'+(n?n+' ':'')+label+'</span>';}
     weeks.forEach(function(wk){
       var mon=wk.mon,sun=new Date(mon);sun.setDate(mon.getDate()+6);
       var ws=toStr(mon),we=toStr(sun);
-      // Only include staff active in this week (task created or done within range)
-      var empStats=emps.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);}).map(function(e){
+      var active=emps.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);});
+      if(!active.length) return;
+      var empStats=active.map(function(e){
         var s=sliceWeek(e.tasks||[],wk.off);
-        return{emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
+        return {emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
       });
-      if(!empStats.length) return; // skip weeks with no active staff
-      var wkTotal=empStats.reduce(function(a,b){return a+b.tot;},0);
-      var sp={planning:0,shooting:0,editing:0,posting:0};
-      empStats.forEach(function(x){sp.planning+=x.s.planning||0;sp.shooting+=x.s.shooting||0;sp.editing+=x.s.editing||0;sp.posting+=x.s.posting||0;});
+      var sp={planning:0,shooting:0,editing:0,posting:0},wkTotal=0;
+      empStats.forEach(function(x){
+        sp.planning+=x.s.planning||0;sp.shooting+=x.s.shooting||0;
+        sp.editing+=x.s.editing||0;sp.posting+=x.s.posting||0;wkTotal+=x.tot;
+      });
       h+='<div class="week-sep">'
         +'<div class="week-sep-lbl">'+esc(wkLbl(mon))+'</div>'
         +'<div class="week-sep-pill">'
-        +stagePill('PLN',sp.planning)
-        +stagePill('SHT',sp.shooting)
-        +stagePill('EDT',sp.editing)
-        +stagePill('PST',sp.posting)
+        +pill('PLN',sp.planning)+pill('SHT',sp.shooting)+pill('EDT',sp.editing)+pill('PST',sp.posting)
         +(wkTotal?'<span class="week-sep-tot-lbl">'+wkTotal+' total</span>':'')
-        +'</div>'
-        +'</div>';
-      // Sort: those with output first, zeros at bottom
+        +'</div></div>';
       empStats.sort(function(a,b){return b.tot-a.tot;});
       empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
     });
-    // Monthly total section
-    var monthActive=emps.filter(function(e){var ms=e.monthStats||{};return (ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)>0;});
-    if(monthActive.length){
-      var mTot={planning:0,shooting:0,editing:0,posting:0};
-      monthActive.forEach(function(e){var ms=e.monthStats||{};mTot.planning+=ms.planning||0;mTot.shooting+=ms.shooting||0;mTot.editing+=ms.editing||0;mTot.posting+=ms.posting||0;});
-      var mGrand=mTot.planning+mTot.shooting+mTot.editing+mTot.posting;
-      h+='<div class="week-sep" style="background:rgba(170,255,0,.06);border-color:rgba(170,255,0,.15);">'
-        +'<div class="week-sep-lbl" style="color:rgba(170,255,0,.7);">'+esc(data.monthLabel||'Month')+' Total</div>'
+    // Monthly total
+    var mActive=emps.filter(function(e){
+      var ms=e.monthStats||{};
+      return (ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)>0;
+    });
+    if(mActive.length){
+      var mTot={planning:0,shooting:0,editing:0,posting:0},mGrand=0;
+      mActive.forEach(function(e){
+        var ms=e.monthStats||{};
+        mTot.planning+=ms.planning||0;mTot.shooting+=ms.shooting||0;
+        mTot.editing+=ms.editing||0;mTot.posting+=ms.posting||0;
+        mGrand+=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
+      });
+      h+='<div class="month-total-sep">'
+        +'<div class="month-total-lbl">'+esc(data.monthLabel||'Month')+' Total</div>'
         +'<div class="week-sep-pill">'
-        +'<span class="week-sep-stage'+(mTot.planning?' has':'')+'">'+( mTot.planning||0)+' PLN</span>'
-        +'<span class="week-sep-stage'+(mTot.shooting?' has':'')+'">'+( mTot.shooting||0)+' SHT</span>'
-        +'<span class="week-sep-stage'+(mTot.editing?' has':'')+'">'+( mTot.editing||0)+' EDT</span>'
-        +'<span class="week-sep-stage'+(mTo
+        +pill('PLN',mTot.planning)+pill('SHT',mTot.shooting)+pill('EDT',mTot.editing)+pill('PST',mTot.posting)
+        +(mGrand?'<span class="week-sep-tot-lbl">'+mGrand+' total</span>':'')
+        +'</div></div>';
+      mActive.sort(function(a,b){
+        var ta=a.monthStats||{},tb=b.monthStats||{};
+        return ((tb.planning||0)+(tb.shooting||0)+(tb.editing||0)+(tb.posting||0))
+              -((ta.planning||0)+(ta.shooting||0)+(ta.editing||0)+(ta.posting||0));
+      });
+      mActive.forEach(function(e){
+        var ms=e.monthStats||{};
+        h+=memberRow(e,{planning:ms.planning||0,shooting:ms.shooting||0,editing:ms.editing||0,posting:ms.posting||0,hrs:ms.hrs||0});
+      });
+    }
+  } else if(_tab==='week'){
+    var mon=getMonday(_weekOffset),sun=new Date(mon);sun.setDate(mon.getDate()+6);
+    var ws=toStr(mon),we=toStr(sun);
+    var empStats=emps.filter(function(e){return isActiveInRange(e.tasks||[],ws,we);}).map(function(e){
+      var s=sliceWeek(e.tasks||[],_weekOffset);
+      return {emp:e,s:s,tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
+    });
+    empStats.sort(function(a,b){return b.tot-a.tot;});
+    empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
+  } else {
+    var empStats=emps.map(function(e){
+      var s=e.allStats||{};
+      return {emp:e,s:{planning:s.planning||0,shooting:s.shooting||0,editing:s.editing||0,posting:s.posting||0,hrs:s.totalHrs||0},tot:(s.planning||0)+(s.shooting||0)+(s.editing||0)+(s.posting||0)};
+    });
+    empStats.sort(function(a,b){return b.tot-a.tot;});
+    empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
+  }
+
+  h+='</div>';
+  document.getElementById('dash').innerHTML=h;
+  document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+window.switchTab=function(t){_tab=t;if(_data)render(_data);};
+window.shiftWeek=function(d){if(d===1&&_weekOffset===0)return;_weekOffset+=d;if(_data)render(_data);};
+
+function loadData(){
+  return fetch('/api/creaitors/employee-stats?token='+_tok)
+    .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
+    .then(function(d){_data=d;render(d);})
+    .catch(function(e){
+      document.getElementById('dash').innerHTML='<div class="loading"><div style="font-size:11px;color:#FF6B35;font-weight:700;">Failed to load</div>'
+        +'<div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';
+    });
+}
+
+loadData();
+setInterval(loadData,300000);
+</script>
+<div class="wgt-footer">Widgets by Opxio.io</div>
+<script>
+(function(){
+  var el=document.getElementById('_eyebrow');if(!el)return;
+  el.textContent=el.dataset.os.toUpperCase();
+  var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
+  fetch('/api/client/info?token='+tok)
+    .then(function(r){return r.ok?r.json():null;})
+    .then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();})
+    .catch(function(){});
+})();
+</script>
+</body>
+</html>

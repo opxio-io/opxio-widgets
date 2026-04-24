@@ -427,7 +427,9 @@ function renderCompact(emps,data){
         h+='<td><span class="cn '+(wt?'cn-tot':'cn-zero')+'">'+(wt||'&mdash;')+'</span>'+brk+'</td>';
       });
       var mHrs=ms.hrs||0;
-      h+='<td class="mth"><span class="cn cn-mth '+(mthTot?'cn-tot':'cn-zero')+'">'+(mthTot||'&mdash;')+'</span>'+moBadge(mthTot,e.prevMonthTotal||0)+'</td>';
+      var momTxt='';
+      if(mthTot>0&&(e.prevMonthTotal||0)>0){var mp=Math.round(((mthTot-(e.prevMonthTotal||0))/(e.prevMonthTotal||0))*100);momTxt='<div style="font-size:8px;font-weight:700;color:'+(mp>0?'rgba(170,255,0,.6)':mp<0?'rgba(255,107,53,.7)':'rgba(255,255,255,.2)')+';">'+(mp>0?'+':'')+mp+'%</div>';}
+      h+='<td class="mth">'+(mthTot?'<span class="cn cn-mth cn-tot">'+mthTot+'</span>'+momTxt:'<span style="font-size:9px;font-weight:700;color:rgba(255,255,255,.15);">No activity</span>')+'</td>';
       h+='<td><span style="font-size:12px;font-weight:800;color:'+(mHrs?'rgba(255,255,255,.5)':'rgba(255,255,255,.12)')+'">'+fmtH(mHrs)+'</span></td>';
     } else {
       var v=_tab==='week'?wkTot:yrTot;
@@ -545,9 +547,4 @@ setInterval(loadData,300000);
 <div class="wgt-footer">Widgets by Opxio.io</div>
 <script>
 (function(){
-  var el=document.getElementById('_eyebrow');if(!el)return;
-  el.textContent=el.dataset.os.toUpperCase();
-  var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api/client/info?token='+tok).then(function(r){return r.ok?r.json():null;}).then(function(d){if(d&&d.client)el.textContent=d.client.toUpperCase()+' - '+el.dataset.os.toUpperCase();}).catch(function(){});
-})();
-</script
+  var el=document.getElementById('_eyebrow');if(!el)retu

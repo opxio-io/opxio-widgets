@@ -216,35 +216,29 @@ function render(data){
       empStats.sort(function(a,b){return b.tot-a.tot;});
       empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
     });
-    // Monthly total
-    var mActive=emps.filter(function(e){
+    // Monthly total — show ALL eligible staff sorted by output
+    var mTot={planning:0,shooting:0,editing:0,posting:0},mGrand=0;
+    emps.forEach(function(e){
       var ms=e.monthStats||{};
-      return (ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0)>0;
+      mTot.planning+=ms.planning||0;mTot.shooting+=ms.shooting||0;
+      mTot.editing+=ms.editing||0;mTot.posting+=ms.posting||0;
+      mGrand+=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
     });
-    if(mActive.length){
-      var mTot={planning:0,shooting:0,editing:0,posting:0},mGrand=0;
-      mActive.forEach(function(e){
-        var ms=e.monthStats||{};
-        mTot.planning+=ms.planning||0;mTot.shooting+=ms.shooting||0;
-        mTot.editing+=ms.editing||0;mTot.posting+=ms.posting||0;
-        mGrand+=(ms.planning||0)+(ms.shooting||0)+(ms.editing||0)+(ms.posting||0);
-      });
-      h+='<div class="month-total-sep">'
-        +'<div class="month-total-lbl">'+esc(data.monthLabel||'Month')+' Total</div>'
-        +'<div class="week-sep-pill">'
-        +pill('PLN',mTot.planning)+pill('SHT',mTot.shooting)+pill('EDT',mTot.editing)+pill('PST',mTot.posting)
-        +(mGrand?'<span class="week-sep-tot-lbl">'+mGrand+' total</span>':'')
-        +'</div></div>';
-      mActive.sort(function(a,b){
-        var ta=a.monthStats||{},tb=b.monthStats||{};
-        return ((tb.planning||0)+(tb.shooting||0)+(tb.editing||0)+(tb.posting||0))
-              -((ta.planning||0)+(ta.shooting||0)+(ta.editing||0)+(ta.posting||0));
-      });
-      mActive.forEach(function(e){
-        var ms=e.monthStats||{};
-        h+=memberRow(e,{planning:ms.planning||0,shooting:ms.shooting||0,editing:ms.editing||0,posting:ms.posting||0,hrs:ms.hrs||0});
-      });
-    }
+    h+='<div class="month-total-sep">'
+      +'<div class="month-total-lbl">'+esc(data.monthLabel||'Month')+' Total</div>'
+      +'<div class="week-sep-pill">'
+      +pill('PLN',mTot.planning)+pill('SHT',mTot.shooting)+pill('EDT',mTot.editing)+pill('PST',mTot.posting)
+      +(mGrand?'<span class="week-sep-tot-lbl">'+mGrand+' total</span>':'')
+      +'</div></div>';
+    var mSorted=emps.slice().sort(function(a,b){
+      var ta=a.monthStats||{},tb=b.monthStats||{};
+      return ((tb.planning||0)+(tb.shooting||0)+(tb.editing||0)+(tb.posting||0))
+            -((ta.planning||0)+(ta.shooting||0)+(ta.editing||0)+(ta.posting||0));
+    });
+    mSorted.forEach(function(e){
+      var ms=e.monthStats||{};
+      h+=memberRow(e,{planning:ms.planning||0,shooting:ms.shooting||0,editing:ms.editing||0,posting:ms.posting||0,hrs:ms.hrs||0});
+    });
   } else if(_tab==='week'){
     var mon=getMonday(_weekOffset),sun=new Date(mon);sun.setDate(mon.getDate()+6);
     var ws=toStr(mon),we=toStr(sun);

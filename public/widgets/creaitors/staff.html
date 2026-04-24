@@ -204,11 +204,9 @@ function render(data){
         +(wkTotal?'<span class="week-sep-tot-lbl">'+wkTotal+' total</span>':'')
         +'</div>'
         +'</div>';
-      // Member rows sorted by total desc, only show those with any output
+      // Member rows sorted by total desc — show all staff even with 0
       empStats.sort(function(a,b){return b.tot-a.tot;});
-      empStats.forEach(function(item){
-        if(item.tot>0) h+=memberRow(item.emp,item.s);
-      });
+      empStats.forEach(function(item){h+=memberRow(item.emp,item.s);});
     });
   } else {
     // Week or All Time view
@@ -247,4 +245,5 @@ setInterval(loadData,300000);
   var el=document.getElementById('_eyebrow');if(!el)return;
   el.textContent=el.dataset.os.toUpperCase();
   var tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api
+  fetch('/api/client/info?token='+tok)
+    .th

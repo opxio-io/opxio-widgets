@@ -307,8 +307,8 @@ async function run(payload) {
   // ── Detect Lead vs Deal and advance stage / create Deal ─────────────────
   // leadId at this point is resolved from: Quotation.Lead Source → Leads DB
   // OR from: Quotation.Deal Source → Deals DB (existing Deal)
-  // • Lead  → mark Lead "Converted", spin up a new Deal at "Building"
-  // • Deal  → advance Deal to "Building" directly
+  // • Lead  → mark Lead "Converted", spin up a new Deal at "Closed-Won"
+  // • Deal  → advance Deal to "Closed-Won" directly
   let dealId             = null  // will be set if we create or find a Deal
   let formPackage        = ""    // OS package name for onboarding form URL
   let formAddons         = []    // add-on names for onboarding form URL
@@ -350,9 +350,9 @@ async function run(payload) {
           try {
             const existingDeal = await getPage(existingDealId, token)
             const currentStage = existingDeal.properties.Stage?.status?.name || ""
-            const doneStages   = ["Building", "Balance Due", "Delivered"]
+            const doneStages   = ["Closed-Won", "Closed-Lost"]
             const dealPatches  = {
-              ...(!doneStages.includes(currentStage) ? { "Stage": { status: { name: "Building" } } } : {}),
+              ...(!doneStages.includes(currentStage) ? { "Stage": { status: { name: "Closed-Won" } } } : {}),
               // Fill Deal Value if not already set
               ...(quotationAmount && !existingDeal.properties["Deal Value"]?.number
                 ? { "Deal Value": { number: quotationAmount } } : {}),
@@ -392,7 +392,7 @@ async function run(payload) {
             parent: { database_id: DB.DEALS },
             properties: {
               "Lead Name":   { title: [{ text: { content: leadName } }] },
-              "Stage":       { status: { name: "Building" } },
+              "Stage":       { status: { name: "Closed-Won" } },
               "Client Type": { select: { name: "New Client" } },
               "Lead Source": { relation: [{ id: leadId }] },
               ...(compIds.length       ? { "Company":       { relation: [{ id: compIds[0] }] } } : {}),
@@ -428,9 +428,9 @@ async function run(payload) {
         // ── Existing client: Deal → Building ─────────────────────────────────
         dealId = leadId
         const currentStage = sourcePage.properties.Stage?.status?.name || ""
-        const doneStages   = ["Building", "Balance Due", "Delivered"]
+        const doneStages   = ["Closed-Won", "Closed-Lost"]
         if (!doneStages.includes(currentStage)) {
-          await patchPage(dealId, { "Stage": { status: { name: "Building" } } }, token)
+          await patchPage(dealId, { "Stage": { status: { name: "Closed-Won" } } }, token)
           console.log(`[deposit_paid] deal stage → Building: ${dealId}`)
         }
 

@@ -229,13 +229,6 @@ async function run(payload) {
     console.warn("[issue_final_invoice] project update:", e.message)
   }
 
-  // ── Advance Lead stage ─────────────────────────────────────────────────
-  if (leadId) {
-    try {
-      await patchPage(leadId, { "Stage": { status: { name: "Balance Due" } } }, process.env.NOTION_API_KEY)
-    } catch {}
-  }
-
   // ── Finance Ledger — auto-create Final Payment entry (Pending) ──────────
   // Status is "Pending" because the invoice has been issued but not yet paid.
   // When the client pays, the user updates this entry to "Received".

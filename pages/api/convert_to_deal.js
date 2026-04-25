@@ -3,32 +3,46 @@
 // Triggered by Notion button "Convert to Deal" on a Lead page.
 //
 // 1. Reads Lead: Company, Primary Contact, OS Interest, Source, Situation,
-//    Discovery Call, Potential Value, Country, Notes
+//    Discovery Call, Potential Value, Country, Industry, Team Size, Notes
 // 2. Fetches Company name for Deal title
 // 3. Creates Deal in Deals DB  ── Deal Name: "Company Name — Product"
 // 4. Stitches: Deal["Origin Lead"] → Lead, Lead["Deal"] → Deal
 // 5. Updates Lead Stage → "Converted"
+// 6. Enriches Company record: Industry, Team Size, Country, Billing Currency
 
 import { getPage, patchPage, createPage, plain, DB, createTeamTask } from "../../lib/notion"
 
 // ─── Catalogue page IDs for each OS (OS Type relation in Deals) ────────────
 const CATALOGUE_OS_IDS = {
-  "Revenue OS":             "e28fe60097f682bf8ec381fd1a4b6950",
-  "Operations OS":          "448fe60097f6837a9f86014edd5503c2",
-  "Finance OS":             "345fe60097f681bfa6bcd1e10295b691",
-  "Marketing OS":           "56cfe60097f683d5ac4181d560bb6a0d",
-  "Team OS":                "33ffe60097f681e4a675d960f861230e",
-  "Retention OS":           "33ffe60097f681a68d47d7a508f86e26",
-  "Micro Install":          "340fe60097f681b2a577f05541116703", // defaults to 1 Module
+  "Revenue OS":               "e28fe60097f682bf8ec381fd1a4b6950",
+  "Operations OS":            "448fe60097f6837a9f86014edd5503c2",
+  "Finance OS":               "345fe60097f681bfa6bcd1e10295b691",
+  "Marketing OS":             "56cfe60097f683d5ac4181d560bb6a0d",
+  "Team OS":                  "33ffe60097f681e4a675d960f861230e",
+  "Retention OS":             "33ffe60097f681a68d47d7a508f86e26",
+  "Micro Install":            "340fe60097f681b2a577f05541116703",
   "Micro Install — 1 Module": "340fe60097f681b2a577f05541116703",
-  "Micro Install — 2 Modules": "340fe60097f68112a63ac60a7599d0c0",
-  "Micro Install — 3 Modules": "340fe60097f68112b5e2e49bd87cfb35",
+  "Micro Install — 2 Modules":"340fe60097f68112a63ac60a7599d0c0",
+  "Micro Install — 3 Modules":"340fe60097f68112b5e2e49bd87cfb35",
+}
+
+// ─── Country → Billing Currency ───────────────────────────────────────────
+const COUNTRY_CURRENCY = {
+  "Malaysia":    "MYR",
+  "Singapore":   "SGD",
+  "Indonesia":   "IDR",
+  "Philippines": "PHP",
+  "Thailand":    "THB",
+  "Vietnam":     "VND",
+  "Bangladesh":  "BDT",
+  "India":       "INR",
+  "UK":          "GBP",
+  "Australia":   "AUD",
+  "USA":         "USD",
+  "Canada":      "CAD",
 }
 
 // ─── Map Lead Source (multi_select channels) → Deal Source (select intent) ─
-// Lead:  Referral, Cold Outreach, Ads, LinkedIn, Instagram, TikTok, etc.
-// Deal:  New Client — Referral | New Client — Outbound | New Client — Inbound
-//        (Existing Client options are set manually — can't infer from Lead)
 function mapLeadSourceToDeal(leadSources) {
   if (!leadSources || leadSources.length === 0) return null
   const names = leadSources.map(s => s.name)
@@ -78,6 +92,9 @@ async function run(payload) {
   const potentialVal  = lp["Potential Value"]?.formula?.number
                      ?? lp["Potential Value"]?.number
                      ?? null
+  const country       = lp.Country?.select?.name || null
+  const industry      = lp.Industry?.select?.name || null
+  const teamSize      = lp["Team Size"]?.select?.name || null
   const notes         = plain(lp.Notes?.rich_text || [])
 
   // Source: Lead = multi_select (channels) → map to Deal = select (intent category)
@@ -115,15 +132,14 @@ async function run(payload) {
     "Origin Lead": { relation: [{ id: leadId }] },
   }
 
-  // ── Only set properties that exist in the Deals DB ───────────────────────
-  if (companyRel)     dealProps["Company"]          = { relation: [{ id: companyRel }] }
-  if (contactRel)     dealProps["Primary Contact"]  = { relation: [{ id: contactRel }] }
-  if (situation)      dealProps["Situation"]        = { rich_text: [{ text: { content: situation } }] }
-  if (discoveryCall)  dealProps["Discovery Call"]   = { date: { start: discoveryCall } }
-  if (potentialVal)   dealProps["Deal Value"]       = { number: potentialVal }
-  if (notes)          dealProps["Notes"]            = { rich_text: [{ text: { content: notes } }] }
-  if (dealSourceName) dealProps["Source"]           = { select: { name: dealSourceName } }
-  if (catalogueOsId)  dealProps["OS Type"]          = { relation: [{ id: catalogueOsId }] }
+  if (companyRel)     dealProps["Company"]         = { relation: [{ id: companyRel }] }
+  if (contactRel)     dealProps["Primary Contact"] = { relation: [{ id: contactRel }] }
+  if (situation)      dealProps["Situation"]       = { rich_text: [{ text: { content: situation } }] }
+  if (discoveryCall)  dealProps["Discovery Call"]  = { date: { start: discoveryCall } }
+  if (potentialVal)   dealProps["Deal Value"]      = { number: potentialVal }
+  if (notes)          dealProps["Notes"]           = { rich_text: [{ text: { content: notes } }] }
+  if (dealSourceName) dealProps["Source"]          = { select: { name: dealSourceName } }
+  if (catalogueOsId)  dealProps["OS Type"]         = { relation: [{ id: catalogueOsId }] }
 
   const dealPage = await createPage({
     parent:     { database_id: DB.DEALS },
@@ -147,7 +163,26 @@ async function run(payload) {
     console.warn("[convert_to_deal] lead stage update:", e.message)
   }
 
-  // ── 7. Auto-create Team Task — send proposal ───────────────────────────────
+  // ── 7. Enrich Company record with qualifying data from Lead ───────────────
+  if (companyRel) {
+    try {
+      const companyUpdates = {}
+      if (industry) companyUpdates["Industry"] = { select: { name: industry } }
+      if (teamSize) companyUpdates["Team Size"] = { select: { name: teamSize } }
+      if (country)  companyUpdates["Country"]   = { select: { name: country } }
+      const currency = country ? COUNTRY_CURRENCY[country] : null
+      if (currency) companyUpdates["Billing Currency"] = { select: { name: currency } }
+
+      if (Object.keys(companyUpdates).length > 0) {
+        await patchPage(companyRel, companyUpdates, token)
+        console.log("[convert_to_deal] Company enriched:", companyName, companyUpdates)
+      }
+    } catch (e) {
+      console.warn("[convert_to_deal] company enrich:", e.message)
+    }
+  }
+
+  // ── 8. Auto-create Team Task — send proposal ──────────────────────────────
   await createTeamTask({
     taskName:  `Send proposal — ${companyName || dealName}`,
     category:  "Sales",

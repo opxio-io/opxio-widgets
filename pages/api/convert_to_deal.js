@@ -182,7 +182,19 @@ async function run(payload) {
     }
   }
 
-  // ── 8. Auto-create Team Task — send proposal ──────────────────────────────
+  // ── 8. Mark Contact as Primary Contact ───────────────────────────────────────
+  if (contactRel) {
+    try {
+      await patchPage(contactRel, {
+        "Primary Contact": { checkbox: true },
+      }, token)
+      console.log("[convert_to_deal] Contact marked as Primary Contact:", contactRel)
+    } catch (e) {
+      console.warn("[convert_to_deal] contact primary mark:", e.message)
+    }
+  }
+
+  // ── 9. Auto-create Team Task — send proposal ──────────────────────────────
   await createTeamTask({
     taskName:  `Send proposal — ${companyName || dealName}`,
     category:  "Sales",

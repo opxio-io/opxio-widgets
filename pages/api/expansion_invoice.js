@@ -2,7 +2,7 @@
 // POST /api/expansion_invoice   { "page_id": "<expansion_page_id>" }
 // Triggered by Notion button "Create Invoice" on the Expansions page.
 //
-// 1. Reads Expansion → Name, Value, Type, Client, Implementation, Deal
+// 1. Reads Expansion → Name, Value, Type, Company, Client Account, Deal
 // 2. Determines payment terms (Micro → Full Upfront; else 50% Deposit)
 // 3. Creates Supplementary invoice in Invoices DB
 // 4. Links Invoice back to Expansion page
@@ -35,12 +35,12 @@ async function run(payload) {
     throw new Error(`Expansion already has an active invoice (status: ${expStatus})`)
   }
 
-  const companyId = props.Client?.relation?.[0]?.id?.replace(/-/g, "") || null
-  const implId    = props.Implementation?.relation?.[0]?.id?.replace(/-/g, "") || null
+  const companyId = props.Company?.relation?.[0]?.id?.replace(/-/g, "") || null
+  const clientAccountId = props["Client Account"]?.relation?.[0]?.id?.replace(/-/g, "") || null
   const leadId    = props.Deal?.relation?.[0]?.id?.replace(/-/g, "") || null
 
   // Payment logic
-  const isMicro       = expType.toLowerCase().includes("micro")
+  const isMicro       = expType === "Small"
   const paymentTerms  = isMicro ? "Full Upfront" : "50% Deposit"
   const depositAmt    = isMicro ? 0 : Math.round(expValue * 0.5 * 100) / 100
   const finalPayAmt   = isMicro ? 0 : Math.round(expValue * 0.5 * 100) / 100
@@ -59,7 +59,7 @@ async function run(payload) {
     ...(depositAmt  ? { "Deposit (50%)": { number: depositAmt  } } : {}),
     ...(finalPayAmt ? { "Final Payment": { number: finalPayAmt } } : {}),
     ...(companyId ? { "Company":         { relation: [{ id: companyId }] } } : {}),
-    ...(implId    ? { "Client Account":  { relation: [{ id: implId    }] } } : {}),
+    ...(clientAccountId ? { "Client Account": { relation: [{ id: clientAccountId }] } } : {}),
     ...(leadId    ? { "Deal Source":     { relation: [{ id: leadId    }] } } : {}),
   }
 

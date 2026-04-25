@@ -79,13 +79,9 @@ async function run(payload) {
   }
 
   // ── Resolve IDs from Expansion record ─────────────────────────────────────
-  const companyId = props.Client?.relation?.[0]?.id?.replace(/-/g, "") || null
+  const companyId = props.Company?.relation?.[0]?.id?.replace(/-/g, "") || null
 
-  // Client Account: "Client Account" field (new, preferred) → "Implementation" (legacy)
-  const clientAccountId =
-    props["Client Account"]?.relation?.[0]?.id?.replace(/-/g, "") ||
-    props.Implementation?.relation?.[0]?.id?.replace(/-/g, "") ||
-    null
+  const clientAccountId = props["Client Account"]?.relation?.[0]?.id?.replace(/-/g, "") || null
 
   // Invoice: linked to expansion record
   const invoiceId = props.Invoice?.relation?.[0]?.id?.replace(/-/g, "") || null

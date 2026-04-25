@@ -78,7 +78,6 @@ async function run(payload) {
   const potentialVal  = lp["Potential Value"]?.formula?.number
                      ?? lp["Potential Value"]?.number
                      ?? null
-  const country       = lp.Country?.select?.name || null
   const notes         = plain(lp.Notes?.rich_text || [])
 
   // Source: Lead = multi_select (channels) → map to Deal = select (intent category)
@@ -119,11 +118,8 @@ async function run(payload) {
   // ── Only set properties that exist in the Deals DB ───────────────────────
   if (companyRel)     dealProps["Company"]          = { relation: [{ id: companyRel }] }
   if (contactRel)     dealProps["Primary Contact"]  = { relation: [{ id: contactRel }] }
-  if (osInterest && osInterest !== "Not Sure Yet")
-                      dealProps["Packages"]         = { multi_select: [{ name: osInterest }] }
   if (situation)      dealProps["Situation"]        = { rich_text: [{ text: { content: situation } }] }
   if (discoveryCall)  dealProps["Discovery Call"]   = { date: { start: discoveryCall } }
-  if (country)        dealProps["Country"]          = { select: { name: country } }
   if (potentialVal)   dealProps["Deal Value"]       = { number: potentialVal }
   if (notes)          dealProps["Notes"]            = { rich_text: [{ text: { content: notes } }] }
   if (dealSourceName) dealProps["Source"]           = { select: { name: dealSourceName } }

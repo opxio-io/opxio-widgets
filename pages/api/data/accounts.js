@@ -24,7 +24,7 @@ export default async function handler(req, res) {
 
     // Counters
     const statusCounts = { Onboarding: 0, Active: 0, "Past Client": 0 }
-    const healthCounts = { "🟢 Green": 0, "🟡 Amber": 0, "🔴 Red": 0, Unset: 0 }
+    const healthCounts = { "🟢 Healthy": 0, "🟡 Critical": 0, "🔴 At Risk": 0, Unset: 0 }
     let expansionCandidates = 0
 
     const clients = []
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       const installDate = p["Install Date"]?.date?.start || null
       const handoverDate = p["Handover Date"]?.date?.start || null
       const lastTouchpoint = p["Last Touchpoint"]?.date?.start || null
-      const isExpansion = p["Expansion Candidate"]?.checkbox || false
+      const expansionStage = p["Expansion Stage"]?.select?.name || null
       const expansionInterest = p["Expansion Interest"]?.multi_select?.map(x => x.name) || []
       const origin     = p["Client Origin"]?.select?.name || null
       const pageUrl    = `https://www.notion.so/${page.id.replace(/-/g, "")}`
@@ -52,7 +52,7 @@ export default async function handler(req, res) {
       else if (!health) healthCounts["Unset"]++
 
       // Expansion
-      if (isExpansion) expansionCandidates++
+      if (expansionStage) expansionCandidates++
 
       clients.push({
         id: page.id,
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
         installDate,
         handoverDate,
         lastTouchpoint,
-        isExpansion,
+        expansionStage,
         expansionInterest,
         origin,
         url: pageUrl,

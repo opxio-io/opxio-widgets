@@ -220,6 +220,21 @@ export default async function handler(req, res) {
     let personId = await findPerson(form.email);
     if (!personId) personId = await createPerson(form, companyId);
 
+    // 3b. Ensure existing person has Company relation set
+    if (personId && companyId) {
+      try {
+        const personPage = await notionFetch("/pages/" + personId)
+        const existingCompany = personPage.properties?.Company?.relation?.[0]?.id
+        if (!existingCompany) {
+          await notionFetch("/pages/" + personId, "PATCH", {
+            properties: { Company: { relation: [{ id: companyId }] } },
+          })
+        }
+      } catch (e) {
+        console.warn("[qualify] person company patch:", e.message)
+      }
+    }
+
     // 4. Create Lead
     const leadId = await createLead(form, companyId, personId, qualResult.qualified);
 

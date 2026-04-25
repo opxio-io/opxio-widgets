@@ -10,7 +10,7 @@
 // 6. Returns { invoice_id, project_id }
 
 import { waitUntil } from "@vercel/functions"
-import { getPage, patchPage, createPage, queryDB, plain, DB, hdrs, createTeamTask } from "../../lib/notion"
+import { getPage, patchPage, createPage, queryDB, plain, DB, getCurrency, hdrs, createTeamTask } from "../../lib/notion"
 
 
 // ── Find inline Products & Services DB on a page (checks callouts too) ──
@@ -209,7 +209,7 @@ async function run(payload) {
 
   const quoteType    = props["Quote Type"]?.select?.name || "New Business"
   const paymentTerms = props["Payment Terms"]?.select?.name || "50% Deposit"
-  const amount       = props["Amount (MYR)"]?.number || props.Amount?.number || 0
+  const amount       = props["Amount"]?.number || props["Amount (MYR)"]?.number || 0
   const packageName  = derivePackage(props) || null  // null if no OS detected — don't use quoteType as package
 
   // Linked IDs
@@ -246,7 +246,8 @@ async function run(payload) {
     "Invoice Type":   { select: { name: invType } },
     "Status":         { select: { name: "Deposit Pending" } },
     "Issue Date":     { date: { start: today } },
-    "Amount (MYR)":   { number: amount },
+    "Amount":         { number: amount },
+    ...(currency ? { "Currency": { select: { name: currency } } } : {}),
     "Payment Terms":  { select: { name: paymentTerms } },
     "Quotation":      { relation: [{ id: quotId }] },
     ...(deposit50  ? { "Deposit (50%)": { number: deposit50 } } : {}),
@@ -346,7 +347,7 @@ async function run(payload) {
       }, token)
       if (addonRows.length) {
         await patchPage(addonRows[0].id.replace(/-/g, ""), {
-          "Agreed Price (MYR)": { number: amount },
+          "Agreed Price": { number: amount },
           "Status":             { select: { name: "In Progress" } },
           "Invoice":            { relation: [{ id: invId }] },
         }, token)

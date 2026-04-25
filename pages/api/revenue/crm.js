@@ -135,7 +135,7 @@ export default async function handler(req, res) {
       const props = page.properties;
       const funnel     = getStatus(props['Funnel']) || getSelect(props['Stage']) || getSelect(props['Status']);
       const name       = getTitle(props['Name']);
-      const value      = getNumber(props['Estimated Value']) || getNumber(props['Deal Value (MYR)']);
+      const value      = getNumber(props['Estimated Value']) || getNumber(props['Deal Value']);
       const source     = getSelect(props['Source']);
       const followUp   = getDate(props['Next Follow-up']) || getDate(props['Follow-up Date']);
       const lastContact = getDate(props['Last Contacted']) || getDate(props['Last Contact']);
@@ -310,7 +310,7 @@ async function handleDealsView(req, res, headers, dbId, client) {
     if (!funnel) continue;
 
     const name    = getTitle(props['Name']);
-    const value   = getNumber(props['Estimated Value']) || getNumber(props['Deal Value (MYR)']);
+    const value   = getNumber(props['Estimated Value']) || getNumber(props['Deal Value']);
     const source  = getSelect(props['Source']);
     const company = getText(props['Primary Contact']) || getText(props['PIC Name']) || '';
     const reasons = getMultiSelect(props['Why Not Closing?']);

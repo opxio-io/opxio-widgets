@@ -109,7 +109,7 @@ export default async function handler(req, res) {
         number: plain(ip['Invoice Number']?.title || ip['Invoice No.']?.formula?.string || ip.Name?.title || []),
         type: ip['Invoice Type']?.select?.name || 'Invoice',
         status: ip.Status?.status?.name || ip.Status?.select?.name || 'Awaiting Payment',
-        amount: ip['Amount (MYR)']?.number || ip.Amount?.number || 0,
+        amount: ip['Amount']?.number || ip['Amount (MYR)']?.number || 0,
         date: ip['Issue Date']?.date?.start || ip.Date?.date?.start || null,
       }
     })

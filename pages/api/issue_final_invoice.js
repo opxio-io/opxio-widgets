@@ -9,7 +9,7 @@
 // 5. Updates Project status → In Review
 // 6. Advances Lead stage → Pending Final Payment
 
-import { getPage, patchPage, createPage, plain, DB, queryDB, createLedgerEntry, createTeamTask } from "../../lib/notion"
+import { getPage, patchPage, createPage, getCurrency, plain, DB, queryDB, createLedgerEntry, createTeamTask } from "../../lib/notion"
 
 
 // ── Notion API headers ─────────────────────────────────────────────────────
@@ -149,7 +149,7 @@ async function run(payload) {
   if (quotationId) {
     try {
       const qpage = await getPage(quotationId, process.env.NOTION_API_KEY)
-      totalAmount  = qpage.properties["Amount (MYR)"]?.number || qpage.properties.Amount?.number || 0
+      totalAmount  = qpage.properties["Amount"]?.number || qpage.properties["Amount (MYR)"]?.number || 0
       paymentTerms = qpage.properties["Payment Terms"]?.select?.name || "50% Deposit"
     } catch (e) {
       console.warn("[issue_final_invoice] quotation fetch:", e.message)
@@ -178,7 +178,8 @@ async function run(payload) {
     "Invoice Type":   { select: { name: "Final Payment" } },
     "Status":         { select: { name: "Balance Pending" } },
     "Issue Date":     { date: { start: today } },
-    "Amount (MYR)":   { number: totalAmount },
+    "Amount":         { number: totalAmount },
+    ...(currency ? { "Currency": { select: { name: currency } } } : {}),
     "Final Payment":  { number: Math.round(finalPayment * 100) / 100 },
     "Payment Terms":  { select: { name: paymentTerms } },
     ...(clientAccountId ? { "Client Account": { relation: [{ id: clientAccountId }] } } : {}),

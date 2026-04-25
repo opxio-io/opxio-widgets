@@ -273,7 +273,7 @@ async function run(payload) {
   }
 
   // ── Fetch Quotation amount (for Deal Value) ──────────────────────────────
-  let quotationAmount = props["Amount (MYR)"]?.number || props["Total Amount"]?.number || 0  // from Invoice
+  let quotationAmount = props["Amount"]?.number || props["Amount (MYR)"]?.number || props["Total Amount"]?.number || 0  // from Invoice
 
   // ── Fetch Quotation data (amount + packages) in one call ──────────────────
   let packageCatalogueIds = []
@@ -282,7 +282,7 @@ async function run(payload) {
     try {
       const qp = await getPage(quotationId, token)
       if (!quotationAmount) {
-        quotationAmount = qp.properties["Amount (MYR)"]?.number || qp.properties.Amount?.number || 0
+        quotationAmount = qp.properties["Amount"]?.number || qp.properties["Amount (MYR)"]?.number || 0
       }
       const pkgRels = qp.properties.Packages?.relation || []
       packageCatalogueIds = pkgRels.map(r => r.id.replace(/-/g, ""))
@@ -622,7 +622,7 @@ async function run(payload) {
   }
 
   // ── Finance Ledger — auto-create Deposit entry ───────────────────────────
-  const depositAmt = props["Deposit (50%)"]?.number || props["Amount (MYR)"]?.number || props["Amount"]?.number || 0
+  const depositAmt = props["Deposit (50%)"]?.number || props["Amount"]?.number || props["Amount (MYR)"]?.number || 0
   createLedgerEntry({
     title:     companyName ? `Deposit — ${companyName}` : "Client Deposit",
     amount:    depositAmt,

@@ -118,7 +118,7 @@ export default async function handler(req, res) {
     for (const inv of invoices) {
       const p       = inv.properties
       const status  = (p.Status?.select?.name || p.Status?.status?.name || "").toLowerCase()
-      const amount  = p["Amount (MYR)"]?.number || p.Amount?.number || 0
+      const amount  = p["Amount"]?.number || p["Amount (MYR)"]?.number || 0
       const issueDate = p["Issue Date"]?.date?.start || p["Created On"]?.date?.start || inv.created_time
       const dueDate   = p["Deposit Due"]?.date?.start || p["Due Date"]?.date?.start || null
       const iDate   = new Date(issueDate)

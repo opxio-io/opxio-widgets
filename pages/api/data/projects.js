@@ -368,10 +368,10 @@ export default async function handler(req, res) {
         || projectPhases[0]
       const overallPct = taskSummary.total > 0 ? Math.round((taskSummary.done / taskSummary.total) * 100) : 0
 
-      // Bucket (aligned to Notion stage options: Awaiting Build, Build Started, In Review, Client Review, Revision, Completed, Cancelled)
+      // Bucket (aligned to Notion stage options: Awaiting Build, Build Started, Internal Review, Client Review, Revision, Completed, Cancelled)
       let bucket = ""
       if (status === "Build Started")                     bucket = "active"
-      else if (["In Review","Client Review"].includes(status)) bucket = "review"
+      else if (["Internal Review","Client Review"].includes(status)) bucket = "review"
       else if (status === "Revision")                     bucket = "revision"
       else if (status === "Completed")                    bucket = "done"
       else if (status === "Cancelled")                    bucket = "cancelled"

@@ -91,7 +91,7 @@ async function run(payload) {
   const invoiceId = props.Invoice?.relation?.[0]?.id?.replace(/-/g, "") || null
 
   // ── Resolve new OS scope ───────────────────────────────────────────────────
-  // Priority 1: "OS Scope" multi_select (new field — Nadia to add to Expansions DB)
+  // Priority 1: "OS Scope" multi_select
   // Priority 2: Parse from "Type" select (e.g. "Operations OS Expansion" or "Operations OS")
   // Priority 3: Parse from expansion Name
   let newOsScope = (props["OS Scope"]?.multi_select || []).map(s => s.name).filter(n => KNOWN_OS.has(n))
@@ -239,7 +239,7 @@ async function run(payload) {
     "Status": { select: { name: "In Progress" } },
   }
 
-  // Try to link Client Build (field may not exist yet — Nadia adds to Expansions DB)
+  // Link Client Build back to Expansion record
   try {
     await patchPage(expansionId, {
       ...expansionUpdates,

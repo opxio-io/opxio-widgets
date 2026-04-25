@@ -153,10 +153,8 @@ function buildWaUrl(phone, companyName, formUrl) {
 // ── Create a Client Account record in the Client Accounts DB ─────────────
 // Called when a deposit is marked as received. Creates the post-install client record
 // and links it back to the Invoice's "Client Account" relation field.
-async function createClientAccount({ invoiceId, companyId, companyName, dealId, leadId, picId, projectId, packages, addonCatalogueIds, formUrl, clientOrigin, today, token }) {
+async function createClientAccount({ invoiceId, companyId, companyName, dealId, leadId, picId, projectId, packages, packageCatalogueIds, addonCatalogueIds, formUrl, clientOrigin, today, token }) {
   try {
-    const osInstalled = (packages || []).map(n => ({ name: n }))
-
     const caProps = {
       "Install Name":  { title: [{ text: { content: companyName || "New Client" } }] },
       "Status":        { select: { name: "Active" } },
@@ -169,7 +167,7 @@ async function createClientAccount({ invoiceId, companyId, companyName, dealId, 
       ...(leadId     ? { "Linked Lead":     { relation: [{ id: leadId     }] } } : {}),
       ...(picId      ? { "Primary Contact": { relation: [{ id: picId      }] } } : {}),
       ...(projectId  ? { "Project Tracker": { relation: [{ id: projectId  }] } } : {}),
-      ...(osInstalled.length ? { "OS Installed": { multi_select: osInstalled } } : {}),
+      ...(packageCatalogueIds?.length ? { "OS Installed": { relation: packageCatalogueIds.map(id => ({ id })) } } : {}),
       ...(addonCatalogueIds?.length ? { "Add-ons Installed": { relation: addonCatalogueIds.map(id => ({ id })) } } : {}),
     }
 
@@ -282,6 +280,15 @@ async function run(payload) {
     try {
       const qp = await getPage(quotationId, token)
       quotationAmount = qp.properties["Amount (MYR)"]?.number || qp.properties.Amount?.number || 0
+    } catch {}
+  }
+
+  // ── Fetch Quotation Packages → Catalogue IDs (for Client Account OS Installed) ──
+  let packageCatalogueIds = []
+  if (quotationId) {
+    try {
+      const qp = await getPage(quotationId, token)
+      packageCatalogueIds = (qp.properties.Packages?.relation || []).map(r => r.id.replace(/-/g, ""))
     } catch {}
   }
 
@@ -474,7 +481,7 @@ async function run(payload) {
   // Project is created HERE at deposit paid — not at invoice creation.
   // Primary: Invoice.Project direct link (set if this is an add-on flow).
   // Otherwise create fresh.
-  let projectId = props.Project?.relation?.[0]?.id?.replace(/-/g, "") || null
+  let projectId = props["Client Build"]?.relation?.[0]?.id?.replace(/-/g, "") || null
   let phasesCount = 0, tasksCount = 0
 
   // Fallback queries for edge cases (e.g. manually created invoices)
@@ -517,7 +524,7 @@ async function run(payload) {
       }, token)
       projectId = projPage.id.replace(/-/g, "")
       // Link Invoice → Project for future lookups
-      await patchPage(pageId, { "Project": { relation: [{ id: projectId }] } }, token).catch(() => {})
+      await patchPage(pageId, { "Client Build": { relation: [{ id: projectId }] } }, token).catch(() => {})
       console.log("[deposit_paid] Created project:", projectId)
     } catch (e) {
       console.warn("[deposit_paid] project creation failed:", e.message)
@@ -542,6 +549,7 @@ async function run(payload) {
     picId,
     projectId,
     packages,
+    packageCatalogueIds,
     addonCatalogueIds,
     formUrl,
     clientOrigin,

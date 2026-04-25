@@ -56,9 +56,10 @@ async function createAddonRecord({ caId, companyId, dealId, projectId, installNa
   const requestedWhen = sourcePageId === projectId ? "Mid-Build" : "Post-Handover"
   const props = {
     "Add-on Name":           { title: [{ text: { content: `Add-on — ${installName}` } }] },
-    "Status":                { select: { name: "Pending" } },
+    "Status":                { select: { name: "Scoped" } },
     "Requested When":        { select: { name: requestedWhen } },
     ...(companyId  ? { "Company":               { relation: [{ id: companyId  }] } } : {}),
+    ...(dealId     ? { "Linked Deal":           { relation: [{ id: dealId     }] } } : {}),
     ...(caId       ? { "Linked Client Account": { relation: [{ id: caId       }] } } : {}),
     ...(projectId  ? { "Linked Project":        { relation: [{ id: projectId  }] } } : {}),
   }
@@ -135,11 +136,14 @@ export default async function handler(req, res) {
     // 2. Create linked Quotation
     const { quotId, quotUrl } = await createAddonQuotation({ companyId, dealId, projectId, token })
 
-    // 3. Link Quotation back to Add-on record
+    // 3. Link Quotation back to Add-on record + advance status to Quoted
     await fetch(`https://api.notion.com/v1/pages/${addonId}`, {
       method:  "PATCH",
       headers: hdrs(token),
-      body:    JSON.stringify({ properties: { "Quotation": { relation: [{ id: quotId }] } } }),
+      body:    JSON.stringify({ properties: {
+        "Quotation": { relation: [{ id: quotId }] },
+        "Status":    { select: { name: "Quoted" } },
+      } }),
     }).catch(e => console.warn("[create_addon] link quotation→addon:", e.message))
 
     // 4. Append Products & Services table to Quotation

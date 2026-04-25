@@ -347,7 +347,7 @@ async function run(payload) {
       if (addonRows.length) {
         await patchPage(addonRows[0].id.replace(/-/g, ""), {
           "Agreed Price (MYR)": { number: amount },
-          "Status":             { select: { name: "Active" } },
+          "Status":             { select: { name: "In Progress" } },
         }, token)
         console.log("[create_invoice] add-on record updated:", addonRows[0].id)
       }

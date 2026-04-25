@@ -276,19 +276,31 @@ async function run(payload) {
 
   // ── Fetch Quotation amount (for Deal Value) ──────────────────────────────
   let quotationAmount = props["Amount (MYR)"]?.number || props["Total Amount"]?.number || 0  // from Invoice
-  if (!quotationAmount && quotationId) {
-    try {
-      const qp = await getPage(quotationId, token)
-      quotationAmount = qp.properties["Amount (MYR)"]?.number || qp.properties.Amount?.number || 0
-    } catch {}
-  }
 
-  // ── Fetch Quotation Packages → Catalogue IDs (for Client Account OS Installed) ──
+  // ── Fetch Quotation data (amount + packages) in one call ──────────────────
   let packageCatalogueIds = []
+  let quotationPackageNames = []
   if (quotationId) {
     try {
       const qp = await getPage(quotationId, token)
-      packageCatalogueIds = (qp.properties.Packages?.relation || []).map(r => r.id.replace(/-/g, ""))
+      if (!quotationAmount) {
+        quotationAmount = qp.properties["Amount (MYR)"]?.number || qp.properties.Amount?.number || 0
+      }
+      const pkgRels = qp.properties.Packages?.relation || []
+      packageCatalogueIds = pkgRels.map(r => r.id.replace(/-/g, ""))
+      // Fetch Catalogue item names for OS Scope fallback when formPackage is empty
+      for (const rel of pkgRels) {
+        try {
+          const catItem = await getPage(rel.id.replace(/-/g, ""), token)
+          for (const [, v] of Object.entries(catItem.properties)) {
+            if (v.type === "title") {
+              const nm = (v.title || []).map(t => t.plain_text).join("").trim()
+              if (nm) quotationPackageNames.push(nm)
+              break
+            }
+          }
+        } catch {}
+      }
     } catch {}
   }
 
@@ -586,7 +598,15 @@ async function run(payload) {
     "Sales OS":           "Revenue OS",
   }
 
-  const osScopeSet = new Set(PACKAGE_TO_SCOPE[formPackage] || ["Revenue OS"])
+  const osScopeSet = new Set(PACKAGE_TO_SCOPE[formPackage] || [])
+  // When formPackage is empty, derive scope from Quotation's Catalogue package names
+  if (!osScopeSet.size && quotationPackageNames.length) {
+    quotationPackageNames.forEach(name => {
+      ;(PACKAGE_TO_SCOPE[name] || []).forEach(s => osScopeSet.add(s))
+    })
+  }
+  // Final fallback if still empty
+  if (!osScopeSet.size) osScopeSet.add("Revenue OS")
   formAddons.forEach(a => { if (ADDON_TO_SCOPE[a]) osScopeSet.add(ADDON_TO_SCOPE[a]) })
   const osScope = [...osScopeSet].map(s => ({ name: s }))
 

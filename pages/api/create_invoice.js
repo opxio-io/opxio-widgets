@@ -312,7 +312,7 @@ async function run(payload) {
       const existing = proj.properties.Invoice?.relation || []
       const merged   = [...existing.map(r => ({ id: r.id })), { id: invId }]
       await patchPage(existingProjectId, { "Invoice": { relation: merged } }, token)
-      await patchPage(invId, { "Project": { relation: [{ id: existingProjectId }] } }, token).catch(() => {})
+      await patchPage(invId, { "Client Build": { relation: [{ id: existingProjectId }] } }, token).catch(() => {})
     } catch (e) {
       console.warn("[create_invoice] link add-on invoice:", e.message)
     }

@@ -137,12 +137,12 @@ export default async function handler(req, res) {
       // Write WA Link → Notion, Status → Issued
       await patchPage(pageId, {
         "WA Link": { url: waUrl },
-        "Status":  { select: { name: "Issued" } },
+        "Status":  { select: { name: "Sent" } },
       }, process.env.NOTION_API_KEY)
     } else {
       // Still update status even without phone
       await patchPage(pageId, {
-        "Status": { select: { name: "Issued" } },
+        "Status": { select: { name: "Sent" } },
       }, process.env.NOTION_API_KEY)
     }
 

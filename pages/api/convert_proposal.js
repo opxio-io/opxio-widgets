@@ -12,7 +12,7 @@
 //   4. Finds the existing inline Products & Services DB on the quotation (from template)
 //   5. Looks up products from Catalogue by OS Type + Deal Add-ons
 //   6. Populates the inline table: Base OS → Main OS product → Add-ons
-//   7. Marks Proposal → "Quotation Issued"
+//   7. Marks Proposal → "Accepted"
 //
 // NOTE: Proposals DB has no inline Products DB. Products are sourced from Catalogue.
 
@@ -450,9 +450,9 @@ export default async function handler(req, res) {
     }
     console.log("[convert_proposal] wrote", lineItems.length, "line items")
 
-    // ── 7. Mark proposal → Quotation Issued ────────────────────────────────
+    // ── 7. Mark proposal → Accepted (quotation created from proposal) ────────────────────────────────
     await patchPage(proposalId, {
-      "Status": { select: { name: "Quotation Issued" } },
+      "Status": { select: { name: "Accepted" } },
     }, process.env.NOTION_API_KEY)
 
     return res.status(200).json({

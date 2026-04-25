@@ -149,7 +149,7 @@ async function handleProposal(pageId) {
 
   await patchPage(pageId, {
     "PDF":    { url: pdfUrl },
-    "Status": { select: { name: "Send Proposal" } },
+    "Status": { select: { name: "Ready to Send" } },
     "Date":   { date: { start: new Date().toISOString().split("T")[0] } },
     // Write the ref number back to the title field
     ...(proposalNo && data.title_prop_name

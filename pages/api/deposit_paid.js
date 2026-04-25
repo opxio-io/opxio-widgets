@@ -156,12 +156,11 @@ function buildWaUrl(phone, companyName, formUrl) {
 async function createClientAccount({ invoiceId, companyId, companyName, dealId, leadId, picId, projectId, packages, packageCatalogueIds, addonCatalogueIds, formUrl, clientOrigin, today, token }) {
   try {
     const caProps = {
-      "Install Name":  { title: [{ text: { content: companyName || "New Client" } }] },
+      "Account Name":  { title: [{ text: { content: companyName || "New Client" } }] },
       "Status":        { select: { name: "Active" } },
       "Client Health": { select: { name: "🟢 Healthy" } },
       "Install Date":  { date: { start: today } },
       ...(clientOrigin ? { "Client Origin": { select: { name: clientOrigin } } } : {}),
-      ...(formUrl      ? { "Onboarding Form": { url: formUrl } } : {}),
       ...(companyId  ? { "Company":         { relation: [{ id: companyId  }] } } : {}),
       ...(dealId     ? { "Linked Deal":     { relation: [{ id: dealId     }] } } : {}),
       ...(leadId     ? { "Linked Lead":     { relation: [{ id: leadId     }] } } : {}),

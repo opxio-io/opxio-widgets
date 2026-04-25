@@ -38,7 +38,7 @@ async function resolveSourcePage(pageId, token) {
     if (caId) {
       try {
         const ca = await getPage(caId, token)
-        installName = plain(ca.properties["Install Name"]?.title || []) || installName
+        installName = plain(ca.properties["Account Name"]?.title || []) || installName
       } catch {}
     }
     return { companyId, dealId, projectId: pageId, caId, installName }
@@ -48,7 +48,7 @@ async function resolveSourcePage(pageId, token) {
   const companyId   = props.Company?.relation?.[0]?.id?.replace(/-/g, "")            || null
   const dealId      = props["Linked Deal"]?.relation?.[0]?.id?.replace(/-/g, "")     || null
   const projectId   = props["Project Tracker"]?.relation?.[0]?.id?.replace(/-/g, "") || null
-  const installName = plain(props["Install Name"]?.title || []) || "Client"
+  const installName = plain(props["Account Name"]?.title || []) || "Client"
   return { companyId, dealId, projectId, caId: pageId, installName }
 }
 

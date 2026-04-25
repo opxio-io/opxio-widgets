@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     for (const page of pages) {
       const p = page.properties
 
-      const name       = plain(p["Install Name"]?.title || []) || "Untitled"
+      const name       = plain(p["Account Name"]?.title || []) || "Untitled"
       const status     = p["Status"]?.select?.name || null
       const health     = p["Client Health"]?.select?.name || null
       const osInstalled = p["OS Installed"]?.multi_select?.map(x => x.name) || []

@@ -137,7 +137,7 @@ async function run(payload) {
   // ── 4. Create Deal ────────────────────────────────────────────────────────
   const dealProps = {
     "Deal Name":   { title: [{ text: { content: dealName } }] },
-    "Stage":       { status: { name: "Proposal" } },
+    "Stage":       { status: { name: "Scoping" } },
     "Origin Lead": { relation: [{ id: leadId }] },
   }
 
@@ -216,7 +216,7 @@ async function run(payload) {
 
   // ── 9. Auto-create Team Task — send proposal ──────────────────────────────
   await createTeamTask({
-    taskName:  `Send proposal — ${companyName || dealName}`,
+    taskName:  `Prepare quotation — ${companyName || dealName}`,
     category:  "Sales",
     priority:  "High",
     dealId,

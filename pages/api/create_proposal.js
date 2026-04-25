@@ -328,7 +328,7 @@ async function handleConvertToDeal(leadId, res) {
       parent: { database_id: DB.DEALS },
       properties: {
         "Lead Name":   { title: [{ text: { content: leadName } }] },
-        "Stage":       { status: { name: "Discovery Done" } },
+        "Stage":       { status: { name: "Scoping" } },
         "Client Type": { select: { name: "New Client" } },
         "Lead Source": { relation: [{ id: leadId }] },
       },
@@ -339,7 +339,7 @@ async function handleConvertToDeal(leadId, res) {
 
   // ── Patch all Lead data into the Deal ─────────────────────────────────────
   await patchPage(dealId, {
-    "Stage":       { status: { name: "Discovery Done" } },
+    "Stage":       { status: { name: "Scoping" } },
     "Client Type": { select: { name: "New Client" } },
     "Lead Source": { relation: [{ id: leadId }] },
     ...(leadName          ? { "Lead Name":    { title: [{ text: { content: leadName } }] } } : {}),
@@ -625,22 +625,17 @@ async function processProposal(sourceId) {
     }
   }
 
-  // ── 6. Advance Lead stage → Proposal Sent ─────────────────────────────────
-  // Proposal is created from a Deal — resolve Lead via Deal.Origin Lead relation
+  // ── 6. Advance Deal stage → Proposal Sent ────────────────────────────────
+  // Proposal sent — move the Deal forward. Lead stage is not touched here.
   try {
-    let resolvedLeadId = leadId
-    if (!resolvedLeadId && dealId) {
-      const dealPage = await getPage(dealId, token)
-      resolvedLeadId = (dealPage.properties["Origin Lead"]?.relation || [])[0]?.id?.replace(/-/g, "") || null
-    }
-    if (resolvedLeadId) {
-      await patchPage(resolvedLeadId, {
+    if (dealId) {
+      await patchPage(dealId, {
         "Stage": { status: { name: "Proposal Sent" } },
-      }, token)
-      console.log(`[create_proposal] lead ${resolvedLeadId} → Proposal Sent`)
+      }, process.env.NOTION_API_KEY)
+      console.log(`[create_proposal] deal ${dealId} → Proposal Sent`)
     }
   } catch (e) {
-    console.warn("[create_proposal] lead stage update:", e.message)
+    console.warn("[create_proposal] deal stage update:", e.message)
   }
 
   console.log(`[create_proposal] ✓ prop ${propId} — ${lineItems.length} line items, source: ${isFromDeal ? "deal" : "lead"}`)

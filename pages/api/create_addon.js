@@ -56,7 +56,7 @@ async function createAddonRecord({ caId, companyId, dealId, projectId, installNa
   const requestedWhen = sourcePageId === projectId ? "Mid-Build" : "Post-Handover"
   const props = {
     "Add-on Name":           { title: [{ text: { content: `Add-on — ${installName}` } }] },
-    "Status":                { select: { name: "Scoped" } },
+    "Status":                { select: { name: "Quoted" } },
     "Requested When":        { select: { name: requestedWhen } },
     ...(companyId  ? { "Company":               { relation: [{ id: companyId  }] } } : {}),
     ...(dealId     ? { "Linked Deal":           { relation: [{ id: dealId     }] } } : {}),
@@ -142,7 +142,6 @@ export default async function handler(req, res) {
       headers: hdrs(token),
       body:    JSON.stringify({ properties: {
         "Quotation": { relation: [{ id: quotId }] },
-        "Status":    { select: { name: "Quoted" } },
       } }),
     }).catch(e => console.warn("[create_addon] link quotation→addon:", e.message))
 

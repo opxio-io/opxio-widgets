@@ -348,6 +348,7 @@ async function run(payload) {
         await patchPage(addonRows[0].id.replace(/-/g, ""), {
           "Agreed Price (MYR)": { number: amount },
           "Status":             { select: { name: "In Progress" } },
+          "Invoice":            { relation: [{ id: invId }] },
         }, token)
         console.log("[create_invoice] add-on record updated:", addonRows[0].id)
       }

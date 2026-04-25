@@ -56,21 +56,41 @@ function addDays(iso, days) {
 }
 
 // ─── Resolve which phases apply to this project scope ───────────────────────
-function resolvePhasesForScope(scope) {
+// mode = "normal" (default) | "expansion"
+//   normal:    all-scope phases (Pre-Build, Infra, Foundation, QC, Handover) + matching OS phases
+//   expansion: skip all-scope foundation phases, include OS phases + expansion-specific QC/Handover
+function resolvePhasesForScope(scope, mode = "normal") {
   const phases = []
 
   for (const phase of taskConfig.phases) {
     const phaseScope = phase.scope
 
-    // Always include phases scoped to "all"
-    if (phaseScope.includes("all")) {
-      phases.push({ ...phase })
-      continue
-    }
+    if (mode === "expansion") {
+      // Expansion mode:
+      //   ✓ expansion-scope phases (lightweight QC + Handover)
+      //   ✓ OS-specific phases matching scope (the new OS being installed)
+      //   ✗ "all"-scope phases (Pre-Build, Infrastructure, Foundation, full QC, full Handover)
+      if (phaseScope.includes("expansion")) {
+        phases.push({ ...phase })
+        continue
+      }
+      if (phaseScope.includes("all")) continue
+      const match = phaseScope.some(s => scope.includes(s))
+      if (match) phases.push({ ...phase })
 
-    // Include OS/add-on phases if any scope key matches
-    const match = phaseScope.some(s => scope.includes(s))
-    if (match) phases.push({ ...phase })
+    } else {
+      // Normal mode:
+      //   ✓ "all"-scope phases (Pre-Build, Infrastructure, Foundation, QC, Handover)
+      //   ✓ OS-specific phases matching scope
+      //   ✗ "expansion"-scope phases (these are expansion-only)
+      if (phaseScope.includes("expansion")) continue
+      if (phaseScope.includes("all")) {
+        phases.push({ ...phase })
+        continue
+      }
+      const match = phaseScope.some(s => scope.includes(s))
+      if (match) phases.push({ ...phase })
+    }
   }
 
   // Sort: first by phase_no, then by dependency order within same phase_no
@@ -193,7 +213,10 @@ async function setup(payload) {
   }
 
   // ── Resolve phases from config ────────────────────────────────────────────
-  const allResolved = resolvePhasesForScope(scope)
+  // mode "expansion" → skip foundation phases, use lightweight QC/Handover
+  const mode        = payload.mode || "normal"
+  if (mode === "expansion") console.log(`[setup_project] Mode: expansion — skipping Pre-Build, Infrastructure, Foundation phases`)
+  const allResolved = resolvePhasesForScope(scope, mode)
   const renumbered  = renumberPhases(allResolved)
 
   // Filter out phases already built — skip "all"-scope phases that exist,

@@ -46,7 +46,6 @@ async function resolveSourcePage(pageId, token) {
 
   // isClientAccount
   const companyId   = props.Company?.relation?.[0]?.id?.replace(/-/g, "")            || null
-  const dealId      = props["Linked Deal"]?.relation?.[0]?.id?.replace(/-/g, "")     || null
   const projectId   = props["Project Tracker"]?.relation?.[0]?.id?.replace(/-/g, "") || null
   const installName = plain(props["Account Name"]?.title || []) || "Client"
   return { companyId, dealId, projectId, caId: pageId, installName }
@@ -61,7 +60,6 @@ async function createAddonRecord({ caId, companyId, dealId, projectId, installNa
     "Requested When":        { select: { name: requestedWhen } },
     ...(companyId  ? { "Company":               { relation: [{ id: companyId  }] } } : {}),
     ...(caId       ? { "Linked Client Account": { relation: [{ id: caId       }] } } : {}),
-    ...(dealId     ? { "Linked Deal":           { relation: [{ id: dealId     }] } } : {}),
     ...(projectId  ? { "Linked Project":        { relation: [{ id: projectId  }] } } : {}),
   }
   const page    = await createPage({ parent: { database_id: DB.ADD_ONS }, properties: props }, token)

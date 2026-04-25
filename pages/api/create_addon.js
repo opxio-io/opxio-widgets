@@ -77,7 +77,7 @@ async function createAddonQuotation({ companyId, dealId, projectId, token }) {
     "Status":        { select: { name: "Draft" } },
     "Issue Date":    { date: { start: today } },
     "Payment Terms": { select: { name: "Full Upfront" } },
-    "Quote Type":    { select: { name: "Expansion" } },
+    "Quote Type":    { select: { name: "Add-on" } },
     ...(companyId ? { "Company":     { relation: [{ id: companyId }] } } : {}),
     ...(dealId    ? { "Deal Source": { relation: [{ id: dealId    }] } } : {}),
   }

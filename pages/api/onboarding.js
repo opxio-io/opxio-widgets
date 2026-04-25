@@ -218,7 +218,7 @@ async function createProjectWithTasks(d, intakePageId) {
       parent: { database_id: PROJECTS_DB },
       properties: {
         'Project Name': { title: [{ type: 'text', text: { content: projectName } }] },
-        'Status':       { select: { name: 'Awaiting Build' } },
+        'Status':       { status: { name: 'Awaiting Build' } },
         'Phase':        { select: { name: 'Phase 0 — Pre-Build' } },
         'Package':      { select: { name: packageName } },
         'Start Date':   { date: { start: today } },

@@ -262,7 +262,7 @@ export default async function handler(req, res) {
     }))
 
     // ── Process projects ───────────────────────────────────────────────────
-    const counts = { active: 0, review: 0, done: 0, hold: 0, awaiting: 0 }
+    const counts = { active: 0, review: 0, revision: 0, done: 0, cancelled: 0, awaiting: 0 }
     const builds = []
     const completed = []
 
@@ -368,13 +368,14 @@ export default async function handler(req, res) {
         || projectPhases[0]
       const overallPct = taskSummary.total > 0 ? Math.round((taskSummary.done / taskSummary.total) * 100) : 0
 
-      // Bucket
+      // Bucket (aligned to Notion stage options: Awaiting Build, Build Started, In Review, Client Review, Revision, Completed, Cancelled)
       let bucket = ""
-      if (["Build Started","Building","In Progress","Active"].includes(status))           bucket = "active"
-      else if (["In Review","Client Review","Review"].includes(status))                    bucket = "review"
-      else if (["Completed","Delivered","Done"].includes(status))                          bucket = "done"
-      else if (["On Hold","Paused"].includes(status))                                      bucket = "hold"
-      else if (["Awaiting Deposit","Awaiting Build","Balance Due"].includes(status))       bucket = "awaiting"
+      if (status === "Build Started")                     bucket = "active"
+      else if (["In Review","Client Review"].includes(status)) bucket = "review"
+      else if (status === "Revision")                     bucket = "revision"
+      else if (status === "Completed")                    bucket = "done"
+      else if (status === "Cancelled")                    bucket = "cancelled"
+      else if (status === "Awaiting Build")               bucket = "awaiting"
 
       if (bucket) counts[bucket]++
 

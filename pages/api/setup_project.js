@@ -86,6 +86,28 @@ function resolvePhasesForScope(scope) {
   return phases
 }
 
+// ─── Renumber phases sequentially when multiple OS share the same phase_no ──
+// e.g. Revenue OS (3) + Operations OS (3) → Phase 3, Phase 4
+// "all" scope phases that come after get bumped accordingly.
+function renumberPhases(phases) {
+  let current = -1
+  return phases.map((phase, i) => {
+    if (i === 0) {
+      current = phase.phase_no
+    } else {
+      const prev = phases[i - 1].phase_no
+      if (phase.phase_no === prev) {
+        // Same base number — increment
+        current++
+      } else {
+        // New base number — jump forward but never go backward
+        current = Math.max(current + 1, phase.phase_no)
+      }
+    }
+    return { ...phase, phase_no: current }
+  })
+}
+
 // ─── MAIN SETUP ──────────────────────────────────────────────────────────────
 async function setup(payload) {
   const token   = process.env.NOTION_API_KEY
@@ -138,16 +160,73 @@ async function setup(payload) {
   const totalDays = TIMELINE_DAYS["2–4 weeks"]  // default; override from intake if available
   const targetDate = addDays(startDate, totalDays)
 
-  // ── Guard: skip if phases already exist ──────────────────────────────────
-  const existingPhases = props.Phases?.relation || []
-  if (existingPhases.length > 0) {
-    console.log(`[setup_project] Phases already exist (${existingPhases.length}) — skipping`)
-    return { status: "skipped", reason: "phases already exist", project_id: projectId }
+  // ── Smart guard: detect which OS types are already covered ───────────────
+  // Skips individual phases already built rather than blanket-blocking the run.
+  // This allows expansion installs (adding Operations OS to existing Revenue OS build)
+  // to append the new phase without duplicating shared phases (0, 1, 2, QC, Close).
+  const existingPhaseIds = (props.Phases?.relation || []).map(r => r.id.replace(/-/g, ""))
+  const coveredOsTypes  = new Set()  // e.g. "Revenue OS", "Operations OS"
+  const coveredAllNos   = new Set()  // phase_no values already present for "all"-scope phases
+  let   maxExistingOsNo = 0  // highest phase_no among OS-specific phases only (not QC/Close)
+
+  if (existingPhaseIds.length > 0) {
+    const existingData = await Promise.all(
+      existingPhaseIds.slice(0, 30).map(async id => {
+        try {
+          const p = await getPage(id, token)
+          return {
+            osType:  p.properties["OS Type"]?.select?.name  || null,
+            phaseNo: p.properties["Phase No."]?.number      ?? null,
+          }
+        } catch { return null }
+      })
+    )
+    for (const ep of existingData.filter(Boolean)) {
+      if (ep.osType && !["All", "Base OS", null].includes(ep.osType)) {
+        coveredOsTypes.add(ep.osType)
+        if (ep.phaseNo != null && ep.phaseNo > maxExistingOsNo) maxExistingOsNo = ep.phaseNo
+      } else if (ep.phaseNo != null) {
+        coveredAllNos.add(ep.phaseNo)
+      }
+    }
+    console.log(`[setup_project] Covered OS types: ${[...coveredOsTypes].join(", ") || "none"} | max OS phase: ${maxExistingOsNo}`)
   }
 
   // ── Resolve phases from config ────────────────────────────────────────────
-  const phases = resolvePhasesForScope(scope)
-  console.log(`[setup_project] Resolved ${phases.length} phases from config`)
+  const allResolved = resolvePhasesForScope(scope)
+  const renumbered  = renumberPhases(allResolved)
+
+  // Filter out phases already built — skip "all"-scope phases that exist,
+  // and skip OS-specific phases whose OS type is already covered.
+  const phases = renumbered.filter(phase => {
+    if (phase.scope.includes("all")) return !coveredAllNos.has(phase.phase_no)
+    return !coveredOsTypes.has(phase.os_type)
+  })
+
+  // For expansion installs: bump new OS phase numbers above the highest existing
+  // OS-specific phase. Uses maxExistingOsNo — NOT the overall max — so QC and
+  // Handover phases (which are "all" scope and already skipped above) don't
+  // push the new OS phase to the wrong number.
+  // e.g. existing Revenue OS = phase 3 → new Operations OS gets phase 4, not 7.
+  if (maxExistingOsNo > 0) {
+    const newOsPhases = phases.filter(p => !p.scope.includes("all"))
+    if (newOsPhases.length > 0) {
+      const minNew = newOsPhases[0].phase_no
+      if (minNew <= maxExistingOsNo) {
+        const bump = maxExistingOsNo + 1 - minNew
+        phases.forEach((p, i) => {
+          if (!p.scope.includes("all")) phases[i] = { ...p, phase_no: p.phase_no + bump }
+        })
+      }
+    }
+  }
+
+  if (phases.length === 0) {
+    console.log(`[setup_project] All phases already exist — skipping`)
+    return { status: "skipped", reason: "all phases already exist", project_id: projectId }
+  }
+
+  console.log(`[setup_project] Resolved ${phases.length} phases to create (${allResolved.length} total for scope)`)
 
   // ── Create phase records ──────────────────────────────────────────────────
   const PHASE_ICON = { type: "icon", icon: { name: "map-pin", color: "red" } }

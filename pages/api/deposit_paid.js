@@ -158,7 +158,7 @@ async function createClientAccount({ invoiceId, companyId, companyName, dealId, 
     const caProps = {
       "Install Name":  { title: [{ text: { content: companyName || "New Client" } }] },
       "Status":        { select: { name: "Active" } },
-      "Client Health": { select: { name: "🟢 Green" } },
+      "Client Health": { select: { name: "Healthy" } },
       "Install Date":  { date: { start: today } },
       ...(clientOrigin ? { "Client Origin": { select: { name: clientOrigin } } } : {}),
       ...(formUrl      ? { "Onboarding Form": { url: formUrl } } : {}),

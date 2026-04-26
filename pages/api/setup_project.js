@@ -13,7 +13,7 @@
 //
 // To edit tasks: update config/tasks.json — no Notion DB changes needed.
 
-import { getPage, patchPage, createPage, plain, DB } from "../../lib/notion"
+import { getPage, patchPage, createPage, plain, queryDB, DB } from "../../lib/notion"
 import taskConfig from "../../config/tasks.json"
 
 // ─── Scope key mapping ───────────────────────────────────────────────────────
@@ -177,7 +177,27 @@ async function setup(payload) {
 
   const today     = new Date().toISOString().split("T")[0]
   const startDate = props["Start Date"]?.date?.start || today
-  const totalDays = TIMELINE_DAYS["2–4 weeks"]  // default; override from intake if available
+
+  // ── Derive totalDays from Catalogue Build Days (summed across OS packages in scope) ──
+  let totalDays = TIMELINE_DAYS["2–4 weeks"]  // fallback: 28 days
+  try {
+    const catalogueRows = await queryDB(DB.CATALOGUE, {
+      and: [
+        { property: "Tier",   select: { equals: "OS Package" } },
+        { property: "Status", select: { equals: "Active" } },
+      ]
+    }, process.env.NOTION_API_KEY)
+    const osNameSet  = new Set(rawScope)
+    const matched    = catalogueRows.filter(r =>
+      osNameSet.has(plain(r.properties["Product Name"]?.title || []))
+    )
+    const sumDays    = matched.reduce((acc, r) => acc + (r.properties["Build Days"]?.number || 0), 0)
+    if (sumDays > 0) totalDays = sumDays
+    console.log(`[setup_project] Catalogue Build Days: ${sumDays}d across [${matched.map(r => plain(r.properties["Product Name"]?.title || [])).join(", ")}] → totalDays: ${totalDays}`)
+  } catch (e) {
+    console.warn("[setup_project] Build Days Catalogue lookup failed — using default:", e.message)
+  }
+
   const targetDate = addDays(startDate, totalDays)
 
   // ── Smart guard: detect which OS types are already covered ───────────────

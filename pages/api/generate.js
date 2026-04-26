@@ -159,6 +159,7 @@ async function handleProposal(pageId) {
     modules,
     addons_now:    addonNowItems,
     addons_later:  addonsLater,
+    line_items:    data.line_items || [],
   }
 
   const html    = renderProposal(templateData)

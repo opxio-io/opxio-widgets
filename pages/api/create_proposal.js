@@ -444,8 +444,15 @@ async function processProposal(sourceId) {
   if (!slug) slug = OS_TYPE_SLUG_MAP[osName.toLowerCase().trim()] || ""
   console.log("[create_proposal] osName:", osName, "slug:", slug)
 
-  const addonSlugs = []
+  // ── Detect client currency from Lead Country ──────────────────────────────
+  const country  = sourceProps.Country?.select?.name || ""
+  const currency = COUNTRY_CURRENCY[country] || "MYR"
+  const priceField = currency === "MYR" ? "Price" : "Price (USD)"
+  console.log("[create_proposal] country:", country, "→ currency:", currency)
+
   const addonNames = []
+  let directAddonProducts = []  // built directly from Catalogue relation pages — no slug re-lookup
+  const addonSlugs = []         // fallback only (multi_select path has no Catalogue page to read)
 
   // Deals: Add-ons is a relation to Catalogue. Leads: "Add-On Interest" is a relation to Catalogue.
   const addonRelationIds = (
@@ -455,23 +462,24 @@ async function processProposal(sourceId) {
     []
   ).map(r => r.id.replace(/-/g, ""))
   if (addonRelationIds.length) {
-    // Fetch Catalogue items to get their names + slugs
+    // Fetch Catalogue items directly — build product objects from the page data.
+    // This avoids the slug re-lookup and ensures add-ons without a Slug field still appear.
     const addonPages = await Promise.all(addonRelationIds.map(id => getPage(id, token).catch(() => null)))
     for (const ap of addonPages.filter(Boolean)) {
       const name = plain(ap.properties["Product Name"]?.title || [])
-      const slug = plain(ap.properties["Slug"]?.rich_text || [])
-      if (name) addonNames.push(name)
-      if (slug) addonSlugs.push(slug)
-      else {
-        // fallback: map name via ADDON_SLUG_MAP
-        const k = name.toLowerCase().trim()
-        for (const [key, val] of Object.entries(ADDON_SLUG_MAP)) {
-          if (k.includes(key)) { addonSlugs.push(val); break }
-        }
-      }
+      if (!name) continue
+      addonNames.push(name)
+      directAddonProducts.push({
+        id:          ap.id.replace(/-/g, ""),
+        name,
+        price:       ap.properties[priceField]?.number ?? ap.properties["Price"]?.number ?? null,
+        quote_type:  ap.properties["Quote Type"]?.select?.name || "New Business",
+        description: plain(ap.properties["Description"]?.rich_text || []),
+        slug:        plain(ap.properties["Slug"]?.rich_text || []),
+      })
     }
   } else {
-    // Leads fallback: multi_select
+    // Leads fallback: multi_select — no page data, fall back to slug lookup
     for (const item of (sourceProps["Add-ons"]?.multi_select || sourceProps["Add-Ons"]?.multi_select || [])) {
       addonNames.push(item.name)
       const k = item.name.toLowerCase().trim()
@@ -481,19 +489,16 @@ async function processProposal(sourceId) {
     }
   }
 
-  // ── Detect client currency from Lead Country ──────────────────────────────
-  const country  = sourceProps.Country?.select?.name || ""
-  const currency = COUNTRY_CURRENCY[country] || "MYR"
-  console.log("[create_proposal] country:", country, "→ currency:", currency)
-
   const isOS = OS_PACKAGE_SLUGS.has(slug)
-  const [mainProduct, baseProduct, ...addonProducts] = await Promise.all([
+  const [mainProduct, baseProduct, ...slugAddonProducts] = await Promise.all([
     slug ? fetchProductInfo(slug, currency) : Promise.resolve(null),
     isOS ? fetchProductInfo("base-os", currency) : Promise.resolve(null),
     ...addonSlugs.map(s => fetchProductInfo(s, currency)),
   ])
+  // Use directly-built addon products when available (relation path); slug-fetched as fallback (multi_select path)
+  const addonProducts = directAddonProducts.length ? directAddonProducts : slugAddonProducts
 
-  console.log("[create_proposal] slug:", slug, "osName:", osName, "addons:", addonSlugs.length, "fromDeal:", isFromDeal)
+  console.log("[create_proposal] slug:", slug, "osName:", osName, "addons:", addonProducts.length, "fromDeal:", isFromDeal)
 
   // ── 2. Find recently created Proposal page ─────────────────────────────────
   // Notion button Action 1 creates the proposal before Action 2 fires the

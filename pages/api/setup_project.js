@@ -336,7 +336,7 @@ async function setup(payload) {
 
   await patchPage(projectId, {
     "Phases":               { relation: phaseIds.map(id => ({ id })) },
-    "Target Handover Date": { date: { start: targetDate } },
+    "Target Handover": { date: { start: targetDate } },
   }, token)
 
   // Link all tasks to Project.Tasks relation in one patch

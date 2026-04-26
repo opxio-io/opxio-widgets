@@ -379,7 +379,7 @@ export default async function handler(req, res) {
     // Build Packages list: OS name + any add-on names from Packages field
     const quotPackages = packageNames.map(n => ({ name: n }))
     await patchPage(quotId, {
-      "Status":        { select: { name: "Draft" } },
+      "Status":        { status: { name: "Draft" } },
       "Issue Date":    { date: { start: today } },
       "Valid Until":   { date: { start: validUntil } },
       "Payment Terms": { select: { name: payTerms } },
@@ -452,7 +452,7 @@ export default async function handler(req, res) {
 
     // ── 7. Mark proposal → Accepted (quotation created from proposal) ────────────────────────────────
     await patchPage(proposalId, {
-      "Status": { select: { name: "Accepted" } },
+      "Status": { status: { name: "Accepted" } },
     }, process.env.NOTION_API_KEY)
 
     return res.status(200).json({

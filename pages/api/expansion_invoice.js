@@ -52,7 +52,7 @@ async function run(payload) {
   const invProps = {
     "Invoice No.":   { title: [{ text: { content: "" } }] },
     "Invoice Type":  { select: { name: "Supplementary" } },
-    "Status":        { select: { name: invStatus } },
+    "Status":        { status: { name: invStatus } },
     "Issue Date":    { date: { start: today } },
     "Total Amount":  { number: expValue },
     "Payment Terms": { select: { name: paymentTerms } },

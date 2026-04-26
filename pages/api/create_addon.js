@@ -74,7 +74,7 @@ async function createAddonQuotation({ companyId, dealId, projectId, token }) {
   const today = new Date().toISOString().split("T")[0]
   const props = {
     "Quotation No.": { title: [{ text: { content: "" } }] },
-    "Status":        { select: { name: "Draft" } },
+    "Status":        { status: { name: "Draft" } },
     "Issue Date":    { date: { start: today } },
     "Payment Terms": { select: { name: "Full Upfront" } },
     "Quote Type":    { select: { name: "Add-on" } },

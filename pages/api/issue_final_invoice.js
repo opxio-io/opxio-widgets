@@ -176,7 +176,7 @@ async function run(payload) {
   const invProps = {
     "Invoice No.":    { title: [{ text: { content: "" } }] },
     "Invoice Type":   { select: { name: "Final Payment" } },
-    "Status":         { select: { name: "Balance Pending" } },
+    "Status":         { status: { name: "Balance Pending" } },
     "Issue Date":     { date: { start: today } },
     "Amount":         { number: totalAmount },
     ...(currency ? { "Currency": { select: { name: currency } } } : {}),

@@ -59,7 +59,7 @@ async function handleQuotation(pageId) {
 
   await patchPage(pageId, {
     "PDF":        { url: pdfUrl },
-    "Status":     { select: { name: "Draft" } },
+    "Status":     { status: { name: "Draft" } },
     "Issue Date": { date: { start: new Date().toISOString().split("T")[0] } },
     ...(total > 0 ? { "Amount": { number: total } } : {}),
     ...(currency   ? { "Currency": { select: { name: currency } } } : {}),
@@ -150,7 +150,7 @@ async function handleProposal(pageId) {
 
   await patchPage(pageId, {
     "PDF":    { url: pdfUrl },
-    "Status": { select: { name: "Ready to Send" } },
+    "Status": { status: { name: "Ready to Send" } },
     "Date":   { date: { start: new Date().toISOString().split("T")[0] } },
     // Write the ref number back to the title field
     ...(proposalNo && data.title_prop_name

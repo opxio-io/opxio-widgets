@@ -516,7 +516,7 @@ async function processProposal(sourceId) {
       parent: { database_id: DB.PROPOSALS },
       properties: {
         "Ref Number":    { title: [{ text: { content: "" } }] },
-        "Status":        { select: { name: "Draft" } },
+        "Status":        { status: { name: "Draft" } },
         "Date":          { date: { start: today } },
         "Payment Terms": { select: { name: "50% Deposit" } },
         ...(companyIds.length ? { "Company":      { relation: [{ id: companyIds[0] }] } } : {}),
@@ -538,7 +538,7 @@ async function processProposal(sourceId) {
   const addonRelIds = addonProducts.filter(Boolean).map(p => ({ id: p.id }))
 
   await patchPage(propId, {
-    "Status":        { select: { name: "Draft" } },
+    "Status":        { status: { name: "Draft" } },
     "Date":          { date: { start: today } },
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },

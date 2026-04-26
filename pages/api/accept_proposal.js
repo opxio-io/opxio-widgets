@@ -154,7 +154,7 @@ async function createQuotation({ companyId, dealId, leadId, picId, payTerms, quo
 
   const props = {
     "Quotation Name": { title: [{ text: { content: "Auto-generated from Accepted Proposal" } }] },
-    "Status":         { select: { name: "Approved" } },   // ← triggers create_invoice automation
+    "Status":         { status: { name: "Approved" } },   // ← triggers create_invoice automation
     "Issue Date":     { date: { start: today } },
     "Valid Until":    { date: { start: validUntil } },
     "Payment Terms":  { select: { name: payTerms || "50% Deposit" } },

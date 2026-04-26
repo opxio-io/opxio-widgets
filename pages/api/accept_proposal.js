@@ -17,6 +17,7 @@
 //   7. Notion automation watches Quotation "Approved" → fires create_invoice
 //      → Invoice + Project created automatically
 
+import { waitUntil } from "@vercel/functions"
 import { getPage, patchPage, createPage, queryDB, plain, DB } from "../../lib/notion"
 
 function hdrs() {
@@ -153,18 +154,16 @@ async function createQuotation({ companyId, dealId, leadId, picId, payTerms, quo
   const validUntil  = validUntilD.toISOString().split("T")[0]
 
   const props = {
-    "Quotation Name": { title: [{ text: { content: "Auto-generated from Accepted Proposal" } }] },
-    "Status":         { status: { name: "Approved" } },   // ← triggers create_invoice automation
-    "Issue Date":     { date: { start: today } },
-    "Valid Until":    { date: { start: validUntil } },
-    "Payment Terms":  { select: { name: payTerms || "50% Deposit" } },
+    "Quotation No.": { title: [{ text: { content: "" } }] },
+    "Status":        { status: { name: "Approved" } },   // ← triggers create_invoice automation
+    "Issue Date":    { date: { start: today } },
+    "Valid Until":   { date: { start: validUntil } },
+    "Payment Terms": { select: { name: payTerms || "50% Deposit" } },
     ...(quoteType         ? { "Quote Type":  { select: { name: quoteType } } } : {}),
-    ...(packages.length   ? { "Packages":    { multi_select: packages.map(n => ({ name: n })) } } : {}),
     ...(companyId         ? { "Company":     { relation: [{ id: companyId }] } } : {}),
     ...(dealId            ? { "Deal Source": { relation: [{ id: dealId }] } } : {}),
     ...(leadId            ? { "Lead Source": { relation: [{ id: leadId }] } } : {}),
     ...(picId             ? { "Primary Contact": { relation: [{ id: picId }] } } : {}),
-    ...(proposalId        ? { "Proposal":    { relation: [{ id: proposalId }] } } : {}),
   }
 
   const page = await createPage({
@@ -276,7 +275,10 @@ export default async function handler(req, res) {
 
   if (!proposalId) return res.status(400).json({ error: "Missing proposal page_id" })
 
-  try {
+  // Respond immediately so Notion button doesn't time out
+  res.status(200).json({ status: "accepted", proposal_id: proposalId })
+
+  waitUntil((async () => { try {
     // ── 1. Read Proposal ──────────────────────────────────────────────────
     const proposal = (body.data?.object === "page" && body.data?.properties)
       ? body.data
@@ -440,19 +442,9 @@ export default async function handler(req, res) {
 
     console.log("[accept_proposal] done — Notion automation will create Invoice + Project")
 
-    return res.status(200).json({
-      status:       "ok",
-      proposal_id:  proposalId,
-      deal_id:      dealId,
-      quotation_id: quotId,
-      os_type:      osTypeName,
-      line_items:   lineItems.length,
-      products:     lineItems.map(l => l.name),
-      next:         "Notion automation (Quotation Approved) → create_invoice → Invoice + Project",
-    })
+    console.log("[accept_proposal] done", { proposalId, dealId, quotId, osTypeName, lineItems: lineItems.length })
 
   } catch (e) {
     console.error("[accept_proposal] error:", e.message, e.stack?.slice(0, 400))
-    return res.status(500).json({ error: e.message })
-  }
+  } })())
 }

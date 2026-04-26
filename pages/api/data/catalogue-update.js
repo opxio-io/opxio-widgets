@@ -48,7 +48,7 @@ export default async function handler(req, res) {
       properties["Price (MYR)"] = fields.price === null ? { number: null } : { number: Number(fields.price) }
     }
     if (fields.priceMax !== undefined) {
-      properties["Price Max"] = fields.priceMax === null ? { number: null } : { number: Number(fields.priceMax) }
+      properties["Price Max (MYR)"] = fields.priceMax === null ? { number: null } : { number: Number(fields.priceMax) }
     }
     if (fields.monthly !== undefined) {
       properties["Monthly Fee (MYR)"] = fields.monthly === null ? { number: null } : { number: Number(fields.monthly) }

@@ -93,9 +93,13 @@ function extractPackageInfo(props) {
     const addons = pkgMulti.filter(n => n !== osName)
     return { pkg: osName, addons }
   }
-  // 2. Try "OS Interest" select + "Add-ons" multi_select (on Leads)
-  const osSel    = props["OS Interest"]?.select?.name || props["Package Type"]?.select?.name || ""
-  const addons   = (props["Add-ons"]?.multi_select || []).map(s => s.name)
+  // 2. Try "OS Interest" multi_select + "Add-ons" multi_select (on Leads)
+  const osMulti  = (props["OS Interest"]?.multi_select || []).map(s => s.name)
+  const osSel    = osMulti.find(n => OS_NAMES.has(n)) || osMulti[0] || props["Package Type"]?.select?.name || ""
+  const addons   = [
+    ...osMulti.filter(n => n !== osSel),
+    ...(props["Add-ons"]?.multi_select || []).map(s => s.name),
+  ]
   return { pkg: osSel, addons }
 }
 
@@ -326,7 +330,7 @@ async function run(payload) {
         const leadName      = plain(lp["Lead Name"]?.title || []) || "New Deal"
         const compIds       = (lp.Company?.relation       || []).map(r => r.id.replace(/-/g, ""))
         const picIds        = (lp["Primary Contact"]?.relation || lp["PIC Name"]?.relation || []).map(r => r.id.replace(/-/g, ""))
-        const osInterest    = lp["OS Interest"]?.select?.name || ""
+        const osInterest    = (lp["OS Interest"]?.multi_select || [])[0]?.name || ""
         const addons        = (lp["Add-ons"]?.multi_select || []).map(a => ({ name: a.name }))
         const situation     = plain(lp.Situation?.rich_text || [])
         const notes         = plain(lp.Notes?.rich_text     || [])

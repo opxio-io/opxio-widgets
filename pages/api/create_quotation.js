@@ -264,7 +264,7 @@ async function patchQuotationProps(quotId, { companyIds, picIds, quoteType, lead
     "Issue Date":    { date: { start: today } },
     "Valid Until":   { date: { start: validUntil } },
     "Payment Terms": { select: { name: "50% Deposit" } },
-    "Status":        { select: { name: "Draft" } },
+    "Status":        { status: { name: "Draft" } },
     ...(quoteType         ? { "Quote Type":   { select: { name: quoteType } } } : {}),
     ...(currency          ? { "Currency":    { select: { name: currency } } } : {}),
     ...(packageId         ? { "Packages":     { relation: [{ id: packageId }] } } : {}),
@@ -571,7 +571,7 @@ export default async function handler(req, res) {
       const today = new Date().toISOString().split("T")[0]
       const cprops = {
         "Quotation No.": { title: [{ text: { content: "" } }] },
-        "Status":        { select: { name: "Draft" } },
+        "Status":        { status: { name: "Draft" } },
         "Issue Date":    { date: { start: today } },
         "Payment Terms": { select: { name: "50% Deposit" } },
         ...(quoteType         ? { "Quote Type":  { select: { name: quoteType } } } : {}),
@@ -602,3 +602,4 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: e.message })
   }
 }
+

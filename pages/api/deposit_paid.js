@@ -231,7 +231,7 @@ async function run(payload) {
   const today = new Date().toISOString().split("T")[0]
 
   await patchPage(pageId, {
-    "Status":       { select: { name: "Deposit Received" } },
+    "Status":       { status: { name: "Deposit Received" } },
     "Deposit Paid": { date: { start: today } },
   }, token)
 

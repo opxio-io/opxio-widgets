@@ -45,7 +45,7 @@ export default async function handler(req, res) {
       properties["Product Name"] = { title: [{ text: { content: fields.name } }] }
     }
     if (fields.price !== undefined) {
-      properties["Price"] = fields.price === null ? { number: null } : { number: Number(fields.price) }
+      properties["Price (MYR)"] = fields.price === null ? { number: null } : { number: Number(fields.price) }
     }
     if (fields.priceMax !== undefined) {
       properties["Price Max"] = fields.priceMax === null ? { number: null } : { number: Number(fields.priceMax) }

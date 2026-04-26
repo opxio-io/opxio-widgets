@@ -76,11 +76,11 @@ async function fetchProductInfo(slug, currency = "MYR") {
     }, process.env.NOTION_API_KEY)
     if (!rows.length) return null
     const p = rows[0]
-    const priceField = currency === "MYR" ? "Price" : "Price (USD)"
+    const priceField = currency === "MYR" ? "Price (MYR)" : "Price (USD)"
     return {
       id:          p.id.replace(/-/g, ""),
       name:        plain(p.properties["Product Name"]?.title || []),
-      price:       p.properties[priceField]?.number ?? p.properties.Price?.number ?? null,
+      price:       p.properties[priceField]?.number ?? null,
       quote_type:  p.properties["Quote Type"]?.select?.name || "New Business",
       description: plain(p.properties.Description?.rich_text || []),
       slug,
@@ -447,7 +447,7 @@ async function processProposal(sourceId) {
   // ── Detect client currency from Lead Country ──────────────────────────────
   const country  = sourceProps.Country?.select?.name || ""
   const currency = COUNTRY_CURRENCY[country] || "MYR"
-  const priceField = currency === "MYR" ? "Price" : "Price (USD)"
+  const priceField = currency === "MYR" ? "Price (MYR)" : "Price (USD)"
   console.log("[create_proposal] country:", country, "→ currency:", currency)
 
   const addonNames = []
@@ -472,7 +472,7 @@ async function processProposal(sourceId) {
       directAddonProducts.push({
         id:          ap.id.replace(/-/g, ""),
         name,
-        price:       ap.properties[priceField]?.number ?? ap.properties["Price"]?.number ?? null,
+        price:       ap.properties[priceField]?.number ?? ap.properties["Price (MYR)"]?.number ?? null,
         quote_type:  ap.properties["Quote Type"]?.select?.name || "New Business",
         description: plain(ap.properties["Description"]?.rich_text || []),
         slug:        plain(ap.properties["Slug"]?.rich_text || []),

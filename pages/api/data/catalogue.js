@@ -31,7 +31,7 @@ export default async function handler(req, res) {
         const name     = plain(pp["Product Name"]?.title || [])
         const tier     = pp["Tier"]?.select?.name || ""
         const order    = pp["Order"]?.number ?? 999
-        const price    = pp["Price"]?.number ?? null
+        const price    = pp["Price (MYR)"]?.number ?? null
         const priceMax = pp["Price Max"]?.number ?? null
         const monthly  = pp["Monthly Fee (MYR)"]?.number ?? null
         const model    = pp["Pricing Model"]?.select?.name || "One-Time"

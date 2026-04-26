@@ -82,18 +82,38 @@ async function handleProposal(pageId) {
   const proposalNo   = titleIsBlank ? await generateProposalNo() : data.proposal_no
 
   // ── Map fetched data → renderProposal format ────────────────────────────
-  const osType    = data.os_type || ""
-  const modules   = OS_DEFAULT_MODULES[osType] || {}
-  const addonsLater = OS_DEFAULT_ADDONS_LATER[osType] || []
+  const osType     = data.os_type || ""
+  const osPackages = data.os_packages && data.os_packages.length ? data.os_packages : (osType ? [osType] : [])
 
-  // ── Split line items: core (Base OS + main OS) vs add-ons ─────────────
-  // Core items are the OS packages — everything else is an add-on for this proposal
-  // Match "Base OS" or any known OS package name (may have suffixes like "(Revenue OS + Operations OS)")
-  const isCoreItem = name => /base\s*os/i.test(name) || /\b(revenue|operations|business|marketing|agency|team|retention|intelligence|starter)\s+os\b/i.test(name)
+  // ── Build modules from each installed OS package individually ─────────
+  // Merge per-package module lists so Revenue OS + Operations OS = both sections
+  let modules = {}
+  for (const pkg of osPackages) {
+    Object.assign(modules, OS_DEFAULT_MODULES[pkg] || {})
+  }
+  if (!Object.keys(modules).length) modules = OS_DEFAULT_MODULES[osType] || {}
+
+  // ── Add-ons later: union across all installed OS packages ─────────────
+  const addonsLaterSet = new Set()
+  for (const pkg of osPackages) {
+    for (const a of (OS_DEFAULT_ADDONS_LATER[pkg] || [])) addonsLaterSet.add(a)
+  }
+  const addonsLater = addonsLaterSet.size ? [...addonsLaterSet] : (OS_DEFAULT_ADDONS_LATER[osType] || [])
+
+  // ── Derive install tier from bundle size (internal naming) ────────────
+  const BUNDLE_NAMES = { 1: "Starter", 2: "Dual", 3: "Pro", 4: "Full Stack" }
+  const installTier  = BUNDLE_NAMES[osPackages.length] || "Standard"
+
+  // ── Derive Notion plan: Business if Team OS or Enhanced Dashboard, else Plus
+  const needsBusiness = osPackages.some(p => /team\s+os/i.test(p))
+  const notionPlan    = needsBusiness ? "Business" : "Plus"
+
+  // ── Split line items: core (Base OS + OS packages) vs add-ons ─────────
+  const isCoreItem = name => /base\s*os/i.test(name) || /\b(revenue|operations|business|finance|marketing|agency|team|retention|sales|intelligence|starter)\s+os\b/i.test(name)
   const coreItems  = (data.line_items || []).filter(i => isCoreItem(i.name || ''))
   const addonItems = (data.line_items || []).filter(i => !isCoreItem(i.name || ''))
 
-  // Derive fee from core items (Base OS + main OS), fall back to all items if none tagged
+  // Derive fee from core OS line items; fall back to all items if none tagged
   const feeBase = coreItems.length
     ? coreItems.reduce((s, i) => s + (i.qty || 1) * (i.unit_price || 0), 0)
     : (data.line_items || []).reduce((s, i) => s + (i.qty || 1) * (i.unit_price || 0), 0)
@@ -125,8 +145,8 @@ async function handleProposal(pageId) {
     email:         "hello@opxio.io",
     website:       "opxio.io",
     os_type:       osType,
-    install_tier:  "Standard",
-    notion_plan:   "Plus",
+    install_tier:  installTier,
+    notion_plan:   notionPlan,
     timeline:      "3–4 weeks",
     fee,
     retainer:      "maintenance",

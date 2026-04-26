@@ -136,7 +136,7 @@ async function fetchProduct(slug) {
     return {
       id:          p.id.replace(/-/g, ""),
       name:        plain(props["Product Name"]?.title || []),
-      price:       props.Price?.number ?? null,
+      price:       props["Price (MYR)"]?.number ?? props["Price"]?.number ?? null,
       description: plain(props.Description?.rich_text || []),
       slug,
     }
@@ -283,8 +283,35 @@ export default async function handler(req, res) {
       : await getPage(proposalId, process.env.NOTION_API_KEY)
     const pp = proposal.properties
 
-    const packageNames = (pp["Packages"]?.multi_select || []).map(s => s.name)
-    const osTypeName   = pp["OS Type"]?.select?.name || packageNames.find(n => OS_NAMES.has(n)) || ""
+    const packageNamesMulti = (pp["Packages"]?.multi_select || []).map(s => s.name)
+
+    // Resolve OS from "OS Packages" relation (primary — set by create_proposal.js)
+    let resolvedPackageNames = []
+    let resolvedPackageIds   = []
+    const osPackageRels = (pp["OS Packages"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+    if (osPackageRels.length) {
+      const osPgs = await Promise.all(osPackageRels.map(id => getPage(id, process.env.NOTION_API_KEY).catch(() => null)))
+      for (const pg of osPgs.filter(Boolean)) {
+        const name = plain(pg.properties["Product Name"]?.title || [])
+        if (name) { resolvedPackageNames.push(name); resolvedPackageIds.push(pg.id.replace(/-/g, "")) }
+      }
+    }
+
+    // Also read add-on relation (Add-Ons on proposal)
+    const addonRels = (pp["Add-Ons"]?.relation || pp["Add-ons"]?.relation || []).map(r => r.id.replace(/-/g, ""))
+    let resolvedAddonNames = []
+    let resolvedAddonIds   = []
+    if (addonRels.length) {
+      const addonPgs = await Promise.all(addonRels.map(id => getPage(id, process.env.NOTION_API_KEY).catch(() => null)))
+      for (const pg of addonPgs.filter(Boolean)) {
+        const name = plain(pg.properties["Product Name"]?.title || [])
+        const price = pg.properties["Price (MYR)"]?.number ?? null
+        if (name) { resolvedAddonNames.push(name); resolvedAddonIds.push({ id: pg.id.replace(/-/g, ""), name, price, description: plain(pg.properties["Description"]?.rich_text || []) }) }
+      }
+    }
+
+    const packageNames = resolvedPackageNames.length ? resolvedPackageNames : packageNamesMulti
+    const osTypeName   = pp["OS Type"]?.select?.name || packageNames.find(n => OS_NAMES.has(n)) || resolvedPackageNames[0] || ""
     const osSlug       = OS_SLUG_MAP[osTypeName.toLowerCase().trim()] || null
     const payTerms     = pp["Payment Terms"]?.select?.name || "50% Deposit"
     const proposalQT   = pp["Quote Type"]?.select?.name   || "New Business"
@@ -345,14 +372,21 @@ export default async function handler(req, res) {
 
     // ── 5. Populate Quotation line items ──────────────────────────────────
     const isOsPkg = osSlug && OS_PACKAGE_SLUGS.has(osSlug)
-    const [baseProduct, mainProduct, ...addonProducts] = await Promise.all([
+
+    // Use directly-resolved addon products (from relation) when available
+    // Fall back to slug lookup from package name multi_select
+    const addonPackageNamesFallback = packageNames.filter(n => !OS_NAMES.has(n))
+    const [baseProduct, mainProduct, ...slugAddonProducts] = await Promise.all([
       isOsPkg ? fetchProduct("base-os") : Promise.resolve(null),
       osSlug  ? fetchProduct(osSlug)    : Promise.resolve(null),
-      ...addonPackageNames.map(n => {
+      ...addonPackageNamesFallback.map(n => {
         const slug = ADDON_SLUG_MAP[n.toLowerCase().trim()]
         return slug ? fetchProduct(slug) : Promise.resolve(null)
       }),
     ])
+
+    // Direct addon products from relation take priority; slug-fetched as fallback
+    const addonProducts = resolvedAddonIds.length ? resolvedAddonIds : slugAddonProducts.filter(Boolean)
 
     const lineItems = []
     if (isOsPkg && baseProduct?.id) lineItems.push(baseProduct)
@@ -369,6 +403,15 @@ export default async function handler(req, res) {
 
     for (const item of lineItems) await createLineItem(dbId, item)
     console.log("[accept_proposal] wrote", lineItems.length, "line items")
+
+    // Patch Amount onto quotation so create_invoice and Deposit Due formula have the value
+    const totalAmount = lineItems.reduce((sum, p) => sum + (p?.price ?? 0), 0)
+    if (totalAmount > 0) {
+      await patchPage(quotId, { "Amount": { number: totalAmount } }, process.env.NOTION_API_KEY).catch(e =>
+        console.warn("[accept_proposal] amount patch:", e.message)
+      )
+      console.log("[accept_proposal] Amount:", totalAmount)
+    }
 
     // ── 6. Stitch relations ───────────────────────────────────────────────
     // Deal → Quotation

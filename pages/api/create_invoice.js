@@ -211,6 +211,7 @@ async function run(payload) {
   const paymentTerms = props["Payment Terms"]?.select?.name || "50% Deposit"
   const amount       = props["Amount"]?.number || props["Amount (MYR)"]?.number || 0
   const packageName  = derivePackage(props) || null  // null if no OS detected — don't use quoteType as package
+  const currency     = props["Currency"]?.select?.name || null
 
   // Linked IDs
   // Quotation has two separate relation fields:
@@ -244,7 +245,7 @@ async function run(payload) {
 
   const invPatch = {
     "Invoice Type":   { select: { name: invType } },
-    "Status":         { select: { name: "Deposit Pending" } },
+    "Status":         { status: { name: "Deposit Pending" } },
     "Issue Date":     { date: { start: today } },
     "Amount":         { number: amount },
     ...(currency ? { "Currency": { select: { name: currency } } } : {}),
@@ -374,7 +375,7 @@ async function run(payload) {
   }
 
   // ── 4. Mark Quotation → Approved ─────────────────────────────────────────
-  await patchPage(quotId, { "Status": { select: { name: "Approved" } } }, token).catch(() => {})
+  await patchPage(quotId, { "Status": { status: { name: "Approved" } } }, token).catch(() => {})
 
   // ── 5. Auto-create Team Task — send invoice to client ────────────────────
   {

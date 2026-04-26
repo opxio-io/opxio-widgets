@@ -3,6 +3,7 @@
 // Triggered by Notion button "Mark Deposit Paid" on Invoice page.
 
 import { getPage, patchPage, createPage, queryDB, plain, DB, createLedgerEntry, hdrs, createTeamTask } from "../../lib/notion"
+import { waitUntil } from "@vercel/functions"
 import { createClient as createSupabaseClient } from "@supabase/supabase-js"
 import crypto from "crypto"
 
@@ -439,6 +440,11 @@ async function run(payload) {
 
         // Capture for onboarding form URL
         ;({ pkg: formPackage, addons: formAddons } = extractPackageInfo(sourcePage.properties))
+        // Fallback: Deal uses OS Type relation — extractPackageInfo can't read it.
+        // Use Quotation package names (already fetched above) if still empty.
+        if (!formPackage && quotationPackageNames.length) {
+          formPackage = quotationPackageNames.find(n => OS_NAMES.has(n)) || quotationPackageNames[0] || ""
+        }
       }
     } catch (e) {
       console.warn("[deposit_paid] stage advance:", e.message)
@@ -623,7 +629,12 @@ async function run(payload) {
       ...(dealId && dealId !== leadId ? { "Deals": { relation: [{ id: dealId }] } } : {}),
       ...(addonCatalogueIds.length ? { "Add-Ons": { relation: addonCatalogueIds.map(id => ({ id })) } } : {}),
     }, token)
-    ;[phasesCount, tasksCount] = await triggerSetupProject(projectId, packages)
+    // Fire setup_project non-blocking via waitUntil — avoids Vercel timeout.
+    // Phases and tasks are created after the response is sent.
+    waitUntil(triggerSetupProject(projectId, packages).then(([p, t]) => {
+      console.log(`[deposit_paid] setup_project done: ${p} phases, ${t} tasks`)
+    }))
+    // phasesCount / tasksCount remain 0 in the response (setup runs async)
   }
 
   // ── Finance Ledger — auto-create Deposit entry ───────────────────────────

@@ -252,7 +252,11 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
         <button class="wl-tab won" id="t-won" onclick="setWlTab('won')">Won</button>
         <button class="wl-tab" id="t-lost" onclick="setWlTab('lost')">Lost</button>
       </div>
-      <span class="filter-badge" id="filter-badge" style="display:none;"></span>
+      <div class="mn-wrap">
+        <button class="mn-btn" onclick="mnPrev()">&#8249;</button>
+        <span class="mn-lbl" id="wl-mn-lbl" style="min-width:70px;">All Time</span>
+        <button class="mn-btn" id="wl-mn-next" onclick="mnNext()">&#8250;</button>
+      </div>
     </div>
     <div id="log-list">
       <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
@@ -297,13 +301,15 @@ function fmtMonthLbl(fm) {
   return new Date(fm.year, fm.month, 1).toLocaleString('default', {month:'short', year:'numeric'});
 }
 function updateMonthNav() {
-  document.getElementById('mn-lbl').textContent = fmtMonthLbl(filterMonth);
+  const lbl = fmtMonthLbl(filterMonth);
+  document.getElementById('mn-lbl').textContent = lbl;
+  const wlLbl = document.getElementById('wl-mn-lbl');
+  if (wlLbl) wlLbl.textContent = lbl;
   const now = new Date();
   const atNow = !filterMonth || (filterMonth.year === now.getFullYear() && filterMonth.month === now.getMonth());
   document.getElementById('mn-next').disabled = atNow;
-  const badge = document.getElementById('filter-badge');
-  if (filterMonth) { badge.textContent = fmtMonthLbl(filterMonth); badge.style.display = ''; }
-  else { badge.style.display = 'none'; }
+  const wlNext = document.getElementById('wl-mn-next');
+  if (wlNext) wlNext.disabled = atNow;
 }
 function mnPrev() {
   const now = new Date();

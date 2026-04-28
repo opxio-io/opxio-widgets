@@ -129,6 +129,25 @@
     .msg.error { color: #ff4444; }
     .msg.success { color: #AAFF00; }
     .msg.visible { opacity: 1; }
+
+    .open-link {
+      display: block;
+      width: 100%;
+      padding: 0.85rem 1rem;
+      background: #AAFF00;
+      color: #0a0a0a;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Satoshi', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      margin-top: 1rem;
+      transition: opacity 0.2s;
+    }
+
+    .open-link:hover { opacity: 0.85; }
   </style>
 </head>
 <body>
@@ -174,8 +193,8 @@
       { name: 'Sufyan Habib',   dept: 'Content Creator',    page: 'https://www.notion.so/27a736ebbe3482eeb662814a0a7f9c93', pw: 'sufyan2026' },
 
       // Video Editor / Videographer
-      { name: 'Hendra Gumilar', dept: 'Videographer',       page: 'https://www.notion.so/4b3736ebbe3482839a75b01c0f12d9587', pw: 'hendra2026' },
-      { name: 'Richard',        dept: 'Videographer',       page: 'https://www.notion.so/0ff736ebbe3483409bdaf81d516956d7b', pw: 'richard2026' },
+      { name: 'Hendra Gumilar', dept: 'Videographer',       page: 'https://www.notion.so/4b3736ebbe348283a75b01c0f12d9587', pw: 'hendra2026' },
+      { name: 'Richard',        dept: 'Videographer',       page: 'https://www.notion.so/0ff736ebbe348340bdaf81d516956d7b', pw: 'richard2026' },
       { name: 'Rifki Purnama',  dept: 'Videographer',       page: 'https://www.notion.so/bd3736ebbe3482bd9b4781b0689119ea', pw: 'rifki2026' },
 
       // KOL Marketing
@@ -222,12 +241,20 @@
       if (!staff) return;
 
       if (passInput.value === staff.pw) {
-        msgEl.className = 'msg success visible';
-        msgEl.textContent = 'Access granted. Opening workspace...';
-        setTimeout(() => {
-          window.open(staff.page, '_blank');
-          try { window.top.location.href = staff.page; } catch(e) {}
-        }, 400);
+        // Replace the entire form with a clickable link (works inside Notion embeds)
+        const gate = document.querySelector('.gate');
+        gate.innerHTML = `
+          <div class="lock-icon">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              <circle cx="12" cy="16.5" r="1.5"/>
+            </svg>
+          </div>
+          <p class="title" style="margin-bottom: 0.25rem;">Welcome, ${staff.name}</p>
+          <p class="subtitle">Password verified</p>
+          <a href="${staff.page}" target="_blank" rel="noopener" class="open-link">Open Your Workspace</a>
+        `;
       } else {
         msgEl.className = 'msg error visible';
         msgEl.textContent = 'Wrong password. Try again.';

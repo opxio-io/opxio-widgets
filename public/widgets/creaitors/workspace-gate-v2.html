@@ -49,6 +49,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .field input::placeholder{color:rgba(255,255,255,.2);}
 .field select:focus,.field input:focus{border-color:rgba(170,255,0,.2);background:rgba(170,255,0,.08);}
 
+/* Password field with eye toggle */
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:42px;}
+.pw-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;padding:4px;
+  display:flex;align-items:center;justify-content:center;
+}
+.pw-toggle svg{width:16px;height:16px;stroke:rgba(255,255,255,.25);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;transition:stroke .15s;}
+.pw-toggle:hover svg{stroke:rgba(255,255,255,.5);}
+
 .btn{
   width:100%;padding:12px 14px;
   background:var(--gm);
@@ -104,13 +115,24 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
   padding:16px;margin:16px 0;
   text-align:center;
 }
+.backup-box .code-row{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin:8px 0 4px;
+}
 .backup-box .code{
   font-size:28px;font-weight:900;
   letter-spacing:.15em;
   color:var(--g);
-  margin:8px 0 4px;
   font-family:'Satoshi',monospace;
 }
+.backup-box .copy-btn{
+  background:rgba(170,255,0,.1);border:1px solid rgba(170,255,0,.15);
+  border-radius:6px;padding:6px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;flex-shrink:0;
+}
+.backup-box .copy-btn:hover{background:rgba(170,255,0,.2);}
+.backup-box .copy-btn svg{width:16px;height:16px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
 .backup-box .hint{
   font-size:10px;font-weight:600;
   color:rgba(255,255,255,.25);
@@ -145,7 +167,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 }
 .open-link:hover{opacity:.85;}
 
-/* Loading skeleton */
 .skeleton{background:rgba(255,255,255,.04);border-radius:8px;height:44px;margin-bottom:14px;animation:pulse 1.5s infinite;}
 @keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.8;}}
 
@@ -180,7 +201,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
       <p class="msg" id="loginMsg"></p>
     </div>
 
-    <!-- CHANGE PASSWORD VIEW (first login) -->
+    <!-- CHANGE PASSWORD VIEW -->
     <div id="changeView" class="hidden">
       <div class="card-hdr">
         <div class="icon">
@@ -195,18 +216,24 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
       <form id="changeForm">
         <div class="field">
           <span class="field-label">New Password</span>
-          <input type="password" id="newPw" placeholder="Min 6 characters" autocomplete="new-password"/>
+          <div class="pw-wrap">
+            <input type="password" id="newPw" placeholder="Min 6 characters" autocomplete="new-password"/>
+            <button type="button" class="pw-toggle" data-target="newPw" aria-label="Toggle password visibility"></button>
+          </div>
         </div>
         <div class="field">
           <span class="field-label">Confirm Password</span>
-          <input type="password" id="confirmPw" placeholder="Type it again" autocomplete="new-password"/>
+          <div class="pw-wrap">
+            <input type="password" id="confirmPw" placeholder="Type it again" autocomplete="new-password"/>
+            <button type="button" class="pw-toggle" data-target="confirmPw" aria-label="Toggle password visibility"></button>
+          </div>
         </div>
         <button type="submit" class="btn" id="changeBtn" disabled>Set Password</button>
       </form>
       <p class="msg" id="changeMsg"></p>
     </div>
 
-    <!-- BACKUP CODE VIEW (shown after first password set) -->
+    <!-- BACKUP CODE VIEW -->
     <div id="backupView" class="hidden">
       <div class="card-hdr">
         <div class="icon">
@@ -220,8 +247,11 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
       </div>
       <div class="backup-box">
         <div class="hint">Your recovery code</div>
-        <div class="code" id="backupCode"></div>
-        <div class="hint">Screenshot or write this down</div>
+        <div class="code-row">
+          <span class="code" id="backupCode"></span>
+          <button class="copy-btn" id="copyBtn" aria-label="Copy code"></button>
+        </div>
+        <div class="hint" id="copyHint">Screenshot or write this down</div>
       </div>
       <p class="backup-warning">This is the only time you'll see this code. If you forget your password, you'll need it to reset.</p>
       <button class="btn" id="backupContinueBtn">I've Saved It — Continue</button>
@@ -238,6 +268,14 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 </div>
 
 <script>
+// ── SVG ICONS ──
+const ICO = {
+  eyeOff: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
+  eyeOn: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  copy: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>',
+  check: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg>'
+};
+
 // ── CONFIG ──
 const params = new URLSearchParams(window.location.search);
 const TOKEN = params.get('token') || '';
@@ -270,7 +308,7 @@ function flash(el, cls, text, ms) {
   if (ms) setTimeout(() => { el.className = 'msg'; }, ms);
 }
 
-function buildSelect(containerId) {
+function buildSelect() {
   const depts = {};
   staffList.forEach(s => {
     if (!depts[s.dept]) depts[s.dept] = [];
@@ -289,6 +327,46 @@ function show(id) {
   ['loginView','changeView','backupView','forgotView','successView'].forEach(v => {
     document.getElementById(v).classList.toggle('hidden', v !== id);
   });
+}
+
+// ── PASSWORD TOGGLE ──
+function initPwToggles(container) {
+  (container || document).querySelectorAll('.pw-toggle').forEach(btn => {
+    btn.innerHTML = ICO.eyeOff;
+    btn.addEventListener('click', function() {
+      const input = document.getElementById(this.dataset.target);
+      if (!input) return;
+      const showing = input.type === 'text';
+      input.type = showing ? 'password' : 'text';
+      this.innerHTML = showing ? ICO.eyeOff : ICO.eyeOn;
+    });
+  });
+}
+
+// ── COPY TO CLIPBOARD ──
+function initCopyBtn(code) {
+  const btn = document.getElementById('copyBtn');
+  if (!btn) return;
+  btn.innerHTML = ICO.copy;
+  btn.addEventListener('click', function() {
+    navigator.clipboard.writeText(code).then(() => {
+      btn.innerHTML = ICO.check;
+      const hint = document.getElementById('copyHint');
+      if (hint) hint.textContent = 'Copied!';
+      setTimeout(() => {
+        btn.innerHTML = ICO.copy;
+        if (hint) hint.textContent = 'Screenshot or write this down';
+      }, 2000);
+    });
+  });
+}
+
+// ── MAKE PW FIELD HTML ──
+function pwFieldHtml(id, placeholder) {
+  return `<div class="pw-wrap">
+    <input type="password" id="${id}" placeholder="${esc(placeholder)}" autocomplete="new-password"/>
+    <button type="button" class="pw-toggle" data-target="${id}" aria-label="Toggle password visibility"></button>
+  </div>`;
 }
 
 // ── INIT ──
@@ -313,12 +391,17 @@ function renderLogin() {
       </div>
       <div class="field">
         <span class="field-label">Password</span>
-        <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off"/>
+        <div class="pw-wrap">
+          <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off"/>
+          <button type="button" class="pw-toggle" data-target="passInput" aria-label="Toggle password visibility"></button>
+        </div>
       </div>
       <button type="submit" class="btn" id="enterBtn" disabled>Enter Workspace</button>
     </form>
     <button type="button" class="btn-forgot" id="forgotBtn">Forgot password?</button>
   `;
+
+  initPwToggles(document.getElementById('loginForm'));
 
   const sel = document.getElementById('staffSelect');
   const pw = document.getElementById('passInput');
@@ -348,11 +431,7 @@ async function handleLogin(e) {
   if (status === 200 && data.ok) {
     currentStaff = { id: staffId, name: data.name, page: data.page, must_change: data.must_change };
     currentPassword = password;
-    if (data.must_change) {
-      showChange();
-    } else {
-      showSuccess();
-    }
+    data.must_change ? showChange() : showSuccess();
   } else {
     flash(msgEl, 'error', 'Wrong password. Try again.', 2500);
     document.getElementById('passInput').value = '';
@@ -361,10 +440,11 @@ async function handleLogin(e) {
   }
 }
 
-// ── CHANGE PASSWORD (first login) ──
+// ── CHANGE PASSWORD ──
 function showChange() {
   show('changeView');
   document.getElementById('changeName').textContent = currentStaff.name;
+  initPwToggles(document.getElementById('changeView'));
 
   const np = document.getElementById('newPw');
   const cp = document.getElementById('confirmPw');
@@ -397,20 +477,17 @@ async function handleChange(e) {
   btn.classList.remove('loading'); btn.textContent = 'Set Password';
 
   if (status === 200 && data.ok) {
-    if (data.backup_code) {
-      showBackupCode(data.backup_code);
-    } else {
-      showSuccess();
-    }
+    data.backup_code ? showBackupCode(data.backup_code) : showSuccess();
   } else {
     flash(msg, 'error', 'Something went wrong. Try again.', 2500);
   }
 }
 
-// ── BACKUP CODE VIEW ──
+// ── BACKUP CODE ──
 function showBackupCode(code) {
   show('backupView');
   document.getElementById('backupCode').textContent = code;
+  initCopyBtn(code);
   document.getElementById('backupContinueBtn').addEventListener('click', () => showSuccess());
 }
 
@@ -441,17 +518,19 @@ function showForgot() {
       </div>
       <div class="field">
         <span class="field-label">New Password</span>
-        <input type="password" id="resetNewPw" placeholder="Min 6 characters" autocomplete="new-password"/>
+        ${pwFieldHtml('resetNewPw', 'Min 6 characters')}
       </div>
       <div class="field">
         <span class="field-label">Confirm Password</span>
-        <input type="password" id="resetConfirmPw" placeholder="Type it again" autocomplete="new-password"/>
+        ${pwFieldHtml('resetConfirmPw', 'Type it again')}
       </div>
       <button type="submit" class="btn" id="resetBtn" disabled>Reset Password</button>
     </form>
     <p class="msg" id="resetMsg"></p>
     <button type="button" class="btn-secondary" id="backBtn">Back to login</button>
   `;
+
+  initPwToggles(fv);
 
   const sel = document.getElementById('resetSelect');
   const code = document.getElementById('resetCode');
@@ -493,7 +572,6 @@ async function handleReset(e) {
   btn.classList.remove('loading'); btn.textContent = 'Reset Password';
 
   if (status === 200 && data.ok) {
-    // Show new backup code
     const staff = staffList.find(s => s.id === staffId);
     const fv = document.getElementById('forgotView');
     fv.innerHTML = `
@@ -509,15 +587,30 @@ async function handleReset(e) {
       </div>
       <div class="backup-box">
         <div class="hint">Your new recovery code</div>
-        <div class="code">${esc(data.new_backup_code)}</div>
-        <div class="hint">Screenshot or write this down</div>
+        <div class="code-row">
+          <span class="code" id="newResetCode">${esc(data.new_backup_code)}</span>
+          <button class="copy-btn" id="resetCopyBtn" aria-label="Copy code"></button>
+        </div>
+        <div class="hint" id="resetCopyHint">Screenshot or write this down</div>
       </div>
       <p class="backup-warning">Your password has been reset. Save this new backup code — the old one no longer works.</p>
       <button type="button" class="btn" id="resetDoneBtn">Back to Login</button>
     `;
-    document.getElementById('resetDoneBtn').addEventListener('click', () => {
-      show('loginView');
+    // Init copy button for the new code
+    const rcBtn = document.getElementById('resetCopyBtn');
+    rcBtn.innerHTML = ICO.copy;
+    rcBtn.addEventListener('click', function() {
+      navigator.clipboard.writeText(data.new_backup_code).then(() => {
+        rcBtn.innerHTML = ICO.check;
+        const hint = document.getElementById('resetCopyHint');
+        if (hint) hint.textContent = 'Copied!';
+        setTimeout(() => {
+          rcBtn.innerHTML = ICO.copy;
+          if (hint) hint.textContent = 'Screenshot or write this down';
+        }, 2000);
+      });
     });
+    document.getElementById('resetDoneBtn').addEventListener('click', () => { show('loginView'); });
   } else if (data.error === 'wrong_code') {
     flash(msg, 'error', 'Wrong backup code. Check and try again.', 2500);
   } else if (data.error === 'no_backup_code') {

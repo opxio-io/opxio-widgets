@@ -26,6 +26,11 @@ body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
 .card:hover{border-color:rgba(170,255,0,.1);}
 .btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:11px;font-weight:700;padding:5px 11px;border-radius:7px;cursor:pointer;transition:all .2s;}
 .btn:hover{border-color:var(--gb);color:var(--g);}
+.mn-wrap{display:flex;align-items:center;gap:3px;}
+.mn-btn{background:#252525;border:1px solid rgba(255,255,255,.09);color:rgba(255,255,255,.45);font-family:'Satoshi',sans-serif;font-size:12px;font-weight:700;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;transition:all .2s;padding:0;}
+.mn-btn:hover:not(:disabled){border-color:var(--gb);color:var(--g);}
+.mn-btn:disabled{opacity:.25;cursor:default;}
+.mn-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);min-width:70px;text-align:center;background:#252525;border:1px solid rgba(255,255,255,.09);border-radius:6px;padding:4px 6px;white-space:nowrap;}
 
 /* Header */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
@@ -668,6 +673,8 @@ function renderCRMLog(pipe, deals){
   }
   const topReason = Object.entries(rCounts).sort((a,b)=>b[1]-a[1])[0];
 
+  // Store raw data for month filtering
+  window._wlAllData = { wonDeals, lostLeads, lostDeals };
   window._wlData = {
     won:  wonDeals.slice(0,8),
     lost: [...lostDeals.map(d=>({...d,_t:'deal'})), ...lostLeads.map(d=>({...d,_t:'lead'}))].slice(0,8),
@@ -677,7 +684,7 @@ function renderCRMLog(pipe, deals){
   const secLabel = _sections.includes('crm') ? '' : `<div class="sec-lbl">Revenue</div>`;
 
   return `${secLabel}
-  <div class="g4">
+  <div id="wl-stats-wrap" class="g4">
     <div class="card stat">
       <div class="s-dot" style="background:var(--g);"></div>
       <span class="s-lbl">Won Deals</span>
@@ -706,11 +713,16 @@ function renderCRMLog(pipe, deals){
   <div class="full-row card panel">
     <div class="panel-hdr" style="margin-bottom:0;">
       <span class="panel-title">Win / Loss Log</span>
+      <div class="mn-wrap">
+        <button class="mn-btn" onclick="wlMnPrev()">&#8249;</button>
+        <span class="mn-lbl" id="wl-mn-lbl" style="min-width:70px;">All Time</span>
+        <button class="mn-btn" id="wl-mn-next" onclick="wlMnNext()" disabled>&#8250;</button>
+      </div>
     </div>
     <div style="margin-top:14px;">
       <div class="wl-tabs">
-        <button class="wl-tab won" id="wlt-won" onclick="wlTab('won')">Won (${window._wlData.won.length})</button>
-        <button class="wl-tab"    id="wlt-lost" onclick="wlTab('lost')">Lost (${window._wlData.lost.length})</button>
+        <button class="wl-tab won" id="wlt-won" onclick="wlTab('won')">Won (${wonDeals.length})</button>
+        <button class="wl-tab"    id="wlt-lost" onclick="wlTab('lost')">Lost (${lostDeals.length + lostLeads.length})</button>
       </div>
       <div id="wl-list"></div>
     </div>
@@ -718,6 +730,7 @@ function renderCRMLog(pipe, deals){
 }
 
 let _wlTab = 'won';
+let _wlMonth = null;
 window.wlTab = function(t){
   _wlTab = t;
   document.getElementById('wlt-won').className  = 'wl-tab' + (t==='won'  ? ' won'  : '');
@@ -735,6 +748,61 @@ function renderWLList(){
       : `<span class="wl-badge wl-badge-lost">${d._t==='lead'?'Lead':'Deal'}</span>`;
     return `<div class="wl-item" ${click}><span class="wl-name">${esc(d.name)}</span>${badge}<span class="wl-val">${d.value?fmtRM(d.value):''}</span></div>`;
   }).join('');
+}
+function wlFmtMonth(){
+  if(!_wlMonth) return 'All Time';
+  return new Date(_wlMonth.year,_wlMonth.month,1).toLocaleString('default',{month:'short',year:'numeric'});
+}
+function wlFilterByMonth(items){
+  if(!_wlMonth) return items;
+  return (items||[]).filter(d=>{
+    if(!d.created) return false;
+    const dt=new Date(d.created);
+    return dt.getMonth()===_wlMonth.month && dt.getFullYear()===_wlMonth.year;
+  });
+}
+function updateWLSection(){
+  const lbl=wlFmtMonth();
+  const mnLbl=document.getElementById('wl-mn-lbl'); if(mnLbl) mnLbl.textContent=lbl;
+  const now=new Date();
+  const atNow=!_wlMonth||(_wlMonth.year===now.getFullYear()&&_wlMonth.month===now.getMonth());
+  const mnNext=document.getElementById('wl-mn-next'); if(mnNext) mnNext.disabled=atNow;
+  if(!window._wlAllData) return;
+  const {wonDeals,lostLeads,lostDeals}=window._wlAllData;
+  const fWon=wlFilterByMonth(wonDeals),fLL=wlFilterByMonth(lostLeads),fLD=wlFilterByMonth(lostDeals);
+  const lostTotal=fLL.length+fLD.length,totalClosed=fWon.length+fLD.length;
+  const winRate=totalClosed>0?Math.round((fWon.length/totalClosed)*100):null;
+  const wonValue=fWon.reduce((s,d)=>s+(d.value||0),0);
+  const rCounts={};
+  for(const d of [...fLL,...fLD]){if(!d.lostReason)continue;d.lostReason.split(',').map(s=>s.trim()).filter(Boolean).forEach(r=>rCounts[r]=(rCounts[r]||0)+1);}
+  const topReason=Object.entries(rCounts).sort((a,b)=>b[1]-a[1])[0];
+  const statsEl=document.getElementById('wl-stats-wrap');
+  if(statsEl) statsEl.innerHTML=`
+    <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Won Deals</span><div class="s-val">${fWon.length}</div><div class="s-sub">${wonValue?fmtRM(wonValue):lbl}</div></div>
+    <div class="card stat"><div class="s-dot" style="background:var(--orange);"></div><span class="s-lbl">Lost</span><div class="s-val orange">${lostTotal}</div><div class="s-sub">${fLL.length} leads · ${fLD.length} deals</div></div>
+    <div class="card stat"><div class="s-dot" style="background:var(--g);"></div><span class="s-lbl">Win Rate</span><div class="s-val">${winRate!=null?winRate+'%':'—'}</div><div class="s-sub">Won vs total closed</div></div>
+    <div class="card stat"><div class="s-dot" style="background:${topReason?'var(--orange)':'var(--g)'};"></div><span class="s-lbl">Top Lost Reason</span><div style="font-size:14px;font-weight:900;color:var(--orange);line-height:1.3;margin-bottom:5px;">${topReason?esc(topReason[0]):'—'}</div><div class="s-sub">${topReason?topReason[1]+' occurrence'+(topReason[1]>1?'s':''):'No data'}</div></div>`;
+  window._wlData={won:fWon.slice(0,8),lost:[...fLD.map(d=>({...d,_t:'deal'})),...fLL.map(d=>({...d,_t:'lead'}))].slice(0,8)};
+  const tWon=document.getElementById('wlt-won'); if(tWon) tWon.textContent='Won ('+fWon.length+')';
+  const tLost=document.getElementById('wlt-lost'); if(tLost) tLost.textContent='Lost ('+(fLL.length+fLD.length)+')';
+  renderWLList();
+}
+function wlMnPrev(){
+  const now=new Date();
+  if(!_wlMonth) _wlMonth={year:now.getFullYear(),month:now.getMonth()};
+  else _wlMonth={..._wlMonth};
+  _wlMonth.month--;
+  if(_wlMonth.month<0){_wlMonth.month=11;_wlMonth.year--;}
+  updateWLSection();
+}
+function wlMnNext(){
+  if(!_wlMonth) return;
+  _wlMonth={..._wlMonth};
+  _wlMonth.month++;
+  if(_wlMonth.month>11){_wlMonth.month=0;_wlMonth.year++;}
+  const now=new Date();
+  if(_wlMonth.year>now.getFullYear()||(_wlMonth.year===now.getFullYear()&&_wlMonth.month>=now.getMonth())) _wlMonth=null;
+  updateWLSection();
 }
 
 // ── EDIT DRAWER ───────────────────────────────────────────────────────────────

@@ -113,6 +113,25 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 .wgt-footer a{color:rgba(255,255,255,.1);text-decoration:none;}
 
+.btn-forgot{
+  width:100%;padding:8px;margin-top:10px;
+  background:none;border:none;
+  font-family:"Satoshi",-apple-system,sans-serif;
+  font-size:11px;font-weight:600;
+  color:rgba(255,255,255,.2);
+  cursor:pointer;transition:color .15s;
+  text-align:center;
+}
+.btn-forgot:hover{color:rgba(255,255,255,.4);}
+
+/* Forgot password view */
+.forgot-state{text-align:center;}
+.forgot-state .icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.forgot-state .icon svg{width:18px;height:18px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.forgot-confirm{font-size:13px;font-weight:600;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.5;}
+.btn-back{width:100%;padding:10px;margin-top:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;font-family:"Satoshi",-apple-system,sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.3);cursor:pointer;transition:all .15s;}
+.btn-back:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
+
 .hidden{display:none;}
 </style>
 </head>
@@ -167,6 +186,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
       </form>
       <p class="msg" id="changeMsg"></p>
     </div>
+
+    <!-- FORGOT PASSWORD VIEW -->
+    <div id="forgotView" class="hidden"></div>
 
     <!-- SUCCESS VIEW -->
     <div id="successView" class="hidden"></div>
@@ -258,7 +280,7 @@ function renderLoginForm() {
   select.addEventListener('change', checkReady);
   passInput.addEventListener('input', checkReady);
 
-  document.getElementById('authForm').addEventListener('submit', handleLogin);
+  document.getElementById('authForm').addEventListener('submit', handleLogin);  // Add forgot password link after form  const forgotBtn = document.createElement('button');  forgotBtn.type = 'button';  forgotBtn.className = 'btn-forgot';  forgotBtn.textContent = 'Forgot password?';  forgotBtn.onclick = showForgotPassword;  document.getElementById('authForm').after(forgotBtn);
 }
 
 // ── LOGIN ──
@@ -377,7 +399,7 @@ function showSuccess() {
   `;
 }
 
-// ── BOOT ──
+// ── FORGOT PASSWORD ──function showForgotPassword() {  document.getElementById('loginView').classList.add('hidden');  const forgotView = document.getElementById('forgotView');  forgotView.classList.remove('hidden');  // Build name select  const depts = {};  staffList.forEach(s => {    if (!depts[s.dept]) depts[s.dept] = [];    depts[s.dept].push(s);  });  let opts = '<option value="" disabled selected>Choose your name</option>';  Object.entries(depts).forEach(([dept, members]) => {    opts += '<optgroup label="' + escapeHtml(dept) + '">';    members.forEach(m => {      opts += '<option value="' + m.id + '">' + escapeHtml(m.name) + '</option>';    });    opts += '</optgroup>';  });  forgotView.innerHTML = '<div class="forgot-state">' +    '<div class="card-hdr">' +    '<div class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>' +    '<div class="eyebrow">Forgot Password</div>' +    '<div class="h-title">Reset Request</div>' +    '</div>' +    '<div class="field"><span class="field-label">Your Name</span>' +    '<select id="forgotSelect" style="width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#fff;font-family:Satoshi,-apple-system,sans-serif;font-size:14px;font-weight:500;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:34px;">' + opts + '</select></div>' +    '<button class="btn" id="forgotSendBtn" disabled onclick="sendResetRequest()">Send Reset Request</button>' +    '<p class="msg" id="forgotMsg"></p>' +    '<button class="btn-back" onclick="backToLogin()">Back to login</button>' +    '</div>';  document.getElementById('forgotSelect').addEventListener('change', function() {    document.getElementById('forgotSendBtn').disabled = !this.value;  });}async function sendResetRequest() {  const staffId = document.getElementById('forgotSelect').value;  const btn = document.getElementById('forgotSendBtn');  const msg = document.getElementById('forgotMsg');  if (!staffId) return;  btn.classList.add('loading');  btn.textContent = 'Sending...';  const { status, data } = await apiPost('workspace-reset-request', { staff_id: staffId });  btn.classList.remove('loading');  if (status === 200) {    const staff = staffList.find(s => s.id === staffId);    document.getElementById('forgotView').innerHTML =      '<div class="forgot-state">' +      '<div class="card-hdr">' +      '<div class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg></div>' +      '<div class="eyebrow">Request Sent</div>' +      '<div class="h-title">' + escapeHtml(staff ? staff.name : '') + '</div>' +      '</div>' +      '<p class="forgot-confirm">Your admin has been notified.<br/>They will reset your password shortly.</p>' +      '<button class="btn-back" onclick="backToLogin()">Back to login</button>' +      '</div>';  } else {    msg.className = 'msg error';    msg.textContent = 'Something went wrong. Try again.';    btn.textContent = 'Send Reset Request';    setTimeout(() => { msg.className = 'msg'; }, 2500);  }}function backToLogin() {  document.getElementById('forgotView').classList.add('hidden');  document.getElementById('loginView').classList.remove('hidden');}// ── BOOT ──
 init();
 </script>
 </body>

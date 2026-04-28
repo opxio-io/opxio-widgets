@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Workspace Admin</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--muted:rgba(255,255,255,.4);--red:#FF6B6B;--amber:#FBBF24;}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:24px;margin-bottom:14px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
+
+.header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.ts{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);}
+
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.14em;color:rgba(255,255,255,.25);margin:18px 0 10px;}
+
+/* PIN login */
+.pin-wrap{display:flex;align-items:center;justify-content:center;min-height:60vh;}
+.pin-box{text-align:center;max-width:320px;width:100%;}
+.pin-box .icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.pin-box .icon svg{width:18px;height:18px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+
+.field{margin-bottom:14px;}
+.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px;display:block;}
+.field input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;
+  color:#fff;font-family:'Satoshi',-apple-system,sans-serif;font-size:14px;font-weight:500;
+  outline:none;transition:all .15s;text-align:center;letter-spacing:.3em;
+}
+.field input:focus{border-color:rgba(170,255,0,.2);background:rgba(170,255,0,.08);}
+.field input::placeholder{color:rgba(255,255,255,.15);letter-spacing:.1em;}
+
+.btn{
+  width:100%;padding:12px 14px;
+  background:var(--gm);border:1px solid var(--gb);border-radius:8px;
+  font-family:'Satoshi',-apple-system,sans-serif;font-size:14px;font-weight:700;
+  color:var(--g);cursor:pointer;transition:all .15s;
+}
+.btn:hover{background:rgba(170,255,0,.18);}
+.btn:disabled{opacity:.2;cursor:not-allowed;}
+.btn.loading{opacity:.5;pointer-events:none;}
+
+.btn-sm{
+  padding:6px 14px;font-size:11px;font-weight:700;border-radius:6px;
+  background:var(--gm);border:1px solid var(--gb);color:var(--g);
+  font-family:'Satoshi',-apple-system,sans-serif;cursor:pointer;transition:all .15s;
+  white-space:nowrap;
+}
+.btn-sm:hover{background:rgba(170,255,0,.18);}
+.btn-sm.danger{background:rgba(255,107,107,.1);border-color:rgba(255,107,107,.2);color:var(--red);}
+.btn-sm.danger:hover{background:rgba(255,107,107,.15);}
+
+.msg{font-size:11px;font-weight:600;margin-top:10px;text-align:center;}
+.msg.error{color:var(--red);}
+.msg.success{color:var(--g);}
+.msg.warn{color:var(--amber);}
+
+/* Staff table */
+.staff-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.staff-row:last-child{border-bottom:none;}
+.sr-info{flex:1;min-width:0;}
+.sr-name{font-size:14px;font-weight:700;color:#fff;}
+.sr-dept{font-size:11px;font-weight:600;color:rgba(255,255,255,.2);}
+.sr-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;}
+.sr-badge.needs-change{background:rgba(251,191,36,.1);color:var(--amber);}
+.sr-actions{display:flex;gap:6px;flex-shrink:0;margin-left:12px;}
+
+/* Request card */
+.req-row{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(255,107,107,.04);border:1px solid rgba(255,107,107,.08);border-radius:10px;margin-bottom:8px;}
+.req-row:last-child{margin-bottom:0;}
+.req-info{flex:1;}
+.req-name{font-size:14px;font-weight:700;color:#fff;}
+.req-time{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);}
+.req-actions{display:flex;gap:6px;flex-shrink:0;margin-left:12px;}
+
+.empty{font-size:12px;font-weight:500;color:rgba(255,255,255,.15);text-align:center;padding:16px 0;}
+
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.wgt-footer a{color:rgba(255,255,255,.1);text-decoration:none;}
+
+.hidden{display:none;}
+
+/* Toast */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);padding:10px 20px;border-radius:8px;font-size:12px;font-weight:700;z-index:999;transition:opacity .3s;opacity:0;pointer-events:none;}
+.toast.show{opacity:1;}
+.toast.success{background:var(--gm);border:1px solid var(--gb);color:var(--g);}
+</style>
+</head>
+<body>
+
+<!-- PIN LOGIN -->
+<div id="pinScreen" class="pin-wrap">
+  <div class="pin-box">
+    <div class="card">
+      <div class="icon" style="margin:0 auto 12px;">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <div class="eyebrow" style="text-align:center;">Creaitors</div>
+      <div class="h-title" style="text-align:center;margin-bottom:16px;">Workspace Admin</div>
+      <form id="pinForm">
+        <div class="field">
+          <span class="field-label">Admin PIN</span>
+          <input type="password" id="pinInput" placeholder="0000" autocomplete="off" maxlength="6" inputmode="numeric"/>
+        </div>
+        <button type="submit" class="btn" id="pinBtn">Unlock</button>
+      </form>
+      <p class="msg" id="pinMsg"></p>
+    </div>
+  </div>
+</div>
+
+<!-- ADMIN DASHBOARD -->
+<div id="adminScreen" class="hidden">
+  <div class="header">
+    <div>
+      <div class="eyebrow">Creaitors</div>
+      <div class="h-title">Workspace Admin</div>
+    </div>
+    <div class="h-right">
+      <button class="btn-sm" onclick="showChangePinModal()">Change PIN</button>
+    </div>
+  </div>
+
+  <!-- PIN change banner (first time) -->
+  <div id="pinBanner" class="card hidden" style="border-color:rgba(251,191,36,.15);background:rgba(251,191,36,.04);">
+    <p style="font-size:13px;font-weight:600;color:var(--amber);">You're using the default PIN (0000). Change it now.</p>
+    <div style="margin-top:10px;display:flex;gap:8px;align-items:center;">
+      <input type="password" id="bannerNewPin" placeholder="New PIN" maxlength="6" inputmode="numeric" style="flex:1;padding:8px 12px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:6px;color:#fff;font-family:'Satoshi',sans-serif;font-size:13px;outline:none;text-align:center;letter-spacing:.3em;"/>
+      <button class="btn-sm" onclick="changePinFromBanner()">Save</button>
+    </div>
+  </div>
+
+  <!-- Reset requests -->
+  <div class="sec-lbl">Reset Requests</div>
+  <div class="card" id="requestsCard">
+    <div class="empty">Loading...</div>
+  </div>
+
+  <!-- Staff list -->
+  <div class="sec-lbl">All Staff</div>
+  <div class="card" id="staffCard">
+    <div class="empty">Loading...</div>
+  </div>
+
+  <div class="wgt-footer">Widgets by <a href="https://opxio.io" target="_blank" rel="noopener">Opxio.io</a></div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- Change PIN modal -->
+<div id="pinModal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;z-index:99;">
+  <div class="card" style="max-width:320px;width:90%;">
+    <div class="h-title" style="text-align:center;font-size:18px;margin-bottom:14px;">Change Admin PIN</div>
+    <div class="field">
+      <span class="field-label">New PIN (4-6 digits)</span>
+      <input type="password" id="modalNewPin" placeholder="New PIN" maxlength="6" inputmode="numeric" style="text-align:center;letter-spacing:.3em;"/>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn-sm" style="flex:1;padding:10px;" onclick="closePinModal()">Cancel</button>
+      <button class="btn-sm" style="flex:1;padding:10px;background:var(--gm);border-color:var(--gb);color:var(--g);" onclick="changePinFromModal()">Save</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const TOKEN = params.get('token') || '';
+const API_BASE = window.location.origin;
+let currentPin = '';
+
+// ── API ──
+async function api(body) {
+  const r = await fetch(`${API_BASE}/api/creaitors/workspace-admin?token=${TOKEN}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...body, admin_pin: currentPin })
+  });
+  return { status: r.status, data: await r.json() };
+}
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast success show';
+  setTimeout(() => t.className = 'toast success', 2500);
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+function timeAgo(iso) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return mins + 'm ago';
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return hrs + 'h ago';
+  return Math.floor(hrs / 24) + 'd ago';
+}
+
+// ── PIN LOGIN ──
+document.getElementById('pinForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const pin = document.getElementById('pinInput').value;
+  const msg = document.getElementById('pinMsg');
+  currentPin = pin;
+
+  const { status, data } = await api({ action: 'list' });
+  if (status === 401) {
+    msg.className = 'msg error';
+    msg.textContent = 'Wrong PIN.';
+    currentPin = '';
+    setTimeout(() => msg.textContent = '', 2500);
+    return;
+  }
+  if (status !== 200) {
+    msg.className = 'msg error';
+    msg.textContent = 'Error connecting. Check token.';
+    return;
+  }
+
+  document.getElementById('pinScreen').classList.add('hidden');
+  document.getElementById('adminScreen').classList.remove('hidden');
+
+  if (data.is_default_pin) {
+    document.getElementById('pinBanner').classList.remove('hidden');
+  }
+
+  renderDashboard(data);
+});
+
+// ── RENDER ──
+function renderDashboard(data) {
+  // Requests
+  const reqCard = document.getElementById('requestsCard');
+  if (!data.requests || data.requests.length === 0) {
+    reqCard.innerHTML = '<div class="empty">No pending requests</div>';
+  } else {
+    reqCard.innerHTML = data.requests.map(r => `
+      <div class="req-row" id="req-${r.staff_id}">
+        <div class="req-info">
+          <div class="req-name">${escapeHtml(r.name)}</div>
+          <div class="req-time">${timeAgo(r.requested_at)}</div>
+        </div>
+        <div class="req-actions">
+          <button class="btn-sm" onclick="resetPassword('${r.staff_id}', '${escapeHtml(r.name)}')">Reset</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // Staff
+  const staffCard = document.getElementById('staffCard');
+  staffCard.innerHTML = data.staff.map(s => `
+    <div class="staff-row" id="staff-${s.id}">
+      <div class="sr-info">
+        <span class="sr-name">${escapeHtml(s.name)}</span>
+        ${s.must_change ? '<span class="sr-badge needs-change">Needs new password</span>' : ''}
+        <div class="sr-dept">${escapeHtml(s.dept)}</div>
+      </div>
+      <div class="sr-actions">
+        <button class="btn-sm" onclick="resetPassword('${s.id}', '${escapeHtml(s.name)}')">Reset Password</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── ACTIONS ──
+async function resetPassword(staffId, name) {
+  if (!confirm('Reset password for ' + name + '? They will need to set a new password on next login.')) return;
+  const { status, data } = await api({ action: 'reset', staff_id: staffId });
+  if (status === 200 && data.ok) {
+    toast('Password reset for ' + data.name + ' → ' + data.default_password);
+    refresh();
+  }
+}
+
+async function refresh() {
+  const { status, data } = await api({ action: 'list' });
+  if (status === 200) renderDashboard(data);
+}
+
+// ── PIN CHANGE ──
+function showChangePinModal() {
+  document.getElementById('pinModal').classList.remove('hidden');
+  document.getElementById('pinModal').style.display = 'flex';
+  document.getElementById('modalNewPin').focus();
+}
+
+function closePinModal() {
+  document.getElementById('pinModal').classList.add('hidden');
+  document.getElementById('pinModal').style.display = 'none';
+}
+
+async function changePinFromModal() {
+  const newPin = document.getElementById('modalNewPin').value;
+  await doChangePin(newPin);
+  closePinModal();
+}
+
+async function changePinFromBanner() {
+  const newPin = document.getElementById('bannerNewPin').value;
+  await doChangePin(newPin);
+  document.getElementById('pinBanner').classList.add('hidden');
+}
+
+async function doChangePin(newPin) {
+  if (!/^\d{4,6}$/.test(newPin)) { alert('PIN must be 4-6 digits.'); return; }
+  const { status, data } = await api({ action: 'set_pin', new_pin: newPin });
+  if (status === 200 && data.ok) {
+    currentPin = newPin;
+    toast('Admin PIN updated');
+  }
+}
+</script>
+</body>
+</html>

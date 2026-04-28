@@ -515,7 +515,7 @@ function mkLiveHostCard(e,tab,wkOff){
       return '<div class="lh-wk">'
         +'<div class="lh-wk-lbl">W'+(i+1)+'</div>'
         +'<div class="lh-wk-hrs'+(wh?'':' zero')+'">'+(wh||'&mdash;')+'</div>'
-        +(ws.length?'<div class="lh-wk-ses">'+ws.length+'ses</div>':'')
+        +(ws.length?'<div class="lh-wk-ses">'+ws.length+(ws.length===1?' session':' sessions')+'</div>':'')
         +'</div>';
     }).join('');
     body='<div class="lh-body">'

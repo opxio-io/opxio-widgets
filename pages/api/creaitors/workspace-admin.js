@@ -5,12 +5,10 @@
  * Requires: ?token=<client_access_token>&admin_pin=<4-digit-pin>
  *
  * Actions (body.action):
- *
  *   "list" — returns staff list + pending reset requests
  *   "reset" — { staff_id } — resets password to default, clears request
- *   "set_pin" — { new_pin } — change the admin PIN (first time setup: default is "0000")
+ *   "set_pin" — { new_pin } — change the admin PIN
  */
-import { getClientByToken, invalidateClientCache } from "../../../lib/supabase"
 import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcryptjs"
 
@@ -20,6 +18,19 @@ function getSb() {
     process.env.SUPABASE_SERVICE_KEY,
     { auth: { persistSession: false } }
   )
+}
+
+// Always read fresh from DB — admin needs real-time data, not cached
+async function getFreshClient(token) {
+  const sb = getSb()
+  const { data, error } = await sb
+    .from("clients")
+    .select("*")
+    .eq("access_token", token)
+    .eq("status", "active")
+    .single()
+  if (error || !data) return null
+  return data
 }
 
 export default async function handler(req, res) {
@@ -32,12 +43,12 @@ export default async function handler(req, res) {
   const token = req.query.token || req.headers["x-widget-token"]
   if (!token) return res.status(401).json({ error: "missing_token" })
 
-  const client = await getClientByToken(token)
+  const client = await getFreshClient(token)
   if (!client) return res.status(403).json({ error: "invalid_token" })
 
-  // Admin PIN auth (simple 4-digit pin, stored in labels)
+  // Admin PIN auth
   const adminPin = req.body?.admin_pin || req.query.admin_pin
-  const storedPin = client.labels?.workspace_admin_pin || "0000" // default first-time pin
+  const storedPin = client.labels?.workspace_admin_pin || "0000"
   if (adminPin !== storedPin) {
     return res.status(401).json({ error: "wrong_pin" })
   }
@@ -72,13 +83,12 @@ export default async function handler(req, res) {
     labels.workspace_staff = { ...ws }
     labels.workspace_staff[staff_id] = { ...staff, password_hash: newHash, must_change: true }
 
-    // Clear any pending request for this staff
+    // Clear pending requests for this staff
     labels.workspace_reset_requests = (labels.workspace_reset_requests || [])
       .filter(r => !(r.staff_id === staff_id && r.status === "pending"))
 
     const { error } = await sb.from("clients").update({ labels }).eq("id", client.id)
     if (error) return res.status(500).json({ error: "update_failed" })
-    invalidateClientCache(client.slug)
 
     return res.json({ ok: true, name: staff.name, default_password: defaultPw })
   }
@@ -93,7 +103,6 @@ export default async function handler(req, res) {
     labels.workspace_admin_pin = new_pin
     const { error } = await sb.from("clients").update({ labels }).eq("id", client.id)
     if (error) return res.status(500).json({ error: "update_failed" })
-    invalidateClientCache(client.slug)
 
     return res.json({ ok: true })
   }

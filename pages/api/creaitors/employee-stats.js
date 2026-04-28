@@ -142,8 +142,8 @@ export default async function handler(req, res) {
       } while (liveCursor);
     } catch (_) {}
 
-    // 5. Fetch issues log — keyed by normalised staff name
-    const issuesByEmpId = {}; // empId → [{date, summary, description, actionTaken, status, stage}]
+    // 5. Fetch issues log — Team Member is now a select field (not relation)
+    const issuesByName = {}; // normName → [{date, title, summary, actionTaken, status, stage}]
     try {
       let issueCursor;
       do {
@@ -156,21 +156,21 @@ export default async function handler(req, res) {
         const id2 = await ir.json();
         id2.results.forEach(issue => {
           const ip = issue.properties;
-          const summary     = ip['Issue Summary']?.title?.map(t => t.plain_text).join('') || '';
-          const description = ip['Issue Description']?.rich_text?.map(t => t.plain_text).join('') || '';
+          const title       = ip['Issue Title']?.title?.map(t => t.plain_text).join('') || '';
+          const summary     = ip['Issue Summary']?.rich_text?.map(t => t.plain_text).join('') || '';
           const actionTaken = ip['Action Taken']?.rich_text?.map(t => t.plain_text).join('') || '';
           const status      = ip['Status']?.select?.name || 'Open';
           const stage       = ip['Stage']?.select?.name || 'General';
           const rawDate     = ip['Date']?.date?.start || issue.created_time || null;
           const date        = rawDate ? rawDate.slice(0, 10) : null;
 
-          // Staff is a Relation to Employee DB — match by employee page ID
-          const staffRels = ip['Team Member']?.relation || [];
-          staffRels.forEach(rel => {
-            const empId = rel.id;
-            if (!issuesByEmpId[empId]) issuesByEmpId[empId] = [];
-            issuesByEmpId[empId].push({ date, summary, description, actionTaken, status, stage });
-          });
+          // Team Member is now a select field — match by name
+          const memberName = ip['Team Member']?.select?.name || '';
+          if (memberName) {
+            const key = normName(memberName);
+            if (!issuesByName[key]) issuesByName[key] = [];
+            issuesByName[key].push({ date, title, summary, actionTaken, status, stage });
+          }
         });
         issueCursor = id2.has_more ? id2.next_cursor : undefined;
       } while (issueCursor);
@@ -233,7 +233,7 @@ export default async function handler(req, res) {
 
       const empName      = empMap[id]?.name || '';
       const liveSessions = liveByName[normName(empName)] || [];
-      const issues       = issuesByEmpId[id] || [];
+      const issues       = issuesByName[normName(empName)] || [];
 
       return {
         id,

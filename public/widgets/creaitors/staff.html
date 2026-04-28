@@ -254,7 +254,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 <div id="dash"><div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div></div>
 <script>
 var _tok=new URLSearchParams(location.search).get('token')||'';
-var _tab='week',_data=null,_wkOff=0,_mthOff=0,_yrOff=0,_view='card';
+var _tab='month',_data=null,_wkOff=0,_mthOff=0,_yrOff=0,_view='card';
 var XROLES=['part time','part-time','freelance'];
 var XNAMES=['danil husaini'];
 var MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -858,15 +858,13 @@ function render(data){
     return !excluded||isLive;
   });
   function mkTab(t,l){return '<button class="tab'+(_tab===t?' active':'')+'" onclick="switchTab(\''+t+'\')">'+l+'</button>';}
-  var tabBar='<div class="tabs">'+mkTab('week','Week')+mkTab('month','Month')+mkTab('year','Yearly')+mkTab('issues','Issues')+'</div>';
+  var tabBar='<div class="tabs">'+mkTab('month','Month')+mkTab('year','Yearly')+mkTab('issues','Issues')+'</div>';
   var isCur=_wkOff===0;
   var mb=getMonthBoundsOff(_mthOff);
   var isMthCur=_mthOff===0;
   var yrNum=new Date().getFullYear()+_yrOff;
   var isYrCur=_yrOff===0;
-  var ctrlLeft=_tab==='week'
-    ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftWeek(-1)">'+PREV+'</button><span class="wk-lbl'+(isCur?' cur':'')+'" >'+esc(wkLbl(getMonday(_wkOff)))+'</span><button class="wk-arrow" onclick="shiftWeek(1)"'+(isCur?' disabled':'')+'>'+NEXT+'</button></div>')
-    :_tab==='month'
+  var ctrlLeft=_tab==='month'
     ?('<div class="wk-nav"><button class="wk-arrow" onclick="shiftMonth(-1)">'+PREV+'</button><span class="wk-lbl'+(isMthCur?' cur':'')+'">'+esc(mb.lbl)+'</span><button class="wk-arrow" onclick="shiftMonth(1)"'+(isMthCur?' disabled':'')+'>'+NEXT+'</button></div>')
     :_tab==='issues'?'':('<div class="wk-nav"><button class="wk-arrow" onclick="shiftYear(-1)">'+PREV+'</button><span class="wk-lbl'+(isYrCur?' cur':'')+'">'+yrNum+'</span><button class="wk-arrow" onclick="shiftYear(1)"'+(isYrCur?' disabled':'')+'>'+NEXT+'</button></div>');
   var h='<div class="ctrl-bar"><div class="ctrl-left">'+(_tab==='issues'?'':ctrlLeft)+'</div>'+tabBar+'</div>';

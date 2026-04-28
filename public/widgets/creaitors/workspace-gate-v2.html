@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Workspace Gate</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;height:100%;display:flex;align-items:center;justify-content:center;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--muted:rgba(255,255,255,.4);}
+::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+
+.gate{width:100%;max-width:420px;}
+
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:28px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.08);}
+
+.card-hdr{text-align:center;margin-bottom:20px;}
+.card-hdr .icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;transition:all .15s;}
+.card-hdr .icon svg{width:18px;height:18px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:4px;}
+.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
+.h-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.2);margin-top:4px;}
+
+.field{margin-bottom:14px;}
+.field-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--muted);margin-bottom:6px;display:block;}
+
+.field select,
+.field input{
+  width:100%;padding:12px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;
+  color:#fff;
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:14px;font-weight:500;
+  outline:none;
+  transition:all .15s;
+  -webkit-appearance:none;appearance:none;
+}
+.field select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 14px center;
+  padding-right:34px;
+}
+.field select option{background:#1E1E1E;color:#fff;}
+.field select optgroup{color:rgba(255,255,255,.3);font-weight:700;font-size:11px;}
+.field input::placeholder{color:rgba(255,255,255,.2);}
+.field select:focus,.field input:focus{border-color:rgba(170,255,0,.2);background:rgba(170,255,0,.08);}
+
+.btn{
+  width:100%;padding:12px 14px;
+  background:var(--gm);
+  border:1px solid var(--gb);
+  border-radius:8px;
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:14px;font-weight:700;
+  color:var(--g);
+  cursor:pointer;
+  transition:all .15s;
+  margin-top:6px;
+  letter-spacing:-.01em;
+}
+.btn:hover{background:rgba(170,255,0,.18);}
+.btn:active{background:rgba(170,255,0,.25);}
+.btn:disabled{opacity:.2;cursor:not-allowed;}
+.btn.loading{pointer-events:none;opacity:.5;}
+
+.btn-secondary{
+  width:100%;padding:10px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:12px;font-weight:600;
+  color:rgba(255,255,255,.3);
+  cursor:pointer;
+  transition:all .15s;
+  margin-top:8px;
+}
+.btn-secondary:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
+
+.msg{font-size:11px;font-weight:600;margin-top:12px;text-align:center;opacity:0;transition:opacity .2s;}
+.msg.error{color:#FF6B6B;opacity:1;}
+.msg.success{color:var(--g);opacity:1;}
+.msg.info{color:rgba(255,255,255,.3);opacity:1;}
+
+/* Success state */
+.success-state{text-align:center;}
+.success-state .check{width:48px;height:48px;border-radius:12px;background:var(--gm);border:1px solid var(--gb);display:inline-flex;align-items:center;justify-content:center;margin-bottom:14px;}
+.success-state .check svg{width:24px;height:24px;stroke:var(--g);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.success-state .welcome{font-size:22px;font-weight:900;letter-spacing:-.03em;color:#fff;margin-bottom:2px;}
+.success-state .verified{font-size:11px;font-weight:600;color:rgba(170,255,0,.5);margin-bottom:18px;}
+
+.open-link{
+  display:block;width:100%;padding:14px;
+  background:var(--g);
+  border:none;border-radius:8px;
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:14px;font-weight:800;
+  color:#191919;
+  text-decoration:none;text-align:center;
+  transition:opacity .15s;
+  letter-spacing:-.01em;
+}
+.open-link:hover{opacity:.85;}
+
+/* Loading skeleton */
+.skeleton{background:rgba(255,255,255,.04);border-radius:8px;height:44px;margin-bottom:14px;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:.8;}}
+
+.wgt-footer{text-align:center;padding:20px 0 4px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.wgt-footer a{color:rgba(255,255,255,.1);text-decoration:none;}
+
+.hidden{display:none;}
+</style>
+</head>
+<body>
+<div class="gate" id="gate">
+  <div class="card" id="card">
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView">
+      <div class="card-hdr">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            <circle cx="12" cy="16.5" r="1.5"/>
+          </svg>
+        </div>
+        <div class="eyebrow">Creaitors</div>
+        <div class="h-title">Team Workspace</div>
+      </div>
+
+      <div id="loginForm">
+        <div class="skeleton" id="skelName"></div>
+        <div class="skeleton" id="skelPw" style="height:44px;margin-bottom:14px;"></div>
+        <div class="skeleton" style="height:44px;margin-bottom:0;"></div>
+      </div>
+      <p class="msg" id="loginMsg"></p>
+    </div>
+
+    <!-- CHANGE PASSWORD VIEW -->
+    <div id="changeView" class="hidden">
+      <div class="card-hdr">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+          </svg>
+        </div>
+        <div class="eyebrow">Set New Password</div>
+        <div class="h-title" id="changeName"></div>
+        <div class="h-sub">Choose a password only you know</div>
+      </div>
+      <form id="changeForm">
+        <div class="field">
+          <span class="field-label">New Password</span>
+          <input type="password" id="newPw" placeholder="Min 6 characters" autocomplete="new-password"/>
+        </div>
+        <div class="field">
+          <span class="field-label">Confirm Password</span>
+          <input type="password" id="confirmPw" placeholder="Type it again" autocomplete="new-password"/>
+        </div>
+        <button type="submit" class="btn" id="changeBtn" disabled>Set Password</button>
+      </form>
+      <p class="msg" id="changeMsg"></p>
+    </div>
+
+    <!-- SUCCESS VIEW -->
+    <div id="successView" class="hidden"></div>
+
+  </div>
+  <div class="wgt-footer">Widgets by <a href="https://opxio.io" target="_blank" rel="noopener">Opxio.io</a></div>
+</div>
+
+<script>
+// ── CONFIG ──
+const params = new URLSearchParams(window.location.search);
+const TOKEN = params.get('token') || '';
+const API_BASE = window.location.origin;
+
+// ── STATE ──
+let staffList = [];
+let currentStaff = null; // { id, name, page, must_change }
+let currentPassword = '';
+
+// ── API HELPERS ──
+async function apiPost(path, body) {
+  const r = await fetch(`${API_BASE}/api/creaitors/${path}?token=${TOKEN}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body)
+  });
+  return { status: r.status, data: await r.json() };
+}
+
+async function apiGet(path) {
+  const r = await fetch(`${API_BASE}/api/creaitors/${path}?token=${TOKEN}`);
+  return { status: r.status, data: await r.json() };
+}
+
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+
+// ── INIT: load staff list ──
+async function init() {
+  const { status, data } = await apiGet('workspace-staff');
+  if (status !== 200 || !data.staff) {
+    document.getElementById('loginForm').innerHTML = '<p class="msg error" style="opacity:1;">Failed to load staff list. Check widget token.</p>';
+    return;
+  }
+  staffList = data.staff;
+  renderLoginForm();
+}
+
+function renderLoginForm() {
+  const depts = {};
+  staffList.forEach(s => {
+    if (!depts[s.dept]) depts[s.dept] = [];
+    depts[s.dept].push(s);
+  });
+
+  let optionsHtml = '<option value="" disabled selected>Choose your name</option>';
+  Object.entries(depts).forEach(([dept, members]) => {
+    optionsHtml += `<optgroup label="${escapeHtml(dept)}">`;
+    members.forEach(m => {
+      optionsHtml += `<option value="${m.id}">${escapeHtml(m.name)}</option>`;
+    });
+    optionsHtml += '</optgroup>';
+  });
+
+  document.getElementById('loginForm').innerHTML = `
+    <form id="authForm">
+      <div class="field">
+        <span class="field-label">Name</span>
+        <select id="staffSelect">${optionsHtml}</select>
+      </div>
+      <div class="field">
+        <span class="field-label">Password</span>
+        <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off"/>
+      </div>
+      <button type="submit" class="btn" id="enterBtn" disabled>Enter Workspace</button>
+    </form>
+  `;
+
+  const select = document.getElementById('staffSelect');
+  const passInput = document.getElementById('passInput');
+  const enterBtn = document.getElementById('enterBtn');
+
+  function checkReady() {
+    enterBtn.disabled = !(select.value && passInput.value);
+  }
+  select.addEventListener('change', checkReady);
+  passInput.addEventListener('input', checkReady);
+
+  document.getElementById('authForm').addEventListener('submit', handleLogin);
+}
+
+// ── LOGIN ──
+async function handleLogin(e) {
+  e.preventDefault();
+  const staffId = document.getElementById('staffSelect').value;
+  const password = document.getElementById('passInput').value;
+  const msgEl = document.getElementById('loginMsg');
+  const btn = document.getElementById('enterBtn');
+
+  btn.classList.add('loading');
+  btn.textContent = 'Verifying...';
+  msgEl.className = 'msg';
+
+  const { status, data } = await apiPost('workspace-auth', { staff_id: staffId, password });
+
+  btn.classList.remove('loading');
+  btn.textContent = 'Enter Workspace';
+
+  if (status === 200 && data.ok) {
+    currentStaff = { id: staffId, name: data.name, page: data.page, must_change: data.must_change };
+    currentPassword = password;
+
+    if (data.must_change) {
+      showChangePassword();
+    } else {
+      showSuccess();
+    }
+  } else {
+    msgEl.className = 'msg error';
+    msgEl.textContent = 'Wrong password. Try again.';
+    document.getElementById('passInput').value = '';
+    document.getElementById('passInput').focus();
+    document.getElementById('enterBtn').disabled = true;
+    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+  }
+}
+
+// ── CHANGE PASSWORD ──
+function showChangePassword() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('changeView').classList.remove('hidden');
+  document.getElementById('changeName').textContent = currentStaff.name;
+
+  const newPw = document.getElementById('newPw');
+  const confirmPw = document.getElementById('confirmPw');
+  const changeBtn = document.getElementById('changeBtn');
+
+  function checkChangePw() {
+    changeBtn.disabled = !(newPw.value.length >= 6 && confirmPw.value.length >= 6);
+  }
+  newPw.addEventListener('input', checkChangePw);
+  confirmPw.addEventListener('input', checkChangePw);
+
+  document.getElementById('changeForm').addEventListener('submit', handleChangePassword);
+}
+
+async function handleChangePassword(e) {
+  e.preventDefault();
+  const newPw = document.getElementById('newPw').value;
+  const confirmPw = document.getElementById('confirmPw').value;
+  const msgEl = document.getElementById('changeMsg');
+  const btn = document.getElementById('changeBtn');
+
+  if (newPw !== confirmPw) {
+    msgEl.className = 'msg error';
+    msgEl.textContent = 'Passwords don\'t match.';
+    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+    return;
+  }
+
+  if (newPw.length < 6) {
+    msgEl.className = 'msg error';
+    msgEl.textContent = 'Minimum 6 characters.';
+    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+    return;
+  }
+
+  btn.classList.add('loading');
+  btn.textContent = 'Saving...';
+
+  const { status, data } = await apiPost('workspace-password', {
+    staff_id: currentStaff.id,
+    old_password: currentPassword,
+    new_password: newPw
+  });
+
+  btn.classList.remove('loading');
+  btn.textContent = 'Set Password';
+
+  if (status === 200 && data.ok) {
+    showSuccess();
+  } else {
+    msgEl.className = 'msg error';
+    msgEl.textContent = data.error === 'password_too_short' ? 'Minimum 6 characters.' : 'Something went wrong. Try again.';
+    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+  }
+}
+
+// ── SUCCESS ──
+function showSuccess() {
+  document.getElementById('loginView').classList.add('hidden');
+  document.getElementById('changeView').classList.add('hidden');
+  document.getElementById('successView').classList.remove('hidden');
+  document.getElementById('successView').innerHTML = `
+    <div class="success-state">
+      <div class="check">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+      </div>
+      <div class="welcome">${escapeHtml(currentStaff.name)}</div>
+      <div class="verified">Access verified</div>
+      <a href="${currentStaff.page}" target="_blank" rel="noopener" class="open-link">Open Workspace</a>
+    </div>
+  `;
+}
+
+// ── BOOT ──
+init();
+</script>
+</body>
+</html>

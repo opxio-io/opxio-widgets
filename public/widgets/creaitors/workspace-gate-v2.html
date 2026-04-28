@@ -81,10 +81,49 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 }
 .btn-secondary:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
 
+.btn-forgot{
+  width:100%;padding:8px;margin-top:10px;
+  background:none;border:none;
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:11px;font-weight:600;
+  color:rgba(255,255,255,.2);
+  cursor:pointer;transition:color .15s;
+  text-align:center;
+}
+.btn-forgot:hover{color:rgba(255,255,255,.4);}
+
 .msg{font-size:11px;font-weight:600;margin-top:12px;text-align:center;opacity:0;transition:opacity .2s;}
 .msg.error{color:#FF6B6B;opacity:1;}
 .msg.success{color:var(--g);opacity:1;}
-.msg.info{color:rgba(255,255,255,.3);opacity:1;}
+
+/* Backup code display */
+.backup-box{
+  background:rgba(0,0,0,.3);
+  border:1px dashed rgba(170,255,0,.25);
+  border-radius:10px;
+  padding:16px;margin:16px 0;
+  text-align:center;
+}
+.backup-box .code{
+  font-size:28px;font-weight:900;
+  letter-spacing:.15em;
+  color:var(--g);
+  margin:8px 0 4px;
+  font-family:'Satoshi',monospace;
+}
+.backup-box .hint{
+  font-size:10px;font-weight:600;
+  color:rgba(255,255,255,.25);
+  text-transform:uppercase;
+  letter-spacing:.1em;
+}
+.backup-warning{
+  font-size:11px;font-weight:600;
+  color:rgba(255,255,255,.35);
+  line-height:1.5;
+  margin-bottom:16px;
+  text-align:center;
+}
 
 /* Success state */
 .success-state{text-align:center;}
@@ -113,25 +152,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .wgt-footer{text-align:center;padding:20px 0 4px;font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 .wgt-footer a{color:rgba(255,255,255,.1);text-decoration:none;}
 
-.btn-forgot{
-  width:100%;padding:8px;margin-top:10px;
-  background:none;border:none;
-  font-family:"Satoshi",-apple-system,sans-serif;
-  font-size:11px;font-weight:600;
-  color:rgba(255,255,255,.2);
-  cursor:pointer;transition:color .15s;
-  text-align:center;
-}
-.btn-forgot:hover{color:rgba(255,255,255,.4);}
-
-/* Forgot password view */
-.forgot-state{text-align:center;}
-.forgot-state .icon{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
-.forgot-state .icon svg{width:18px;height:18px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
-.forgot-confirm{font-size:13px;font-weight:600;color:rgba(255,255,255,.4);margin-bottom:16px;line-height:1.5;}
-.btn-back{width:100%;padding:10px;margin-top:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;font-family:"Satoshi",-apple-system,sans-serif;font-size:12px;font-weight:600;color:rgba(255,255,255,.3);cursor:pointer;transition:all .15s;}
-.btn-back:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
-
 .hidden{display:none;}
 </style>
 </head>
@@ -152,16 +172,15 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
         <div class="eyebrow">Creaitors</div>
         <div class="h-title">Team Workspace</div>
       </div>
-
       <div id="loginForm">
-        <div class="skeleton" id="skelName"></div>
-        <div class="skeleton" id="skelPw" style="height:44px;margin-bottom:14px;"></div>
-        <div class="skeleton" style="height:44px;margin-bottom:0;"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton" style="margin-bottom:0;"></div>
       </div>
       <p class="msg" id="loginMsg"></p>
     </div>
 
-    <!-- CHANGE PASSWORD VIEW -->
+    <!-- CHANGE PASSWORD VIEW (first login) -->
     <div id="changeView" class="hidden">
       <div class="card-hdr">
         <div class="icon">
@@ -169,9 +188,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
             <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
           </svg>
         </div>
-        <div class="eyebrow">Set New Password</div>
+        <div class="eyebrow">First Login</div>
         <div class="h-title" id="changeName"></div>
-        <div class="h-sub">Choose a password only you know</div>
+        <div class="h-sub">Set a password only you know</div>
       </div>
       <form id="changeForm">
         <div class="field">
@@ -185,6 +204,27 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
         <button type="submit" class="btn" id="changeBtn" disabled>Set Password</button>
       </form>
       <p class="msg" id="changeMsg"></p>
+    </div>
+
+    <!-- BACKUP CODE VIEW (shown after first password set) -->
+    <div id="backupView" class="hidden">
+      <div class="card-hdr">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 12l2 2 4-4"/>
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          </svg>
+        </div>
+        <div class="eyebrow">Save This</div>
+        <div class="h-title">Backup Code</div>
+      </div>
+      <div class="backup-box">
+        <div class="hint">Your recovery code</div>
+        <div class="code" id="backupCode"></div>
+        <div class="hint">Screenshot or write this down</div>
+      </div>
+      <p class="backup-warning">This is the only time you'll see this code. If you forget your password, you'll need it to reset.</p>
+      <button class="btn" id="backupContinueBtn">I've Saved It — Continue</button>
     </div>
 
     <!-- FORGOT PASSWORD VIEW -->
@@ -201,16 +241,16 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 // ── CONFIG ──
 const params = new URLSearchParams(window.location.search);
 const TOKEN = params.get('token') || '';
-const API_BASE = window.location.origin;
+const API = window.location.origin + '/api/creaitors';
 
 // ── STATE ──
 let staffList = [];
-let currentStaff = null; // { id, name, page, must_change }
+let currentStaff = null;
 let currentPassword = '';
 
-// ── API HELPERS ──
-async function apiPost(path, body) {
-  const r = await fetch(`${API_BASE}/api/creaitors/${path}?token=${TOKEN}`, {
+// ── HELPERS ──
+async function post(endpoint, body) {
+  const r = await fetch(`${API}/${endpoint}?token=${TOKEN}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(body)
@@ -218,49 +258,58 @@ async function apiPost(path, body) {
   return { status: r.status, data: await r.json() };
 }
 
-async function apiGet(path) {
-  const r = await fetch(`${API_BASE}/api/creaitors/${path}?token=${TOKEN}`);
-  return { status: r.status, data: await r.json() };
-}
-
-function escapeHtml(s) {
+function esc(s) {
   const d = document.createElement('div');
   d.textContent = s;
   return d.innerHTML;
 }
 
-// ── INIT: load staff list ──
-async function init() {
-  const { status, data } = await apiGet('workspace-staff');
-  if (status !== 200 || !data.staff) {
-    document.getElementById('loginForm').innerHTML = '<p class="msg error" style="opacity:1;">Failed to load staff list. Check widget token.</p>';
-    return;
-  }
-  staffList = data.staff;
-  renderLoginForm();
+function flash(el, cls, text, ms) {
+  el.className = 'msg ' + cls;
+  el.textContent = text;
+  if (ms) setTimeout(() => { el.className = 'msg'; }, ms);
 }
 
-function renderLoginForm() {
+function buildSelect(containerId) {
   const depts = {};
   staffList.forEach(s => {
     if (!depts[s.dept]) depts[s.dept] = [];
     depts[s.dept].push(s);
   });
-
-  let optionsHtml = '<option value="" disabled selected>Choose your name</option>';
+  let html = '<option value="" disabled selected>Choose your name</option>';
   Object.entries(depts).forEach(([dept, members]) => {
-    optionsHtml += `<optgroup label="${escapeHtml(dept)}">`;
-    members.forEach(m => {
-      optionsHtml += `<option value="${m.id}">${escapeHtml(m.name)}</option>`;
-    });
-    optionsHtml += '</optgroup>';
+    html += `<optgroup label="${esc(dept)}">`;
+    members.forEach(m => { html += `<option value="${m.id}">${esc(m.name)}</option>`; });
+    html += '</optgroup>';
   });
+  return html;
+}
 
+function show(id) {
+  ['loginView','changeView','backupView','forgotView','successView'].forEach(v => {
+    document.getElementById(v).classList.toggle('hidden', v !== id);
+  });
+}
+
+// ── INIT ──
+async function init() {
+  try {
+    const r = await fetch(`${API}/workspace-staff?token=${TOKEN}`);
+    const data = await r.json();
+    if (!data.staff) throw new Error();
+    staffList = data.staff;
+    renderLogin();
+  } catch(e) {
+    document.getElementById('loginForm').innerHTML = '<p class="msg error" style="opacity:1;">Failed to load. Check widget token.</p>';
+  }
+}
+
+function renderLogin() {
   document.getElementById('loginForm').innerHTML = `
     <form id="authForm">
       <div class="field">
         <span class="field-label">Name</span>
-        <select id="staffSelect">${optionsHtml}</select>
+        <select id="staffSelect">${buildSelect()}</select>
       </div>
       <div class="field">
         <span class="field-label">Password</span>
@@ -268,19 +317,17 @@ function renderLoginForm() {
       </div>
       <button type="submit" class="btn" id="enterBtn" disabled>Enter Workspace</button>
     </form>
+    <button type="button" class="btn-forgot" id="forgotBtn">Forgot password?</button>
   `;
 
-  const select = document.getElementById('staffSelect');
-  const passInput = document.getElementById('passInput');
-  const enterBtn = document.getElementById('enterBtn');
-
-  function checkReady() {
-    enterBtn.disabled = !(select.value && passInput.value);
-  }
-  select.addEventListener('change', checkReady);
-  passInput.addEventListener('input', checkReady);
-
-  document.getElementById('authForm').addEventListener('submit', handleLogin);  // Add forgot password link after form  const forgotBtn = document.createElement('button');  forgotBtn.type = 'button';  forgotBtn.className = 'btn-forgot';  forgotBtn.textContent = 'Forgot password?';  forgotBtn.onclick = showForgotPassword;  document.getElementById('authForm').after(forgotBtn);
+  const sel = document.getElementById('staffSelect');
+  const pw = document.getElementById('passInput');
+  const btn = document.getElementById('enterBtn');
+  function check() { btn.disabled = !(sel.value && pw.value); }
+  sel.addEventListener('change', check);
+  pw.addEventListener('input', check);
+  document.getElementById('authForm').addEventListener('submit', handleLogin);
+  document.getElementById('forgotBtn').addEventListener('click', showForgot);
 }
 
 // ── LOGIN ──
@@ -291,100 +338,198 @@ async function handleLogin(e) {
   const msgEl = document.getElementById('loginMsg');
   const btn = document.getElementById('enterBtn');
 
-  btn.classList.add('loading');
-  btn.textContent = 'Verifying...';
+  btn.classList.add('loading'); btn.textContent = 'Verifying...';
   msgEl.className = 'msg';
 
-  const { status, data } = await apiPost('workspace-auth', { staff_id: staffId, password });
+  const { status, data } = await post('workspace-auth', { staff_id: staffId, password });
 
-  btn.classList.remove('loading');
-  btn.textContent = 'Enter Workspace';
+  btn.classList.remove('loading'); btn.textContent = 'Enter Workspace';
 
   if (status === 200 && data.ok) {
     currentStaff = { id: staffId, name: data.name, page: data.page, must_change: data.must_change };
     currentPassword = password;
-
     if (data.must_change) {
-      showChangePassword();
+      showChange();
     } else {
       showSuccess();
     }
   } else {
-    msgEl.className = 'msg error';
-    msgEl.textContent = 'Wrong password. Try again.';
+    flash(msgEl, 'error', 'Wrong password. Try again.', 2500);
     document.getElementById('passInput').value = '';
     document.getElementById('passInput').focus();
-    document.getElementById('enterBtn').disabled = true;
-    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+    btn.disabled = true;
   }
 }
 
-// ── CHANGE PASSWORD ──
-function showChangePassword() {
-  document.getElementById('loginView').classList.add('hidden');
-  document.getElementById('changeView').classList.remove('hidden');
+// ── CHANGE PASSWORD (first login) ──
+function showChange() {
+  show('changeView');
   document.getElementById('changeName').textContent = currentStaff.name;
 
-  const newPw = document.getElementById('newPw');
-  const confirmPw = document.getElementById('confirmPw');
-  const changeBtn = document.getElementById('changeBtn');
-
-  function checkChangePw() {
-    changeBtn.disabled = !(newPw.value.length >= 6 && confirmPw.value.length >= 6);
-  }
-  newPw.addEventListener('input', checkChangePw);
-  confirmPw.addEventListener('input', checkChangePw);
-
-  document.getElementById('changeForm').addEventListener('submit', handleChangePassword);
-}
-
-async function handleChangePassword(e) {
-  e.preventDefault();
-  const newPw = document.getElementById('newPw').value;
-  const confirmPw = document.getElementById('confirmPw').value;
-  const msgEl = document.getElementById('changeMsg');
+  const np = document.getElementById('newPw');
+  const cp = document.getElementById('confirmPw');
   const btn = document.getElementById('changeBtn');
 
-  if (newPw !== confirmPw) {
-    msgEl.className = 'msg error';
-    msgEl.textContent = 'Passwords don\'t match.';
-    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
-    return;
-  }
+  function check() { btn.disabled = !(np.value.length >= 6 && cp.value.length >= 6); }
+  np.addEventListener('input', check);
+  cp.addEventListener('input', check);
+  document.getElementById('changeForm').addEventListener('submit', handleChange);
+}
 
-  if (newPw.length < 6) {
-    msgEl.className = 'msg error';
-    msgEl.textContent = 'Minimum 6 characters.';
-    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
-    return;
-  }
+async function handleChange(e) {
+  e.preventDefault();
+  const np = document.getElementById('newPw').value;
+  const cp = document.getElementById('confirmPw').value;
+  const msg = document.getElementById('changeMsg');
+  const btn = document.getElementById('changeBtn');
 
-  btn.classList.add('loading');
-  btn.textContent = 'Saving...';
+  if (np !== cp) { flash(msg, 'error', "Passwords don't match.", 2500); return; }
+  if (np.length < 6) { flash(msg, 'error', 'Minimum 6 characters.', 2500); return; }
 
-  const { status, data } = await apiPost('workspace-password', {
+  btn.classList.add('loading'); btn.textContent = 'Saving...';
+
+  const { status, data } = await post('workspace-password', {
     staff_id: currentStaff.id,
     old_password: currentPassword,
-    new_password: newPw
+    new_password: np
   });
 
-  btn.classList.remove('loading');
-  btn.textContent = 'Set Password';
+  btn.classList.remove('loading'); btn.textContent = 'Set Password';
 
   if (status === 200 && data.ok) {
-    showSuccess();
+    if (data.backup_code) {
+      showBackupCode(data.backup_code);
+    } else {
+      showSuccess();
+    }
   } else {
-    msgEl.className = 'msg error';
-    msgEl.textContent = data.error === 'password_too_short' ? 'Minimum 6 characters.' : 'Something went wrong. Try again.';
-    setTimeout(() => { msgEl.className = 'msg'; }, 2500);
+    flash(msg, 'error', 'Something went wrong. Try again.', 2500);
+  }
+}
+
+// ── BACKUP CODE VIEW ──
+function showBackupCode(code) {
+  show('backupView');
+  document.getElementById('backupCode').textContent = code;
+  document.getElementById('backupContinueBtn').addEventListener('click', () => showSuccess());
+}
+
+// ── FORGOT PASSWORD ──
+function showForgot() {
+  show('forgotView');
+  const fv = document.getElementById('forgotView');
+
+  fv.innerHTML = `
+    <div class="card-hdr">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+        </svg>
+      </div>
+      <div class="eyebrow">Reset Password</div>
+      <div class="h-title">Backup Code</div>
+      <div class="h-sub">Enter your backup code to reset</div>
+    </div>
+    <form id="resetForm">
+      <div class="field">
+        <span class="field-label">Your Name</span>
+        <select id="resetSelect">${buildSelect()}</select>
+      </div>
+      <div class="field">
+        <span class="field-label">Backup Code</span>
+        <input type="text" id="resetCode" placeholder="XXXX-XXXX" autocomplete="off" style="text-transform:uppercase;letter-spacing:.1em;font-weight:700;"/>
+      </div>
+      <div class="field">
+        <span class="field-label">New Password</span>
+        <input type="password" id="resetNewPw" placeholder="Min 6 characters" autocomplete="new-password"/>
+      </div>
+      <div class="field">
+        <span class="field-label">Confirm Password</span>
+        <input type="password" id="resetConfirmPw" placeholder="Type it again" autocomplete="new-password"/>
+      </div>
+      <button type="submit" class="btn" id="resetBtn" disabled>Reset Password</button>
+    </form>
+    <p class="msg" id="resetMsg"></p>
+    <button type="button" class="btn-secondary" id="backBtn">Back to login</button>
+  `;
+
+  const sel = document.getElementById('resetSelect');
+  const code = document.getElementById('resetCode');
+  const npw = document.getElementById('resetNewPw');
+  const cpw = document.getElementById('resetConfirmPw');
+  const btn = document.getElementById('resetBtn');
+
+  function check() {
+    btn.disabled = !(sel.value && code.value.length >= 4 && npw.value.length >= 6 && cpw.value.length >= 6);
+  }
+  sel.addEventListener('change', check);
+  code.addEventListener('input', check);
+  npw.addEventListener('input', check);
+  cpw.addEventListener('input', check);
+
+  document.getElementById('resetForm').addEventListener('submit', handleReset);
+  document.getElementById('backBtn').addEventListener('click', () => { show('loginView'); });
+}
+
+async function handleReset(e) {
+  e.preventDefault();
+  const staffId = document.getElementById('resetSelect').value;
+  const code = document.getElementById('resetCode').value;
+  const npw = document.getElementById('resetNewPw').value;
+  const cpw = document.getElementById('resetConfirmPw').value;
+  const msg = document.getElementById('resetMsg');
+  const btn = document.getElementById('resetBtn');
+
+  if (npw !== cpw) { flash(msg, 'error', "Passwords don't match.", 2500); return; }
+
+  btn.classList.add('loading'); btn.textContent = 'Resetting...';
+
+  const { status, data } = await post('workspace-self-reset', {
+    staff_id: staffId,
+    backup_code: code,
+    new_password: npw
+  });
+
+  btn.classList.remove('loading'); btn.textContent = 'Reset Password';
+
+  if (status === 200 && data.ok) {
+    // Show new backup code
+    const staff = staffList.find(s => s.id === staffId);
+    const fv = document.getElementById('forgotView');
+    fv.innerHTML = `
+      <div class="card-hdr">
+        <div class="icon">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M9 12l2 2 4-4"/>
+            <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/>
+          </svg>
+        </div>
+        <div class="eyebrow">Password Reset</div>
+        <div class="h-title">${esc(staff ? staff.name : 'Done')}</div>
+      </div>
+      <div class="backup-box">
+        <div class="hint">Your new recovery code</div>
+        <div class="code">${esc(data.new_backup_code)}</div>
+        <div class="hint">Screenshot or write this down</div>
+      </div>
+      <p class="backup-warning">Your password has been reset. Save this new backup code — the old one no longer works.</p>
+      <button type="button" class="btn" id="resetDoneBtn">Back to Login</button>
+    `;
+    document.getElementById('resetDoneBtn').addEventListener('click', () => {
+      show('loginView');
+    });
+  } else if (data.error === 'wrong_code') {
+    flash(msg, 'error', 'Wrong backup code. Check and try again.', 2500);
+  } else if (data.error === 'no_backup_code') {
+    flash(msg, 'error', "No backup code set yet. Complete your first login to get one.", 3000);
+  } else {
+    flash(msg, 'error', 'Something went wrong. Try again.', 2500);
   }
 }
 
 // ── SUCCESS ──
 function showSuccess() {
-  document.getElementById('loginView').classList.add('hidden');
-  document.getElementById('changeView').classList.add('hidden');
-  document.getElementById('successView').classList.remove('hidden');
+  show('successView');
   document.getElementById('successView').innerHTML = `
     <div class="success-state">
       <div class="check">
@@ -392,14 +537,14 @@ function showSuccess() {
           <polyline points="20 6 9 17 4 12"/>
         </svg>
       </div>
-      <div class="welcome">${escapeHtml(currentStaff.name)}</div>
+      <div class="welcome">${esc(currentStaff.name)}</div>
       <div class="verified">Access verified</div>
       <a href="${currentStaff.page}" target="_blank" rel="noopener" class="open-link">Open Workspace</a>
     </div>
   `;
 }
 
-// ── FORGOT PASSWORD ──function showForgotPassword() {  document.getElementById('loginView').classList.add('hidden');  const forgotView = document.getElementById('forgotView');  forgotView.classList.remove('hidden');  // Build name select  const depts = {};  staffList.forEach(s => {    if (!depts[s.dept]) depts[s.dept] = [];    depts[s.dept].push(s);  });  let opts = '<option value="" disabled selected>Choose your name</option>';  Object.entries(depts).forEach(([dept, members]) => {    opts += '<optgroup label="' + escapeHtml(dept) + '">';    members.forEach(m => {      opts += '<option value="' + m.id + '">' + escapeHtml(m.name) + '</option>';    });    opts += '</optgroup>';  });  forgotView.innerHTML = '<div class="forgot-state">' +    '<div class="card-hdr">' +    '<div class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg></div>' +    '<div class="eyebrow">Forgot Password</div>' +    '<div class="h-title">Reset Request</div>' +    '</div>' +    '<div class="field"><span class="field-label">Your Name</span>' +    '<select id="forgotSelect" style="width:100%;padding:12px 14px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:#fff;font-family:Satoshi,-apple-system,sans-serif;font-size:14px;font-weight:500;outline:none;-webkit-appearance:none;appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:34px;">' + opts + '</select></div>' +    '<button class="btn" id="forgotSendBtn" disabled onclick="sendResetRequest()">Send Reset Request</button>' +    '<p class="msg" id="forgotMsg"></p>' +    '<button class="btn-back" onclick="backToLogin()">Back to login</button>' +    '</div>';  document.getElementById('forgotSelect').addEventListener('change', function() {    document.getElementById('forgotSendBtn').disabled = !this.value;  });}async function sendResetRequest() {  const staffId = document.getElementById('forgotSelect').value;  const btn = document.getElementById('forgotSendBtn');  const msg = document.getElementById('forgotMsg');  if (!staffId) return;  btn.classList.add('loading');  btn.textContent = 'Sending...';  const { status, data } = await apiPost('workspace-reset-request', { staff_id: staffId });  btn.classList.remove('loading');  if (status === 200) {    const staff = staffList.find(s => s.id === staffId);    document.getElementById('forgotView').innerHTML =      '<div class="forgot-state">' +      '<div class="card-hdr">' +      '<div class="icon"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><polyline points="20 6 9 17 4 12"/></svg></div>' +      '<div class="eyebrow">Request Sent</div>' +      '<div class="h-title">' + escapeHtml(staff ? staff.name : '') + '</div>' +      '</div>' +      '<p class="forgot-confirm">Your admin has been notified.<br/>They will reset your password shortly.</p>' +      '<button class="btn-back" onclick="backToLogin()">Back to login</button>' +      '</div>';  } else {    msg.className = 'msg error';    msg.textContent = 'Something went wrong. Try again.';    btn.textContent = 'Send Reset Request';    setTimeout(() => { msg.className = 'msg'; }, 2500);  }}function backToLogin() {  document.getElementById('forgotView').classList.add('hidden');  document.getElementById('loginView').classList.remove('hidden');}// ── BOOT ──
+// ── BOOT ──
 init();
 </script>
 </body>

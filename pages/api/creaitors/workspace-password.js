@@ -2,17 +2,20 @@
  * POST /api/creaitors/workspace-password
  *
  * Allows staff to change their workspace password.
+ * On first login (must_change), also generates a backup code for self-service reset.
+ *
  * Body: { staff_id, old_password, new_password }
  * Query: ?token=<client_access_token>
  *
  * Returns:
- *   200 { ok: true }
+ *   200 { ok: true, backup_code?: "XXXX-XXXX" }  — backup_code only on first set
  *   401 { error: "wrong_password" }
  *   400 { error: "password_too_short" } (min 6 chars)
  */
 import { getClientByToken, invalidateClientCache } from "../../../lib/supabase"
 import { createClient } from "@supabase/supabase-js"
 import bcrypt from "bcryptjs"
+import crypto from "crypto"
 
 function getSb() {
   return createClient(
@@ -20,6 +23,16 @@ function getSb() {
     process.env.SUPABASE_SERVICE_KEY,
     { auth: { persistSession: false } }
   )
+}
+
+function generateBackupCode() {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"; // no 0/O/1/I confusion
+  let code = "";
+  const bytes = crypto.randomBytes(8);
+  for (let i = 0; i < 8; i++) {
+    code += chars[bytes[i] % chars.length];
+  }
+  return code.slice(0, 4) + "-" + code.slice(4);
 }
 
 export default async function handler(req, res) {
@@ -50,15 +63,25 @@ export default async function handler(req, res) {
   const valid = bcrypt.compareSync(old_password, staff.password_hash)
   if (!valid) return res.status(401).json({ error: "wrong_password" })
 
-  // Hash new password and update
+  const isFirstSet = !!staff.must_change
   const newHash = bcrypt.hashSync(new_password, 10)
-  const labels = { ...client.labels }
-  labels.workspace_staff = { ...labels.workspace_staff }
-  labels.workspace_staff[staff_id] = {
+
+  const updatedStaff = {
     ...staff,
     password_hash: newHash,
     must_change: false
   }
+
+  // Generate backup code on first password set
+  let backupCode = null
+  if (isFirstSet) {
+    backupCode = generateBackupCode()
+    updatedStaff.backup_code_hash = bcrypt.hashSync(backupCode, 10)
+  }
+
+  const labels = { ...client.labels }
+  labels.workspace_staff = { ...labels.workspace_staff }
+  labels.workspace_staff[staff_id] = updatedStaff
 
   const sb = getSb()
   const { error } = await sb.from("clients").update({ labels }).eq("id", client.id)
@@ -67,8 +90,9 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "update_failed" })
   }
 
-  // Bust cache so next auth check uses new password
   invalidateClientCache(client.slug)
 
-  return res.json({ ok: true })
+  const response = { ok: true }
+  if (backupCode) response.backup_code = backupCode
+  return res.json(response)
 }

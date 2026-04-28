@@ -106,9 +106,9 @@ export default async function handler(req, res) {
       } catch { empMap[empId] = { name: 'Unknown', role: '', status: 'Active', avatarUrl: null }; }
     }));
 
-    // 4. Fetch live sessions DB — keyed by normalised host name
-    // Live Host = People property, Duration = formula (number, minutes)
-    const liveByName = {}; // normName → [{date, mins}]
+    // 4. Fetch live sessions DB — Live Host = relation, Duration Formula = number (hours)
+    const liveByEmpId = {}; // empId → [{date, mins}]
+    const liveHostIds = new Set();
     try {
       let liveCursor;
       do {
@@ -121,9 +121,9 @@ export default async function handler(req, res) {
         const ld = await lr.json();
         ld.results.forEach(session => {
           const sp = session.properties;
-          const durProp = sp['Duration'];
+          // Duration Formula returns hours as a number
+          const durProp = sp['Duration Formula'];
           let mins = 0;
-          // Formula: dateBetween(..., "minutes") / 60 → result is hours, convert to mins
           if (durProp?.type === 'number')  mins = (durProp.number || 0) * 60;
           if (durProp?.type === 'formula') mins = (durProp.formula?.number || 0) * 60;
 
@@ -131,16 +131,35 @@ export default async function handler(req, res) {
           const rawDate = dateProp?.date?.start || session.created_time || null;
           const date = rawDate ? rawDate.slice(0, 10) : null;
 
-          const hosts = sp['Live Host']?.people || [];
-          hosts.forEach(person => {
-            const key = normName(person.name);
-            if (!liveByName[key]) liveByName[key] = [];
-            liveByName[key].push({ date, mins });
+          // Live Host is a relation — collect IDs, resolve via empMap later
+          const hostRels = sp['Live Host']?.relation || [];
+          hostRels.forEach(({ id: hostId }) => {
+            liveHostIds.add(hostId);
+            if (!liveByEmpId[hostId]) liveByEmpId[hostId] = [];
+            liveByEmpId[hostId].push({ date, mins });
           });
         });
         liveCursor = ld.has_more ? ld.next_cursor : undefined;
       } while (liveCursor);
     } catch (_) {}
+
+    // Ensure live host pages are loaded into empMap
+    await Promise.all([...liveHostIds].map(async hostId => {
+      if (empMap[hostId]) return;
+      empIdSet.add(hostId);
+      try {
+        const r = await fetch('https://api.notion.com/v1/pages/' + hostId, { headers });
+        if (!r.ok) { empMap[hostId] = { name: 'Unknown', role: '', status: 'Active', avatarUrl: null }; return; }
+        const pg = await r.json();
+        const p  = pg.properties;
+        empMap[hostId] = {
+          name:      p['Name']?.title?.map(t => t.plain_text).join('') || 'Unknown',
+          role:      p['Role']?.select?.name || '',
+          status:    p['Status']?.select?.name || 'Active',
+          avatarUrl: extractAvatar(pg.icon),
+        };
+      } catch { empMap[hostId] = { name: 'Unknown', role: '', status: 'Active', avatarUrl: null }; }
+    }));
 
     // 5. Fetch issues log — Team Member is now a select field (not relation)
     const issuesByName = {}; // normName → [{date, title, summary, actionTaken, status, stage}]
@@ -232,7 +251,7 @@ export default async function handler(req, res) {
       });
 
       const empName      = empMap[id]?.name || '';
-      const liveSessions = liveByName[normName(empName)] || [];
+      const liveSessions = liveByEmpId[id] || [];
       const issues       = issuesByName[normName(empName)] || [];
 
       return {

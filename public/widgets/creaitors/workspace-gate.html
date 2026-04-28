@@ -1,269 +1,217 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Team Workspace</title>
-  <style>
-    @import url('https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap');
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio - Workspace Gate</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#fff;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow-y:auto;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.2);--card:#1E1E1E;--border:rgba(255,255,255,.06);--dim:rgba(255,255,255,.2);--dimmer:rgba(255,255,255,.15);}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
 
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+.gate{width:100%;max-width:360px;padding:20px;}
 
-    body {
-      font-family: 'Satoshi', sans-serif;
-      background: #0a0a0a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      color: #fff;
-    }
+/* Header */
+.hdr{text-align:center;margin-bottom:18px;}
+.hdr .icon{width:32px;height:32px;border-radius:10px;background:var(--gm);border:1px solid var(--gb);display:inline-flex;align-items:center;justify-content:center;margin-bottom:10px;}
+.hdr .icon svg{width:16px;height:16px;stroke:var(--g);fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round;}
+.hdr .eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin-bottom:4px;}
+.hdr .title{font-size:20px;font-weight:900;letter-spacing:-.03em;color:#fff;}
 
-    .gate {
-      text-align: center;
-      max-width: 380px;
-      width: 100%;
-      padding: 2rem 1.5rem;
-    }
+/* Card */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
 
-    .lock-icon {
-      margin-bottom: 0.75rem;
-    }
+/* Fields */
+.field{margin-bottom:12px;}
+.field-label{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:6px;}
 
-    .lock-icon svg {
-      width: 28px;
-      height: 28px;
-      stroke: #AAFF00;
-      fill: none;
-      stroke-width: 1.5;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
+.field select,
+.field input{
+  width:100%;padding:10px 12px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;
+  color:#fff;
+  font-family:'Satoshi',sans-serif;
+  font-size:13px;font-weight:500;
+  outline:none;
+  transition:all .15s;
+  -webkit-appearance:none;appearance:none;
+}
 
-    .gate .title {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
+.field select{
+  cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;
+  background-position:right 12px center;
+  padding-right:32px;
+}
 
-    .gate .subtitle {
-      font-size: 0.82rem;
-      color: #555;
-      margin-bottom: 1.5rem;
-    }
+.field select option{background:#1E1E1E;color:#fff;}
+.field select optgroup{color:rgba(255,255,255,.3);font-weight:700;font-size:11px;}
+.field input::placeholder{color:rgba(255,255,255,.2);}
+.field select:focus,.field input:focus{border-color:var(--gb);background:var(--gm);}
 
-    /* Shared input styles */
-    .field {
-      margin-bottom: 0.75rem;
-    }
+/* Button */
+.btn{
+  width:100%;padding:10px 12px;
+  background:var(--gm);
+  border:1px solid var(--gb);
+  border-radius:8px;
+  font-family:'Satoshi',sans-serif;
+  font-size:13px;font-weight:700;
+  color:var(--g);
+  cursor:pointer;
+  transition:all .15s;
+  margin-top:4px;
+}
+.btn:hover{background:rgba(170,255,0,.18);}
+.btn:active{background:rgba(170,255,0,.25);}
+.btn:disabled{opacity:.25;cursor:not-allowed;}
 
-    .field select,
-    .field input {
-      width: 100%;
-      padding: 0.85rem 1rem;
-      background: #141414;
-      border: 1px solid #222;
-      border-radius: 10px;
-      color: #fff;
-      font-family: 'Satoshi', sans-serif;
-      font-size: 0.95rem;
-      outline: none;
-      transition: border-color 0.2s;
-      -webkit-appearance: none;
-      appearance: none;
-    }
+/* Messages */
+.msg{font-size:11px;font-weight:600;margin-top:10px;text-align:center;opacity:0;transition:opacity .2s;}
+.msg.error{color:#FF6B35;}
+.msg.visible{opacity:1;}
 
-    .field select {
-      cursor: pointer;
-      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 1rem center;
-      padding-right: 2.5rem;
-    }
+/* Success state */
+.success-state{text-align:center;}
+.success-state .check{width:40px;height:40px;border-radius:12px;background:var(--gm);border:1px solid var(--gb);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;}
+.success-state .check svg{width:20px;height:20px;stroke:var(--g);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.success-state .welcome{font-size:16px;font-weight:900;letter-spacing:-.02em;color:#fff;margin-bottom:2px;}
+.success-state .verified{font-size:11px;font-weight:600;color:rgba(170,255,0,.5);margin-bottom:16px;}
 
-    .field select option {
-      background: #141414;
-      color: #fff;
-    }
-
-    .field input::placeholder {
-      color: #555;
-    }
-
-    .field select:focus,
-    .field input:focus {
-      border-color: #AAFF00;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 0.85rem 1rem;
-      background: #AAFF00;
-      color: #0a0a0a;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Satoshi', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      margin-top: 0.25rem;
-    }
-
-    .btn:hover { opacity: 0.85; }
-    .btn:active { opacity: 0.7; }
-
-    .btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
-
-    .msg {
-      font-size: 0.82rem;
-      margin-top: 0.75rem;
-      opacity: 0;
-      transition: opacity 0.25s;
-    }
-
-    .msg.error { color: #ff4444; }
-    .msg.success { color: #AAFF00; }
-    .msg.visible { opacity: 1; }
-
-    .open-link {
-      display: block;
-      width: 100%;
-      padding: 0.85rem 1rem;
-      background: #AAFF00;
-      color: #0a0a0a;
-      border: none;
-      border-radius: 10px;
-      font-family: 'Satoshi', sans-serif;
-      font-size: 0.95rem;
-      font-weight: 700;
-      text-decoration: none;
-      text-align: center;
-      margin-top: 1rem;
-      transition: opacity 0.2s;
-    }
-
-    .open-link:hover { opacity: 0.85; }
-  </style>
+.open-link{
+  display:block;width:100%;padding:12px;
+  background:var(--g);
+  border:none;border-radius:8px;
+  font-family:'Satoshi',sans-serif;
+  font-size:13px;font-weight:800;
+  color:#191919;
+  text-decoration:none;text-align:center;
+  transition:opacity .15s;
+  letter-spacing:-.01em;
+}
+.open-link:hover{opacity:.85;}
+</style>
 </head>
 <body>
-  <div class="gate">
-    <div class="lock-icon">
-      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-        <circle cx="12" cy="16.5" r="1.5"/>
-      </svg>
+  <div class="gate" id="gate">
+    <div class="hdr">
+      <div class="icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          <circle cx="12" cy="16.5" r="1.5"/>
+        </svg>
+      </div>
+      <div class="eyebrow">Staff Access</div>
+      <div class="title">Team Workspace</div>
     </div>
-    <p class="title">Team Workspace</p>
-    <p class="subtitle">Select your name and enter your password</p>
 
-    <form id="gateForm">
-      <div class="field">
-        <select id="staffSelect">
-          <option value="" disabled selected>Choose your name</option>
-        </select>
-      </div>
-      <div class="field">
-        <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off" />
-      </div>
-      <button type="submit" class="btn" id="enterBtn" disabled>Enter Workspace</button>
-    </form>
-    <p class="msg" id="msgEl"></p>
+    <div class="card">
+      <form id="gateForm">
+        <div class="field">
+          <div class="field-label">Name</div>
+          <select id="staffSelect">
+            <option value="" disabled selected>Choose your name</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Password</div>
+          <input type="password" id="passInput" placeholder="Enter your password" autocomplete="off"/>
+        </div>
+        <button type="submit" class="btn" id="enterBtn" disabled>Enter Workspace</button>
+      </form>
+      <p class="msg" id="msgEl">Wrong password. Try again.</p>
+    </div>
   </div>
 
-  <script>
-    // -------------------------------------------------------
-    // CREAITORS — TEAM WORKSPACE GATE
-    // -------------------------------------------------------
-    // Each entry: { name, page (Notion URL), pw (password) }
-    //
-    // To add/remove staff or change passwords, edit this array.
-    // Department is display-only grouping.
-    // -------------------------------------------------------
+<script>
+// -------------------------------------------------------
+// CREAITORS — TEAM WORKSPACE GATE
+// -------------------------------------------------------
+// Each entry: { name, dept, page (Notion URL), pw }
+// To add/remove staff or change passwords, edit this array.
+// -------------------------------------------------------
 
-    const STAFF = [
-      // Content Creators
-      { name: 'Maisarah',       dept: 'Content Creator',    page: 'https://www.notion.so/502736ebbe34829aada981e516950457', pw: 'maisarah2026' },
-      { name: 'Firdaus',        dept: 'Content Creator',    page: 'https://www.notion.so/e0c736ebbe3483b685990149c8c57a64', pw: 'firdaus2026' },
-      { name: 'Sufyan Habib',   dept: 'Content Creator',    page: 'https://www.notion.so/27a736ebbe3482eeb662814a0a7f9c93', pw: 'sufyan2026' },
+const STAFF = [
+  { name: 'Maisarah',       dept: 'Content Creator',  page: 'https://www.notion.so/502736ebbe34829aada981e516950457', pw: 'maisarah2026' },
+  { name: 'Firdaus',        dept: 'Content Creator',  page: 'https://www.notion.so/e0c736ebbe3483b685990149c8c57a64', pw: 'firdaus2026' },
+  { name: 'Sufyan Habib',   dept: 'Content Creator',  page: 'https://www.notion.so/27a736ebbe3482eeb662814a0a7f9c93', pw: 'sufyan2026' },
+  { name: 'Hendra Gumilar', dept: 'Videographer',     page: 'https://www.notion.so/4b3736ebbe348283a75b01c0f12d9587', pw: 'hendra2026' },
+  { name: 'Richard',        dept: 'Videographer',     page: 'https://www.notion.so/0ff736ebbe348340bdaf81d516956d7b', pw: 'richard2026' },
+  { name: 'Rifki Purnama',  dept: 'Videographer',     page: 'https://www.notion.so/bd3736ebbe3482bd9b4781b0689119ea', pw: 'rifki2026' },
+  { name: 'Aina Zahara',    dept: 'KOL Marketing',    page: 'https://www.notion.so/401736ebbe34822cb60a0115a5a4722d', pw: 'aina2026' },
+];
 
-      // Video Editor / Videographer
-      { name: 'Hendra Gumilar', dept: 'Videographer',       page: 'https://www.notion.so/4b3736ebbe348283a75b01c0f12d9587', pw: 'hendra2026' },
-      { name: 'Richard',        dept: 'Videographer',       page: 'https://www.notion.so/0ff736ebbe348340bdaf81d516956d7b', pw: 'richard2026' },
-      { name: 'Rifki Purnama',  dept: 'Videographer',       page: 'https://www.notion.so/bd3736ebbe3482bd9b4781b0689119ea', pw: 'rifki2026' },
+// Populate dropdown grouped by department
+const select = document.getElementById('staffSelect');
+const depts = {};
+STAFF.forEach((s, i) => {
+  if (!depts[s.dept]) depts[s.dept] = [];
+  depts[s.dept].push({ ...s, index: i });
+});
+Object.entries(depts).forEach(([dept, members]) => {
+  const group = document.createElement('optgroup');
+  group.label = dept;
+  members.forEach(m => {
+    const opt = document.createElement('option');
+    opt.value = m.index;
+    opt.textContent = m.name;
+    group.appendChild(opt);
+  });
+  select.appendChild(group);
+});
 
-      // KOL Marketing
-      { name: 'Aina Zahara',    dept: 'KOL Marketing',      page: 'https://www.notion.so/401736ebbe34822cb60a0115a5a4722d', pw: 'aina2026' },
-    ];
+// Enable button when both fields filled
+const passInput = document.getElementById('passInput');
+const enterBtn = document.getElementById('enterBtn');
+function checkReady() {
+  enterBtn.disabled = !(select.value && passInput.value);
+}
+select.addEventListener('change', checkReady);
+passInput.addEventListener('input', checkReady);
 
-    // Populate dropdown with optgroups by department
-    const select = document.getElementById('staffSelect');
-    const depts = {};
-    STAFF.forEach((s, i) => {
-      if (!depts[s.dept]) depts[s.dept] = [];
-      depts[s.dept].push({ ...s, index: i });
-    });
+// Submit
+document.getElementById('gateForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const msgEl = document.getElementById('msgEl');
+  const idx = parseInt(select.value);
+  const staff = STAFF[idx];
+  if (!staff) return;
 
-    Object.entries(depts).forEach(([dept, members]) => {
-      const group = document.createElement('optgroup');
-      group.label = dept;
-      members.forEach(m => {
-        const opt = document.createElement('option');
-        opt.value = m.index;
-        opt.textContent = m.name;
-        group.appendChild(opt);
-      });
-      select.appendChild(group);
-    });
+  if (passInput.value === staff.pw) {
+    // Show success state with clickable link
+    document.querySelector('.card').innerHTML = `
+      <div class="success-state">
+        <div class="check">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <polyline points="20 6 9 17 4 12"/>
+          </svg>
+        </div>
+        <div class="welcome">${escapeHtml(staff.name)}</div>
+        <div class="verified">Access verified</div>
+        <a href="${staff.page}" target="_blank" rel="noopener" class="open-link">Open Workspace</a>
+      </div>
+    `;
+  } else {
+    msgEl.classList.add('error', 'visible');
+    passInput.value = '';
+    passInput.focus();
+    checkReady();
+    setTimeout(() => msgEl.classList.remove('visible'), 2500);
+  }
+});
 
-    // Enable button only when both fields filled
-    const passInput = document.getElementById('passInput');
-    const enterBtn = document.getElementById('enterBtn');
-
-    function checkReady() {
-      enterBtn.disabled = !(select.value && passInput.value);
-    }
-    select.addEventListener('change', checkReady);
-    passInput.addEventListener('input', checkReady);
-
-    // Form submit
-    document.getElementById('gateForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      const msgEl = document.getElementById('msgEl');
-      const idx = parseInt(select.value);
-      const staff = STAFF[idx];
-
-      if (!staff) return;
-
-      if (passInput.value === staff.pw) {
-        // Replace the entire form with a clickable link (works inside Notion embeds)
-        const gate = document.querySelector('.gate');
-        gate.innerHTML = `
-          <div class="lock-icon">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              <circle cx="12" cy="16.5" r="1.5"/>
-            </svg>
-          </div>
-          <p class="title" style="margin-bottom: 0.25rem;">Welcome, ${staff.name}</p>
-          <p class="subtitle">Password verified</p>
-          <a href="${staff.page}" target="_blank" rel="noopener" class="open-link">Open Your Workspace</a>
-        `;
-      } else {
-        msgEl.className = 'msg error visible';
-        msgEl.textContent = 'Wrong password. Try again.';
-        passInput.value = '';
-        passInput.focus();
-        checkReady();
-        setTimeout(() => msgEl.classList.remove('visible'), 2500);
-      }
-    });
-  </script>
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s;
+  return d.innerHTML;
+}
+</script>
 </body>
 </html>

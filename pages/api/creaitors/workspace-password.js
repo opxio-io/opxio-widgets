@@ -76,7 +76,7 @@ export default async function handler(req, res) {
   let backupCode = null
   if (isFirstSet) {
     backupCode = generateBackupCode()
-    updatedStaff.backup_code_hash = bcrypt.hashSync(backupCode, 10)
+    updatedStaff.backup_code_hash = bcrypt.hashSync(backupCode.replace("-", ""), 10)
   }
 
   const labels = { ...client.labels }

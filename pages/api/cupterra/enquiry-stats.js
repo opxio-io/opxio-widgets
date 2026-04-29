@@ -1,6 +1,5 @@
 // pages/api/cupterra/enquiry-stats.js
 // 4-tile CRM dashboard for cupTerra / Shin Supplies
-// Single DB query (Enquiry Submissions) + optional People lookup for rep names
 
 import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
 
@@ -30,7 +29,6 @@ async function queryAll(dbId, notionKey, filter) {
   return results
 }
 
-// Property helpers
 const getTitle    = p => (p?.title || []).map(t => t.plain_text).join('')
 const getText     = p => (p?.rich_text || []).map(t => t.plain_text).join('')
 const getStatus   = p => p?.status?.name || p?.select?.name || null
@@ -38,7 +36,6 @@ const getDate     = p => p?.date?.start || null
 const getCheckbox = p => p?.checkbox === true
 const getRelIds   = p => (p?.relation || []).map(r => r.id)
 const getMultiSel = p => (p?.multi_select || []).map(s => s.name)
-const getFormula  = p => p?.formula?.number ?? p?.formula?.string ?? null
 
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -58,10 +55,8 @@ export default async function handler(req, res) {
   const PEOPLE_DB   = resolveDB(client, 'people', PEOPLE_DB_DEFAULT)
 
   try {
-    // ── Fetch all enquiries ──────────────────────────────────────────────────
     const pages = await queryAll(ENQUIRY_DB, NOTION_KEY)
 
-    // ── Fetch people for rep name mapping ───────────────────────────────────
     let repMap = {}
     try {
       const people = await queryAll(PEOPLE_DB, NOTION_KEY)
@@ -70,7 +65,7 @@ export default async function handler(req, res) {
         const name = getTitle(nameProp)
         if (name) {
           repMap[p.id] = name
-          repMap[p.id.replace(/-/g,'')] = name  // also store without dashes
+          repMap[p.id.replace(/-/g,'')] = name
         }
       }
     } catch(err) { console.error('People DB error:', err.message) }
@@ -80,136 +75,103 @@ export default async function handler(req, res) {
     const mStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const wStart = new Date(now); wStart.setDate(now.getDate() - 6)
 
-    // ── Metric buckets ───────────────────────────────────────────────────────
     let newLeads24h = 0, newLeadsWeek = 0
-    let overdueResponse = 0      // new lead, no quotation, >2h old
-    let responded2h = 0, eligibleResponse = 0  // for rate calc
+    let overdueResponse = 0
+    let responded2h = 0, eligibleResponse = 0
     let pendingQuotations = 0, overdueQuotations = 0
     let followupsToday = 0, followupsNext3Days = 0
-    const stuckByStatus = { 'Negotiation': 0, 'Sales Order Issued': 0 }
-    const closedWonMTD = []
-    const repStats = {}   // id → { name, closedWon, active }
+    let closedWonMTD = 0
+    const stageCount = {}
     const productCount = {}
     const sourceCount  = {}
 
     const d3 = new Date(now); d3.setDate(now.getDate() + 3)
     const d3Str = d3.toISOString().slice(0, 10)
 
+    // Stage order for funnel
+    const STAGE_ORDER = ['New Lead', 'Quotation Sent', 'Negotiation', 'Sales Order Issued', 'Closed Won', 'Closed Lost']
+
     for (const page of pages) {
-      const p       = page.properties
-      const status  = getStatus(p['Status'])
-      const submAt  = getDate(p['Submitted At'])
+      const p        = page.properties
+      const status   = getStatus(p['Status'])
+      const submAt   = getDate(p['Submitted At'])
       const quoIssued = getCheckbox(p['Quotation Issued'])
       const quoSentDt = getDate(p['Quotation Sent Date'])
-      const nextFU  = getDate(p['Next Follow-up Date'])
+      const nextFU   = getDate(p['Next Follow-up Date'])
       const assigned = getRelIds(p['Assigned To'])
       const products = getMultiSel(p['Kategori produk'])
       const source   = getStatus(p['Lead Source'])
       const name     = getTitle(p['Nama Penuh'])
-      const biz      = getText(p['Nama Perniagaan'])
-      const wa       = getText(p['Nombor WhatsApp'])
 
       if (!status) continue
 
       const isClosed = status === 'Closed Won' || status === 'Closed Lost' || status === 'Done'
 
-      // ── TILE 1: New Leads + Response Speed ─────────────────────────────────
+      // Stage breakdown (all statuses)
+      const stageKey = status === 'Done' ? 'Closed Won' : status
+      stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
+
+      // Tile 1
       if (submAt) {
         const submDate = new Date(submAt)
         const ageH = (now - submDate) / 3600000
-
         if (ageH <= 24)  newLeads24h++
         if (submDate >= wStart) newLeadsWeek++
-
-        // Response: quotation issued = "responded"
-        if (ageH <= 48) {  // only count leads <48h for rate (recent enough to matter)
+        if (ageH <= 48) {
           eligibleResponse++
           if (quoIssued || status !== 'New Lead') {
-            // Responded — check if within 2h
             if (quoSentDt) {
               const respH = (new Date(quoSentDt) - submDate) / 3600000
               if (respH <= 2) responded2h++
             }
           } else if (ageH > 2) {
-            // New lead, no quotation, older than 2h → overdue
             overdueResponse++
           }
         }
       }
 
-      // ── TILE 2: Quotation Backlog ───────────────────────────────────────────
+      // Tile 2
       if (!isClosed && !quoIssued && status === 'New Lead') {
         pendingQuotations++
-        if (submAt && (now - new Date(submAt)) / 3600000 > 24) {
-          overdueQuotations++
-        }
+        if (submAt && (now - new Date(submAt)) / 3600000 > 24) overdueQuotations++
       }
 
-      // ── TILE 3: Follow-ups ──────────────────────────────────────────────────
+      // Tile 3
       if (nextFU && !isClosed) {
         if (nextFU <= today)   followupsToday++
         if (nextFU <= d3Str)   followupsNext3Days++
       }
 
-      // ── TILE 4: Pipeline Health ─────────────────────────────────────────────
-      if (status === 'Closed Won') {
-        // MTD check — use submAt or page created time as proxy
+      // Tile 4
+      if (status === 'Closed Won' || status === 'Done') {
         const ref = submAt || page.created_time
-        if (ref && new Date(ref) >= mStart) {
-          closedWonMTD.push({
-            name,
-            biz,
-            repId: assigned[0] || null,
-          })
-        }
+        if (ref && new Date(ref) >= mStart) closedWonMTD++
       }
 
-      if ((status === 'Negotiation' || status === 'Sales Order Issued')) {
-        stuckByStatus[status] = (stuckByStatus[status] || 0) + 1
-      }
-
-      // Per-rep stats
-      for (const repId of assigned) {
-        const repName = repMap[repId] || repMap[repId.replace(/-/g,'')] || null
-        if (!repStats[repId]) repStats[repId] = { name: repName || repId.slice(0,8), closedWon: 0, active: 0 }
-        if (status === 'Closed Won') repStats[repId].closedWon++
-        else if (!isClosed) repStats[repId].active++
-      }
-
-      // Product breakdown
-      for (const prod of products) {
-        productCount[prod] = (productCount[prod] || 0) + 1
-      }
-
-      // Source breakdown
+      // Product + source
+      for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
       if (source) sourceCount[source] = (sourceCount[source] || 0) + 1
     }
 
-    const responseRate2h = eligibleResponse > 0 ? Math.round((responded2h / eligibleResponse) * 100) : null
+    // Build ordered stage funnel (exclude Closed Lost from main funnel)
+    const stageFunnel = STAGE_ORDER
+      .filter(s => s !== 'Closed Lost')
+      .map(s => ({ stage: s, count: stageCount[s] || 0 }))
+
+    const responseRate2h = eligibleResponse > 0
+      ? Math.round((responded2h / eligibleResponse) * 100)
+      : null
 
     return res.status(200).json({
       total: pages.length,
-      tile1: {
-        newLeads24h,
-        newLeadsWeek,
-        overdueResponse,
-        responseRate2h,
-        eligibleResponse,
-        responded2h,
-      },
-      tile2: {
-        pendingQuotations,
-        overdueQuotations,
-      },
-      tile3: {
-        followupsToday,
-        followupsNext3Days,
-      },
+      tile1: { newLeads24h, newLeadsWeek, overdueResponse, responseRate2h, eligibleResponse, responded2h },
+      tile2: { pendingQuotations, overdueQuotations },
+      tile3: { followupsToday, followupsNext3Days },
       tile4: {
-        closedWonMTD: closedWonMTD.length,
-        stuckNegotiation: stuckByStatus['Negotiation'] || 0,
-        stuckSalesOrder: stuckByStatus['Sales Order Issued'] || 0,
-        byRep: Object.values(repStats).sort((a,b) => b.closedWon - a.closedWon),
+        closedWonMTD,
+        stuckNegotiation: stageCount['Negotiation'] || 0,
+        stuckSalesOrder: stageCount['Sales Order Issued'] || 0,
+        stageFunnel,
       },
       productBreakdown: productCount,
       sourceBreakdown: sourceCount,

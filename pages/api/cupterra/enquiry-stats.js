@@ -5,7 +5,7 @@
 import { getClientByToken, getNotionToken, resolveDB } from "../../../lib/supabase"
 
 const ENQUIRY_DB_DEFAULT = '71c9ba4af0694291876bf78422805f18'
-const PEOPLE_DB_DEFAULT  = '34cfe60097f680cba3e8000beeb8103c'
+const PEOPLE_DB_DEFAULT  = '34cfe60097f680e1bac0e75b431bc325'
 
 async function queryAll(dbId, notionKey, filter) {
   const headers = {
@@ -66,10 +66,14 @@ export default async function handler(req, res) {
     try {
       const people = await queryAll(PEOPLE_DB, NOTION_KEY)
       for (const p of people) {
-        const name = getTitle(p.properties['Name'] || p.properties['Nama'] || p.properties['Full Name'])
-        if (name) repMap[p.id] = name
+        const nameProp = p.properties['Name'] || p.properties['Nama'] || p.properties['Full Name']
+        const name = getTitle(nameProp)
+        if (name) {
+          repMap[p.id] = name
+          repMap[p.id.replace(/-/g,'')] = name  // also store without dashes
+        }
       }
-    } catch { /* non-fatal — rep names become IDs */ }
+    } catch(err) { console.error('People DB error:', err.message) }
 
     const now    = new Date()
     const today  = now.toISOString().slice(0, 10)
@@ -166,7 +170,8 @@ export default async function handler(req, res) {
 
       // Per-rep stats
       for (const repId of assigned) {
-        if (!repStats[repId]) repStats[repId] = { name: repMap[repId] || repId.slice(0,8), closedWon: 0, active: 0 }
+        const repName = repMap[repId] || repMap[repId.replace(/-/g,'')] || null
+        if (!repStats[repId]) repStats[repId] = { name: repName || repId.slice(0,8), closedWon: 0, active: 0 }
         if (status === 'Closed Won') repStats[repId].closedWon++
         else if (!isClosed) repStats[repId].active++
       }

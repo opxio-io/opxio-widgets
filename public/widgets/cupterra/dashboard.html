@@ -11,7 +11,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 :root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--amber:#FBBF24;--blue:#60A5FA;}
 .card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
 .card:hover{border-color:rgba(170,255,0,.08);}
-/* Top bar */
 .top-bar{display:flex;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap;}
 .top-right{display:flex;align-items:center;gap:6px;margin-left:auto;}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
@@ -22,7 +21,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .icon-btn svg{width:14px;height:14px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-/* Stat rows */
 .stat-row{display:grid;gap:10px;margin-bottom:12px;}
 .stat-row-4{grid-template-columns:repeat(4,1fr);}
 .stat-row-2{grid-template-columns:repeat(2,1fr);}
@@ -34,9 +32,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.5);margin-bottom:10px;line-height:1.4;display:block;}
 .s-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
 .s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:7px;}
-/* Divider */
-.divider{height:1px;background:rgba(255,255,255,.05);margin:12px 0;}
-/* Panel */
 .panel{padding:18px 20px;display:flex;flex-direction:column;}
 .panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
@@ -53,17 +48,28 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 .rate-fill{height:100%;border-radius:999px;background:var(--g);transition:width .6s ease;}
 .rate-fill.bad{background:var(--lost);}
 .rate-meta{display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:rgba(255,255,255,.28);}
-/* 2-col bottom */
 .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 @media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
-/* Product cards grid */
-.prod-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
-.prod-card{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px 14px;position:relative;overflow:hidden;}
-.prod-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
-.prod-name{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.4);margin-bottom:6px;line-height:1.3;}
-.prod-count{font-size:24px;font-weight:900;letter-spacing:-1px;line-height:1;}
-.prod-pct{font-size:10px;font-weight:700;color:rgba(255,255,255,.2);margin-top:4px;}
-/* Loading / error */
+/* Donut chart */
+.donut-wrap{display:flex;align-items:center;gap:18px;flex:1;}
+.donut-svg{flex-shrink:0;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:7px;}
+.legend-row{display:flex;align-items:center;gap:7px;}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.legend-name{font-size:9px;font-weight:700;color:rgba(255,255,255,.45);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.legend-val{font-size:11px;font-weight:900;color:rgba(255,255,255,.7);}
+.legend-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);margin-left:3px;}
+/* Source ranked list */
+.src-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.src-item:last-child{border-bottom:none;}
+.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.15);width:14px;flex-shrink:0;text-align:center;}
+.src-accent{width:3px;height:28px;border-radius:2px;flex-shrink:0;}
+.src-info{flex:1;min-width:0;}
+.src-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.src-bar-wrap{height:3px;background:rgba(255,255,255,.06);border-radius:999px;margin-top:4px;overflow:hidden;}
+.src-bar-fill{height:100%;border-radius:999px;transition:width .5s ease;}
+.src-count{font-size:13px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;}
+.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);flex-shrink:0;width:30px;text-align:right;}
 .loading{display:flex;align-items:center;justify-content:center;min-height:220px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;}
@@ -97,33 +103,106 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-const PROD_COLORS = {
-  'Paper Cup':         { bar:'rgba(96,165,250,.55)',  card:'#60A5FA' },
-  'Plastic Cup':       { bar:'rgba(192,132,252,.55)', card:'#C084FC' },
-  'Greaseproof Paper': { bar:'rgba(251,191,36,.55)',  card:'#FBBF24' },
-  'PET Can':           { bar:'rgba(170,255,0,.55)',   card:'#AAFF00' },
-};
-const SRC_COLORS = {
+const PROD_COLORS = ['#60A5FA','#C084FC','#FBBF24','#AAFF00','#34D399','#F97316'];
+const PROD_NAMES  = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
+const SRC_COLORS  = {
   'Iklan Facebook':'#60A5FA','TikTok':'#E879F9',
   'Threads':'#F97316','Rujukan / Kenalan':'#AAFF00',
   'Walk-in':'#34D399','Lain-lain':'#9CA3AF',
 };
-
-// Stage funnel colours — gradient from muted → green
 const STAGE_COLORS = [
-  'rgba(255,255,255,.15)',  // New Lead
-  'rgba(96,165,250,.5)',    // Quotation Sent
-  'rgba(251,191,36,.5)',    // Negotiation
-  'rgba(249,115,22,.5)',    // Sales Order Issued
-  'rgba(170,255,0,.6)',     // Closed Won
+  'rgba(255,255,255,.18)',
+  'rgba(96,165,250,.55)',
+  'rgba(251,191,36,.55)',
+  'rgba(249,115,22,.55)',
+  'rgba(170,255,0,.65)',
 ];
+
+// SVG donut chart builder
+function buildDonut(dataObj, colorList, size) {
+  const entries = Object.entries(dataObj).sort((a,b)=>b[1]-a[1]);
+  const total   = entries.reduce((s,[,v])=>s+v,0) || 1;
+  const cx=size/2, cy=size/2, ro=size/2-4, ri=ro*0.58;
+  let angle = -Math.PI/2;
+  const slices = entries.map(([name,count],i) => {
+    const sweep = (count/total)*Math.PI*2;
+    const ea = angle+sweep;
+    const large = sweep>Math.PI?1:0;
+    const col = colorList[i % colorList.length];
+    const x1=cx+ro*Math.cos(angle), y1=cy+ro*Math.sin(angle);
+    const x2=cx+ro*Math.cos(ea),    y2=cy+ro*Math.sin(ea);
+    const x3=cx+ri*Math.cos(ea),    y3=cy+ri*Math.sin(ea);
+    const x4=cx+ri*Math.cos(angle), y4=cy+ri*Math.sin(angle);
+    const path = `M${x1},${y1} A${ro},${ro} 0 ${large},1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 ${large},0 ${x4},${y4}Z`;
+    angle = ea;
+    return { name, count, color: col, path };
+  });
+  return { slices, total, cx, cy, ri };
+}
+
+function renderDonut(dataObj, colorList, size) {
+  if (!dataObj || Object.keys(dataObj).length === 0)
+    return '<div style="font-size:11px;color:rgba(255,255,255,.18);padding:20px 0;">No data</div>';
+
+  const { slices, total, cx, cy, ri } = buildDonut(dataObj, colorList, size);
+
+  const paths = slices.map(s =>
+    `<path d="${s.path}" fill="${s.color}" stroke="#222" stroke-width="1.5"/>`
+  ).join('');
+
+  const svgHtml = `
+    <svg class="donut-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
+      ${paths}
+      <text x="${cx}" y="${cy-7}" text-anchor="middle" font-family="Satoshi,sans-serif"
+        font-size="18" font-weight="900" fill="rgba(255,255,255,.85)">${total}</text>
+      <text x="${cx}" y="${cy+8}" text-anchor="middle" font-family="Satoshi,sans-serif"
+        font-size="7.5" font-weight="700" fill="rgba(255,255,255,.28)" letter-spacing="1">TOTAL</text>
+    </svg>`;
+
+  const legendHtml = slices.map(s => {
+    const pct = Math.round((s.count/total)*100);
+    return `<div class="legend-row">
+      <div class="legend-dot" style="background:${s.color};"></div>
+      <span class="legend-name">${esc(PROD_NAMES[s.name]||s.name)}</span>
+      <span class="legend-val">${s.count}</span>
+      <span class="legend-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+
+  return `<div class="donut-wrap">
+    ${svgHtml}
+    <div class="donut-legend">${legendHtml}</div>
+  </div>`;
+}
+
+function renderSources(dataObj) {
+  if (!dataObj || Object.keys(dataObj).length === 0)
+    return '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>';
+  const entries = Object.entries(dataObj).sort((a,b)=>b[1]-a[1]);
+  const total   = entries.reduce((s,[,v])=>s+v,0) || 1;
+  const maxVal  = entries[0][1] || 1;
+  return entries.map(([name,count],i) => {
+    const pct  = Math.round((count/total)*100);
+    const barW = Math.round((count/maxVal)*100);
+    const col  = SRC_COLORS[name] || '#9CA3AF';
+    return `<div class="src-item">
+      <span class="src-rank">${i+1}</span>
+      <div class="src-accent" style="background:${col};opacity:.7;"></div>
+      <div class="src-info">
+        <div class="src-name">${esc(name)}</div>
+        <div class="src-bar-wrap"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>
+      </div>
+      <span class="src-count" style="color:${col};">${count}</span>
+      <span class="src-pct">${pct}%</span>
+    </div>`;
+  }).join('');
+}
 
 function render(d) {
   const t1=d.tile1, t2=d.tile2, t3=d.tile3, t4=d.tile4;
   const rate=t1.responseRate2h;
   const rateOk = rate!==null && rate>=70;
 
-  // ── Row 1: 4 stat tiles ──────────────────────────────────────────────────
   const row1 = `
   <div class="stat-row stat-row-4">
     <div class="card stat" style="--accent:var(--g);">
@@ -148,15 +227,13 @@ function render(d) {
     </div>
   </div>`;
 
-  // ── Row 2: Response rate + Pipeline funnel ───────────────────────────────
-  const funnel = (t4.stageFunnel || []);
+  const funnel = t4.stageFunnel || [];
   const funnelMax = Math.max(...funnel.map(s=>s.count), 1);
   const funnelRows = funnel.map((s,i) => {
     const pct = Math.max(Math.round((s.count/funnelMax)*100), s.count>0?4:0);
-    const col = STAGE_COLORS[i] || 'rgba(170,255,0,.45)';
     return `<div class="f-row">
       <span class="f-lbl">${esc(s.stage)}</span>
-      <div class="f-bg"><div class="f-fill" style="width:${pct}%;background:${col};"></div></div>
+      <div class="f-bg"><div class="f-fill" style="width:${pct}%;background:${STAGE_COLORS[i]||'rgba(170,255,0,.45)'};"></div></div>
       <span class="f-n">${s.count}</span>
     </div>`;
   }).join('');
@@ -168,11 +245,9 @@ function render(d) {
         Response Speed
         <span class="panel-badge" style="${rateOk?'':'background:rgba(255,107,53,.1);color:var(--lost);border-color:rgba(255,107,53,.2);'}">${rate!==null?rate+'%':'—'} within 2h</span>
       </div>
-      <div style="display:flex;gap:28px;align-items:flex-end;">
-        <div>
-          <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:${rateOk?'var(--g)':'var(--lost)'};">${rate!==null?rate+'%':'—'}</div>
-          <div style="font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:4px;">${t1.responded2h} of ${t1.eligibleResponse} leads (48h window)</div>
-        </div>
+      <div>
+        <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:${rateOk?'var(--g)':'var(--lost)'};">${rate!==null?rate+'%':'—'}</div>
+        <div style="font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:4px;">${t1.responded2h} of ${t1.eligibleResponse} leads (48h window)</div>
       </div>
       <div class="rate-wrap">
         <div class="rate-track"><div class="rate-fill${rateOk?'':' bad'}" style="width:${rate||0}%;"></div></div>
@@ -183,53 +258,23 @@ function render(d) {
       </div>
     </div>
     <div class="card panel">
-      <div class="panel-title">
-        Pipeline
-        <span class="panel-badge">${t4.closedWonMTD} won MTD</span>
-      </div>
+      <div class="panel-title">Pipeline<span class="panel-badge">${t4.closedWonMTD} won MTD</span></div>
       ${funnelRows || '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
     </div>
   </div>`;
 
-  // ── Row 3: Product cards + Source bars ──────────────────────────────────
-  const prod = d.productBreakdown || {};
-  const prodTotal = Object.values(prod).reduce((s,n)=>s+n,0) || 1;
-  const prodOrder = ['Paper Cup','Plastic Cup','Greaseproof Paper','PET Can'];
-  const prodCards = prodOrder.map(k => {
-    const n = prod[k] || 0;
-    const pct = Math.round((n/prodTotal)*100);
-    const col = (PROD_COLORS[k] || {card:'rgba(170,255,0,.7)'}).card;
-    return `<div class="prod-card">
-      <div class="prod-card" style="padding:0;background:none;border:none;">
-        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${col};opacity:.7;"></div>
-      </div>
-      <div class="prod-name">${esc(k)}</div>
-      <div class="prod-count" style="color:${col};">${n}</div>
-      <div class="prod-pct">${pct}% of enquiries</div>
-    </div>`;
-  }).join('');
-
-  const src = d.sourceBreakdown || {};
-  const srcTotal = Object.values(src).reduce((s,n)=>s+n,0) || 1;
-  const srcRows = Object.entries(src).sort((a,b)=>b[1]-a[1]).map(([k,v]) => {
-    const pct = Math.max(Math.round((v/srcTotal)*100), 3);
-    const col = SRC_COLORS[k] || 'rgba(170,255,0,.45)';
-    return `<div class="f-row">
-      <span class="f-lbl">${esc(k)}</span>
-      <div class="f-bg"><div class="f-fill" style="width:${pct}%;background:${col.startsWith('#')?col+'99':col};"></div></div>
-      <span class="f-n">${v}</span>
-    </div>`;
-  }).join('');
+  const prodTotal = Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
+  const srcTotal  = Object.values(d.sourceBreakdown||{}).reduce((s,n)=>s+n,0)||0;
 
   const row3 = `
   <div class="grid-2">
     <div class="card panel">
       <div class="panel-title">Product Breakdown<span class="panel-badge">${prodTotal} enquiries</span></div>
-      <div class="prod-grid">${prodCards}</div>
+      ${renderDonut(d.productBreakdown, PROD_COLORS, 120)}
     </div>
     <div class="card panel">
       <div class="panel-title">Lead Sources<span class="panel-badge">${srcTotal} total</span></div>
-      ${srcRows || '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
+      ${renderSources(d.sourceBreakdown)}
     </div>
   </div>`;
 

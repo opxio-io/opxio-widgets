@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>cupTerra — CRM Dashboard</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Satoshi',-apple-system,sans-serif;background:#111;color:#fff;padding:16px;overflow-y:auto;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.2);--red:#FF5C5C;--redm:rgba(255,92,92,.12);--redb:rgba(255,92,92,.22);--amber:#FBBF24;--blue:#60A5FA;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.hdr-left{display:flex;flex-direction:column;gap:2px;}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.2);}
+.h-title{font-size:20px;font-weight:900;letter-spacing:-.04em;}
+.hdr-right{display:flex;align-items:center;gap:6px;}
+.ts{font-size:9px;color:rgba(255,255,255,.18);font-weight:500;}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:14px;height:14px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* 4-tile grid */
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px;}
+@media(max-width:520px){.tiles{grid-template-columns:1fr;}}
+
+.tile{background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden;transition:border-color .2s;}
+.tile:hover{border-color:rgba(255,255,255,.1);}
+.tile-accent{position:absolute;top:0;left:0;right:0;height:2px;}
+.tile-label{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:12px;}
+.tile-num{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1;color:#fff;}
+.tile-num.green{color:var(--g);}
+.tile-num.red{color:var(--red);}
+.tile-num.amber{color:var(--amber);}
+.tile-sub{font-size:10px;font-weight:600;color:rgba(255,255,255,.22);margin-top:6px;}
+.tile-sub b{color:rgba(255,255,255,.55);}
+
+/* Split tiles */
+.tile-split{display:grid;grid-template-columns:1fr 1fr;gap:0;}
+.split-cell{padding:16px 18px;position:relative;}
+.split-cell:first-child{border-right:1px solid rgba(255,255,255,.05);}
+.split-num{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.split-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:8px;}
+.split-sub{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.2);margin-top:5px;}
+
+/* Alert badge */
+.alert-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--red);margin-right:5px;vertical-align:middle;animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+
+/* Rate bar */
+.rate-wrap{margin-top:10px;}
+.rate-bar-bg{height:4px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;}
+.rate-bar-fill{height:100%;border-radius:999px;transition:width .6s ease;background:var(--g);}
+.rate-bar-fill.bad{background:var(--red);}
+.rate-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.3);margin-top:4px;}
+
+/* Bottom row */
+.bottom-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:520px){.bottom-row{grid-template-columns:1fr;}}
+
+.panel{background:#1A1A1A;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px 20px;}
+.panel-hdr{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;}
+.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+
+/* Bar chart */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.bar-row:last-child{margin-bottom:0;}
+.bar-lbl{font-size:10px;font-weight:700;color:rgba(255,255,255,.55);width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-bg{flex:1;height:22px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:10px;font-weight:700;color:#000;transition:width .55s cubic-bezier(.4,0,.2,1);}
+
+/* Rep leaderboard */
+.rep-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.rep-row:last-child{border-bottom:none;}
+.rep-av{width:28px;height:28px;border-radius:50%;background:rgba(170,255,0,.15);border:1px solid var(--gb);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;color:var(--g);flex-shrink:0;}
+.rep-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rep-won{font-size:12px;font-weight:900;color:var(--g);}
+.rep-active{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);margin-left:6px;}
+
+/* Pipeline stuck row */
+.stuck-row{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.stuck-row:last-child{border-bottom:none;}
+.stuck-stage{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);}
+.stuck-n{font-size:22px;font-weight:900;color:var(--amber);}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:10px;}
+.spinner{width:20px;height:20px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;}
+
+.wgt-footer{text-align:center;padding:18px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.08);}
+
+/* Source breakdown pills row */
+.source-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px;}
+.src-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.5);}
+.src-pill span{color:#fff;margin-left:4px;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="hdr-left">
+    <span class="eyebrow">Shin Supplies · CRM</span>
+    <h1 class="h-title">Sales Dashboard</h1>
+  </div>
+  <div class="hdr-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="main">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading dashboard</div></div>
+</div>
+
+<div class="wgt-footer">Widgets by Opxio.io</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const BAR_COLORS = {
+  'Paper Cup':         'rgba(96,165,250,.7)',
+  'Plastic Cup':       'rgba(192,132,252,.7)',
+  'Greaseproof Paper': 'rgba(251,191,36,.7)',
+  'PET Can':           'rgba(170,255,0,.7)',
+};
+const SRC_COLORS = {
+  'Iklan Facebook': '#60A5FA', 'TikTok': '#E879F9',
+  'Threads': '#F97316', 'Rujukan / Kenalan': '#AAFF00',
+  'Walk-in': '#34D399', 'Lain-lain': '#9CA3AF',
+};
+
+function render(d) {
+  const t1 = d.tile1, t2 = d.tile2, t3 = d.tile3, t4 = d.tile4;
+  const rate = t1.responseRate2h;
+  const rateGood = rate !== null && rate >= 70;
+
+  // ── TILE 1: New Leads + Response ─────────────────────────────────────────
+  const tile1 = `
+  <div class="tile">
+    <div class="tile-accent" style="background:linear-gradient(90deg,var(--g),transparent);"></div>
+    <div class="tile-label">New Leads</div>
+    <div class="tile-num green">${t1.newLeads24h}</div>
+    <div class="tile-sub">last 24h &nbsp;·&nbsp; <b>${t1.newLeadsWeek}</b> this week</div>
+    <div class="rate-wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px;">
+        <span style="font-size:9px;font-weight:700;color:rgba(255,255,255,.3);">Response &lt;2h</span>
+        <span style="font-size:13px;font-weight:900;color:${rateGood?'var(--g)':'var(--red)'};">${rate !== null ? rate+'%' : '—'}</span>
+      </div>
+      <div class="rate-bar-bg"><div class="rate-bar-fill${rateGood?'':' bad'}" style="width:${rate||0}%;"></div></div>
+      <div class="rate-lbl" style="display:flex;justify-content:space-between;">
+        <span>${t1.responded2h} responded in time</span>
+        ${t1.overdueResponse > 0 ? `<span><span class="alert-dot"></span><b style="color:var(--red);">${t1.overdueResponse}</b> overdue</span>` : '<span style="color:rgba(170,255,0,.5);">✓ none overdue</span>'}
+      </div>
+    </div>
+  </div>`;
+
+  // ── TILE 2: Quotation Backlog ────────────────────────────────────────────
+  const tile2 = `
+  <div class="tile tile-split" style="padding:0;">
+    <div class="tile-accent" style="background:linear-gradient(90deg,var(--amber),transparent);"></div>
+    <div class="split-cell">
+      <div class="split-lbl">Pending Quotes</div>
+      <div class="split-num" style="color:var(--amber);">${t2.pendingQuotations}</div>
+      <div class="split-sub">awaiting quotation</div>
+    </div>
+    <div class="split-cell">
+      <div class="split-lbl">${t2.overdueQuotations > 0 ? '<span class="alert-dot"></span>' : ''}Overdue &gt;24h</div>
+      <div class="split-num" style="color:${t2.overdueQuotations > 0 ? 'var(--red)' : 'rgba(255,255,255,.2)'};">${t2.overdueQuotations}</div>
+      <div class="split-sub">${t2.overdueQuotations > 0 ? 'need urgent action' : 'all on track'}</div>
+    </div>
+  </div>`;
+
+  // ── TILE 3: Follow-ups ───────────────────────────────────────────────────
+  const tile3 = `
+  <div class="tile tile-split" style="padding:0;">
+    <div class="tile-accent" style="background:linear-gradient(90deg,var(--blue),transparent);"></div>
+    <div class="split-cell">
+      <div class="split-lbl">${t3.followupsToday > 0 ? '<span class="alert-dot" style="background:var(--amber);"></span>' : ''}Due Today</div>
+      <div class="split-num" style="color:${t3.followupsToday > 0 ? 'var(--amber)' : 'rgba(255,255,255,.2)'};">${t3.followupsToday}</div>
+      <div class="split-sub">follow-ups due</div>
+    </div>
+    <div class="split-cell">
+      <div class="split-lbl">Next 3 Days</div>
+      <div class="split-num" style="color:var(--blue);">${t3.followupsNext3Days}</div>
+      <div class="split-sub">coming up</div>
+    </div>
+  </div>`;
+
+  // ── TILE 4: Closed Won MTD ───────────────────────────────────────────────
+  const tile4 = `
+  <div class="tile">
+    <div class="tile-accent" style="background:linear-gradient(90deg,var(--g),transparent);"></div>
+    <div class="tile-label">Closed Won (MTD)</div>
+    <div class="tile-num green">${t4.closedWonMTD}</div>
+    <div class="tile-sub">
+      <b style="color:var(--amber);">${t4.stuckNegotiation}</b> in Negotiation &nbsp;·&nbsp;
+      <b style="color:var(--amber);">${t4.stuckSalesOrder}</b> Sales Order pending
+    </div>
+  </div>`;
+
+  // ── Product breakdown ────────────────────────────────────────────────────
+  const prod = d.productBreakdown || {};
+  const prodTotal = Object.values(prod).reduce((s,n) => s+n, 0) || 1;
+  const prodOrder = ['Paper Cup','Plastic Cup','Greaseproof Paper','PET Can'];
+  const prodBars = prodOrder
+    .filter(k => prod[k])
+    .map(k => {
+      const pct = Math.round((prod[k]/prodTotal)*100);
+      const col = BAR_COLORS[k] || 'rgba(170,255,0,.5)';
+      return `<div class="bar-row">
+        <span class="bar-lbl">${esc(k)}</span>
+        <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${col};min-width:${prod[k]?24:0}px;">${prod[k]}</div></div>
+      </div>`;
+    }).join('');
+
+  // ── Rep leaderboard ──────────────────────────────────────────────────────
+  const repRows = (t4.byRep || []).slice(0,5).map((r,i) => {
+    const initials = r.name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();
+    return `<div class="rep-row">
+      <div class="rep-av">${initials}</div>
+      <span class="rep-name">${esc(r.name)}</span>
+      <span class="rep-won">${r.closedWon} won</span>
+      <span class="rep-active">${r.active} active</span>
+    </div>`;
+  }).join('') || '<div style="font-size:11px;color:rgba(255,255,255,.18);padding:12px 0;">No rep data yet</div>';
+
+  // ── Source breakdown pills ───────────────────────────────────────────────
+  const src = d.sourceBreakdown || {};
+  const srcTotal = Object.values(src).reduce((s,n) => s+n, 0) || 1;
+  const srcPills = Object.entries(src)
+    .sort((a,b) => b[1]-a[1])
+    .map(([k,v]) => {
+      const col = SRC_COLORS[k] || '#9CA3AF';
+      const pct = Math.round((v/srcTotal)*100);
+      return `<div class="src-pill" style="border-color:${col}22;">${esc(k)}<span style="color:${col};">${v} (${pct}%)</span></div>`;
+    }).join('');
+
+  document.getElementById('main').innerHTML = `
+    <div class="tiles">
+      ${tile1}${tile2}${tile3}${tile4}
+    </div>
+    <div class="bottom-row">
+      <div class="panel">
+        <div class="panel-hdr">
+          Product Breakdown
+          <span class="panel-badge">${prodTotal} enquiries</span>
+        </div>
+        ${prodBars || '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
+      </div>
+      <div class="panel">
+        <div class="panel-hdr">
+          By Sales Rep
+          <span class="panel-badge">${(t4.byRep||[]).length} reps</span>
+        </div>
+        ${repRows}
+      </div>
+    </div>
+    ${srcPills ? `<div style="margin-top:10px;"><div style="font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.2);margin-bottom:8px;">Lead Sources</div><div class="source-row">${srcPills}</div></div>` : ''}
+  `;
+
+  document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+async function load() {
+  try {
+    const url = '/api/cupterra/enquiry-stats' + (_tok ? '?token='+_tok : '');
+    const r = await fetch(url);
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    render(d);
+  } catch(e) {
+    document.getElementById('main').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed to load</div><div style="font-size:10px;color:rgba(255,255,255,.2);margin-top:4px;">${esc(e.message)}</div></div>`;
+  }
+}
+
+function doRefresh() {
+  const b = document.getElementById('rb'); if(b) b.classList.add('spinning');
+  load().finally(() => { const b2 = document.getElementById('rb'); if(b2) b2.classList.remove('spinning'); });
+}
+
+load();
+setInterval(load, 3 * 60 * 1000);
+</script>
+</body>
+</html>

@@ -46,6 +46,46 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 }
 .field select option{background:#1E1E1E;color:#fff;}
 .field select optgroup{color:rgba(255,255,255,.3);font-weight:700;font-size:11px;}
+
+/* Custom dropdown */
+.cs-wrap{position:relative;width:100%;}
+.cs-trigger{
+  width:100%;padding:12px 34px 12px 14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.07);
+  border-radius:8px;
+  color:rgba(255,255,255,.25);
+  font-family:'Satoshi',-apple-system,sans-serif;
+  font-size:14px;font-weight:500;
+  outline:none;cursor:pointer;
+  transition:all .15s;text-align:left;
+  background-image:url("data:image/svg+xml,%3Csvg width='10' height='6' viewBox='0 0 10 6' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23555' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 14px center;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.cs-trigger.selected{color:#fff;}
+.cs-trigger:focus,.cs-trigger.open{border-color:rgba(170,255,0,.2);background-color:rgba(170,255,0,.08);}
+.cs-dropdown{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;z-index:999;
+  background:#1E1E1E;border:1px solid rgba(255,255,255,.1);
+  border-radius:8px;overflow:hidden;
+  box-shadow:0 8px 24px rgba(0,0,0,.5);
+  display:none;max-height:240px;overflow-y:auto;
+}
+.cs-dropdown.open{display:block;}
+.cs-group-label{
+  padding:8px 12px 4px;
+  font-size:9.5px;font-weight:700;
+  text-transform:uppercase;letter-spacing:.1em;
+  color:rgba(255,255,255,.25);
+}
+.cs-option{
+  padding:10px 14px;
+  font-size:13px;font-weight:500;color:rgba(255,255,255,.75);
+  cursor:pointer;transition:background .1s;
+}
+.cs-option:hover{background:rgba(255,255,255,.06);color:#fff;}
+.cs-option.selected{background:rgba(170,255,0,.08);color:var(--g);}
 .field input::placeholder{color:rgba(255,255,255,.2);}
 .field select:focus,.field input:focus{border-color:rgba(170,255,0,.2);background:rgba(170,255,0,.08);}
 
@@ -323,6 +363,63 @@ function buildSelect() {
   return html;
 }
 
+function buildCustomSelect(id) {
+  const depts = {};
+  staffList.forEach(s => {
+    if (!depts[s.dept]) depts[s.dept] = [];
+    depts[s.dept].push(s);
+  });
+  let opts = '';
+  Object.entries(depts).forEach(([dept, members]) => {
+    opts += `<div class="cs-group-label">${esc(dept)}</div>`;
+    members.forEach(m => {
+      opts += `<div class="cs-option" data-value="${m.id}">${esc(m.name)}</div>`;
+    });
+  });
+  return `<div class="cs-wrap" id="${id}-wrap">
+    <button type="button" class="cs-trigger" id="${id}" data-value="">${esc('Choose your name')}</button>
+    <div class="cs-dropdown" id="${id}-dropdown">${opts}</div>
+  </div>`;
+}
+
+function initCustomSelect(id, onChange) {
+  const trigger = document.getElementById(id);
+  const dropdown = document.getElementById(id + '-dropdown');
+  if (!trigger || !dropdown) return;
+
+  trigger.addEventListener('click', e => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.contains('open');
+    document.querySelectorAll('.cs-dropdown.open').forEach(d => {
+      d.classList.remove('open');
+      d.previousElementSibling && d.previousElementSibling.classList.remove('open');
+    });
+    if (!isOpen) { dropdown.classList.add('open'); trigger.classList.add('open'); }
+  });
+
+  dropdown.querySelectorAll('.cs-option').forEach(opt => {
+    opt.addEventListener('click', () => {
+      const val = opt.dataset.value;
+      const label = opt.textContent;
+      trigger.dataset.value = val;
+      trigger.textContent = label;
+      trigger.classList.add('selected');
+      trigger.classList.remove('open');
+      dropdown.classList.remove('open');
+      dropdown.querySelectorAll('.cs-option').forEach(o => o.classList.remove('selected'));
+      opt.classList.add('selected');
+      if (onChange) onChange(val);
+    });
+  });
+
+  document.addEventListener('click', e => {
+    if (!trigger.contains(e.target) && !dropdown.contains(e.target)) {
+      dropdown.classList.remove('open');
+      trigger.classList.remove('open');
+    }
+  });
+}
+
 function show(id) {
   ['loginView','changeView','backupView','forgotView','successView'].forEach(v => {
     document.getElementById(v).classList.toggle('hidden', v !== id);
@@ -387,7 +484,7 @@ function renderLogin() {
     <form id="authForm">
       <div class="field">
         <span class="field-label">Name</span>
-        <select id="staffSelect">${buildSelect()}</select>
+        ${buildCustomSelect('staffSelect')}
       </div>
       <div class="field">
         <span class="field-label">Password</span>
@@ -403,11 +500,13 @@ function renderLogin() {
 
   initPwToggles(document.getElementById('loginForm'));
 
-  const sel = document.getElementById('staffSelect');
   const pw = document.getElementById('passInput');
   const btn = document.getElementById('enterBtn');
-  function check() { btn.disabled = !(sel.value && pw.value); }
-  sel.addEventListener('change', check);
+  function check() {
+    const sel = document.getElementById('staffSelect');
+    btn.disabled = !(sel && sel.dataset.value && pw.value);
+  }
+  initCustomSelect('staffSelect', () => check());
   pw.addEventListener('input', check);
   document.getElementById('authForm').addEventListener('submit', handleLogin);
   document.getElementById('forgotBtn').addEventListener('click', showForgot);
@@ -416,7 +515,7 @@ function renderLogin() {
 // ── LOGIN ──
 async function handleLogin(e) {
   e.preventDefault();
-  const staffId = document.getElementById('staffSelect').value;
+  const staffId = document.getElementById('staffSelect').dataset.value;
   const password = document.getElementById('passInput').value;
   const msgEl = document.getElementById('loginMsg');
   const btn = document.getElementById('enterBtn');
@@ -510,7 +609,7 @@ function showForgot() {
     <form id="resetForm">
       <div class="field">
         <span class="field-label">Your Name</span>
-        <select id="resetSelect">${buildSelect()}</select>
+        ${buildCustomSelect('resetSelect')}
       </div>
       <div class="field">
         <span class="field-label">Backup Code</span>
@@ -532,16 +631,16 @@ function showForgot() {
 
   initPwToggles(fv);
 
-  const sel = document.getElementById('resetSelect');
   const code = document.getElementById('resetCode');
   const npw = document.getElementById('resetNewPw');
   const cpw = document.getElementById('resetConfirmPw');
   const btn = document.getElementById('resetBtn');
 
   function check() {
-    btn.disabled = !(sel.value && code.value.length >= 4 && npw.value.length >= 6 && cpw.value.length >= 6);
+    const sel = document.getElementById('resetSelect');
+    btn.disabled = !(sel && sel.dataset.value && code.value.length >= 4 && npw.value.length >= 6 && cpw.value.length >= 6);
   }
-  sel.addEventListener('change', check);
+  initCustomSelect('resetSelect', () => check());
   code.addEventListener('input', check);
   npw.addEventListener('input', check);
   cpw.addEventListener('input', check);
@@ -552,7 +651,7 @@ function showForgot() {
 
 async function handleReset(e) {
   e.preventDefault();
-  const staffId = document.getElementById('resetSelect').value;
+  const staffId = document.getElementById('resetSelect').dataset.value;
   const code = document.getElementById('resetCode').value;
   const npw = document.getElementById('resetNewPw').value;
   const cpw = document.getElementById('resetConfirmPw').value;
@@ -642,3 +741,4 @@ init();
 </script>
 </body>
 </html>
+

@@ -308,6 +308,22 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;backg
 </div>
 
 <script>
+// ── CLIPBOARD HELPER ──
+function copyToClipboard(text) {
+  if (navigator.clipboard && window.isSecureContext) {
+    return copyToClipboard(text);
+  }
+  // Fallback for iframes / restricted contexts
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;left:-9999px;top:-9999px;opacity:0;';
+  document.body.appendChild(ta);
+  ta.focus(); ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  return Promise.resolve();
+}
+
 // ── SVG ICONS ──
 const ICO = {
   eyeOff: '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>',
@@ -446,7 +462,7 @@ function initCopyBtn(code) {
   if (!btn) return;
   btn.innerHTML = ICO.copy;
   btn.addEventListener('click', function() {
-    navigator.clipboard.writeText(code).then(() => {
+    copyToClipboard(code).then(() => {
       btn.innerHTML = ICO.check;
       const hint = document.getElementById('copyHint');
       if (hint) hint.textContent = 'Copied!';
@@ -699,7 +715,7 @@ async function handleReset(e) {
     const rcBtn = document.getElementById('resetCopyBtn');
     rcBtn.innerHTML = ICO.copy;
     rcBtn.addEventListener('click', function() {
-      navigator.clipboard.writeText(data.new_backup_code).then(() => {
+      copyToClipboard(data.new_backup_code).then(() => {
         rcBtn.innerHTML = ICO.check;
         const hint = document.getElementById('resetCopyHint');
         if (hint) hint.textContent = 'Copied!';

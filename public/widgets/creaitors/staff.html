@@ -566,9 +566,10 @@ function mkIssueLog(issues,label){
     h+='<div class="'+cls+'">'
       +'<div class="issue-row1">'
       +'<span class="issue-stg">'+esc(is.stage||'General')+'</span>'
-      +'<span class="issue-sum">'+esc(is.summary||'Untitled issue')+'</span>'
+      +'<span class="issue-sum">'+esc(is.title||'Untitled issue')+'</span>'
       +'<span class="issue-stat '+esc(is.status||'Open')+'">'+esc(is.status||'Open')+'</span>'
       +'</div>';
+    if(is.summary)h+='<div class="issue-desc">'+esc(is.summary)+'</div>';
     if(is.description)h+='<div class="issue-desc">'+esc(is.description)+'</div>';
     if(is.actionTaken)h+='<div class="issue-act">&#8627; '+esc(is.actionTaken)+'</div>';
     h+='</div>';
@@ -837,9 +838,10 @@ function renderIssues(data){
         +'<div class="issue-row1">'
         +'<span class="issue-stg">'+esc(is.stage||'General')+'</span>'
         +'<span class="issue-date">'+fmtDate(is.date)+'</span>'
-        +'<span class="issue-sum">'+esc(is.summary||'Untitled issue')+'</span>'
+        +'<span class="issue-sum">'+esc(is.title||'Untitled issue')+'</span>'
         +'<span class="issue-stat '+esc(is.status||'Open')+'">'+esc(is.status||'Open')+'</span>'
         +'</div>';
+      if(is.summary)h+='<div class="issue-desc">'+esc(is.summary)+'</div>';
       if(is.description)h+='<div class="issue-desc">'+esc(is.description)+'</div>';
       if(is.actionTaken)h+='<div class="issue-act"><span class="issue-act-lbl">Action Taken:</span> '+esc(is.actionTaken)+'</div>';
       h+='</div>';
@@ -894,4 +896,5 @@ setInterval(loadData,300000);
 </script>
 </body>
 </html>
+
 

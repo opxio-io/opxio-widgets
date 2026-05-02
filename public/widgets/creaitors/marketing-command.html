@@ -3,12 +3,12 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Opxio — Campaigns</title>
+<title>Opxio — Marketing Command</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;--lost:#FF6B35;--lostm:rgba(255,107,53,.12);}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--amber:#FBBF24;--red:#FF6B6B;}
 ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 
@@ -34,11 +34,14 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;backg
 .s-val{font-size:30px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
 .s-val.red{color:var(--red);}
 .s-val.amber{color:var(--amber);}
-.s-sub{font-size:10.5px;font-weight:500;color:rgba(255,255,255,.38);margin-top:6px;}
+.s-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);margin-top:6px;}
+.s-sub.g{color:var(--g);}
 
-/* Mid row */
+/* Rows */
 .mid-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;}
 @media(max-width:680px){.mid-row{grid-template-columns:1fr;}}
+.bot-row{display:grid;grid-template-columns:300px 1fr;gap:10px;margin-top:10px;}
+@media(max-width:680px){.bot-row{grid-template-columns:1fr;}}
 
 /* Panel */
 .panel{padding:20px 22px;}
@@ -46,7 +49,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;backg
 .panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);}
 .panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 
-/* Content breakdown progress bars */
+/* Content breakdown bars */
 .prog-row{margin-bottom:14px;}
 .prog-row:last-child{margin-bottom:0;}
 .prog-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px;}
@@ -56,22 +59,41 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:14px 14px 24px;backg
 .prog-fill{height:8px;border-radius:999px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .prog-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);margin-top:4px;}
 .prog-sub.done{color:var(--g);}
-.prog-sub.rem{color:var(--lost);}
 
 /* Campaign list */
-.camp-scroll{max-height:300px;overflow-y:auto;padding-right:2px;}
+.camp-scroll{max-height:260px;overflow-y:auto;padding-right:2px;}
 .camp-item{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .camp-item:last-child{border-bottom:none;}
 .camp-info{flex:1;min-width:0;}
 .camp-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.8);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.camp-dates{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);margin-top:2px;white-space:nowrap;}
-.camp-type{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:var(--gm);color:var(--g);border:1px solid rgba(170,255,0,.15);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;}
+.camp-dates{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.25);margin-top:2px;white-space:nowrap;}
+.camp-type{font-size:9px;font-weight:700;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);white-space:nowrap;text-transform:uppercase;letter-spacing:.05em;flex-shrink:0;}
 .camp-bar-wrap{width:56px;flex-shrink:0;}
 .camp-track{background:rgba(255,255,255,.05);border-radius:999px;height:5px;overflow:hidden;}
 .camp-fill{height:5px;border-radius:999px;}
 .camp-pct{font-size:12px;font-weight:900;min-width:34px;text-align:right;flex-shrink:0;letter-spacing:-.5px;}
-.camp-delivs{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);margin-top:3px;line-height:1.5;}
-.camp-delivs .dl{color:rgba(255,255,255,.55);font-weight:700;}
+
+/* Task card */
+.task-big{font-size:44px;font-weight:900;letter-spacing:-2.5px;line-height:1;color:var(--g);}
+.task-big-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#fff;margin-top:5px;margin-bottom:16px;}
+.task-mini-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:18px;}
+.task-mini{background:#252525;border:1px solid rgba(255,255,255,.07);border-radius:9px;padding:11px 12px;text-align:center;}
+.task-mini-val{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.task-mini-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.35);margin-top:5px;}
+.task-status-list{display:flex;flex-direction:column;gap:10px;}
+.ts-row{display:flex;align-items:center;gap:9px;}
+.ts-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.ts-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);flex:1;}
+.ts-dash{width:42px;height:3px;border-radius:2px;flex-shrink:0;}
+.ts-count{font-size:14px;font-weight:900;letter-spacing:-.5px;min-width:22px;text-align:right;flex-shrink:0;}
+
+/* Assignee bars */
+.assign-list{display:flex;flex-direction:column;gap:11px;}
+.assign-row{display:flex;align-items:center;gap:10px;}
+.assign-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);width:72px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.assign-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.05);overflow:hidden;}
+.assign-fill{height:6px;border-radius:999px;background:rgba(170,255,0,.28);transition:width .6s cubic-bezier(.4,0,.2,1);}
+.assign-count{font-size:13px;font-weight:900;color:#fff;min-width:20px;text-align:right;flex-shrink:0;letter-spacing:-.4px;}
 
 /* Loading / empty */
 .loading{display:flex;align-items:center;justify-content:center;min-height:120px;flex-direction:column;gap:10px;}
@@ -84,7 +106,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 
 /* Light mode */
 body.light{background:#FFFFFF;color:#111;}
-body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--amber:#B45309;--red:#DC2626;--lost:#D97706;--lostm:rgba(217,119,6,.12);}
+body.light{--g:#fff;--gm:rgba(255,255,255,.07);--gb:rgba(255,255,255,.16);--amber:#B45309;--red:#DC2626;}
 body.light .card{background:#1E1E1E;border-color:rgba(255,255,255,.06);}
 body.light .card:hover{border-color:rgba(0,0,0,.15);}
 body.light .btn{background:#EFEFEF;border-color:rgba(0,0,0,.09);color:rgba(255,255,255,.65);}
@@ -98,6 +120,7 @@ body.light .s-val{color:var(--g);}
 body.light .s-val.red{color:var(--red);}
 body.light .s-val.amber{color:var(--amber);}
 body.light .s-sub{color:rgba(255,255,255,.22);}
+body.light .s-sub.g{color:var(--g);}
 body.light .panel-title{color:rgba(255,255,255,.75);}
 body.light .panel-badge{background:rgba(0,0,0,.05);color:var(--g);border-color:rgba(0,0,0,.1);}
 body.light .prog-label{color:rgba(255,255,255,.65);}
@@ -105,19 +128,27 @@ body.light .prog-count{color:rgba(255,255,255,.9);}
 body.light .prog-track{background:rgba(0,0,0,.05);}
 body.light .prog-sub{color:rgba(255,255,255,.5);}
 body.light .prog-sub.done{color:var(--g);}
-body.light .prog-sub.rem{color:var(--lost);}
 body.light .camp-item{border-bottom-color:rgba(0,0,0,.06);}
 body.light .camp-name{color:rgba(255,255,255,.9);}
 body.light .camp-dates{color:rgba(255,255,255,.5);}
-body.light .camp-type{background:rgba(0,0,0,.05);color:var(--g);border-color:rgba(0,0,0,.1);}
+body.light .camp-type{background:rgba(0,0,0,.06);color:rgba(255,255,255,.5);}
 body.light .camp-track{background:rgba(0,0,0,.05);}
 body.light .camp-pct{color:rgba(255,255,255,.9);}
-body.light .camp-delivs{color:rgba(255,255,255,.5);}
-body.light .camp-delivs .dl{color:rgba(255,255,255,.75);}
+body.light .task-big{color:var(--g);}
+body.light .task-big-lbl{color:rgba(255,255,255,.9);}
+body.light .task-mini{background:#EFEFEF;border-color:rgba(0,0,0,.08);}
+body.light .task-mini-val{color:rgba(255,255,255,.9);}
+body.light .task-mini-lbl{color:rgba(255,255,255,.5);}
+body.light .ts-label{color:rgba(255,255,255,.65);}
+body.light .ts-count{color:rgba(255,255,255,.9);}
+body.light .assign-name{color:rgba(255,255,255,.65);}
+body.light .assign-track{background:rgba(0,0,0,.05);}
+body.light .assign-fill{background:rgba(0,0,0,.12);}
+body.light .assign-count{color:rgba(255,255,255,.9);}
 body.light .loading-text{color:rgba(255,255,255,.5);}
 body.light .empty{color:rgba(255,255,255,.5);}
 body.light ::-webkit-scrollbar-thumb{background:rgba(0,0,0,.1);}
-body.light .spinner{border-color:rgba(0,0,0,.08);border-top-color:var(--g);}
+body.light .spinner{border-color:rgba(0,0,0,.07);border-top-color:var(--g);}
 </style>
 </head>
 <body>
@@ -125,7 +156,7 @@ body.light .spinner{border-color:rgba(0,0,0,.08);border-top-color:var(--g);}
 <div class="header">
   <div>
     <p class="eyebrow" id="_eyebrow" data-os="Marketing OS">MARKETING OS</p>
-    <h1 class="h-title">Campaigns</h1>
+    <h1 class="h-title">Marketing Command</h1>
   </div>
   <div class="h-right">
     <span class="ts" id="ts"></span>
@@ -161,9 +192,27 @@ const CONTENT_COLORS = {
   kol:     '#C084FC',
 };
 
-function render(camp){
-  const cb        = camp.contentBreakdown || {};
-  const remaining = camp.remainingDeliverables || 0;
+function statusColor(label){
+  const l = (label||'').toLowerCase();
+  if(l.includes('done') || l.includes('published') || l.includes('posting') || l.includes('posted')) return 'var(--g)';
+  if(l.includes('revision') || l.includes('review needed'))                                           return 'var(--red)';
+  if(l.includes('qc') || l.includes('final') || l.includes('pending') || l.includes('approval'))     return 'var(--amber)';
+  if(l.includes('progress') || l.includes('production') || l.includes('ready') || l.includes('scripting') || l.includes('editing') || l.includes('recording')) return '#60A5FA';
+  return 'rgba(255,255,255,.35)';
+}
+
+function render(camp, content){
+  const cb            = camp.contentBreakdown || {};
+  const remaining     = camp.remainingDeliverables || 0;
+  const overdue       = (content.attentionBreakdown || {}).overdue || 0;
+  const dueWeek       = content.dueThisWeek || 0;
+  const linked        = content.contentLinkedToCampaign || 0;
+  const totalTasks    = content.tasksTotal || 0;
+  const assignees     = content.byAssignee || [];
+  const assigneeMax   = Math.max(...assignees.map(a => a.count), 1);
+  const assigneeTotal = assignees.reduce((s,a) => s+a.count, 0);
+  const taskStatuses     = content.taskStatuses   || ['Not Started','In Progress','Pending QC','Revision','Done'];
+  const taskStatusCounts = content.taskStatusCounts || {};
 
   // ── Stat cards ──
   let html = `<div class="g4">
@@ -181,81 +230,32 @@ function render(camp){
     </div>
     <div class="card stat">
       <div class="s-dot" style="background:var(--g);"></div>
-      <span class="s-lbl">Completed</span>
-      <div class="s-val">${camp.completedDeliverables ?? '—'}</div>
-      <div class="s-sub">of ${camp.totalDeliverables || 0} total deliverables</div>
+      <span class="s-lbl">Content in Motion</span>
+      <div class="s-val">${content.contentInMotion ?? '—'}</div>
+      <div class="s-sub ${linked > 0 ? 'g' : ''}">${linked > 0 ? linked + ' linked to campaigns' : 'No campaign link'}</div>
     </div>
     <div class="card stat">
-      <div class="s-dot" style="background:${remaining > 0 ? 'var(--lost)' : 'var(--g)'};"></div>
-      <span class="s-lbl">Remaining</span>
-      <div class="s-val" style="${remaining > 0 ? 'color:var(--lost);' : ''}">${remaining}</div>
-      <div class="s-sub">Deliverables still open</div>
+      <div class="s-dot" style="background:${overdue > 0 ? 'var(--red)' : 'var(--g)'};"></div>
+      <span class="s-lbl">Overdue</span>
+      <div class="s-val ${overdue > 0 ? 'red' : ''}">${overdue}</div>
+      <div class="s-sub">${dueWeek} due this week</div>
     </div>
   </div>`;
 
-  html += `<div class="sec-lbl">Breakdown</div>`;
+  // ── Campaigns section ──
+  html += `<div class="sec-lbl">Campaigns</div>`;
   html += `<div class="mid-row">`;
 
-  // ── Campaign list (LEFT) ──
-  html += `<div class="card panel">
-    <div class="panel-hdr">
-      <span class="panel-title">Campaign Progress</span>
-      <span class="panel-badge">${camp.activeCampaigns || 0} active</span>
-    </div>`;
-
-  if(camp.campaignDetails && camp.campaignDetails.length > 0){
-    html += `<div class="camp-scroll">`;
-    for(const c of camp.campaignDetails){
-      const col    = pctColor(c.pct);
-      const start  = fmtDate(c.startDate);
-      const end    = fmtDate(c.endDate);
-      const dateStr = start && end ? `${start} – ${end}` : start || end || '';
-      const remC = (c.planned || 0) - (c.done || 0);
-      // Build per-type breakdown string e.g. "7 Videos · 3 Posters"
-      const TYPE_LABELS = {videos:'Videos', posters:'Posters', live:'Live', kol:'KOL'};
-      const cb2 = c.contentBreakdown || {};
-      const typeParts = Object.entries(TYPE_LABELS)
-        .filter(([k]) => (cb2[k]?.planned || 0) > 0)
-        .map(([k, lbl]) => `<span class="dl">${cb2[k].planned} ${lbl}</span>`);
-      const typeStr = typeParts.join(' · ');
-      const statusStr = remC > 0
-        ? `<span style="color:var(--lost);">${remC} left</span>`
-        : `<span style="color:var(--g);">All done</span>`;
-      const delivStr = c.planned > 0
-        ? (typeStr ? typeStr + ' &nbsp;·&nbsp; ' + statusStr : statusStr)
-        : '';
-      html += `<div class="camp-item">
-        <div class="camp-info">
-          <div class="camp-name" title="${esc(c.name)}">${esc(c.name)}</div>
-          ${dateStr ? `<div class="camp-dates">${esc(dateStr)}</div>` : ''}
-          ${delivStr ? `<div class="camp-delivs">${delivStr}</div>` : ''}
-        </div>
-        <span class="camp-type">${esc(c.type||'')}</span>
-        <div class="camp-bar-wrap">
-          <div class="camp-track">
-            <div class="camp-fill" style="width:${Math.max(c.pct>0?4:0,c.pct)}%;background:${col};"></div>
-          </div>
-        </div>
-        <span class="camp-pct" style="color:${col};">${c.pct}%</span>
-      </div>`;
-    }
-    html += `</div>`;
-  } else {
-    html += `<div class="empty">No active campaigns</div>`;
-  }
-  html += `</div>`;
-
-  // ── Content breakdown (RIGHT) ──
+  // Content breakdown
   html += `<div class="card panel">
     <div class="panel-hdr">
       <span class="panel-title">Content Breakdown</span>
       <span class="panel-badge">${camp.completedDeliverables || 0} completed</span>
     </div>`;
-
   const types = [
     {key:'videos',  label:'Videos'},
     {key:'posters', label:'Posters'},
-    {key:'live',    label:'Live Sessions'},
+    {key:'live',    label:'Livestreams'},
     {key:'kol',     label:'KOL Posts'},
   ];
   for(const tp of types){
@@ -267,17 +267,98 @@ function render(camp){
         <span class="prog-label">${tp.label}</span>
         <span class="prog-count">${d.completed} / ${d.planned}</span>
       </div>
-      <div class="prog-track">
-        <div class="prog-fill" style="width:${pct}%;background:${CONTENT_COLORS[tp.key]};"></div>
-      </div>
-      ${rem > 0
-        ? `<div class="prog-sub rem">${rem} remaining</div>`
-        : `<div class="prog-sub done">All done</div>`}
+      <div class="prog-track"><div class="prog-fill" style="width:${pct}%;background:${CONTENT_COLORS[tp.key]};"></div></div>
+      ${rem > 0 ? `<div class="prog-sub">${rem} remaining</div>` : `<div class="prog-sub done">All done</div>`}
     </div>`;
   }
   html += `</div>`;
 
-  html += `</div>`; // mid-row
+  // Campaign list
+  html += `<div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Campaign Progress</span>
+      <span class="panel-badge">${camp.activeCampaigns || 0} active</span>
+    </div>`;
+  if(camp.campaignDetails && camp.campaignDetails.length > 0){
+    html += `<div class="camp-scroll">`;
+    for(const c of camp.campaignDetails){
+      const col    = pctColor(c.pct);
+      const start  = fmtDate(c.startDate);
+      const end    = fmtDate(c.endDate);
+      const dateStr = start && end ? `${start} – ${end}` : start || end || '';
+      html += `<div class="camp-item">
+        <div class="camp-info">
+          <div class="camp-name" title="${esc(c.name)}">${esc(c.name)}</div>
+          ${dateStr ? `<div class="camp-dates">${esc(dateStr)}</div>` : ''}
+        </div>
+        <span class="camp-type">${esc(c.type||'')}</span>
+        <div class="camp-bar-wrap">
+          <div class="camp-track"><div class="camp-fill" style="width:${Math.max(c.pct>0?4:0,c.pct)}%;background:${col};"></div></div>
+        </div>
+        <span class="camp-pct" style="color:${col};">${c.pct}%</span>
+      </div>`;
+    }
+    html += `</div>`;
+  } else {
+    html += `<div class="empty">No active campaigns</div>`;
+  }
+  html += `</div></div>`; // end mid-row
+
+  // ── Content & Tasks section ──
+  html += `<div class="sec-lbl">Content &amp; Tasks</div>`;
+  html += `<div class="bot-row">`;
+
+  // Task status card
+  html += `<div class="card panel">
+    <div class="task-big">${totalTasks}</div>
+    <div class="task-big-lbl">Active Tasks</div>
+    <div class="task-mini-row">
+      <div class="task-mini">
+        <div class="task-mini-val" style="color:var(--g);">${dueWeek}</div>
+        <div class="task-mini-lbl">Due This Week</div>
+      </div>
+      <div class="task-mini">
+        <div class="task-mini-val" style="color:${overdue > 0 ? 'var(--red)' : 'rgba(255,255,255,.3)'};">${overdue}</div>
+        <div class="task-mini-lbl">Overdue</div>
+      </div>
+    </div>
+    <div class="task-status-list">`;
+  for(const label of taskStatuses){
+    const count = taskStatusCounts[label] || 0;
+    const col   = statusColor(label);
+    const active = count > 0;
+    html += `<div class="ts-row">
+      <div class="ts-dot" style="background:${col};${!active?'opacity:.35;':''}"></div>
+      <span class="ts-label">${esc(label)}</span>
+      <div class="ts-dash" style="background:${active?col:'rgba(255,255,255,.1)'};"></div>
+      <span class="ts-count" style="color:${active?'#fff':'rgba(255,255,255,.25)'};">${count}</span>
+    </div>`;
+  }
+  html += `</div></div>`;
+
+  // Content by Assignee
+  html += `<div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Content by Assignee</span>
+      <span class="panel-badge">${assigneeTotal} active</span>
+    </div>`;
+  if(assignees.length > 0){
+    html += `<div class="assign-list">`;
+    for(const a of assignees){
+      const w = Math.round((a.count / assigneeMax) * 100);
+      html += `<div class="assign-row">
+        <span class="assign-name" title="${esc(a.name)}">${esc(a.name)}</span>
+        <div class="assign-track"><div class="assign-fill" style="width:${Math.max(w, a.count > 0 ? 6 : 0)}%;"></div></div>
+        <span class="assign-count">${a.count}</span>
+      </div>`;
+    }
+    html += `</div>`;
+  } else {
+    html += `<div class="empty">No active content</div>`;
+  }
+  html += `</div>`;
+
+  html += `</div>`; // bot-row
 
   document.getElementById('dash').innerHTML = html;
   document.getElementById('ts').textContent = new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
@@ -286,9 +367,13 @@ function render(camp){
 async function loadData(){
   document.getElementById('rb').textContent = '↻ Refreshing…';
   try{
-    const r = await fetch('/api/marketing/campaign-stats?token='+_tok);
-    if(!r.ok) throw new Error('campaign-stats ' + r.status);
-    render(await r.json());
+    const [r1, r2] = await Promise.all([
+      fetch('/api/clients/creaitors/marketing/campaign-stats?token='+_tok),
+      fetch('/api/clients/creaitors/marketing/content-stats?token='+_tok),
+    ]);
+    if(!r1.ok) throw new Error('campaign-stats ' + r1.status);
+    if(!r2.ok) throw new Error('content-stats ' + r2.status);
+    render(await r1.json(), await r2.json());
   } catch(e){
     document.getElementById('dash').innerHTML = `
       <div class="loading">

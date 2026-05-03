@@ -564,15 +564,18 @@ function render(d){
 
   const isCurrentMonth=!filterMonth;
   const liveCol=isCurrentMonth?`<div style="display:flex;flex-direction:column;gap:10px;">
+    <div style="display:flex;justify-content:flex-end;">
+      <span class="badge blue" style="font-size:9px;">Entire pipeline</span>
+    </div>
     <div class="card kpi">
       <span class="kpi-lbl">Follow-ups Due Today</span>
       <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'var(--zero-val)'};">${live.followupsToday||0}</div>
-      <div class="kpi-sub">All open leads · ${live.followupsNext3||0} due within 3 days</div>
+      <div class="kpi-sub">${live.followupsNext3||0} due within 3 days</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Quotations</span>
       <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'var(--zero-val)'};">${live.overdueResponse||0}</div>
-      <div class="kpi-sub">All open leads · no quote issued after 2h</div>
+      <div class="kpi-sub">New leads open &gt;2h · no quote issued</div>
     </div>
   </div>`:'';
 

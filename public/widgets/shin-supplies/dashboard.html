@@ -100,12 +100,12 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rep-rate-val{font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;}
 
 /* ── Donut ── */
-.donut-wrap{display:flex;align-items:center;gap:22px;margin:auto 0;}
+.donut-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
 .donut-svg-wrap{position:relative;flex-shrink:0;}
 .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
-.donut-total{font-size:18px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.donut-total{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
 .donut-total-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-top:3px;}
-.donut-legend{flex:1;display:flex;flex-direction:column;gap:10px;}
+.donut-legend{width:100%;display:flex;flex-direction:column;gap:10px;}
 .dl-item{display:flex;align-items:center;gap:9px;}
 .dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
 .dl-info{flex:1;min-width:0;}
@@ -168,7 +168,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
     body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#5a8a00;}
     body.light .wgt-footer{color:rgba(0,0,0,.3);}
     body.light .empty{color:rgba(0,0,0,.3);}
-    @keyframes livepulse{0%,100%{opacity:1;}50%{opacity:.3;}}
 </style>
 </head>
 <body>
@@ -251,12 +250,15 @@ function mnNext() {
 const PROD_COLORS  = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES   = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
 const SRC_MAP = {
+  'Facebook Ads':      { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/facebook.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Iklan Facebook':    { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/facebook.png" width="18" height="18" style="object-fit:contain;"/>' },
-  'TikTok':           { color:'#E879F9', icon:'<img src="https://widgets.opxio.io/icons/social/tiktok.png" width="18" height="18" style="object-fit:contain;"/>' },
-  'Threads':          { color:'#F97316', icon:'<img src="https://widgets.opxio.io/icons/social/threads.png" width="18" height="18" style="object-fit:contain;"/>' },
-  'Rujukan / Kenalan':{ color:'#C8FF00', icon:'<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>' },
-  'Walk-in':          { color:'#34D399', icon:'<img src="https://widgets.opxio.io/icons/social/walk-in.png" width="18" height="18" style="object-fit:contain;"/>' },
-  'Lain-lain':        { color:'#9CA3AF', icon:'<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'TikTok':            { color:'#E879F9', icon:'<img src="https://widgets.opxio.io/icons/social/tiktok.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Threads':           { color:'#F97316', icon:'<img src="https://widgets.opxio.io/icons/social/threads.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Referral':          { color:'#C8FF00', icon:'<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Rujukan / Kenalan': { color:'#C8FF00', icon:'<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Walk-in':           { color:'#34D399', icon:'<img src="https://widgets.opxio.io/icons/social/walk-in.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Others':            { color:'#9CA3AF', icon:'<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Lain-lain':         { color:'#9CA3AF', icon:'<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>' },
 };
 function srcColor(name){ return (SRC_MAP[name]||{color:'#9CA3AF'}).color; }
 function srcIcon(name){ return (SRC_MAP[name]||SRC_MAP['Others']||{icon:'<span style="font-size:14px;">📋</span>'}).icon; }
@@ -265,14 +267,14 @@ const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
 
-const DONUT_R = 36;
+const DONUT_R = 44;
 const DONUT_CIRC = 2 * Math.PI * DONUT_R;
 
 function renderDonut(obj, colors, _unused) {
   if (!obj || !Object.keys(obj).length) return '<div class="empty">No data yet</div>';
   const entries = Object.entries(obj).sort((a,b) => b[1]-a[1]);
   const total = entries.reduce((s,[,v])=>s+v,0) || 1;
-  const size = 90;
+  const size = 110;
   const cx = size/2, cy = size/2, r = DONUT_R;
   const circ = 2*Math.PI*r;
 
@@ -412,13 +414,13 @@ function render(d){
       <div class="kpi-sub">no quote &gt;2h</div>
     </div>
     <div class="card kpi" style="position:relative;">
-      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;animation:livepulse 1.5s ease-in-out infinite;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
+      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
       <span class="kpi-lbl">Pending Quotations</span>
       <div class="kpi-val" style="color:${t2.pendingQuotations>0?'var(--amber)':'rgba(255,255,255,.18)'}">${t2.pendingQuotations}</div>
       <div class="kpi-sub">${t2.overdueQuotations} overdue &gt;24h</div>
     </div>
     <div class="card kpi" style="position:relative;">
-      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;animation:livepulse 1.5s ease-in-out infinite;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
+      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
       <span class="kpi-lbl">Follow-ups Due Today</span>
       <div class="kpi-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.18)'}">${t3.followupsToday}</div>
       <div class="kpi-sub">${t3.followupsNext3Days} next 3 days</div>

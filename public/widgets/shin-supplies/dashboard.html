@@ -42,7 +42,10 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .g-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
 .g2-eq{display:grid;grid-template-columns:2fr 3fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+@media(max-width:900px){.g3{grid-template-columns:1fr 1fr;}}
 @media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
+@media(max-width:600px){.g3{grid-template-columns:1fr;}}
 @media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
 
 /* ── Hero stat ── */
@@ -323,10 +326,10 @@ function render(d){
   // ── Row 1: 4 equal KPI tiles ──
   const row1=`<div class="g-hero row">
     <div class="card hero">
-      <span class="hero-eyebrow">New Leads — Last 24 Hours</span>
-      <div class="hero-val">${t1.newLeads24h}</div>
-      <div class="hero-label">Leads today</div>
-      <div class="hero-sub">${t1.newLeadsWeek} this week · ${d.total} all time</div>
+      <span class="hero-eyebrow">New Leads — ${monLabel}</span>
+      <div class="hero-val">${t1.monthLeads}</div>
+      <div class="hero-label">Leads this month</div>
+      <div class="hero-sub">${t1.newLeads24h} today · ${d.total} all time</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Response</span>
@@ -403,38 +406,33 @@ function render(d){
     </div>
   </div>`;
 
-  // ── Row 3: Rep leaderboard ──
+  // ── Row 3: Rep + Lead Sources + Product (3-col) ──
   const reps=(d.repBreakdown||[]).filter(r=>r.name!=='Unassigned');
-  const row3=reps.length?`<div class="row">
-    <div class="card panel">
-      <div class="panel-hdr">
-        <span class="panel-title">Sales Rep Performance</span>
-        <span class="badge blue">${reps.length} rep${reps.length!==1?'s':''}</span>
-      </div>
-      ${renderReps(d.repBreakdown||[], monLabel)}
-    </div>
-  </div>`:'';
-
-  // ── Row 4: Product + Sources ──
   const prodTotal=Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
   const srcTotal=Object.values(d.sourceBreakdown||{}).reduce((s,v)=>s+(v.leads||0),0)||0;
 
-  const hasProd=prodTotal>0, hasSrc=srcTotal>0;
-  let row4='';
-  if(hasProd||hasSrc){
-    row4=`<div class="${hasProd&&hasSrc?'g2-eq':'g2'} row">
-      ${hasProd?`<div class="card panel">
-        <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
-        ${renderDonut(d.productBreakdown,PROD_COLORS,124)}
-      </div>`:''}
-      ${hasSrc?`<div class="card panel">
-        <div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">${srcTotal} total</span></div>
-        ${renderSources(d.sourceBreakdown)}
-      </div>`:''}
-    </div>`;
-  }
+  const repPanel=reps.length?`<div class="card panel">
+    <div class="panel-hdr">
+      <span class="panel-title">Sales Rep Performance</span>
+      <span class="badge blue">${reps.length} rep${reps.length!==1?'s':''}</span>
+    </div>
+    ${renderReps(d.repBreakdown||[], monLabel)}
+  </div>`:'';
 
-  document.getElementById('main').innerHTML=row1+row2+row3+row4;
+  const srcPanel=srcTotal>0?`<div class="card panel">
+    <div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">${srcTotal} total</span></div>
+    ${renderSources(d.sourceBreakdown)}
+  </div>`:'';
+
+  const prodPanel=prodTotal>0?`<div class="card panel">
+    <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
+    ${renderDonut(d.productBreakdown,PROD_COLORS,110)}
+  </div>`:'';
+
+  const row3panels=[repPanel,srcPanel,prodPanel].filter(Boolean);
+  const row3=row3panels.length?`<div class="g3 row">${row3panels.join('')}</div>`:'';
+
+  document.getElementById('main').innerHTML=row1+row2+row3;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 

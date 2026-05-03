@@ -1,6 +1,4 @@
 // pages/api/clients/shin-supplies/enquiry-stats.js
-// CRM dashboard for Shin Supplies — includes per-rep breakdown + month/year filter
-
 import { getClientByToken, getNotionToken, resolveDB } from "../../../../lib/supabase.js"
 
 const ENQUIRY_DB_DEFAULT = '71c9ba4af0694291876bf78422805f18'
@@ -41,7 +39,6 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type,Authorization')
   if (req.method === 'OPTIONS') return res.status(200).end()
-
   res.setHeader('Cache-Control', 's-maxage=60, stale-while-revalidate=120')
 
   const token = req.query.token || req.headers['x-widget-token']
@@ -53,19 +50,18 @@ export default async function handler(req, res) {
   const ENQUIRY_DB = resolveDB(client, 'enquiry_submissions', ENQUIRY_DB_DEFAULT)
   const PEOPLE_DB  = resolveDB(client, 'people', PEOPLE_DB_DEFAULT)
 
-  // Month/year filter — 0-indexed month (JS Date convention)
+  // Month/year filter — 0-indexed month (JS Date)
   const now    = new Date()
   const qMonth = req.query.month !== undefined ? parseInt(req.query.month) : null
   const qYear  = req.query.year  !== undefined ? parseInt(req.query.year)  : null
   const mYear  = (qMonth !== null && qYear !== null && !isNaN(qMonth) && !isNaN(qYear)) ? qYear  : now.getFullYear()
   const mMon   = (qMonth !== null && qYear !== null && !isNaN(qMonth) && !isNaN(qYear)) ? qMonth : now.getMonth()
   const mStart = new Date(mYear, mMon, 1)
-  const mEnd   = new Date(mYear, mMon + 1, 1) // exclusive upper bound
+  const mEnd   = new Date(mYear, mMon + 1, 1)
 
   try {
     const pages = await queryAll(ENQUIRY_DB, NOTION_KEY)
 
-    // Build rep ID → name map
     let repMap = {}
     try {
       const people = await queryAll(PEOPLE_DB, NOTION_KEY)
@@ -84,9 +80,12 @@ export default async function handler(req, res) {
     const d3     = new Date(now); d3.setDate(now.getDate() + 3)
     const d3Str  = d3.toISOString().slice(0, 10)
 
+    // Real-time (always current, unaffected by month filter)
     let newLeads24h = 0, newLeadsWeek = 0
-    let overdueResponse = 0, responded2h = 0, eligibleResponse = 0
-    let totalResponseHours = 0
+
+    // All tiles — month-filtered
+    let monthLeads = 0
+    let overdueResponse = 0, responded2h = 0, eligibleResponse = 0, totalResponseHours = 0
     let pendingQuotations = 0, overdueQuotations = 0
     let followupsToday = 0, followupsNext3Days = 0
     let closedWonMTD = 0
@@ -95,12 +94,9 @@ export default async function handler(req, res) {
     const productCount      = {}
     const sourceCount       = {}
     const sourceClosedCount = {}
-
-    // Per-rep tracking
-    const repStats = {}
-    const UNASSIGNED = 'Unassigned'
-
-    const STAGE_ORDER = ['New Lead', 'Quotation Sent', 'Negotiation', 'Sales Order Issued', 'Closed Won', 'Closed Lost']
+    const repStats          = {}
+    const UNASSIGNED        = 'Unassigned'
+    const STAGE_ORDER       = ['New Lead', 'Quotation Sent', 'Negotiation', 'Sales Order Issued', 'Closed Won', 'Closed Lost']
 
     for (const page of pages) {
       const p         = page.properties
@@ -115,11 +111,17 @@ export default async function handler(req, res) {
 
       if (!status) continue
 
+      const submDate = submAt ? new Date(submAt) : null
+      const ageH     = submDate ? (now - submDate) / 3600000 : null
+
+      // Determine if this lead falls in the selected month window
+      const inMonth = submDate && submDate >= mStart && submDate < mEnd
+
       const isClosed = status === 'Closed Won' || status === 'Closed Lost' || status === 'Done'
       const stageKey = status === 'Done' ? 'Closed Won' : status
       stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
 
-      // Resolve rep name
+      // Rep setup
       let repName = UNASSIGNED
       if (assigned.length > 0) {
         const rid = assigned[0]
@@ -127,21 +129,19 @@ export default async function handler(req, res) {
       }
       if (!repStats[repName]) repStats[repName] = { closedWonMTD: 0, activePipeline: 0, activities: 0, followupsToday: 0 }
 
-      // Track activities in selected month window (same filter as closes)
-      if (submAt) {
-        const submDate2 = new Date(submAt)
-        if (submDate2 >= mStart && submDate2 < mEnd) {
-          repStats[repName].activities++
-        }
+      // ── Real-time metrics (always current) ──
+      if (submDate) {
+        if (ageH <= 24)         newLeads24h++
+        if (submDate >= wStart) newLeadsWeek++
       }
 
-      // Tile 1 — new leads + response speed (always real-time, not month-filtered)
-      if (submAt) {
-        const submDate = new Date(submAt)
-        const ageH = (now - submDate) / 3600000
-        if (ageH <= 24)  newLeads24h++
-        if (submDate >= wStart) newLeadsWeek++
-        if (ageH <= 48) {
+      // ── Month-filtered metrics ──
+      if (inMonth) {
+        monthLeads++
+        repStats[repName].activities++
+
+        // Tile 1 — response speed (leads created in selected month)
+        if (ageH !== null && ageH <= 48) {
           eligibleResponse++
           if (quoIssued || status !== 'New Lead') {
             if (quoSentDt) {
@@ -152,38 +152,30 @@ export default async function handler(req, res) {
             overdueResponse++
           }
         }
-      }
 
-      // Tile 2 — quotation backlog (real-time)
-      if (!isClosed && !quoIssued && status === 'New Lead') {
-        pendingQuotations++
-        if (submAt && (now - new Date(submAt)) / 3600000 > 24) overdueQuotations++
-      }
+        // Tile 2 — pending quotations (leads from selected month)
+        if (!isClosed && !quoIssued && status === 'New Lead') {
+          pendingQuotations++
+          if (ageH > 24) overdueQuotations++
+        }
 
-      // Tile 3 — follow-ups (real-time)
-      if (nextFU && !isClosed) {
-        if (nextFU <= today) { followupsToday++; repStats[repName].followupsToday++ }
-        if (nextFU <= d3Str) followupsNext3Days++
-      }
+        // Tile 3 — follow-ups for leads from selected month
+        if (nextFU && !isClosed) {
+          if (nextFU <= today) { followupsToday++; repStats[repName].followupsToday++ }
+          if (nextFU <= d3Str) followupsNext3Days++
+        }
 
-      // Tile 4 + rep — closed won filtered by selected month window
-      if (status === 'Closed Won' || status === 'Done') {
-        const ref = submAt || page.created_time
-        if (ref) {
-          const refDate = new Date(ref)
-          if (refDate >= mStart && refDate < mEnd) {
-            closedWonMTD++
-            repStats[repName].closedWonMTD++
-          }
+        // Tile 4 + rep — closed won in selected month
+        if (status === 'Closed Won' || status === 'Done') {
+          closedWonMTD++
+          repStats[repName].closedWonMTD++
         }
       }
 
       // Rep — active pipeline (real-time, not closed)
-      if (!isClosed) {
-        repStats[repName].activePipeline++
-      }
+      if (!isClosed) repStats[repName].activePipeline++
 
-      // Product + source breakdown (all-time)
+      // Product + source breakdown (all-time for context)
       for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
       if (source) {
         sourceCount[source] = (sourceCount[source] || 0) + 1
@@ -207,8 +199,11 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       total: pages.length,
-      tile1: { newLeads24h, newLeadsWeek, overdueResponse, responseRate2h, eligibleResponse, responded2h,
-        avgResponseHours: responded2h > 0 ? Math.round((totalResponseHours / responded2h) * 10) / 10 : null },
+      tile1: {
+        monthLeads, newLeads24h, newLeadsWeek,
+        overdueResponse, responseRate2h, eligibleResponse, responded2h,
+        avgResponseHours: responded2h > 0 ? Math.round((totalResponseHours / responded2h) * 10) / 10 : null
+      },
       tile2: { pendingQuotations, overdueQuotations },
       tile3: { followupsToday, followupsNext3Days },
       tile4: {

@@ -7,6 +7,20 @@ const ICONS = {
   'Cold Call':  '📞', 'Email':    '📧', 'Website':  '🌐', 'Others':   '📌',
 }
 
+function getCountColor(count, closeRate) {
+  if (!count) return 'rgba(255,255,255,.18)'
+  if (closeRate != null && closeRate >= 0.25) return 'var(--g)'
+  return 'var(--text)'
+}
+
+function getRateStyle(rate) {
+  // rate is 0–1
+  const pct = rate != null ? Math.round(rate * 100) : -1
+  if (pct >= 25) return { color: 'var(--g)', background: 'rgba(200,255,0,.1)' }
+  if (pct > 0)   return { color: 'var(--amber)', background: 'rgba(251,191,36,.1)' }
+  return { color: 'rgba(255,255,255,.35)', background: 'rgba(255,255,255,.05)' }
+}
+
 export default function LeadSources({ sources = [], monthLabel, empty }) {
   return (
     <div className={s.card}>
@@ -19,19 +33,29 @@ export default function LeadSources({ sources = [], monthLabel, empty }) {
         <div className={s.emptyState}>No source data for {monthLabel}</div>
       ) : (
         <div className={s.srcGrid}>
-          {sources.map(src => (
-            <div key={src.name} className={s.srcCard}>
-              <div className={s.srcIcon}>{ICONS[src.name] || '📌'}</div>
-              <div className={s.srcName}>{src.name}</div>
-              <div className={s.srcN}>{src.count}</div>
-              <div className={s.srcMeta}>
-                <span>{src.won ?? 0}W · {src.lost ?? 0}L</span>
-                <span className={s.srcRate}>
-                  {src.closeRate != null ? `${Math.round(src.closeRate * 100)}%` : '—'}
-                </span>
+          {sources.map(src => {
+            const rate   = src.closeRate ?? null
+            const closed = (src.won ?? 0) + (src.lost ?? 0)
+            const pct    = rate != null ? Math.round(rate * 100) : null
+            const rStyle = getRateStyle(rate)
+            const cColor = getCountColor(src.count, rate)
+
+            return (
+              <div key={src.name} className={s.srcCard}>
+                <div className={s.srcCardTop}>
+                  <div className={s.srcIcon}>{ICONS[src.name] || '📌'}</div>
+                  <div className={s.srcName}>{src.name}</div>
+                </div>
+                <div className={s.srcCount} style={{ color: cColor }}>{src.count}</div>
+                <div className={s.srcCardFoot}>
+                  <span className={s.srcLeadsLbl}>{closed} closed</span>
+                  <span className={s.srcClosePill} style={rStyle}>
+                    {pct != null ? `${pct}%` : '—'}
+                  </span>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </div>

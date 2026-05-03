@@ -174,7 +174,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 <div class="hdr">
   <div>
-    <p class="eyebrow">Shin Supplies · CRM</p>
+    <p class="eyebrow">Shin Supplies · Cupterra</p>
     <h1 class="h-title">Sales Dashboard</h1>
   </div>
   <div class="h-right">
@@ -468,20 +468,13 @@ function render(d){
     speedDisplay='<div class="empty">No response data yet — will populate as leads come in</div>';
   }
 
-  const row2=`<div class="g2 row">
-    <div class="card panel">
+  const row2=`<div class="row">
+    <div class="card panel" style="width:100%;">
       <div class="panel-hdr">
         <span class="panel-title">Pipeline Stages</span>
         <span class="badge">${d.monthLeads||0} Enquiries — ${monLabel}</span>
       </div>
       ${fRows||'<div class="empty">No pipeline data yet</div>'}
-    </div>
-    <div class="card panel">
-      <div class="panel-hdr">
-        <span class="panel-title">Response Speed</span>
-        ${rate!==null?`<span class="badge ${rateOk?'':'red'}">${rate}% within 2h</span>`:''}
-      </div>
-      ${speedDisplay}
     </div>
   </div>`;
 
@@ -510,8 +503,8 @@ function render(d){
     </div>
   </div>`:'';
 
-  const row3panels=[repPanel,srcPanel,prodPanel].filter(Boolean);
-  const row3=row3panels.length?`<div class="g3 row">${row3panels.join('')}</div>`:'';
+  const row3panels=[repPanel,srcPanel].filter(Boolean);
+  const row3=row3panels.length?`<div class="g2 row">${row3panels.join('')}</div>`:'';
 
   document.getElementById('main').innerHTML=row1+row2+row3;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});

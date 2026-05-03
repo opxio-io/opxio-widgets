@@ -123,9 +123,9 @@ export default function CRMPipeline({ config, token, bypass = false, defaultFilt
           {/* Row 1 — 5 KPI cards (matches HTML widget exactly) */}
           <div className={s.heroRow}>
             <HeroCard
-              eyebrow={config.eyebrow}
+              eyebrow={`${term.newLeads ?? 'New Leads'} — ${monthLabel}`}
               value={monthLeads}
-              label={`${term.newLeads ?? 'New Leads'} — ${monthLabel}`}
+              label="Leads this month"
             />
             <KPICard
               label={term.closedWon ?? 'Closed Won'}

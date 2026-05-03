@@ -229,7 +229,7 @@ export default function ConfigEditor() {
                   <input
                     style={{ ...S.input, flex: 1, margin: 0 }}
                     value={stage.label}
-                    onChange={e => { updateStage(i, 'label', e.target.value); updateStage(i, 'key', e.target.value) }}
+                    onChange={e => updateStage(i, 'label', e.target.value)}
                     placeholder="Stage name"
                   />
                   <button style={S.removeBtn} onClick={() => removeStage(i)}>×</button>

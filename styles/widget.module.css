@@ -172,3 +172,6 @@
 
 @media (max-width: 900px)  { .heroRow { grid-template-columns: 1fr 1fr; } .row2, .row3 { grid-template-columns: 1fr; } }
 @media (max-width: 540px)  { .heroRow { grid-template-columns: 1fr; } }
+
+/* ── Empty state ──────────────────────────────────── */
+.emptyState { padding: 20px 0; text-align: center; font-size: 11px; color: var(--sub); }

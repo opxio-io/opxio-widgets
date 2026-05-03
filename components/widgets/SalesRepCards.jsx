@@ -4,63 +4,63 @@ import s from '@/styles/widget.module.css'
 
 const PAGE_SIZE = 4
 
-export default function SalesRepCards({ repBreakdown = [], terminology = {} }) {
+export default function SalesRepCards({ reps = [], monthLabel, empty }) {
   const [page, setPage] = useState(0)
-  const reps  = repBreakdown
-  const total = reps.length
-
-  const layout  = total <= 2 ? s.repGrid2 : s.repGrid4
-  const pages   = Math.ceil(total / PAGE_SIZE)
-  const visible = total <= 4 ? reps : reps.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE)
-  const maxWon  = Math.max(...reps.map(r => r.closedWon), 1)
+  const pages = Math.ceil(reps.length / PAGE_SIZE)
+  const slice = reps.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+  const cols  = slice.length <= 2 ? 2 : 4
 
   return (
     <div className={s.card}>
       <div className={s.panelHdr}>
-        <span className={s.panelTitle}>{terminology.salesRepPerf || 'Sales Rep Performance'}</span>
-        <span className={`${s.badge} ${s.badgeBlue}`}>{total} rep{total !== 1 ? 's' : ''}</span>
+        <span className={s.panelTitle}>Sales Reps</span>
+        <span className={s.badge}>{monthLabel}</span>
       </div>
 
-      <div className={`${s.repGrid} ${layout}`}>
-        {visible.map((rep, idx) => {
-          const rank     = reps.indexOf(rep) + 1
-          const isLeader = rank === 1
-          const decided  = rep.closedWon + rep.closedLost
-          const cr       = decided > 0 ? Math.round((rep.closedWon / decided) * 100) : 0
-          const barW     = maxWon > 0 ? Math.round((rep.closedWon / maxWon) * 100) : 0
+      {empty || reps.length === 0 ? (
+        <div className={s.emptyState}>No rep data for {monthLabel}</div>
+      ) : (
+        <>
+          <div className={`${s.repGrid} ${cols === 2 ? s.repGrid2 : s.repGrid4}`}>
+            {slice.map((rep, i) => {
+              const rank     = page * PAGE_SIZE + i + 1
+              const isLeader = rank === 1
+              const maxWon   = reps[0]?.closedWon || 1
+              const pct      = Math.round(((rep.closedWon || 0) / maxWon) * 100)
+              return (
+                <div key={rep.name} className={`${s.repCard}${isLeader ? ` ${s.repLeader}` : ''}`}>
+                  <div className={s.repTop}>
+                    <span className={s.repName}>{rep.name}</span>
+                    <span className={s.repRank}>#{rank}</span>
+                  </div>
+                  <div className={s.repHeroVal}>{rep.closedWon ?? 0}</div>
+                  <div className={s.repHeroLbl}>Closed Won</div>
+                  <div className={s.repBarWrap}>
+                    <div className={s.repBarLbl}>
+                      <span>Win rate</span>
+                      <span>{rep.closeRate != null ? `${Math.round(rep.closeRate * 100)}%` : '—'}</span>
+                    </div>
+                    <div className={s.repBarTrack}>
+                      <div className={s.repBarFill} style={{ width: `${pct}%` }} />
+                    </div>
+                  </div>
+                  <div className={s.repMeta}>
+                    <span>Leads</span>
+                    <span className={s.repMetaVal}>{rep.leads ?? 0}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
 
-          return (
-            <div key={rep.name} className={`${s.repCard}${isLeader ? ` ${s.repLeader}` : ''}`}>
-              <div className={s.repTop}>
-                <span className={s.repName}>{rep.name}</span>
-                <span className={s.repRank}>#{rank}</span>
-              </div>
-              <div className={s.repHeroVal}>{rep.closedWon}</div>
-              <div className={s.repHeroLbl}>{terminology.closedWonLabel || 'Closed Won'}</div>
-              <div className={s.repBarWrap}>
-                <div className={s.repBarLbl}>
-                  <span>Close Rate</span>
-                  <span style={{ color: 'var(--g)', fontWeight: 700 }}>{cr}%</span>
-                </div>
-                <div className={s.repBarTrack}>
-                  <div className={s.repBarFill} style={{ width: `${barW}%` }} />
-                </div>
-              </div>
-              <div className={s.repMeta}>
-                <span>{terminology.activities || 'Activities'}</span>
-                <span className={s.repMetaVal}>{rep.activities}</span>
-              </div>
+          {pages > 1 && (
+            <div className={s.paginator}>
+              <button className={s.pageBtn} onClick={() => setPage(p => p - 1)} disabled={page === 0}>←</button>
+              <span className={s.pageInfo}>{page + 1} / {pages}</span>
+              <button className={s.pageBtn} onClick={() => setPage(p => p + 1)} disabled={page >= pages - 1}>→</button>
             </div>
-          )
-        })}
-      </div>
-
-      {pages > 1 && (
-        <div className={s.paginator}>
-          <button className={s.pageBtn} disabled={page === 0} onClick={() => setPage(p => p - 1)}>← Prev</button>
-          <span className={s.pageInfo}>Page {page + 1} of {pages}</span>
-          <button className={s.pageBtn} disabled={page === pages - 1} onClick={() => setPage(p => p + 1)}>Next →</button>
-        </div>
+          )}
+        </>
       )}
     </div>
   )

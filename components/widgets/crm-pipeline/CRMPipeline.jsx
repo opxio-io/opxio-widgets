@@ -1,6 +1,5 @@
 // components/widgets/crm-pipeline/CRMPipeline.jsx
-// Main CRM Pipeline widget — composes all shared components
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback } from 'react'
 import WidgetShell    from '@/components/widgets/WidgetShell'
 import MonthNav       from '@/components/widgets/MonthNav'
 import { HeroCard, KPICard } from '@/components/widgets/KPICard'
@@ -21,8 +20,9 @@ function nextMonth(fm) {
   if (!fm) return null
   const d = new Date(fm.year, fm.month + 1, 1)
   const now = new Date()
-  if (d.getFullYear() > now.getFullYear() || (d.getFullYear() === now.getFullYear() && d.getMonth() >= now.getMonth())) {
-    return null // can't go past current month
+  if (d.getFullYear() > now.getFullYear() ||
+      (d.getFullYear() === now.getFullYear() && d.getMonth() >= now.getMonth())) {
+    return null
   }
   return { year: d.getFullYear(), month: d.getMonth() }
 }
@@ -34,7 +34,7 @@ function fmtLabel(fm) {
 
 export default function CRMPipeline({ config, token }) {
   const [theme,         setTheme]         = useState('dark')
-  const [filterMonth,   setFilterMonth]   = useState(null) // null = current month
+  const [filterMonth,   setFilterMonth]   = useState(null)
   const [refreshSignal, setRefreshSignal] = useState(0)
 
   const { data, loading, error } = useCRMData({
@@ -52,28 +52,28 @@ export default function CRMPipeline({ config, token }) {
   const isCurrentMonth = !filterMonth
   const monthLabel     = fmtLabel(filterMonth)
 
-  // --- Derived display values ---
-  const newLeads       = data?.stats?.monthLeads      ?? 0
-  const quotesSent     = data?.stats?.quotesSent      ?? 0
-  const closedWon      = data?.stats?.closedWon       ?? 0
-  const closedLost     = data?.stats?.closedLost      ?? 0
-  const closeRate      = data?.stats?.closeRate       ?? null
-  const followUps      = data?.stats?.followUps       ?? 0
-  const overdue        = data?.stats?.overdueQuotes   ?? 0
-  const stageFunnel    = data?.stats?.stageFunnel     ?? []
-  const reps           = data?.stats?.reps            ?? []
-  const sources        = data?.stats?.sources         ?? []
-  const stillActive    = data?.stats?.stillActive     ?? 0
-  const updatedAt      = data?.meta?.updatedAt        ?? null
-  const totalPipeline  = data?.stats?.totalPipeline   ?? null
+  const newLeads      = data?.stats?.monthLeads    ?? 0
+  const quotesSent    = data?.stats?.quotesSent    ?? 0
+  const closedWon     = data?.stats?.closedWon     ?? 0
+  const closedLost    = data?.stats?.closedLost    ?? 0
+  const closeRate     = data?.stats?.closeRate     ?? null
+  const followUps     = data?.stats?.followUps     ?? 0
+  const overdue       = data?.stats?.overdueQuotes ?? 0
+  const stageFunnel   = data?.stats?.stageFunnel   ?? []
+  const reps          = data?.stats?.reps          ?? []
+  const sources       = data?.stats?.sources       ?? []
+  const stillActive   = data?.stats?.stillActive   ?? 0
+  const updatedAt     = data?.meta?.updatedAt      ?? null
+  const totalPipeline = data?.stats?.totalPipeline ?? null
 
-  // Close rate display
-  const closeRateDisplay = closeRate !== null
-    ? `${Math.round(closeRate * 100)}%`
-    : '—'
+  const closeRateDisplay = closeRate !== null ? `${Math.round(closeRate * 100)}%` : '—'
   const closeRateColor   = closeRate !== null
     ? (closeRate >= 0.5 ? 'lime' : closeRate >= 0.3 ? 'amber' : 'red')
     : 'muted'
+
+  // Respect section order from config
+  const sectionOrder = config.sectionOrder || ['pipeline', 'salesReps', 'leadSources', 'liveColumn']
+  const sections     = config.sections || {}
 
   return (
     <WidgetShell theme={theme} onThemeToggle={toggleTheme} loading={loading} error={error}>
@@ -96,23 +96,15 @@ export default function CRMPipeline({ config, token }) {
 
       {data && (
         <>
-          {/* Row 1 — KPI hero row */}
+          {/* Row 1 — KPIs */}
           <div className={s.heroRow}>
             <HeroCard
               eyebrow={config.eyebrow}
               value={newLeads}
               label={`${config.terminology?.newLeads ?? 'New Leads'} — ${monthLabel}`}
             />
-            <KPICard
-              label={config.terminology?.quotesSent ?? 'Quotations Sent'}
-              value={quotesSent}
-              color="blue"
-            />
-            <KPICard
-              label={config.terminology?.closedWon ?? 'Closed Won'}
-              value={closedWon}
-              color="lime"
-            />
+            <KPICard label={config.terminology?.quotesSent ?? 'Quotations Sent'} value={quotesSent} color="blue" />
+            <KPICard label={config.terminology?.closedWon  ?? 'Closed Won'}      value={closedWon}  color="lime" />
             <KPICard
               label={config.terminology?.closeRate ?? 'Close Rate'}
               value={closeRateDisplay}
@@ -121,7 +113,7 @@ export default function CRMPipeline({ config, token }) {
             />
           </div>
 
-          {/* Row 2 — Pipeline + Live (current month) or full-width pipeline (past) */}
+          {/* Row 2 — Pipeline + Live (current) or full-width pipeline (past) */}
           {isCurrentMonth ? (
             <div className={s.row2}>
               <div className={s.pipelineCol}>
@@ -135,11 +127,7 @@ export default function CRMPipeline({ config, token }) {
                 />
               </div>
               <div className={s.liveCol}>
-                <LiveColumn
-                  followUps={followUps}
-                  overdueQuotes={overdue}
-                  totalPipeline={totalPipeline}
-                />
+                <LiveColumn followUps={followUps} overdueQuotes={overdue} totalPipeline={totalPipeline} />
               </div>
             </div>
           ) : (
@@ -153,14 +141,31 @@ export default function CRMPipeline({ config, token }) {
             />
           )}
 
-          {/* Row 3 — Rep performance + Lead sources */}
+          {/* Row 3 — ordered sections */}
           <div className={s.row3}>
-            {config.sections?.salesReps !== false && reps.length > 0 && (
-              <SalesRepCards reps={reps} monthLabel={monthLabel} />
-            )}
-            {config.sections?.leadSources !== false && sources.length > 0 && (
-              <LeadSources sources={sources} monthLabel={monthLabel} />
-            )}
+            {sectionOrder
+              .filter(k => k !== 'pipeline' && k !== 'liveColumn')
+              .filter(k => sections[k] !== false)
+              .map(k => {
+                if (k === 'salesReps')   return (
+                  <SalesRepCards
+                    key="reps"
+                    reps={reps}
+                    monthLabel={monthLabel}
+                    empty={reps.length === 0}
+                  />
+                )
+                if (k === 'leadSources') return (
+                  <LeadSources
+                    key="sources"
+                    sources={sources}
+                    monthLabel={monthLabel}
+                    empty={sources.length === 0}
+                  />
+                )
+                return null
+              })
+            }
           </div>
         </>
       )}

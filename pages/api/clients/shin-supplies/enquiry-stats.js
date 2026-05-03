@@ -125,7 +125,10 @@ export default async function handler(req, res) {
         const rid = assigned[0]
         repName = repMap[rid] || repMap[rid.replace(/-/g,'')] || UNASSIGNED
       }
-      if (!repStats[repName]) repStats[repName] = { closedWonMTD: 0, activePipeline: 0, followupsToday: 0 }
+      if (!repStats[repName]) repStats[repName] = { closedWonMTD: 0, activePipeline: 0, totalLeads: 0, followupsToday: 0 }
+
+      // Track total leads assigned to rep (all-time)
+      repStats[repName].totalLeads++
 
       // Tile 1 — new leads + response speed (always real-time, not month-filtered)
       if (submAt) {
@@ -194,7 +197,7 @@ export default async function handler(req, res) {
       : null
 
     const repBreakdown = Object.entries(repStats)
-      .map(([name, stats]) => ({ name, ...stats }))
+      .map(([name, { closedWonMTD, activePipeline, totalLeads, followupsToday }]) => ({ name, closedWonMTD, activePipeline, totalLeads, followupsToday }))
       .sort((a, b) => b.closedWonMTD - a.closedWonMTD || b.activePipeline - a.activePipeline)
 
     return res.status(200).json({

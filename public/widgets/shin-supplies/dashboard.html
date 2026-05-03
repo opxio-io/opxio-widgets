@@ -86,19 +86,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
 .rate-meta{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:rgba(255,255,255,.4);margin-top:7px;}
 
-/* ── Rep leaderboard ── */
-.rep-item{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);}
-.rep-item:first-child{padding-top:0;}
-.rep-item:last-child{border-bottom:none;padding-bottom:0;}
-.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.15);width:14px;text-align:center;flex-shrink:0;}
-.rep-av{display:none;}
-.rep-info{flex:1;min-width:0;}
-.rep-name{font-size:15px;font-weight:900;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;}
-.rep-hint{font-size:12px;font-weight:500;color:rgba(255,255,255,.5);margin-top:4px;}
-.rep-nums{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.rep-pill{text-align:center;padding:8px 16px;border-radius:8px;}
-.rep-pill-val{font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.rep-pill-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:4px;}
+/* ── Rep table ── */
+.rep-table{width:100%;border-collapse:collapse;}
+.rep-table thead th{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);text-align:right;padding:0 0 12px 16px;}
+.rep-table thead th:first-child{text-align:left;padding-left:0;}
+.rep-table tbody tr{border-top:1px solid rgba(255,255,255,.05);}
+.rep-table tbody tr:first-child{border-top:none;}
+.rep-table tbody td{padding:11px 0 11px 16px;text-align:right;vertical-align:middle;}
+.rep-table tbody td:first-child{text-align:left;padding-left:0;}
+.rep-name{font-size:14px;font-weight:900;color:rgba(255,255,255,.88);letter-spacing:-.3px;}
+.rep-num{font-size:18px;font-weight:900;letter-spacing:-.5px;}
+.rep-rate{font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
 
 /* ── Donut ── */
 .donut-wrap{display:flex;align-items:center;gap:22px;}
@@ -293,27 +291,26 @@ function renderSources(obj){
 function renderReps(reps, monthLabel){
   const active=reps.filter(r=>r.name!=='Unassigned');
   if(!active.length) return '<div class="empty">No rep data yet</div>';
-  return active.map((r,i)=>{
-    const col=REP_COLORS[i%REP_COLORS.length];
-    const fuLabel=r.followupsToday===0?'No follow-ups due':r.followupsToday===1?'1 follow-up due today':`${r.followupsToday} follow-ups due today`;
-    return `<div class="rep-item">
-      <span class="rep-rank">${i+1}</span>
-      <div class="rep-info">
-        <div class="rep-name">${esc(r.name)}</div>
-        <div class="rep-hint">${fuLabel}</div>
-      </div>
-      <div class="rep-nums">
-        <div class="rep-pill" style="background:${col}12;">
-          <div class="rep-pill-val" style="color:${col};">${r.closedWonMTD}</div>
-          <div class="rep-pill-lbl">Won ${monthLabel}</div>
-        </div>
-        <div class="rep-pill" style="background:rgba(255,255,255,.04);">
-          <div class="rep-pill-val" style="color:rgba(255,255,255,.55);">${r.activePipeline}</div>
-          <div class="rep-pill-lbl">Active</div>
-        </div>
-      </div>
-    </div>`;
+  const rows=active.map(r=>{
+    const rate=r.totalLeads>0?Math.round((r.closedWonMTD/r.totalLeads)*100):0;
+    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
+    const rateBg=rate>=30?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
+    return `<tr>
+      <td><span class="rep-name">${esc(r.name)}</span></td>
+      <td><span class="rep-num" style="color:rgba(255,255,255,.7);">${r.totalLeads}</span></td>
+      <td><span class="rep-num" style="color:rgba(255,255,255,.7);">${r.closedWonMTD}</span></td>
+      <td><span class="rep-rate" style="color:${rateCol};background:${rateBg};">${rate}%</span></td>
+    </tr>`;
   }).join('');
+  return `<table class="rep-table">
+    <thead><tr>
+      <th></th>
+      <th>Activities</th>
+      <th>Closes</th>
+      <th>Close Rate</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
 }
 
 function render(d){

@@ -307,8 +307,8 @@ const SRC_MAP = {
 function srcColor(name){ return (SRC_MAP[name]||{color:'#9CA3AF'}).color; }
 function srcIcon(name){ return (SRC_MAP[name]||SRC_MAP['Others']||{icon:'<span style="font-size:14px;">📋</span>'}).icon; }
 function getStageColors(){return _light
-  ?['#999999','#1976D2','#FF9800','#9C27B0','#C8FF00','#F44336']
-  :['#999999','#1976D2','#FF9800','#9C27B0','#C8FF00','#F44336'];}
+  ?['#888888','#5B8DB8','#C4874A','#8E5AA0','#C8FF00','#C45C5C']
+  :['#888888','#5B8DB8','#C4874A','#8E5AA0','#C8FF00','#C45C5C'];}
 const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }

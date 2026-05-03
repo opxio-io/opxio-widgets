@@ -424,23 +424,7 @@ function render(d){
     </div>
   </div>`;
 
-  // ── Live strip: always today ──
-  const liveStrip=`<div class="g2-eq row">
-    <div class="card kpi" style="position:relative;">
-      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
-      <span class="kpi-lbl">Follow-ups Due Today</span>
-      <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'rgba(255,255,255,.18)'};">${live.followupsToday||0}</div>
-      <div class="kpi-sub">${live.followupsNext3||0} next 3 days</div>
-    </div>
-    <div class="card kpi" style="position:relative;">
-      <span style="position:absolute;top:14px;right:14px;display:inline-flex;align-items:center;gap:3px;"><span style="width:6px;height:6px;border-radius:50%;background:#ff4444;"></span><span style="font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;">LIVE</span></span>
-      <span class="kpi-lbl">Overdue Response</span>
-      <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'rgba(255,255,255,.18)'};">${live.overdueResponse||0}</div>
-      <div class="kpi-sub">open leads &gt;2h no quote</div>
-    </div>
-  </div>`;
-
-  // ── Row 2: Pipeline ──
+  // ── Row 2: Pipeline + live column (current month only) ──
   const funnel=d.stageFunnel||[], fMax=Math.max(...funnel.map(s=>s.count),1);
   const fRows=funnel.map((s,i)=>{
     const w=Math.max(Math.round((s.count/fMax)*100),s.count>0?3:0);
@@ -451,7 +435,30 @@ function render(d){
     </div>`;
   }).join('');
 
-  const row2=`<div class="row">
+  const isCurrentMonth=!filterMonth;
+  const liveCol=isCurrentMonth?`<div style="display:flex;flex-direction:column;gap:10px;">
+    <div class="card kpi">
+      <span class="kpi-lbl">Follow-ups Due Today</span>
+      <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'rgba(255,255,255,.18)'};">${live.followupsToday||0}</div>
+      <div class="kpi-sub">${live.followupsNext3||0} next 3 days</div>
+    </div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Overdue Response</span>
+      <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'rgba(255,255,255,.18)'};">${live.overdueResponse||0}</div>
+      <div class="kpi-sub">open leads &gt;2h no quote</div>
+    </div>
+  </div>`:'';
+
+  const row2=isCurrentMonth?`<div class="g2 row">
+    <div class="card panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Pipeline Stages</span>
+        <span class="badge">${d.monthLeads||0} Enquiries — ${monLabel}</span>
+      </div>
+      ${fRows||'<div class="empty">No pipeline data yet</div>'}
+    </div>
+    ${liveCol}
+  </div>`:`<div class="row">
     <div class="card panel" style="width:100%;">
       <div class="panel-hdr">
         <span class="panel-title">Pipeline Stages</span>
@@ -489,7 +496,7 @@ function render(d){
   const row3panels=[repPanel,srcPanel].filter(Boolean);
   const row3=row3panels.length?`<div class="g2 row">${row3panels.join('')}</div>`:'';
 
-  document.getElementById('main').innerHTML=row1+liveStrip+row2+row3;
+  document.getElementById('main').innerHTML=row1+row2+row3;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 

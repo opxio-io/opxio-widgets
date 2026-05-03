@@ -635,18 +635,23 @@ const MOON_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 function toggleMode(){_light=!_light;document.body.classList.toggle('light',_light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=_light?MOON_SVG:SUN_SVG;}
 let _loadCtrl=null;
 let _abortedByNav=false;
-const _monthCache=new Map(); // client-side cache: monthKey → response data
+const _monthCache=new Map(); // client-side cache: monthKey → { data, ts }
+const CURRENT_TTL  = 6*60*1000;  // current month: 6 min
+const PAST_TTL     = 30*60*1000; // past months: 30 min (leads can still close/be edited)
 
 function monthKey(fm){ return fm ? `${fm.year}-${fm.month}` : 'current'; }
+function isCurrentMonth(fm){ return !fm; }
 
 async function load(forceNetwork=false){
   if(_loadCtrl){ _abortedByNav=true; _loadCtrl.abort(); }
   _abortedByNav=false;
 
-  // Client cache hit — render instantly, no network needed
+  // Client cache hit — check TTL based on whether it's current or past month
   const ck=monthKey(filterMonth);
-  if(!forceNetwork && _monthCache.has(ck)){
-    render(_monthCache.get(ck));
+  const cached=_monthCache.get(ck);
+  const ttl=isCurrentMonth(filterMonth)?CURRENT_TTL:PAST_TTL;
+  if(!forceNetwork && cached && (Date.now()-cached.ts)<ttl){
+    render(cached.data);
     return;
   }
 
@@ -663,7 +668,7 @@ async function load(forceNetwork=false){
     const r=await fetch('https://api.opxio.io/api/clients/shin-supplies/crm-pipeline?'+params.toString(),{signal:sig});
     if(!r.ok) throw new Error('HTTP '+r.status);
     const data=await r.json();
-    _monthCache.set(ck, data); // store in client cache
+    _monthCache.set(ck, { data, ts: Date.now() }); // store with timestamp
     render(data);
   }catch(e){
     if(e.name==='AbortError'){
@@ -677,10 +682,10 @@ async function load(forceNetwork=false){
     if(!sig.aborted){const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');}
   }
 }
-// Auto-refresh: only invalidate current month — past months never change
+// Manual refresh: force network for current month, let past months respect their TTL
 function doRefresh(){ _monthCache.delete('current'); load(true); }
 
-// Init month label
+// Auto-refresh: only force-clear current month, past months expire via TTL
 updateMonthNav();
 load();
 setInterval(()=>{ _monthCache.delete('current'); load(true); }, 6*60*1000);

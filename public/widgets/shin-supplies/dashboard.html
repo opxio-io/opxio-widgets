@@ -530,6 +530,8 @@ async function load(){
   if(_loadCtrl)_loadCtrl.abort();
   _loadCtrl=new AbortController();
   const sig=_loadCtrl.signal;
+  // 15s timeout — prevents infinite hang if server restarts mid-request
+  const timer=setTimeout(()=>_loadCtrl.abort(),15000);
   const b=document.getElementById('rb');
   if(b)b.classList.add('spinning');
   try{
@@ -540,9 +542,13 @@ async function load(){
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){
-    if(e.name==='AbortError') return;
+    if(e.name==='AbortError'){
+      document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Request timed out — <a href="" style="color:var(--g);" onclick="location.reload();return false;">Reload</a></div></div>`;
+      return;
+    }
     document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
   }finally{
+    clearTimeout(timer);
     if(!sig.aborted){const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');}
   }
 }

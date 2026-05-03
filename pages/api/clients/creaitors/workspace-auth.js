@@ -10,7 +10,7 @@
  *   401 { error: "wrong_password" }
  *   404 { error: "staff_not_found" }
  */
-import { getClientByToken } from "../../../lib/supabase.js"
+import { getClientByToken } from "../../../../lib/supabase.js"
 import bcrypt from "bcryptjs"
 
 export default async function handler(req, res) {

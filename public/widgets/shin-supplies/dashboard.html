@@ -371,7 +371,7 @@ function renderReps(reps, monthLabel){
   if(!active.length) return '<div class="empty">No rep data yet</div>';
   const cards=active.map(r=>{
     const acts=r.activities||0;
-    const rate=acts>0?Math.round((r.closedWonMTD/acts)*100):0;
+    const rate=acts>0?Math.round((r.closedWon/acts)*100):0;
     const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.38)';
     const rateBg=rate>=30?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
     return `<div class="rep-card">
@@ -382,7 +382,7 @@ function renderReps(reps, monthLabel){
       </div>
       <div class="rep-stat">
         <span class="rep-stat-lbl">Closes</span>
-        <span class="rep-stat-val">${r.closedWonMTD}</span>
+        <span class="rep-stat-val">${r.closedWon}</span>
       </div>
       <div class="rep-stat">
         <span class="rep-stat-lbl">Close Rate</span>
@@ -397,6 +397,7 @@ function render(d){
   const live=d.live||{};
   const monLabel=currentMonthShort();
   const cr=d.closeRate;
+  const cw=d.closedWon||0, cl=d.closedLost||0;
   const crCol=cr===null?'rgba(255,255,255,.18)':cr>=30?'var(--g)':cr>=15?'var(--amber)':'var(--red)';
 
   // ── Row 1: KPI tiles — month-locked ──
@@ -414,13 +415,13 @@ function render(d){
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Closed Won</span>
-      <div class="kpi-val" style="color:${(d.quotationsClosed||0)>0?'var(--g)':'rgba(255,255,255,.18)'};">${d.quotationsClosed||0}</div>
-      <div class="kpi-sub">of ${monLabel} quotations</div>
+      <div class="kpi-val" style="color:${(d.closedWon||0)>0?'var(--g)':'rgba(255,255,255,.18)'};">${d.closedWon||0}</div>
+      <div class="kpi-sub">of ${monLabel} leads</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Close Rate</span>
       <div class="kpi-val" style="color:${crCol};">${cr!==null?cr+'%':'—'}</div>
-      <div class="kpi-sub">${d.quotationsSent||0} sent · ${d.quotationsClosed||0} closed</div>
+      <div class="kpi-sub">${d.closedWon||0} won · ${d.closedLost||0} lost</div>
     </div>
   </div>`;
 
@@ -515,7 +516,7 @@ async function load(){
     const params=new URLSearchParams();
     if(_tok) params.set('token',_tok);
     if(filterMonth){ params.set('month',filterMonth.month); params.set('year',filterMonth.year); }
-    const r=await fetch('/api/clients/shin-supplies/enquiry-stats?'+params.toString(),{signal:sig});
+    const r=await fetch('https://api.opxio.io/api/clients/shin-supplies/crm-pipeline?'+params.toString(),{signal:sig});
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){

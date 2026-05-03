@@ -420,6 +420,8 @@ function render(d){
   const cr=d.closeRate;
   const cw=d.closedWon||0, cl=d.closedLost||0;
   const crCol=cr===null?'var(--zero-val)':cr>=30?'var(--g)':cr>=15?'var(--amber)':'var(--red)';
+  const stillActive=(d.monthLeads||0)-(d.closedWon||0)-(d.closedLost||0);
+  const crSub=filterMonth&&stillActive>0?`Closed Won / Quotes Sent · ${stillActive} still active`:'Closed Won / Quotes Sent';
 
   // ── Row 1: KPI tiles — month-locked ──
   const row1=`<div class="g-hero row">
@@ -437,7 +439,7 @@ function render(d){
     <div class="card kpi">
       <span class="kpi-lbl">Close Rate</span>
       <div class="kpi-val" style="color:${crCol};">${cr!==null?cr+'%':'—'}</div>
-      <div class="kpi-sub">Closed Won / Quotes Sent</div>
+      <div class="kpi-sub">${crSub}</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Avg Days to Close</span>

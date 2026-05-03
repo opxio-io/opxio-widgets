@@ -179,7 +179,7 @@ export default async function handler(req, res) {
       : null
 
     const stageFunnel = STAGE_ORDER
-      .filter(s => s !== 'Closed Lost')
+
       .map(s => ({ stage: s, count: stageCount[s] || 0 }))
 
     const repBreakdown = Object.entries(repStats)

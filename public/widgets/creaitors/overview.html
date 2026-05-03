@@ -868,7 +868,7 @@ async function saveConfig(){
   }
 
   try{
-    const r = await fetch('/api/clients/creaitors/config?token='+_tok, {
+    const r = await fetch('https://api.opxio.io/api/clients/creaitors/config?token='+_tok, {
       method: 'POST',
       headers: {'Content-Type':'application/json'},
       body: JSON.stringify({ sections }),
@@ -905,7 +905,7 @@ async function load(){
     } else {
       // No role: fetch config from API (falls back to default on error)
       try{
-        const cr = await fetch('/api/clients/creaitors/config?token='+_tok);
+        const cr = await fetch('https://api.opxio.io/api/clients/creaitors/config?token='+_tok);
         if(cr.ok){
           const cj = await cr.json();
           if(Array.isArray(cj.sections) && cj.sections.length) _sections = cj.sections;
@@ -920,9 +920,9 @@ async function load(){
     const needRevenue  = _sections.includes('crm') || _sections.includes('crm-log');
 
     const fetchMap = {};
-    if(needCampaign) fetchMap.campaign = fetch('/api/clients/creaitors/campaign-stats?token='+_tok).then(r=>r.json());
-    if(needKol)      fetchMap.kol      = fetch('/api/clients/creaitors/kol-data?token='+_tok).then(r=>r.json());
-    if(needContent)  fetchMap.content  = fetch('/api/clients/creaitors/content-stats?token='+_tok).then(r=>r.json());
+    if(needCampaign) fetchMap.campaign = fetch('https://api.opxio.io/api/clients/creaitors/campaign-stats?token='+_tok).then(r=>r.json());
+    if(needKol)      fetchMap.kol      = fetch('https://api.opxio.io/api/clients/creaitors/kol-data?token='+_tok).then(r=>r.json());
+    if(needContent)  fetchMap.content  = fetch('https://api.opxio.io/api/clients/creaitors/content-stats?token='+_tok).then(r=>r.json());
     if(needRevenue){
       fetchMap.pipe  = fetch('/api/data/pipeline?token='+_tok).then(r=>r.json());
       fetchMap.deals = fetch('/api/data/deals?token='+_tok).then(r=>r.json());

@@ -233,7 +233,7 @@ window.switchTab = function(tab){
 async function loadData(){
   document.getElementById('rb').textContent = '↻ Refreshing…';
   try{
-    const r = await fetch('/api/clients/creaitors/marketing/staff-breakdown?token='+_tok);
+    const r = await fetch('https://api.opxio.io/api/clients/creaitors/marketing/staff-breakdown?token='+_tok);
     if(!r.ok) throw new Error('API '+r.status);
     _data = await r.json();
     render(_data);

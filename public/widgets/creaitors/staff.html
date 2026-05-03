@@ -877,7 +877,7 @@ function render(data){
 
 function doRefresh(){var b=document.getElementById('rb');if(b)b.classList.add('spinning');loadData().finally(function(){var b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
 function loadData(){
-  return fetch('/api/clients/creaitors/employee-stats?token='+_tok)
+  return fetch('https://api.opxio.io/api/clients/creaitors/employee-stats?token='+_tok)
     .then(function(r){if(!r.ok)throw new Error('API '+r.status);return r.json();})
     .then(function(d){_data=d;render(d);})
     .catch(function(e){document.getElementById('dash').innerHTML='<div class="loading"><div class="err-text">Failed to load</div><div style="font-size:9px;color:rgba(255,255,255,.2);margin-top:4px;">'+esc(e.message)+'</div></div>';});

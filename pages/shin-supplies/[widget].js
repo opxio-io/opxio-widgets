@@ -34,7 +34,7 @@ export async function getServerSideProps({ params, res }) {
   if (!html) return { notFound: true }
 
   res.setHeader('Content-Type', 'text/html; charset=utf-8')
-  res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate')
+  res.setHeader('Cache-Control', 'public, s-maxage=300, stale-while-revalidate=86400')
   res.setHeader('X-Frame-Options', 'ALLOWALL')
   res.setHeader('Content-Security-Policy', 'frame-ancestors *')
   res.write(html)

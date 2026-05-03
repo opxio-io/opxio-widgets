@@ -32,27 +32,27 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Grids ── */
 .row{margin-bottom:10px;}
-.g-hero{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;}
+.g-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
 .g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
 .g2-eq{display:grid;grid-template-columns:2fr 3fr;gap:10px;}
 @media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
 @media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
 
 /* ── Hero stat ── */
-.hero{padding:28px 28px 24px;}
+.hero{padding:24px 24px 22px;}
 .hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;display:block;}
-.hero-val{font-size:64px;font-weight:900;letter-spacing:-3px;line-height:1;color:var(--g);filter:drop-shadow(0 0 24px rgba(200,255,0,.25));}
-.hero-label{font-size:13px;font-weight:700;color:rgba(255,255,255,.55);margin-top:10px;}
-.hero-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
+.hero-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.hero-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.45);margin-top:8px;}
+.hero-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:4px;}
 
 /* ── Small KPI ── */
-.kpi{padding:22px 22px 20px;}
-.kpi-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.3);margin-bottom:14px;display:block;line-height:1.5;}
-.kpi-val{font-size:36px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.kpi{padding:24px 24px 22px;}
+.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:14px;display:block;white-space:nowrap;}
+.kpi-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
 .kpi-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:8px;}
 
 /* ── Panel ── */
-.panel{padding:24px 26px 22px;}
+.panel{padding:22px 24px 20px;}
 .panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:6px;}
 .panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);}
 .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
@@ -80,17 +80,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rate-meta{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.2);margin-top:7px;}
 
 /* ── Rep leaderboard ── */
-.rep-item{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.rep-item{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);}
 .rep-item:last-child{border-bottom:none;padding-bottom:0;}
-.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.1);width:18px;text-align:center;flex-shrink:0;}
-.rep-av{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.1);width:14px;text-align:center;flex-shrink:0;}
+.rep-av{display:none;}
 .rep-info{flex:1;min-width:0;}
-.rep-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rep-hint{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:2px;}
+.rep-name{font-size:15px;font-weight:900;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;}
+.rep-hint{font-size:11px;font-weight:500;color:rgba(255,255,255,.28);margin-top:3px;}
 .rep-nums{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-.rep-pill{text-align:center;padding:6px 14px;border-radius:8px;}
-.rep-pill-val{font-size:20px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.rep-pill-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:3px;}
+.rep-pill{text-align:center;padding:8px 16px;border-radius:8px;}
+.rep-pill-val{font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.rep-pill-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:4px;}
 
 /* ── Donut ── */
 .donut-wrap{display:flex;align-items:center;gap:22px;}
@@ -268,17 +268,17 @@ function render(d){
       <div class="hero-sub">${t1.newLeadsWeek} received this week · ${d.total} all time</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Overdue<br>Response</span>
+      <span class="kpi-lbl">Overdue Response</span>
       <div class="kpi-val" style="color:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.18)'};">${t1.overdueResponse}</div>
       <div class="kpi-sub">no quote &gt;2h</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Pending<br>Quotations</span>
+      <span class="kpi-lbl">Pending Quotations</span>
       <div class="kpi-val" style="color:${t2.pendingQuotations>0?'var(--amber)':'rgba(255,255,255,.18)'};">${t2.pendingQuotations}</div>
       <div class="kpi-sub">${t2.overdueQuotations} overdue &gt;24h</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Follow-ups<br>Due Today</span>
+      <span class="kpi-lbl">Follow-ups Due Today</span>
       <div class="kpi-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.18)'};">${t3.followupsToday}</div>
       <div class="kpi-sub">${t3.followupsNext3Days} next 3 days</div>
     </div>

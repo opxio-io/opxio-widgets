@@ -108,23 +108,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .leg-val{font-size:14px;font-weight:900;color:rgba(255,255,255,.85);}
 .leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.38);margin-left:2px;}
 
-/* ── Sources ── */
-.src-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.src-item:first-child{padding-top:0;}
-.src-item:last-child{border-bottom:none;padding-bottom:0;}
-.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.15);width:16px;text-align:center;flex-shrink:0;}
-.src-icon{width:32px;height:32px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.95;}
-.src-icon svg{width:22px;height:22px;}
-.src-icon img{width:24px;height:24px;object-fit:contain;}
-.src-info{flex:1;min-width:0;}
-.src-name{font-size:13px;font-weight:700;color:rgba(255,255,255,.82);}
-.src-meta{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;font-weight:600;}
-.src-leads{color:rgba(255,255,255,.5);}
-.src-sep{color:rgba(255,255,255,.12);}
-.src-closed{/* color set inline */}
-.src-right{text-align:right;flex-shrink:0;}
-.src-count{font-size:18px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.src-close-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:4px;display:inline-block;}
+/* ── Sources grid ── */
+.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.src-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.src-card-top{display:flex;align-items:center;gap:8px;}
+.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.95;}
+.src-icon img{width:22px;height:22px;object-fit:contain;}
+.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.78);line-height:1.2;}
+.src-count{font-size:22px;font-weight:900;letter-spacing:-.8px;line-height:1;}
+.src-card-foot{display:flex;align-items:center;justify-content:space-between;}
+.src-leads-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);}
+.src-close-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;}
 
 /* ── Empty / Loading ── */
 .loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
@@ -264,29 +258,24 @@ function renderDonut(obj,colors,size){
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
   const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
-  const totalLeads=entries.reduce((s,[,v])=>s+v.leads,0)||1;
-  return entries.map(([name,{leads,closed}],i)=>{
+  const cards=entries.map(([name,{leads,closed}])=>{
     const col=srcColor(name), icon=srcIcon(name);
     const rate=leads>0?Math.round((closed/leads)*100):0;
-    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.38)';
-    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.06)';
-    return `<div class="src-item">
-      <span class="src-rank">${i+1}</span>
-      <div class="src-icon" style="color:${col};">${icon}</div>
-      <div class="src-info">
+    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
+    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
+    return `<div class="src-card">
+      <div class="src-card-top">
+        <div class="src-icon">${icon}</div>
         <div class="src-name">${esc(name)}</div>
-        <div class="src-meta">
-          <span class="src-leads">${leads} lead${leads!==1?'s':''}</span>
-          <span class="src-sep">·</span>
-          <span class="src-closed" style="color:${closed>0?rateCol:'rgba(255,255,255,.38)'};">${closed} closed</span>
-        </div>
       </div>
-      <div class="src-right">
-        <div class="src-count" style="color:${col};">${leads}</div>
-        <div class="src-close-pill" style="background:${rateBg};color:${rateCol};">${rate}%</div>
+      <div class="src-count" style="color:${col};">${leads}</div>
+      <div class="src-card-foot">
+        <span class="src-leads-lbl">${closed} closed</span>
+        <span class="src-close-pill" style="color:${rateCol};background:${rateBg};">${rate}%</span>
       </div>
     </div>`;
   }).join('');
+  return `<div class="src-grid">${cards}</div>`;
 }
 
 function renderReps(reps, monthLabel){

@@ -100,7 +100,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rep-rate-val{font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;}
 
 /* ── Donut ── */
-.donut-wrap{display:flex;align-items:center;gap:22px;}
+.donut-wrap{display:flex;align-items:center;gap:22px;margin:auto 0;}
 .donut-svg-wrap{position:relative;flex-shrink:0;}
 .donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
 .donut-total{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
@@ -284,15 +284,19 @@ function renderDonut(obj, colors, _unused) {
 }
 
 
-// Sources that use their own brand color for the count number
-const SRC_OWN_COLOR = new Set(['Lain-lain','Walk-in','Rujukan / Kenalan']);
+// Source count color logic:
+// - Ad channels (Facebook, TikTok, Threads) → lime green
+// - Rujukan/Kenalan → brand color
+// - Walk-in, Lain-lain → muted grey
+const SRC_GREY = new Set(['Lain-lain','Walk-in']);
+const SRC_BRAND = new Set(['Rujukan / Kenalan']);
 
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
   const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
   const cards=entries.map(([name,{leads,closed}])=>{
     const col=srcColor(name), icon=srcIcon(name);
-    const numCol=SRC_OWN_COLOR.has(name)?col:'var(--g)';
+    const numCol=SRC_GREY.has(name)?'rgba(255,255,255,.4)':SRC_BRAND.has(name)?col:'var(--g)';
     const rate=leads>0?Math.round((closed/leads)*100):0;
     const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
     const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
@@ -447,9 +451,11 @@ function render(d){
     ${renderSources(d.sourceBreakdown)}
   </div>`:'';
 
-  const prodPanel=prodTotal>0?`<div class="card panel">
+  const prodPanel=prodTotal>0?`<div class="card panel" style="display:flex;flex-direction:column;">
     <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
-    ${renderDonut(d.productBreakdown,PROD_COLORS,110)}
+    <div style="flex:1;display:flex;align-items:center;">
+      ${renderDonut(d.productBreakdown,PROD_COLORS,110)}
+    </div>
   </div>`:'';
 
   const row3panels=[repPanel,srcPanel,prodPanel].filter(Boolean);

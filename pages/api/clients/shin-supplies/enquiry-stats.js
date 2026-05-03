@@ -118,8 +118,6 @@ export default async function handler(req, res) {
       const inMonth = submDate && submDate >= mStart && submDate < mEnd
 
       const isClosed = status === 'Closed Won' || status === 'Closed Lost' || status === 'Done'
-      const stageKey = status === 'Done' ? 'Closed Won' : status
-      stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
 
       // Rep setup
       let repName = UNASSIGNED
@@ -140,23 +138,34 @@ export default async function handler(req, res) {
         monthLeads++
         repStats[repName].activities++
 
-        // Tile 1 — response speed (leads created in selected month)
-        if (ageH !== null && ageH <= 48) {
-          eligibleResponse++
-          if (quoIssued || status !== 'New Lead') {
-            if (quoSentDt) {
-              const respH = (new Date(quoSentDt) - submDate) / 3600000
-              if (respH <= 2) { responded2h++; totalResponseHours += respH }
-            }
-          } else if (ageH > 2) {
-            overdueResponse++
+        // Stage funnel — month scoped
+        const stageKey = status === 'Done' ? 'Closed Won' : status
+        stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
+
+        // Product + source breakdown — month scoped
+        for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
+        if (source) {
+          sourceCount[source] = (sourceCount[source] || 0) + 1
+          if (status === 'Closed Won' || status === 'Done') {
+            sourceClosedCount[source] = (sourceClosedCount[source] || 0) + 1
           }
+        }
+
+        // Tile 1 — response speed (all leads in selected month are eligible)
+        eligibleResponse++
+        if (quoIssued || status !== 'New Lead') {
+          if (quoSentDt) {
+            const respH = (new Date(quoSentDt) - submDate) / 3600000
+            if (respH <= 2) { responded2h++; totalResponseHours += respH }
+          }
+        } else if (ageH !== null && ageH > 2) {
+          overdueResponse++
         }
 
         // Tile 2 — pending quotations (leads from selected month)
         if (!isClosed && !quoIssued && status === 'New Lead') {
           pendingQuotations++
-          if (ageH > 24) overdueQuotations++
+          if (ageH !== null && ageH > 24) overdueQuotations++
         }
 
         // Tile 3 — follow-ups for leads from selected month
@@ -172,17 +181,8 @@ export default async function handler(req, res) {
         }
       }
 
-      // Rep — active pipeline (real-time, not closed)
+      // Rep — active pipeline (real-time, not month-scoped)
       if (!isClosed) repStats[repName].activePipeline++
-
-      // Product + source breakdown (all-time for context)
-      for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
-      if (source) {
-        sourceCount[source] = (sourceCount[source] || 0) + 1
-        if (status === 'Closed Won' || status === 'Done') {
-          sourceClosedCount[source] = (sourceClosedCount[source] || 0) + 1
-        }
-      }
     }
 
     const stageFunnel = STAGE_ORDER

@@ -92,7 +92,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rate-meta{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:rgba(255,255,255,.4);margin-top:7px;}
 
 /* ── Rep cards ── */
-.rep-cards{display:flex;gap:10px;flex-wrap:wrap;}
+.rep-cards{display:grid;gap:10px;}
+.rep-cards.layout-2{grid-template-columns:1fr 1fr;}
+.rep-cards.layout-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.rep-page-nav{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:10px;}
+.rep-page-btn{font-size:11px;font-weight:700;padding:4px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:rgba(255,255,255,.5);cursor:pointer;letter-spacing:.04em;}
+.rep-page-btn:hover:not(:disabled){border-color:var(--g);color:var(--g);}
+.rep-page-btn:disabled{opacity:.3;cursor:default;}
+.rep-page-info{font-size:11px;font-weight:600;color:rgba(255,255,255,.3);}
+body.light .rep-page-btn{border-color:#ddd;background:#f5f5f5;color:#aaa;}
+body.light .rep-page-btn:hover:not(:disabled){border-color:#7ab800;color:#5a9900;}
+body.light .rep-page-info{color:#bbb;}
 .rep-card{flex:1;min-width:180px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s;}
 .rep-card.leader{border-color:rgba(200,255,0,.35);background:rgba(200,255,0,.04);}
 .rep-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
@@ -413,11 +423,13 @@ function renderSources(obj){
 
 function renderReps(reps, monthLabel){
   const EXCLUDED=['Unassigned','Nurhan'];
-  const RANK_LABELS=['#1','#2','#3','#4','#5'];
+  const RANK_LABELS=['#1','#2','#3','#4','#5','#6','#7','#8'];
+  const PER_PAGE=4;
   const active=reps.filter(r=>!EXCLUDED.includes(r.name));
   if(!active.length) return '<div class="empty">No rep data yet</div>';
   const maxRate=Math.max(...active.map(r=>r.activities>0?Math.round((r.closedWon/r.activities)*100):0),1);
-  const cards=active.map((r,i)=>{
+
+  function makeCard(r,i){
     const acts=r.activities||0;
     const rate=acts>0?Math.round((r.closedWon/acts)*100):0;
     const isLeader=i===0;
@@ -445,8 +457,51 @@ function renderReps(reps, monthLabel){
         <span class="rep-stat-val">${acts}</span>
       </div>
     </div>`;
-  }).join('');
-  return `<div class="rep-cards">${cards}</div>`;
+  }
+
+  const layoutClass = active.length<=2 ? 'layout-2' : 'layout-4';
+
+  if(active.length<=4){
+    const cards=active.map((r,i)=>makeCard(r,i)).join('');
+    return `<div class="rep-cards ${layoutClass}">${cards}</div>`;
+  }
+
+  // Paginated — 4 per page
+  const totalPages=Math.ceil(active.length/PER_PAGE);
+  let currentPage=0;
+  function renderPage(){
+    const start=currentPage*PER_PAGE;
+    const slice=active.slice(start,start+PER_PAGE);
+    const cards=slice.map((r,i)=>makeCard(r,start+i)).join('');
+    const prevDis=currentPage===0?'disabled':'';
+    const nextDis=currentPage>=totalPages-1?'disabled':'';
+    return `<div class="rep-cards layout-4">${cards}</div>
+    <div class="rep-page-nav">
+      <button class="rep-page-btn" id="rep-prev" ${prevDis}>← Prev</button>
+      <span class="rep-page-info">Page ${currentPage+1} of ${totalPages}</span>
+      <button class="rep-page-btn" id="rep-next" ${nextDis}>Next →</button>
+    </div>`;
+  }
+
+  // Wire up after render via timeout
+  setTimeout(()=>{
+    const prev=document.getElementById('rep-prev');
+    const next=document.getElementById('rep-next');
+    const wrap=document.getElementById('rep-wrap');
+    if(prev) prev.onclick=()=>{ if(currentPage>0){currentPage--;wrap.innerHTML=renderPage();wireRep(wrap);} };
+    if(next) next.onclick=()=>{ if(currentPage<totalPages-1){currentPage++;wrap.innerHTML=renderPage();wireRep(wrap);} };
+  },50);
+
+  function wireRep(wrap){
+    setTimeout(()=>{
+      const prev=wrap.querySelector('#rep-prev');
+      const next=wrap.querySelector('#rep-next');
+      if(prev) prev.onclick=()=>{ if(currentPage>0){currentPage--;wrap.innerHTML=renderPage();wireRep(wrap);} };
+      if(next) next.onclick=()=>{ if(currentPage<totalPages-1){currentPage++;wrap.innerHTML=renderPage();wireRep(wrap);} };
+    },50);
+  }
+
+  return `<div id="rep-wrap">${renderPage()}</div>`;
 }
 
 function render(d){

@@ -86,18 +86,15 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
 .rate-meta{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:rgba(255,255,255,.4);margin-top:7px;}
 
-/* ── Rep table ── */
-.rep-table{width:100%;border-collapse:collapse;}
-.rep-table{width:100%;border-collapse:collapse;}
-.rep-table thead th{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);text-align:center;padding:0 0 12px 16px;}
-.rep-table thead th:first-child{text-align:left;padding-left:0;}
-.rep-table tbody tr{border-top:1px solid rgba(255,255,255,.05);}
-.rep-table tbody tr:first-child{border-top:none;}
-.rep-table tbody td{padding:11px 0 11px 16px;text-align:center;vertical-align:middle;}
-.rep-table tbody td:first-child{text-align:left;padding-left:0;}
-.rep-name{font-size:14px;font-weight:900;color:rgba(255,255,255,.88);letter-spacing:-.3px;}
-.rep-num{font-size:18px;font-weight:900;letter-spacing:-.5px;color:rgba(255,255,255,.82);}
-.rep-rate{font-size:12px;font-weight:700;padding:3px 9px;border-radius:6px;display:inline-block;}
+/* ── Rep cards ── */
+.rep-cards{display:flex;gap:10px;flex-wrap:wrap;}
+.rep-card{flex:1;min-width:140px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;}
+.rep-card-name{font-size:13px;font-weight:900;color:rgba(255,255,255,.88);letter-spacing:-.2px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);}
+.rep-stat{display:flex;align-items:center;justify-content:space-between;padding:6px 0;}
+.rep-stat:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04);}
+.rep-stat-lbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);}
+.rep-stat-val{font-size:13px;font-weight:900;color:rgba(255,255,255,.82);}
+.rep-rate-val{font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;}
 
 /* ── Donut ── */
 .donut-wrap{display:flex;align-items:center;gap:22px;}
@@ -292,27 +289,28 @@ function renderSources(obj){
 function renderReps(reps, monthLabel){
   const active=reps.filter(r=>r.name!=='Unassigned');
   if(!active.length) return '<div class="empty">No rep data yet</div>';
-  const rows=active.map(r=>{
+  const cards=active.map(r=>{
     const acts=r.activities||0;
     const rate=acts>0?Math.round((r.closedWonMTD/acts)*100):0;
-    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
+    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.38)';
     const rateBg=rate>=30?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
-    return `<tr>
-      <td><span class="rep-name">${esc(r.name)}</span></td>
-      <td><span class="rep-num">${acts}</span></td>
-      <td><span class="rep-num">${r.closedWonMTD}</span></td>
-      <td><span class="rep-rate" style="color:${rateCol};background:${rateBg};">${rate}%</span></td>
-    </tr>`;
+    return `<div class="rep-card">
+      <div class="rep-card-name">${esc(r.name)}</div>
+      <div class="rep-stat">
+        <span class="rep-stat-lbl">Activities</span>
+        <span class="rep-stat-val">${acts}</span>
+      </div>
+      <div class="rep-stat">
+        <span class="rep-stat-lbl">Closes</span>
+        <span class="rep-stat-val">${r.closedWonMTD}</span>
+      </div>
+      <div class="rep-stat">
+        <span class="rep-stat-lbl">Close Rate</span>
+        <span class="rep-rate-val" style="color:${rateCol};background:${rateBg};">${rate}%</span>
+      </div>
+    </div>`;
   }).join('');
-  return `<table class="rep-table">
-    <thead><tr>
-      <th></th>
-      <th>Activities</th>
-      <th>Closes</th>
-      <th>Close Rate</th>
-    </tr></thead>
-    <tbody>${rows}</tbody>
-  </table>`;
+  return `<div class="rep-cards">${cards}</div>`;
 }
 
 function render(d){

@@ -84,9 +84,10 @@ export default async function handler(req, res) {
     let followupsToday = 0, followupsNext3Days = 0
     let closedWonMTD = 0
 
-    const stageCount   = {}
-    const productCount = {}
-    const sourceCount  = {}
+    const stageCount        = {}
+    const productCount      = {}
+    const sourceCount       = {}
+    const sourceClosedCount = {}
 
     // Per-rep tracking
     // repStats[repName] = { closedWonMTD, activePipeline, followupsToday }
@@ -167,7 +168,12 @@ export default async function handler(req, res) {
 
       // Product + source breakdown
       for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
-      if (source) sourceCount[source] = (sourceCount[source] || 0) + 1
+      if (source) {
+        sourceCount[source] = (sourceCount[source] || 0) + 1
+        if (status === 'Closed Won' || status === 'Done') {
+          sourceClosedCount[source] = (sourceClosedCount[source] || 0) + 1
+        }
+      }
     }
 
     const stageFunnel = STAGE_ORDER
@@ -197,7 +203,11 @@ export default async function handler(req, res) {
       },
       repBreakdown,
       productBreakdown: productCount,
-      sourceBreakdown:  sourceCount,
+      sourceBreakdown: Object.fromEntries(
+        Object.entries(sourceCount).map(([src, count]) => [
+          src, { leads: count, closed: sourceClosedCount[src] || 0 }
+        ])
+      ),
       updatedAt: now.toISOString(),
     })
 

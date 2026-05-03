@@ -204,22 +204,28 @@ function renderDonut(obj,colors,size){
 
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
-  const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
-  const total=entries.reduce((s,[,v])=>s+v,0)||1;
-  const maxVal=entries[0][1]||1;
-  return entries.map(([name,count],i)=>{
-    const pct=Math.round((count/total)*100),barW=Math.round((count/maxVal)*100);
+  // obj is now { sourceName: { leads, closed } }
+  const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
+  const totalLeads=entries.reduce((s,[,v])=>s+v.leads,0)||1;
+  return entries.map(([name,{leads,closed}],i)=>{
     const col=srcColor(name), icon=srcIcon(name);
+    const rate=leads>0?Math.round((closed/leads)*100):0;
+    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.18)';
+    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
     return `<div class="src-item">
       <span class="src-rank">${i+1}</span>
       <div class="src-icon" style="color:${col};">${icon}</div>
       <div class="src-info">
         <div class="src-name">${esc(name)}</div>
-        <div class="src-bar"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>
+        <div class="src-meta">
+          <span class="src-leads">${leads} lead${leads!==1?'s':''}</span>
+          <span style="color:rgba(255,255,255,.1);">·</span>
+          <span class="src-rate" style="color:${rateCol};">${closed} closed</span>
+        </div>
       </div>
       <div class="src-right">
-        <div class="src-count" style="color:${col};">${count}</div>
-        <div class="src-pct">${pct}%</div>
+        <div class="src-count" style="color:${col};">${leads}</div>
+        <div class="src-close-pill" style="background:${rateBg};color:${rateCol};">${rate}%</div>
       </div>
     </div>`;
   }).join('');
@@ -356,7 +362,7 @@ function render(d){
 
   // ── Row 4: Product + Sources ──
   const prodTotal=Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
-  const srcTotal=Object.values(d.sourceBreakdown||{}).reduce((s,n)=>s+n,0)||0;
+  const srcTotal=Object.values(d.sourceBreakdown||{}).reduce((s,v)=>s+(v.leads||0),0)||0;
 
   const hasProd=prodTotal>0, hasSrc=srcTotal>0;
   let row4='';

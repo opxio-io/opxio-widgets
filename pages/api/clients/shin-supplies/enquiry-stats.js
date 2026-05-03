@@ -81,7 +81,7 @@ export default async function handler(req, res) {
 
     // ── Month-scoped counters ──
     let monthLeads       = 0
-    let quotationsSent   = 0  // by quoSentDt in month window
+    let quotationsSent   = 0  // leads submitted this month that progressed past New Lead
     let quotationsClosed = 0  // sent in month + now Closed Won
     let closedWonMTD     = 0
 
@@ -151,8 +151,8 @@ export default async function handler(req, res) {
         }
       }
 
-      // ── Quotations Sent — based on quoSentDt window (independent of submAt) ──
-      if (quoSentDate && quoSentDate >= mStart && quoSentDate < mEnd) {
+      // ── Quotations Sent — leads this month that moved past New Lead stage ──
+      if (inMonth && status !== 'New Lead') {
         quotationsSent++
         if (status === 'Closed Won' || status === 'Done') {
           quotationsClosed++

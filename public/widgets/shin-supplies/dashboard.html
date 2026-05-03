@@ -40,11 +40,12 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Grids ── */
 .row{margin-bottom:10px;}
-.g-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.g-hero{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;}
 .g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
 .g2-eq{display:grid;grid-template-columns:2fr 3fr;gap:10px;}
 .g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 @media(max-width:900px){.g3{grid-template-columns:1fr 1fr;}}
+@media(max-width:1000px){.g-hero{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
 @media(max-width:600px){.g3{grid-template-columns:1fr;}}
 @media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
@@ -429,11 +430,6 @@ function render(d){
       <div class="hero-sub">${d.total} all time</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Quotations Sent</span>
-      <div class="kpi-val" style="color:${(d.quotationsSent||0)>0?'var(--amber)':'var(--zero-val)'};">${d.quotationsSent||0}</div>
-      <div class="kpi-sub">sent in ${monLabel}</div>
-    </div>
-    <div class="card kpi">
       <span class="kpi-lbl">Closed Won</span>
       <div class="kpi-val" style="color:${(d.closedWon||0)>0?'var(--g)':'var(--zero-val)'};">${d.closedWon||0}</div>
       <div class="kpi-sub">of ${monLabel} leads</div>
@@ -442,6 +438,16 @@ function render(d){
       <span class="kpi-lbl">Close Rate</span>
       <div class="kpi-val" style="color:${crCol};">${cr!==null?cr+'%':'—'}</div>
       <div class="kpi-sub">Closed Won / Quotes Sent</div>
+    </div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Avg Days to Close</span>
+      <div class="kpi-val" style="color:${d.avgDaysToClose!==null?'var(--amber)':'var(--zero-val)'};">${d.avgDaysToClose!==null?d.avgDaysToClose+'d':'—'}</div>
+      <div class="kpi-sub">Lead to Closed Won</div>
+    </div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Quote to Win</span>
+      <div class="kpi-val" style="color:${d.avgQuoteToWin!==null?'var(--amber)':'var(--zero-val)'};">${d.avgQuoteToWin!==null?d.avgQuoteToWin+'d':'—'}</div>
+      <div class="kpi-sub">Quote sent to Closed Won</div>
     </div>
   </div>`;
 

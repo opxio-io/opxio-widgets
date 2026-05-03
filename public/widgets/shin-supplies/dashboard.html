@@ -256,6 +256,12 @@ body.light .cohort-note{background:rgba(0,0,0,.03);border-color:#e0e0e0;color:#a
 <div class="footer">Widgets by Opxio.io</div>
 
 <script>
+// Block direct browser access — must be embedded in Notion iframe
+if (window.self === window.top) {
+  document.body.innerHTML = '';
+  document.documentElement.style.cssText = 'background:#191919;margin:0;';
+  throw new Error('Embedded access only');
+}
 const _tok = new URLSearchParams(location.search).get('token') || '';
 const _now  = new Date();
 let filterMonth = null; // null = current month

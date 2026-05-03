@@ -184,7 +184,7 @@ export default function ConfigEditor() {
                 + Stage
               </button>
             }>
-              <div style={{fontSize:10,color:'#444',marginBottom:10}}>Drag ⠿ to reorder · Color swatch = bar color · Name is display only</div>
+              <div style={{fontSize:10,color:'#666',marginBottom:10}}>Drag ⠿ to reorder · Color swatch = bar color · Name is display only</div>
               {config.stages.map((st,i) => (
                 <div key={i} draggable
                   onDragStart={()=>setDragIdx(i)} onDragOver={e=>{e.preventDefault();setOverIdx(i)}}
@@ -207,7 +207,7 @@ export default function ConfigEditor() {
 
             {/* KPI Labels */}
             <ConfigSection icon="◉" title="KPI Labels">
-              <div style={{fontSize:10,color:'#444',marginBottom:10}}>Rename cards to match the client's language</div>
+              <div style={{fontSize:10,color:'#666',marginBottom:10}}>Rename cards to match the client's language</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                 {Object.entries(config.terminology).map(([k,v])=>(
                   <div key={k}>
@@ -221,7 +221,7 @@ export default function ConfigEditor() {
 
             {/* Sections */}
             <ConfigSection icon="⊞" title="Sections">
-              <div style={{fontSize:10,color:'#444',marginBottom:12}}>Drag active sections to reorder · Click available to add</div>
+              <div style={{fontSize:10,color:'#666',marginBottom:12}}>Drag active sections to reorder · Click available to add</div>
 
               {/* Active */}
               <div style={S.secGroupLabel}>ACTIVE</div>
@@ -267,8 +267,8 @@ export default function ConfigEditor() {
                               ? <span style={S.soonBadge}>SOON</span>
                               : <span style={S.addBadge}>+ Add</span>}
                           </div>
-                          <div style={{fontSize:11,fontWeight:600,color:locked?'#444':'#888',marginBottom:2}}>{sec.label}</div>
-                          <div style={{fontSize:10,color:'#383838',lineHeight:1.4}}>{sec.description}</div>
+                          <div style={{fontSize:11,fontWeight:600,color:locked?'#666':'#aaa',marginBottom:2}}>{sec.label}</div>
+                          <div style={{fontSize:10,color:'#555',lineHeight:1.4}}>{sec.description}</div>
                         </div>
                       )
                     })}
@@ -285,11 +285,11 @@ export default function ConfigEditor() {
             <div style={S.previewBar}>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
                 <div style={S.liveDot}/>
-                <span style={{fontSize:11,fontWeight:700,color:'#555',letterSpacing:'.08em',textTransform:'uppercase'}}>Live Preview</span>
+                <span style={{fontSize:11,fontWeight:700,color:'#888',letterSpacing:'.08em',textTransform:'uppercase'}}>Live Preview</span>
               </div>
               <div style={{display:'flex',alignItems:'center',gap:6,marginLeft:'auto'}}>
                 <button style={S.mnBtn} onClick={()=>setPreviewMonth(fm=>prevFm(fm))}>‹</button>
-                <span style={{fontSize:11,fontWeight:700,color:'#666',minWidth:70,textAlign:'center'}}>{fmtMonth(previewMonth)}</span>
+                <span style={{fontSize:11,fontWeight:700,color:'#999',minWidth:70,textAlign:'center'}}>{fmtMonth(previewMonth)}</span>
                 <button style={{...S.mnBtn,opacity:isPreviewCurrent?.3:1}} onClick={()=>setPreviewMonth(fm=>nextFm(fm))} disabled={isPreviewCurrent}>›</button>
               </div>
             </div>
@@ -322,7 +322,7 @@ function ConfigSection({ icon, title, children, action }) {
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <span style={{fontSize:13,color:'#C8FF00'}}>{icon}</span>
-          <span style={{fontSize:12,fontWeight:700,letterSpacing:'.04em',color:'#ccc'}}>{title}</span>
+          <span style={{fontSize:12,fontWeight:700,letterSpacing:'.04em',color:'#ddd'}}>{title}</span>
         </div>
         {action}
       </div>
@@ -332,7 +332,7 @@ function ConfigSection({ icon, title, children, action }) {
 }
 
 function Label({ children }) {
-  return <div style={{fontSize:10,color:'#555',fontWeight:600,letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{children}</div>
+  return <div style={{fontSize:10,color:'#888',fontWeight:600,letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{children}</div>
 }
 
 export async function getServerSideProps() { return { props: {} } }
@@ -342,9 +342,9 @@ const S = {
   topbar:        { display:'flex', alignItems:'center', gap:12, padding:'0 16px', height:48, borderBottom:'1px solid #171717', flexShrink:0 },
   backBtn:       { width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'1px solid #222', borderRadius:7, color:'#666', cursor:'pointer', flexShrink:0 },
   breadcrumb:    { display:'flex', alignItems:'center', gap:8 },
-  breadSlug:     { fontSize:13, fontWeight:700, color:'#ccc' },
+  breadSlug:     { fontSize:13, fontWeight:700, color:'#eee' },
   breadSep:      { color:'#333', fontSize:13 },
-  breadWidget:   { fontSize:12, color:'#555', fontFamily:'monospace' },
+  breadWidget:   { fontSize:12, color:'#888', fontFamily:'monospace' },
   dirtyDot:      { width:7, height:7, borderRadius:'50%', background:'#C8FF00', animation:'pulse 2s infinite' },
   saveBtn:       { background:'#C8FF00', color:'#000', border:'none', borderRadius:7, padding:'7px 16px', fontWeight:700, fontSize:12, cursor:'pointer', letterSpacing:'.02em' },
   loadingWrap:   { flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' },
@@ -358,22 +358,22 @@ const S = {
   colorWrap:     { position:'relative', cursor:'pointer', flexShrink:0 },
   colorDot:      { width:28, height:28, borderRadius:6, flexShrink:0, border:'2px solid rgba(255,255,255,.08)' },
   hiddenColor:   { position:'absolute', top:0, left:0, width:'100%', height:'100%', opacity:0, cursor:'pointer', padding:0, border:'none' },
-  removeStageBtn:{ background:'transparent', border:'none', color:'#333', fontSize:18, cursor:'pointer', padding:'0 2px', lineHeight:1 },
+  removeStageBtn:{ background:'transparent', border:'none', color:'#555', fontSize:18, cursor:'pointer', padding:'0 2px', lineHeight:1 },
   addStageBtn:   { background:'transparent', border:'1px solid #222', borderRadius:6, padding:'4px 10px', color:'#555', fontSize:11, cursor:'pointer' },
-  secGroupLabel: { fontSize:9, fontWeight:700, letterSpacing:'.15em', color:'#333', marginBottom:8, textTransform:'uppercase' },
+  secGroupLabel: { fontSize:9, fontWeight:700, letterSpacing:'.15em', color:'#555', marginBottom:8, textTransform:'uppercase' },
   secRow:        { display:'flex', alignItems:'center', gap:10, padding:'10px 12px', borderRadius:9, border:'1px solid transparent', marginBottom:6, transition:'all .1s' },
   secActive:     { },
-  secName:       { fontSize:12, fontWeight:600, color:'#bbb', marginBottom:2 },
+  secName:       { fontSize:12, fontWeight:600, color:'#ddd', marginBottom:2 },
   secDesc:       { fontSize:10, color:'#3A3A3A', lineHeight:1.4 },
   coreBadge:     { fontSize:9, fontWeight:700, letterSpacing:'.1em', color:'#C8FF00', background:'rgba(200,255,0,.08)', padding:'3px 8px', borderRadius:5, flexShrink:0 },
-  removeSec:     { background:'transparent', border:'1px solid #252525', borderRadius:5, padding:'3px 8px', color:'#444', fontSize:10, cursor:'pointer', flexShrink:0 },
+  removeSec:     { background:'transparent', border:'1px solid #252525', borderRadius:5, padding:'3px 8px', color:'#888', fontSize:10, cursor:'pointer', flexShrink:0 },
   secCard:       { background:'#141414', border:'1px solid #1E1E1E', borderRadius:9, padding:12, transition:'border-color .15s, background .15s' },
   soonBadge:     { fontSize:9, fontWeight:700, color:'#333', letterSpacing:'.08em' },
   addBadge:      { fontSize:10, fontWeight:700, color:'#C8FF00' },
   previewPanel:  { display:'flex', flexDirection:'column', minHeight:0, overflow:'hidden', background:'#111' },
   previewBar:    { display:'flex', alignItems:'center', padding:'0 16px', height:44, borderBottom:'1px solid #171717', flexShrink:0, gap:10 },
   liveDot:       { width:6, height:6, borderRadius:'50%', background:'#C8FF00', animation:'pulse 2s infinite', flexShrink:0 },
-  mnBtn:         { background:'transparent', border:'1px solid #222', borderRadius:5, color:'#555', fontSize:16, width:26, height:26, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', lineHeight:1 },
+  mnBtn:         { background:'transparent', border:'1px solid #222', borderRadius:5, color:'#888', fontSize:16, width:26, height:26, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer', lineHeight:1 },
   previewInner:  { flex:1, overflowY:'auto', minHeight:0 },
   noPreview:     { height:'100%', display:'flex', alignItems:'center', justifyContent:'center', color:'#333', fontSize:12 },
 }

@@ -38,7 +38,7 @@ function resolveEnabledSections(config) {
   return order.filter(k => secs[k] !== false)
 }
 
-export default function CRMPipeline({ config, token, bypass = false, defaultFilterMonth = null }) {
+export default function CRMPipeline({ config, token, bypass = false, defaultFilterMonth = null, mockData = null }) {
   const [theme,         setTheme]         = useState('dark')
   const [filterMonth,   setFilterMonth]   = useState(defaultFilterMonth)
   const [refreshSignal, setRefreshSignal] = useState(0)
@@ -48,6 +48,7 @@ export default function CRMPipeline({ config, token, bypass = false, defaultFilt
     apiEndpoint:  config.apiEndpoint,
     filterMonth,
     refreshSignal,
+    mockData,
   })
 
   const handlePrev    = useCallback(() => setFilterMonth(fm => prevMonth(fm)), [])
@@ -155,7 +156,7 @@ export default function CRMPipeline({ config, token, bypass = false, defaultFilt
 
           {/* Remaining sections in configured order */}
           {otherSections.length > 0 && (
-            <div className={s.row3}>
+            <div className={s.row3} style={otherSections.length === 1 ? { gridTemplateColumns: '1fr' } : {}}>
               {otherSections.map(id => renderSection(id))}
             </div>
           )}

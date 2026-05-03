@@ -5,6 +5,7 @@ import dynamic        from 'next/dynamic'
 import Head           from 'next/head'
 import { getConfig }  from '@/lib/configs'
 import { WIDGET_SECTIONS, DEFAULT_ENABLED_SECTIONS } from '@/lib/configs/sections-registry'
+import { MOCK_CRM_DATA } from '@/lib/mock-data'
 
 const CRMPipeline = dynamic(() => import('@/components/widgets/crm-pipeline/CRMPipeline'), { ssr: false })
 
@@ -62,6 +63,7 @@ export default function ConfigEditor() {
   const [overIdx,     setOverIdx]     = useState(null)
   const [dragSec,     setDragSec]     = useState(null)
   const [overSec,     setOverSec]     = useState(null)
+  const [mockMode,    setMockMode]    = useState(true)
   const [previewMonth,setPreviewMonth]= useState(() => {
     const d = new Date(); d.setMonth(d.getMonth()-1)
     return { year: d.getFullYear(), month: d.getMonth() }
@@ -184,7 +186,7 @@ export default function ConfigEditor() {
                 + Stage
               </button>
             }>
-              <div style={{fontSize:10,color:'#666',marginBottom:10}}>Drag ⠿ to reorder · Color swatch = bar color · Name is display only</div>
+              <div style={{fontSize:11,color:'#999',marginBottom:10}}>Drag ⠿ to reorder · Color swatch = bar color · Name is display only</div>
               {config.stages.map((st,i) => (
                 <div key={i} draggable
                   onDragStart={()=>setDragIdx(i)} onDragOver={e=>{e.preventDefault();setOverIdx(i)}}
@@ -198,7 +200,7 @@ export default function ConfigEditor() {
                       onChange={e=>upd(c=>({...c,stages:c.stages.map((s,j)=>j===i?{...s,color:e.target.value}:s)}))}
                       style={S.hiddenColor}/>
                   </label>
-                  <input style={{...S.input,flex:1,margin:0,height:32,padding:'0 10px',fontSize:12}}
+                  <input style={{...S.input,flex:1,margin:0,height:34,padding:'0 10px',fontSize:13}}
                     value={st.label} onChange={e=>upd(c=>({...c,stages:c.stages.map((s,j)=>j===i?{...s,label:e.target.value}:s)}))}/>
                   <button style={S.removeStageBtn} onClick={()=>upd(c=>({...c,stages:c.stages.filter((_,j)=>j!==i)}))}>×</button>
                 </div>
@@ -207,7 +209,7 @@ export default function ConfigEditor() {
 
             {/* KPI Labels */}
             <ConfigSection icon="◉" title="KPI Labels">
-              <div style={{fontSize:10,color:'#666',marginBottom:10}}>Rename cards to match the client's language</div>
+              <div style={{fontSize:11,color:'#999',marginBottom:10}}>Rename cards to match the client's language</div>
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
                 {Object.entries(config.terminology).map(([k,v])=>(
                   <div key={k}>
@@ -221,7 +223,7 @@ export default function ConfigEditor() {
 
             {/* Sections */}
             <ConfigSection icon="⊞" title="Sections">
-              <div style={{fontSize:10,color:'#666',marginBottom:12}}>Drag active sections to reorder · Click available to add</div>
+              <div style={{fontSize:11,color:'#999',marginBottom:12}}>Drag active sections to reorder · Click available to add</div>
 
               {/* Active */}
               <div style={S.secGroupLabel}>ACTIVE</div>
@@ -267,7 +269,7 @@ export default function ConfigEditor() {
                               ? <span style={S.soonBadge}>SOON</span>
                               : <span style={S.addBadge}>+ Add</span>}
                           </div>
-                          <div style={{fontSize:11,fontWeight:600,color:locked?'#666':'#aaa',marginBottom:2}}>{sec.label}</div>
+                          <div style={{fontSize:11,fontWeight:600,color:locked?'#777':'#ccc',marginBottom:2}}>{sec.label}</div>
                           <div style={{fontSize:10,color:'#555',lineHeight:1.4}}>{sec.description}</div>
                         </div>
                       )
@@ -285,11 +287,20 @@ export default function ConfigEditor() {
             <div style={S.previewBar}>
               <div style={{display:'flex',alignItems:'center',gap:8}}>
                 <div style={S.liveDot}/>
-                <span style={{fontSize:11,fontWeight:700,color:'#888',letterSpacing:'.08em',textTransform:'uppercase'}}>Live Preview</span>
+                <span style={{fontSize:11,fontWeight:700,color:'#aaa',letterSpacing:'.08em',textTransform:'uppercase'}}>Live Preview</span>
               </div>
               <div style={{display:'flex',alignItems:'center',gap:6,marginLeft:'auto'}}>
+                <button
+                  onClick={()=>setMockMode(m=>!m)}
+                  style={{...S.mnBtn, padding:'0 12px', width:'auto', fontSize:10, fontWeight:700, letterSpacing:'.06em',
+                    background: mockMode ? 'rgba(200,255,0,.12)' : 'transparent',
+                    borderColor: mockMode ? 'rgba(200,255,0,.3)' : '#222',
+                    color: mockMode ? '#C8FF00' : '#888'}}>
+                  {mockMode ? '◉ MOCK' : '◎ LIVE'}
+                </button>
+                <div style={{width:1,height:16,background:'#222'}}/>
                 <button style={S.mnBtn} onClick={()=>setPreviewMonth(fm=>prevFm(fm))}>‹</button>
-                <span style={{fontSize:11,fontWeight:700,color:'#999',minWidth:70,textAlign:'center'}}>{fmtMonth(previewMonth)}</span>
+                <span style={{fontSize:11,fontWeight:700,color:'#ccc',minWidth:70,textAlign:'center'}}>{fmtMonth(previewMonth)}</span>
                 <button style={{...S.mnBtn,opacity:isPreviewCurrent?.3:1}} onClick={()=>setPreviewMonth(fm=>nextFm(fm))} disabled={isPreviewCurrent}>›</button>
               </div>
             </div>
@@ -297,7 +308,7 @@ export default function ConfigEditor() {
             {/* Widget renders here — no extra padding, fills panel */}
             <div style={S.previewInner}>
               {clientToken && config.apiEndpoint ? (
-                <CRMPipeline config={config} token={clientToken} bypass={true} defaultFilterMonth={previewMonth} />
+                <CRMPipeline config={config} token={clientToken} bypass={true} defaultFilterMonth={mockMode ? null : previewMonth} mockData={mockMode ? MOCK_CRM_DATA : null} />
               ) : (
                 <div style={S.noPreview}>No API endpoint configured for this client</div>
               )}
@@ -322,7 +333,7 @@ function ConfigSection({ icon, title, children, action }) {
       <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
         <div style={{display:'flex',alignItems:'center',gap:8}}>
           <span style={{fontSize:13,color:'#C8FF00'}}>{icon}</span>
-          <span style={{fontSize:12,fontWeight:700,letterSpacing:'.04em',color:'#ddd'}}>{title}</span>
+          <span style={{fontSize:13,fontWeight:700,letterSpacing:'.02em',color:'#fff'}}>{title}</span>
         </div>
         {action}
       </div>
@@ -332,7 +343,7 @@ function ConfigSection({ icon, title, children, action }) {
 }
 
 function Label({ children }) {
-  return <div style={{fontSize:10,color:'#888',fontWeight:600,letterSpacing:'.08em',textTransform:'uppercase',marginBottom:4}}>{children}</div>
+  return <div style={{fontSize:11,color:'#bbb',fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',marginBottom:5}}>{children}</div>
 }
 
 export async function getServerSideProps() { return { props: {} } }
@@ -342,9 +353,9 @@ const S = {
   topbar:        { display:'flex', alignItems:'center', gap:12, padding:'0 16px', height:48, borderBottom:'1px solid #171717', flexShrink:0 },
   backBtn:       { width:32, height:32, display:'flex', alignItems:'center', justifyContent:'center', background:'transparent', border:'1px solid #222', borderRadius:7, color:'#666', cursor:'pointer', flexShrink:0 },
   breadcrumb:    { display:'flex', alignItems:'center', gap:8 },
-  breadSlug:     { fontSize:13, fontWeight:700, color:'#eee' },
+  breadSlug:     { fontSize:14, fontWeight:700, color:'#fff' },
   breadSep:      { color:'#333', fontSize:13 },
-  breadWidget:   { fontSize:12, color:'#888', fontFamily:'monospace' },
+  breadWidget:   { fontSize:12, color:'#aaa', fontFamily:'monospace' },
   dirtyDot:      { width:7, height:7, borderRadius:'50%', background:'#C8FF00', animation:'pulse 2s infinite' },
   saveBtn:       { background:'#C8FF00', color:'#000', border:'none', borderRadius:7, padding:'7px 16px', fontWeight:700, fontSize:12, cursor:'pointer', letterSpacing:'.02em' },
   loadingWrap:   { flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center' },
@@ -358,17 +369,17 @@ const S = {
   colorWrap:     { position:'relative', cursor:'pointer', flexShrink:0 },
   colorDot:      { width:28, height:28, borderRadius:6, flexShrink:0, border:'2px solid rgba(255,255,255,.08)' },
   hiddenColor:   { position:'absolute', top:0, left:0, width:'100%', height:'100%', opacity:0, cursor:'pointer', padding:0, border:'none' },
-  removeStageBtn:{ background:'transparent', border:'none', color:'#555', fontSize:18, cursor:'pointer', padding:'0 2px', lineHeight:1 },
+  removeStageBtn:{ background:'transparent', border:'none', color:'#888', fontSize:18, cursor:'pointer', padding:'0 2px', lineHeight:1 },
   addStageBtn:   { background:'transparent', border:'1px solid #222', borderRadius:6, padding:'4px 10px', color:'#555', fontSize:11, cursor:'pointer' },
-  secGroupLabel: { fontSize:9, fontWeight:700, letterSpacing:'.15em', color:'#555', marginBottom:8, textTransform:'uppercase' },
+  secGroupLabel: { fontSize:10, fontWeight:700, letterSpacing:'.12em', color:'#888', marginBottom:8, textTransform:'uppercase' },
   secRow:        { display:'flex', alignItems:'center', gap:10, padding:'10px 12px', borderRadius:9, border:'1px solid transparent', marginBottom:6, transition:'all .1s' },
   secActive:     { },
-  secName:       { fontSize:12, fontWeight:600, color:'#ddd', marginBottom:2 },
+  secName:       { fontSize:13, fontWeight:600, color:'#fff', marginBottom:2 },
   secDesc:       { fontSize:10, color:'#3A3A3A', lineHeight:1.4 },
-  coreBadge:     { fontSize:9, fontWeight:700, letterSpacing:'.1em', color:'#C8FF00', background:'rgba(200,255,0,.08)', padding:'3px 8px', borderRadius:5, flexShrink:0 },
-  removeSec:     { background:'transparent', border:'1px solid #252525', borderRadius:5, padding:'3px 8px', color:'#888', fontSize:10, cursor:'pointer', flexShrink:0 },
+  coreBadge:     { fontSize:10, fontWeight:700, letterSpacing:'.08em', color:'#C8FF00', background:'rgba(200,255,0,.08)', padding:'3px 8px', borderRadius:5, flexShrink:0 },
+  removeSec:     { background:'transparent', border:'1px solid #252525', borderRadius:5, padding:'3px 8px', color:'#aaa', fontSize:11, cursor:'pointer', flexShrink:0 },
   secCard:       { background:'#141414', border:'1px solid #1E1E1E', borderRadius:9, padding:12, transition:'border-color .15s, background .15s' },
-  soonBadge:     { fontSize:9, fontWeight:700, color:'#333', letterSpacing:'.08em' },
+  soonBadge:     { fontSize:9, fontWeight:700, color:'#666', letterSpacing:'.08em' },
   addBadge:      { fontSize:10, fontWeight:700, color:'#C8FF00' },
   previewPanel:  { display:'flex', flexDirection:'column', minHeight:0, overflow:'hidden', background:'#111' },
   previewBar:    { display:'flex', alignItems:'center', padding:'0 16px', height:44, borderBottom:'1px solid #171717', flexShrink:0, gap:10 },

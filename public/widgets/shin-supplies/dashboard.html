@@ -12,6 +12,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 :root{
   --g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.09);--gb:rgba(200,255,0,.2);
   --red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;
+  --zero-val:rgba(255,255,255,.18);
 }
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
@@ -134,40 +135,57 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 .footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
     /* ── Light mode ── */
-    body.light{background:#F4F4F4;color:#111;}
-    body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.07);}
-    body.light .panel-title{color:rgba(0,0,0,.4);}
-    body.light .badge{background:rgba(140,200,0,.12);color:#5a8a00;border-color:rgba(140,200,0,.25);}
-    body.light .badge.red{background:rgba(255,80,80,.1);color:#c0392b;border-color:rgba(255,80,80,.2);}
-    body.light .badge.blue{background:rgba(30,80,180,.08);color:#1e50b4;border-color:rgba(30,80,180,.15);}
-    body.light .eyebrow{color:rgba(0,0,0,.4);}
+    body.light{background:#F4F4F4;color:#111;
+      --g:#388E3C;--gd:#2E7D32;--gm:rgba(56,142,60,.08);--gb:rgba(56,142,60,.2);
+      --red:#D32F2F;--amber:#388E3C;--blue:#1976D2;--teal:#2E7D32;
+      --zero-val:rgba(0,0,0,.15);
+    }
+    body.light .card{background:#FFFFFF;border-color:#E0E0E0;}
+    body.light .panel-title{color:#616161;}
+    body.light .badge{background:rgba(56,142,60,.1);color:#388E3C;border-color:rgba(56,142,60,.2);}
+    body.light .badge.red{background:rgba(211,47,47,.08);color:#D32F2F;border-color:rgba(211,47,47,.18);}
+    body.light .badge.blue{background:rgba(25,118,210,.08);color:#1976D2;border-color:rgba(25,118,210,.18);}
+    body.light .eyebrow{color:#9E9E9E;}
     body.light .h-title{color:#111;}
-    body.light .kpi-lbl{color:rgba(0,0,0,.4);}
-    body.light .kpi-sub{color:rgba(0,0,0,.35);}
-    body.light .bar-label{color:rgba(0,0,0,.55);}
+    body.light .ts{color:#BDBDBD;}
+    body.light .kpi-lbl{color:#9E9E9E;}
+    body.light .kpi-sub{color:#9E9E9E;}
+    body.light .kpi-val{color:#111;}
+    body.light .hero-val{color:#111;}
+    body.light .hero-label{color:#616161;}
+    body.light .hero-sub{color:#9E9E9E;}
+    body.light .hero-eyebrow{color:#9E9E9E;}
+    body.light .panel-hdr{border-color:#E0E0E0;}
+    body.light .f-lbl{color:#616161;}
+    body.light .f-n{color:#111;}
+    body.light .f-track{background:rgba(0,0,0,.07);}
+    body.light .bar-label{color:#616161;}
     body.light .bar-count{color:#111;}
     body.light .bar-track{background:rgba(0,0,0,.07);}
     body.light .rate-track{background:rgba(0,0,0,.07);}
-    body.light .rate-meta{color:rgba(0,0,0,.4);}
-    body.light .src-card{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
-    body.light .src-name{color:rgba(0,0,0,.6);}
-    body.light .src-leads-lbl{color:rgba(0,0,0,.4);}
-    body.light .rep-card{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
-    body.light .rep-card-name{color:#111;}
-    body.light .rep-stat-lbl{color:rgba(0,0,0,.4);}
+    body.light .rate-meta{color:#9E9E9E;}
+    body.light .src-card{background:#FAFAFA;border-color:#E0E0E0;}
+    body.light .src-name{color:#424242;}
+    body.light .src-leads-lbl{color:#9E9E9E;}
+    body.light .src-n{color:#111;}
+    body.light .rep-card{background:#FAFAFA;border-color:#E0E0E0;}
+    body.light .rep-card-name{color:#111;border-color:#E0E0E0;}
+    body.light .rep-stat-lbl{color:#9E9E9E;}
     body.light .rep-stat-val{color:#111;}
-    body.light .dl-name{color:rgba(0,0,0,.75);}
-    body.light .dl-meta{color:rgba(0,0,0,.4);}
+    body.light .dl-name{color:#424242;}
+    body.light .dl-meta{color:#9E9E9E;}
     body.light .dl-bar-track{background:rgba(0,0,0,.07);}
     body.light .donut-total{color:#111;}
-    body.light .donut-total-lbl{color:rgba(0,0,0,.35);}
-    body.light .speed-desc{color:rgba(0,0,0,.55);}
-    body.light .mn-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);color:rgba(0,0,0,.5);}
-    body.light .mn-lbl{color:rgba(0,0,0,.65);}
-    body.light .icon-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.5);}
-    body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#5a8a00;}
-    body.light .wgt-footer{color:rgba(0,0,0,.3);}
-    body.light .empty{color:rgba(0,0,0,.3);}
+    body.light .donut-total-lbl{color:#9E9E9E;}
+    body.light .speed-desc{color:#616161;}
+    body.light .mn-btn{background:rgba(0,0,0,.04);border-color:#E0E0E0;color:#616161;}
+    body.light .mn-lbl{color:#424242;}
+    body.light .icon-btn{background:rgba(0,0,0,.04);border-color:#E0E0E0;color:#616161;}
+    body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#388E3C;}
+    body.light .loading-text{color:#9E9E9E;}
+    body.light .spinner{border-color:rgba(0,0,0,.06);border-top-color:#388E3C;}
+    body.light .wgt-footer{color:#BDBDBD;}
+    body.light .empty{color:#BDBDBD;}
 </style>
 </head>
 <body>
@@ -262,7 +280,9 @@ const SRC_MAP = {
 };
 function srcColor(name){ return (SRC_MAP[name]||{color:'#9CA3AF'}).color; }
 function srcIcon(name){ return (SRC_MAP[name]||SRC_MAP['Others']||{icon:'<span style="font-size:14px;">📋</span>'}).icon; }
-const STAGE_COLORS = ['rgba(255,255,255,.12)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(200,255,0,.55)','rgba(255,107,107,.55)'];
+function getStageColors(){return _light
+  ?['rgba(0,0,0,.07)','rgba(25,118,210,.55)','rgba(245,124,0,.55)','rgba(230,74,25,.55)','rgba(46,125,50,.6)','rgba(211,47,47,.55)']
+  :['rgba(255,255,255,.12)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(200,255,0,.55)','rgba(255,107,107,.55)'];}
 const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
@@ -296,7 +316,7 @@ function renderDonut(obj, colors, _unused) {
 
   const svg = `<div class="donut-svg-wrap" style="width:${size}px;height:${size}px;">
     <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible;">
-      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="8"/>
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${_light?'rgba(0,0,0,.07)':\'rgba(255,255,255,.05)'}" stroke-width="8"/>
       ${arcs}
     </svg>
     <div class="donut-center">
@@ -346,10 +366,10 @@ function renderSources(obj){
   const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
   const cards=entries.map(([name,{leads,closed}])=>{
     const col=srcColor(name), icon=srcIcon(name);
-    const numCol=SRC_GREY.has(name)?'rgba(255,255,255,.4)':SRC_BRAND.has(name)?col:'var(--g)';
+    const numCol=SRC_GREY.has(name)?(_light?'rgba(0,0,0,.35)':'rgba(255,255,255,.4)'):SRC_BRAND.has(name)?col:'var(--g)';
     const rate=leads>0?Math.round((closed/leads)*100):0;
-    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
-    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
+    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':(_light?'rgba(0,0,0,.2)':'rgba(255,255,255,.35)');
+    const rateBg=rate>=25?(_light?'rgba(56,142,60,.1)':'rgba(200,255,0,.1)'):rate>0?(_light?'rgba(56,142,60,.08)':'rgba(251,191,36,.1)'):(_light?'rgba(0,0,0,.04)':'rgba(255,255,255,.05)');
     return `<div class="src-card">
       <div class="src-card-top">
         <div class="src-icon">${icon}</div>
@@ -372,8 +392,8 @@ function renderReps(reps, monthLabel){
   const cards=active.map(r=>{
     const acts=r.activities||0;
     const rate=acts>0?Math.round((r.closedWon/acts)*100):0;
-    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.38)';
-    const rateBg=rate>=30?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
+    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':(_light?'rgba(0,0,0,.2)':'rgba(255,255,255,.38)');
+    const rateBg=rate>=30?(_light?'rgba(56,142,60,.1)':'rgba(200,255,0,.1)'):rate>0?(_light?'rgba(56,142,60,.08)':'rgba(251,191,36,.1)'):(_light?'rgba(0,0,0,.04)':'rgba(255,255,255,.05)');
     return `<div class="rep-card">
       <div class="rep-card-name">${esc(r.name)}</div>
       <div class="rep-stat">
@@ -398,7 +418,7 @@ function render(d){
   const monLabel=currentMonthShort();
   const cr=d.closeRate;
   const cw=d.closedWon||0, cl=d.closedLost||0;
-  const crCol=cr===null?'rgba(255,255,255,.18)':cr>=30?'var(--g)':cr>=15?'var(--amber)':'var(--red)';
+  const crCol=cr===null?'var(--zero-val)':cr>=30?'var(--g)':cr>=15?'var(--amber)':'var(--red)';
 
   // ── Row 1: KPI tiles — month-locked ──
   const row1=`<div class="g-hero row">
@@ -410,12 +430,12 @@ function render(d){
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Quotations Sent</span>
-      <div class="kpi-val" style="color:${(d.quotationsSent||0)>0?'var(--amber)':'rgba(255,255,255,.18)'};">${d.quotationsSent||0}</div>
+      <div class="kpi-val" style="color:${(d.quotationsSent||0)>0?'var(--amber)':'var(--zero-val)'};">${d.quotationsSent||0}</div>
       <div class="kpi-sub">sent in ${monLabel}</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Closed Won</span>
-      <div class="kpi-val" style="color:${(d.closedWon||0)>0?'var(--g)':'rgba(255,255,255,.18)'};">${d.closedWon||0}</div>
+      <div class="kpi-val" style="color:${(d.closedWon||0)>0?'var(--g)':'var(--zero-val)'};">${d.closedWon||0}</div>
       <div class="kpi-sub">of ${monLabel} leads</div>
     </div>
     <div class="card kpi">
@@ -431,7 +451,7 @@ function render(d){
     const w=Math.max(Math.round((s.count/fMax)*100),s.count>0?3:0);
     return `<div class="f-item">
       <span class="f-lbl">${esc(s.stage)}</span>
-      <div class="f-track"><div class="f-fill" style="width:${w}%;background:${STAGE_COLORS[i]||'rgba(200,255,0,.4)'};"></div></div>
+      <div class="f-track"><div class="f-fill" style="width:${w}%;background:${getStageColors()[i]||(_light?'rgba(46,125,50,.6)':'rgba(200,255,0,.4)')};"></div></div>
       <span class="f-n">${s.count}</span>
     </div>`;
   }).join('');
@@ -440,12 +460,12 @@ function render(d){
   const liveCol=isCurrentMonth?`<div style="display:flex;flex-direction:column;gap:10px;">
     <div class="card kpi">
       <span class="kpi-lbl">Follow-ups Due Today</span>
-      <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'rgba(255,255,255,.18)'};">${live.followupsToday||0}</div>
+      <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'var(--zero-val)'};">${live.followupsToday||0}</div>
       <div class="kpi-sub">${live.followupsNext3||0} next 3 days</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Response</span>
-      <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'rgba(255,255,255,.18)'};">${live.overdueResponse||0}</div>
+      <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'var(--zero-val)'};">${live.overdueResponse||0}</div>
       <div class="kpi-sub">open leads &gt;2h no quote</div>
     </div>
   </div>`:'';

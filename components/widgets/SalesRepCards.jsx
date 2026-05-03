@@ -4,13 +4,23 @@ import s from '@/styles/widget.module.css'
 
 const PAGE_SIZE = 4
 
-// Inline SVG crown for #1
+// Crown icon — positioned on top edge of card
+// NOTE: replace /icons/crown.png with actual file once added to public/icons/
 const CrownSVG = () => (
-  <svg width="14" height="12" viewBox="0 0 20 16" fill="none" xmlns="http://www.w3.org/2000/svg"
-    style={{ position:'absolute', top:'-7px', right:'12px', filter:'drop-shadow(0 1px 2px rgba(0,0,0,.5))' }}>
-    <path d="M2 14h16M2 14l2-8 4 4 2-6 2 6 4-4 2 8" stroke="#C8FF00" strokeWidth="2.2"
-      strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
+  <img
+    src="/icons/crown.png"
+    alt="crown"
+    width={24}
+    height={24}
+    style={{
+      position: 'absolute',
+      top: '-12px',
+      right: '14px',
+      filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.6))',
+      pointerEvents: 'none',
+    }}
+    onError={e => { e.currentTarget.style.display = 'none' }}
+  />
 )
 
 export default function SalesRepCards({ reps = [], monthLabel, empty }) {

@@ -101,12 +101,18 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Donut ── */
 .donut-wrap{display:flex;align-items:center;gap:22px;}
+.donut-svg-wrap{position:relative;flex-shrink:0;}
+.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;}
+.donut-total{font-size:22px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.donut-total-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-top:3px;}
 .donut-legend{flex:1;display:flex;flex-direction:column;gap:10px;}
-.leg-row{display:flex;align-items:center;gap:9px;}
-.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.leg-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.leg-val{font-size:14px;font-weight:900;color:rgba(255,255,255,.85);}
-.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.38);margin-left:2px;}
+.dl-item{display:flex;align-items:center;gap:9px;}
+.dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
+.dl-info{flex:1;min-width:0;}
+.dl-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.82);}
+.dl-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.05);margin-top:4px;overflow:hidden;}
+.dl-bar-fill{height:5px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.dl-meta{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);flex-shrink:0;text-align:right;min-width:46px;}
 
 /* ── Sources grid ── */
 .src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
@@ -220,46 +226,73 @@ const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
 
-function buildDonut(obj, colors, size) {
-  const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
-  const total=entries.reduce((s,[,v])=>s+v,0)||1;
-  const cx=size/2,cy=size/2,ro=size/2-5,ri=ro*0.56;
-  let angle=-Math.PI/2;
-  return {slices:entries.map(([name,count],i)=>{
-    const sweep=(count/total)*Math.PI*2,ea=angle+sweep,large=sweep>Math.PI?1:0;
-    const x1=cx+ro*Math.cos(angle),y1=cy+ro*Math.sin(angle);
-    const x2=cx+ro*Math.cos(ea),y2=cy+ro*Math.sin(ea);
-    const x3=cx+ri*Math.cos(ea),y3=cy+ri*Math.sin(ea);
-    const x4=cx+ri*Math.cos(angle),y4=cy+ri*Math.sin(angle);
-    const d=`M${x1},${y1} A${ro},${ro} 0 ${large},1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 ${large},0 ${x4},${y4}Z`;
-    angle=ea; return {name,count,color:colors[i%colors.length],d};
-  }),total,cx,cy};
-}
+const DONUT_R = 44;
+const DONUT_CIRC = 2 * Math.PI * DONUT_R;
 
-function renderDonut(obj,colors,size){
-  if(!obj||!Object.keys(obj).length) return '<div class="empty">No data yet</div>';
-  const {slices,total,cx,cy}=buildDonut(obj,colors,size);
-  const glowId='glow'+Math.random().toString(36).slice(2);
-  const svg=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0;">
-    <defs>
-      <filter id="${glowId}"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-    </defs>
-    ${slices.map((s,i)=>`<path d="${s.d}" fill="${s.color}" stroke="#222222" stroke-width="2" ${i===0?`filter="url(#${glowId})"`:''}/>`).join('')}
-    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="18" font-weight="900" fill="rgba(255,255,255,.88)">${total}</text>
-    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.3)" letter-spacing="1.5">TOTAL</text>
-  </svg>`;
-  const legend=slices.map(s=>{
-    const pct=Math.round((s.count/total)*100);
-    return `<div class="leg-row"><div class="leg-dot" style="background:${s.color};box-shadow:0 0 6px ${s.color}55;"></div><span class="leg-name">${esc(PROD_NAMES[s.name]||s.name)}</span><span class="leg-val">${s.count}</span><span class="leg-pct">${pct}%</span></div>`;
+function renderDonut(obj, colors, _unused) {
+  if (!obj || !Object.keys(obj).length) return '<div class="empty">No data yet</div>';
+  const entries = Object.entries(obj).sort((a,b) => b[1]-a[1]);
+  const total = entries.reduce((s,[,v])=>s+v,0) || 1;
+  const size = 110;
+  const cx = size/2, cy = size/2, r = DONUT_R;
+  const circ = 2*Math.PI*r;
+
+  // Build arcs
+  let offset = 0;
+  const arcs = entries.map(([name,count],i) => {
+    const color = colors[i % colors.length];
+    const frac = count/total;
+    const len = frac*circ;
+    const gap = entries.length>1 ? 3 : 0;
+    const rot = -90 + offset*360;
+    offset += frac;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none"
+      stroke="${color}" stroke-width="8" stroke-linecap="round"
+      stroke-dasharray="${Math.max(len-gap,1)} ${circ}"
+      transform="rotate(${rot} ${cx} ${cy})"
+      style="transition:all .8s cubic-bezier(.4,0,.2,1)"/>`;
   }).join('');
+
+  const svg = `<div class="donut-svg-wrap" style="width:${size}px;height:${size}px;">
+    <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="overflow:visible;">
+      <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="rgba(255,255,255,.05)" stroke-width="8"/>
+      ${arcs}
+    </svg>
+    <div class="donut-center">
+      <div class="donut-total">${total}</div>
+      <div class="donut-total-lbl">Total</div>
+    </div>
+  </div>`;
+
+  const maxCount = entries[0][1] || 1;
+  const legend = entries.map(([name,count],i) => {
+    const color = colors[i % colors.length];
+    const pct = Math.round((count/total)*100);
+    const barW = Math.round((count/maxCount)*100);
+    const label = PROD_NAMES[name] || name;
+    return `<div class="dl-item">
+      <div class="dl-swatch" style="background:${color};"></div>
+      <div class="dl-info">
+        <div class="dl-name">${esc(label)}</div>
+        <div class="dl-bar-track"><div class="dl-bar-fill" style="width:${barW}%;background:${color};"></div></div>
+      </div>
+      <div class="dl-meta">${count} · ${pct}%</div>
+    </div>`;
+  }).join('');
+
   return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
 }
+
+
+// Sources that use their own brand color for the count number
+const SRC_OWN_COLOR = new Set(['Lain-lain','Walk-in','Rujukan / Kenalan']);
 
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
   const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
   const cards=entries.map(([name,{leads,closed}])=>{
     const col=srcColor(name), icon=srcIcon(name);
+    const numCol=SRC_OWN_COLOR.has(name)?col:'var(--g)';
     const rate=leads>0?Math.round((closed/leads)*100):0;
     const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.35)';
     const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
@@ -268,7 +301,7 @@ function renderSources(obj){
         <div class="src-icon">${icon}</div>
         <div class="src-name">${esc(name)}</div>
       </div>
-      <div class="src-count" style="color:${col};">${leads}</div>
+      <div class="src-count" style="color:${numCol};">${leads}</div>
       <div class="src-card-foot">
         <span class="src-leads-lbl">${closed} closed</span>
         <span class="src-close-pill" style="color:${rateCol};background:${rateBg};">${rate}%</span>
@@ -279,7 +312,8 @@ function renderSources(obj){
 }
 
 function renderReps(reps, monthLabel){
-  const active=reps.filter(r=>r.name!=='Unassigned');
+  const EXCLUDED=['Unassigned','Nurhan'];
+  const active=reps.filter(r=>!EXCLUDED.includes(r.name));
   if(!active.length) return '<div class="empty">No rep data yet</div>';
   const cards=active.map(r=>{
     const acts=r.activities||0;

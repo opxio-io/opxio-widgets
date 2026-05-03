@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="en"><head>
 <script>
-// Block direct browser access — must be embedded in Notion iframe
+// Block direct browser access — must be embedded in a Notion iframe
 if (window.self === window.top) {
-  document.documentElement.style.cssText = 'background:#191919;margin:0;height:100%;';
-  document.body.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100vh;margin:0;flex-direction:column;gap:8px;font-family:sans-serif;';
-  document.body.innerHTML = '<div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div>';
   window.stop();
+  document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
 }
 </script><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Opxio — Sales CRM</title>

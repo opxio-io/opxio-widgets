@@ -20,15 +20,22 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Header ── */
 .hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
-.eyebrow{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:4px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;}
 .h-title{font-size:22px;font-weight:900;letter-spacing:-.04em;}
 .h-right{display:flex;align-items:center;gap:8px;}
-.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.15);}
-.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
+.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Month nav ── */
+.mn-nav{display:flex;align-items:center;gap:6px;}
+.mn-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.mn-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
+.mn-btn:disabled{opacity:.25;cursor:default;}
+.mn-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);min-width:72px;text-align:center;letter-spacing:-.01em;}
 
 /* ── Grids ── */
 .row{margin-bottom:10px;}
@@ -40,20 +47,20 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Hero stat ── */
 .hero{padding:24px 24px 22px;}
-.hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;display:block;}
+.hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px;display:block;}
 .hero-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
-.hero-label{font-size:11px;font-weight:700;color:rgba(255,255,255,.45);margin-top:8px;}
-.hero-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:4px;}
+.hero-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-top:8px;}
+.hero-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.45);margin-top:4px;}
 
 /* ── Small KPI ── */
 .kpi{padding:24px 24px 22px;}
-.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:14px;display:block;white-space:nowrap;}
+.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px;display:block;white-space:nowrap;}
 .kpi-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
-.kpi-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:8px;}
+.kpi-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.45);margin-top:8px;}
 
 /* ── Panel ── */
 .panel{padding:22px 24px 20px;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:6px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:6px;}
 .panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);}
 .badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
 .badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);}
@@ -63,64 +70,70 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 /* ── Pipeline funnel ── */
 .f-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f-item:last-child{margin-bottom:0;}
-.f-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.3);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.5);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .f-track{flex:1;height:24px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden;position:relative;}
 .f-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
-.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.5);width:28px;text-align:right;flex-shrink:0;}
+.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.6);width:28px;text-align:right;flex-shrink:0;}
 
 /* ── Response speed ── */
 .speed-row{display:flex;align-items:flex-end;gap:18px;margin-bottom:16px;}
 .speed-big{font-size:48px;font-weight:900;letter-spacing:-2.5px;line-height:1;}
-.speed-unit{font-size:14px;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:8px;}
+.speed-unit{font-size:14px;font-weight:700;color:rgba(255,255,255,.4);margin-bottom:8px;}
 .speed-meta{flex:1;}
 .speed-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;margin-bottom:8px;}
-.speed-desc{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);line-height:1.5;}
+.speed-desc{font-size:11.5px;font-weight:500;color:rgba(255,255,255,.5);line-height:1.5;}
 .rate-track{height:5px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:16px;}
 .rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
-.rate-meta{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.2);margin-top:7px;}
+.rate-meta{display:flex;justify-content:space-between;font-size:11px;font-weight:600;color:rgba(255,255,255,.4);margin-top:7px;}
 
 /* ── Rep leaderboard ── */
 .rep-item{display:flex;align-items:center;gap:16px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.05);}
+.rep-item:first-child{padding-top:0;}
 .rep-item:last-child{border-bottom:none;padding-bottom:0;}
-.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.1);width:14px;text-align:center;flex-shrink:0;}
+.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.15);width:14px;text-align:center;flex-shrink:0;}
 .rep-av{display:none;}
 .rep-info{flex:1;min-width:0;}
-.rep-name{font-size:15px;font-weight:900;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;}
-.rep-hint{font-size:11px;font-weight:500;color:rgba(255,255,255,.28);margin-top:3px;}
+.rep-name{font-size:15px;font-weight:900;color:rgba(255,255,255,.88);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.3px;}
+.rep-hint{font-size:12px;font-weight:500;color:rgba(255,255,255,.5);margin-top:4px;}
 .rep-nums{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 .rep-pill{text-align:center;padding:8px 16px;border-radius:8px;}
 .rep-pill-val{font-size:22px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.rep-pill-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:4px;}
+.rep-pill-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.45);margin-top:4px;}
 
 /* ── Donut ── */
 .donut-wrap{display:flex;align-items:center;gap:22px;}
 .donut-legend{flex:1;display:flex;flex-direction:column;gap:10px;}
 .leg-row{display:flex;align-items:center;gap:9px;}
 .leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
-.leg-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.leg-val{font-size:14px;font-weight:900;color:rgba(255,255,255,.75);}
-.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-left:2px;}
+.leg-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.6);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.leg-val{font-size:14px;font-weight:900;color:rgba(255,255,255,.85);}
+.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.38);margin-left:2px;}
 
 /* ── Sources ── */
-.src-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.src-item{display:flex;align-items:center;gap:10px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.src-item:first-child{padding-top:0;}
 .src-item:last-child{border-bottom:none;padding-bottom:0;}
-.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.1);width:16px;text-align:center;flex-shrink:0;}
-.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.85;}.src-icon svg{width:16px;height:16px;}.src-icon img{width:18px;height:18px;object-fit:contain;}
+.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.15);width:16px;text-align:center;flex-shrink:0;}
+.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.9;}
+.src-icon svg{width:16px;height:16px;}
+.src-icon img{width:18px;height:18px;object-fit:contain;}
 .src-info{flex:1;min-width:0;}
-.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);}
-.src-bar{height:3px;background:rgba(255,255,255,.05);border-radius:999px;margin-top:5px;overflow:hidden;}
-.src-bar-fill{height:100%;border-radius:999px;transition:width .55s ease;}
+.src-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);}
+.src-meta{display:flex;align-items:center;gap:6px;margin-top:4px;font-size:11px;font-weight:600;}
+.src-leads{color:rgba(255,255,255,.5);}
+.src-sep{color:rgba(255,255,255,.12);}
+.src-closed{/* color set inline */}
 .src-right{text-align:right;flex-shrink:0;}
 .src-count{font-size:18px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-top:2px;}
+.src-close-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;margin-top:4px;display:inline-block;}
 
 /* ── Empty / Loading ── */
 .loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
-.loading-text{font-size:11px;color:rgba(255,255,255,.18);font-weight:600;}
-.empty{font-size:11px;color:rgba(255,255,255,.16);font-weight:500;padding:16px 0;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.empty{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;padding:16px 0;}
 
-.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.07);}
+.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
@@ -131,6 +144,11 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
     <h1 class="h-title">Sales Dashboard</h1>
   </div>
   <div class="h-right">
+    <div class="mn-nav">
+      <button class="mn-btn" onclick="mnPrev()">&#8249;</button>
+      <span class="mn-lbl" id="mn-lbl">May 2026</span>
+      <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>&#8250;</button>
+    </div>
     <span class="ts" id="ts"></span>
     <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -144,11 +162,53 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
   <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
 </div>
 
-<div class="footer">Powered by Opxio</div>
+<div class="footer">Widgets by Opxio.io</div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
+const _now  = new Date();
+let filterMonth = null; // null = current month
+
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function fmtMonthLbl(fm) {
+  const d = fm ? new Date(fm.year, fm.month, 1) : new Date();
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' });
+}
+function currentMonthLabel() {
+  const d = filterMonth ? new Date(filterMonth.year, filterMonth.month, 1) : new Date();
+  return d.toLocaleString('default', { month: 'long', year: 'numeric' });
+}
+function currentMonthShort() {
+  const d = filterMonth ? new Date(filterMonth.year, filterMonth.month, 1) : new Date();
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' });
+}
+
+function updateMonthNav() {
+  document.getElementById('mn-lbl').textContent = fmtMonthLbl(filterMonth);
+  const isCurrentMonth = !filterMonth ||
+    (filterMonth.year === _now.getFullYear() && filterMonth.month === _now.getMonth());
+  document.getElementById('mn-next').disabled = isCurrentMonth;
+}
+
+function mnPrev() {
+  if (!filterMonth) filterMonth = { year: _now.getFullYear(), month: _now.getMonth() };
+  filterMonth.month--;
+  if (filterMonth.month < 0) { filterMonth.month = 11; filterMonth.year--; }
+  updateMonthNav();
+  load();
+}
+function mnNext() {
+  if (!filterMonth) return;
+  filterMonth.month++;
+  if (filterMonth.month > 11) { filterMonth.month = 0; filterMonth.year++; }
+  if (filterMonth.year > _now.getFullYear() ||
+      (filterMonth.year === _now.getFullYear() && filterMonth.month >= _now.getMonth())) {
+    filterMonth = null;
+  }
+  updateMonthNav();
+  load();
+}
 
 const PROD_COLORS  = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES   = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
@@ -193,7 +253,7 @@ function renderDonut(obj,colors,size){
     </defs>
     ${slices.map((s,i)=>`<path d="${s.d}" fill="${s.color}" stroke="#222222" stroke-width="2" ${i===0?`filter="url(#${glowId})"`:''}/>`).join('')}
     <text x="${cx}" y="${cy-5}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="18" font-weight="900" fill="rgba(255,255,255,.88)">${total}</text>
-    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.2)" letter-spacing="1.5">TOTAL</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.3)" letter-spacing="1.5">TOTAL</text>
   </svg>`;
   const legend=slices.map(s=>{
     const pct=Math.round((s.count/total)*100);
@@ -204,14 +264,13 @@ function renderDonut(obj,colors,size){
 
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
-  // obj is now { sourceName: { leads, closed } }
   const entries=Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads);
   const totalLeads=entries.reduce((s,[,v])=>s+v.leads,0)||1;
   return entries.map(([name,{leads,closed}],i)=>{
     const col=srcColor(name), icon=srcIcon(name);
     const rate=leads>0?Math.round((closed/leads)*100):0;
-    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.18)';
-    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.05)';
+    const rateCol=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.38)';
+    const rateBg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(251,191,36,.1)':'rgba(255,255,255,.06)';
     return `<div class="src-item">
       <span class="src-rank">${i+1}</span>
       <div class="src-icon" style="color:${col};">${icon}</div>
@@ -219,8 +278,8 @@ function renderSources(obj){
         <div class="src-name">${esc(name)}</div>
         <div class="src-meta">
           <span class="src-leads">${leads} lead${leads!==1?'s':''}</span>
-          <span style="color:rgba(255,255,255,.1);">·</span>
-          <span class="src-rate" style="color:${rateCol};">${closed} closed</span>
+          <span class="src-sep">·</span>
+          <span class="src-closed" style="color:${closed>0?rateCol:'rgba(255,255,255,.38)'};">${closed} closed</span>
         </div>
       </div>
       <div class="src-right">
@@ -231,7 +290,7 @@ function renderSources(obj){
   }).join('');
 }
 
-function renderReps(reps){
+function renderReps(reps, monthLabel){
   const active=reps.filter(r=>r.name!=='Unassigned');
   if(!active.length) return '<div class="empty">No rep data yet</div>';
   return active.map((r,i)=>{
@@ -239,7 +298,6 @@ function renderReps(reps){
     const fuLabel=r.followupsToday===0?'No follow-ups due':r.followupsToday===1?'1 follow-up due today':`${r.followupsToday} follow-ups due today`;
     return `<div class="rep-item">
       <span class="rep-rank">${i+1}</span>
-      <div class="rep-av" style="border-color:${col}30;color:${col};">${initials(r.name)}</div>
       <div class="rep-info">
         <div class="rep-name">${esc(r.name)}</div>
         <div class="rep-hint">${fuLabel}</div>
@@ -247,10 +305,10 @@ function renderReps(reps){
       <div class="rep-nums">
         <div class="rep-pill" style="background:${col}12;">
           <div class="rep-pill-val" style="color:${col};">${r.closedWonMTD}</div>
-          <div class="rep-pill-lbl">Won MTD</div>
+          <div class="rep-pill-lbl">Won ${monthLabel}</div>
         </div>
         <div class="rep-pill" style="background:rgba(255,255,255,.04);">
-          <div class="rep-pill-val" style="color:rgba(255,255,255,.5);">${r.activePipeline}</div>
+          <div class="rep-pill-val" style="color:rgba(255,255,255,.55);">${r.activePipeline}</div>
           <div class="rep-pill-lbl">Active</div>
         </div>
       </div>
@@ -263,15 +321,15 @@ function render(d){
   const rate=t1.responseRate2h, rateOk=rate!==null&&rate>=70;
   const rateCol=rateOk?'var(--g)':'var(--red)';
   const avg=t1.avgResponseHours;
+  const monLabel=currentMonthShort();
 
-  // ── Row 1: Hero + 3 KPI tiles ──
-
+  // ── Row 1: 4 equal KPI tiles ──
   const row1=`<div class="g-hero row">
     <div class="card hero">
       <span class="hero-eyebrow">New Leads — Last 24 Hours</span>
       <div class="hero-val">${t1.newLeads24h}</div>
       <div class="hero-label">Leads today</div>
-      <div class="hero-sub">${t1.newLeadsWeek} received this week · ${d.total} all time</div>
+      <div class="hero-sub">${t1.newLeadsWeek} this week · ${d.total} all time</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Response</span>
@@ -290,9 +348,9 @@ function render(d){
     </div>
   </div>`;
 
-  // ── Row 2: Pipeline (bigger) + Response Speed ──
+  // ── Row 2: Pipeline + Response Speed ──
   const funnel=t4.stageFunnel||[], fMax=Math.max(...funnel.map(s=>s.count),1);
-  const fRows=funnel.filter(s=>s.count>0||true).map((s,i)=>{
+  const fRows=funnel.map((s,i)=>{
     const w=Math.max(Math.round((s.count/fMax)*100),s.count>0?3:0);
     return `<div class="f-item">
       <span class="f-lbl">${esc(s.stage)}</span>
@@ -315,7 +373,7 @@ function render(d){
         </div>
       </div>
       <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${speedCol};"></div></div>
-      <div class="rate-meta"><span>Target: under 2h · 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
+      <div class="rate-meta"><span>Target: under 2h · 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.5)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
   } else if(rate!==null){
     speedDisplay=`
       <div class="speed-row">
@@ -326,7 +384,7 @@ function render(d){
         </div>
       </div>
       <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${rateCol};"></div></div>
-      <div class="rate-meta"><span>Target: 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
+      <div class="rate-meta"><span>Target: 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.5)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
   } else {
     speedDisplay='<div class="empty">No response data yet — will populate as leads come in</div>';
   }
@@ -335,7 +393,7 @@ function render(d){
     <div class="card panel">
       <div class="panel-hdr">
         <span class="panel-title">Pipeline Stages</span>
-        <span class="badge">${t4.closedWonMTD} closed won MTD</span>
+        <span class="badge">${t4.closedWonMTD} Won ${monLabel}</span>
       </div>
       ${fRows||'<div class="empty">No pipeline data yet</div>'}
     </div>
@@ -356,7 +414,7 @@ function render(d){
         <span class="panel-title">Sales Rep Performance</span>
         <span class="badge blue">${reps.length} rep${reps.length!==1?'s':''}</span>
       </div>
-      ${renderReps(d.repBreakdown||[])}
+      ${renderReps(d.repBreakdown||[], monLabel)}
     </div>
   </div>`:'';
 
@@ -385,7 +443,10 @@ function render(d){
 
 async function load(){
   try{
-    const r=await fetch('/api/clients/shin-supplies/enquiry-stats'+(_tok?'?token='+_tok:''));
+    const params=new URLSearchParams();
+    if(_tok) params.set('token',_tok);
+    if(filterMonth){ params.set('month',filterMonth.month); params.set('year',filterMonth.year); }
+    const r=await fetch('/api/clients/shin-supplies/enquiry-stats?'+params.toString());
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){
@@ -393,6 +454,9 @@ async function load(){
   }
 }
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');load().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
+
+// Init month label
+updateMonthNav();
 load();
 setInterval(load,3*60*1000);
 </script>

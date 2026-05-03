@@ -1,5 +1,5 @@
 // pages/api/clients/shin-supplies/enquiry-stats.js
-// CRM dashboard for Shin Supplies — includes per-rep breakdown
+// CRM dashboard for Shin Supplies — includes per-rep breakdown + month/year filter
 
 import { getClientByToken, getNotionToken, resolveDB } from "../../../../lib/supabase.js"
 
@@ -53,6 +53,15 @@ export default async function handler(req, res) {
   const ENQUIRY_DB = resolveDB(client, 'enquiry_submissions', ENQUIRY_DB_DEFAULT)
   const PEOPLE_DB  = resolveDB(client, 'people', PEOPLE_DB_DEFAULT)
 
+  // Month/year filter — 0-indexed month (JS Date convention)
+  const now    = new Date()
+  const qMonth = req.query.month !== undefined ? parseInt(req.query.month) : null
+  const qYear  = req.query.year  !== undefined ? parseInt(req.query.year)  : null
+  const mYear  = (qMonth !== null && qYear !== null && !isNaN(qMonth) && !isNaN(qYear)) ? qYear  : now.getFullYear()
+  const mMon   = (qMonth !== null && qYear !== null && !isNaN(qMonth) && !isNaN(qYear)) ? qMonth : now.getMonth()
+  const mStart = new Date(mYear, mMon, 1)
+  const mEnd   = new Date(mYear, mMon + 1, 1) // exclusive upper bound
+
   try {
     const pages = await queryAll(ENQUIRY_DB, NOTION_KEY)
 
@@ -70,9 +79,7 @@ export default async function handler(req, res) {
       }
     } catch(err) { console.error('People DB error:', err.message) }
 
-    const now    = new Date()
     const today  = now.toISOString().slice(0, 10)
-    const mStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const wStart = new Date(now); wStart.setDate(now.getDate() - 6)
     const d3     = new Date(now); d3.setDate(now.getDate() + 3)
     const d3Str  = d3.toISOString().slice(0, 10)
@@ -90,7 +97,6 @@ export default async function handler(req, res) {
     const sourceClosedCount = {}
 
     // Per-rep tracking
-    // repStats[repName] = { closedWonMTD, activePipeline, followupsToday }
     const repStats = {}
     const UNASSIGNED = 'Unassigned'
 
@@ -113,7 +119,7 @@ export default async function handler(req, res) {
       const stageKey = status === 'Done' ? 'Closed Won' : status
       stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
 
-      // Resolve rep name (first assigned, or Unassigned)
+      // Resolve rep name
       let repName = UNASSIGNED
       if (assigned.length > 0) {
         const rid = assigned[0]
@@ -121,7 +127,7 @@ export default async function handler(req, res) {
       }
       if (!repStats[repName]) repStats[repName] = { closedWonMTD: 0, activePipeline: 0, followupsToday: 0 }
 
-      // Tile 1 — new leads + response speed
+      // Tile 1 — new leads + response speed (always real-time, not month-filtered)
       if (submAt) {
         const submDate = new Date(submAt)
         const ageH = (now - submDate) / 3600000
@@ -140,33 +146,36 @@ export default async function handler(req, res) {
         }
       }
 
-      // Tile 2 — quotation backlog
+      // Tile 2 — quotation backlog (real-time)
       if (!isClosed && !quoIssued && status === 'New Lead') {
         pendingQuotations++
         if (submAt && (now - new Date(submAt)) / 3600000 > 24) overdueQuotations++
       }
 
-      // Tile 3 — follow-ups
+      // Tile 3 — follow-ups (real-time)
       if (nextFU && !isClosed) {
         if (nextFU <= today) { followupsToday++; repStats[repName].followupsToday++ }
         if (nextFU <= d3Str) followupsNext3Days++
       }
 
-      // Tile 4 + rep — closed won MTD
+      // Tile 4 + rep — closed won filtered by selected month window
       if (status === 'Closed Won' || status === 'Done') {
         const ref = submAt || page.created_time
-        if (ref && new Date(ref) >= mStart) {
-          closedWonMTD++
-          repStats[repName].closedWonMTD++
+        if (ref) {
+          const refDate = new Date(ref)
+          if (refDate >= mStart && refDate < mEnd) {
+            closedWonMTD++
+            repStats[repName].closedWonMTD++
+          }
         }
       }
 
-      // Rep — active pipeline (not closed)
+      // Rep — active pipeline (real-time, not closed)
       if (!isClosed) {
         repStats[repName].activePipeline++
       }
 
-      // Product + source breakdown
+      // Product + source breakdown (all-time)
       for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
       if (source) {
         sourceCount[source] = (sourceCount[source] || 0) + 1
@@ -184,7 +193,6 @@ export default async function handler(req, res) {
       ? Math.round((responded2h / eligibleResponse) * 100)
       : null
 
-    // Sort reps: most closed MTD first, then most active pipeline
     const repBreakdown = Object.entries(repStats)
       .map(([name, stats]) => ({ name, ...stats }))
       .sort((a, b) => b.closedWonMTD - a.closedWonMTD || b.activePipeline - a.activePipeline)
@@ -209,6 +217,7 @@ export default async function handler(req, res) {
         ])
       ),
       updatedAt: now.toISOString(),
+      filterMonth: { year: mYear, month: mMon },
     })
 
   } catch (e) {

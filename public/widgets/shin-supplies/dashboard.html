@@ -93,13 +93,27 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* ── Rep cards ── */
 .rep-cards{display:flex;gap:10px;flex-wrap:wrap;}
-.rep-card{flex:1;min-width:140px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:16px;}
-.rep-card-name{font-size:13px;font-weight:900;color:rgba(255,255,255,.88);letter-spacing:-.2px;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,.06);}
-.rep-stat{display:flex;align-items:center;justify-content:space-between;padding:6px 0;}
-.rep-stat:not(:last-child){border-bottom:1px solid rgba(255,255,255,.04);}
-.rep-stat-lbl{font-size:11px;font-weight:600;color:rgba(255,255,255,.4);}
-.rep-stat-val{font-size:13px;font-weight:900;color:rgba(255,255,255,.82);}
-.rep-rate-val{font-size:12px;font-weight:700;padding:2px 8px;border-radius:5px;}
+.rep-card{flex:1;min-width:180px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.rep-card.leader{border-color:rgba(200,255,0,.35);background:rgba(200,255,0,.04);}
+.rep-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.rep-rank{font-size:10px;font-weight:800;letter-spacing:.08em;padding:3px 8px;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.4);}
+.rep-card.leader .rep-rank{background:rgba(200,255,0,.15);color:var(--g);}
+.rep-card-name{font-size:14px;font-weight:900;color:rgba(255,255,255,.9);letter-spacing:-.3px;}
+.rep-card.leader .rep-card-name{color:#fff;}
+.rep-hero{text-align:center;padding:12px 0 16px;}
+.rep-hero-val{font-size:52px;font-weight:900;letter-spacing:-2px;line-height:1;color:rgba(255,255,255,.9);}
+.rep-card.leader .rep-hero-val{color:var(--g);}
+.rep-hero-lbl{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-top:4px;}
+.rep-bar-wrap{margin-bottom:14px;}
+.rep-bar-track{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:6px 0 4px;}
+.rep-bar-fill{height:100%;border-radius:3px;background:var(--g);transition:width .6s ease;}
+.rep-bar-meta{display:flex;justify-content:space-between;align-items:center;}
+.rep-bar-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em;}
+.rep-bar-pct{font-size:13px;font-weight:800;color:var(--g);}
+.rep-bar-pct.amber{color:var(--amber);}
+.rep-stat{display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-top:1px solid rgba(255,255,255,.05);}
+.rep-stat-lbl{font-size:10.5px;font-weight:600;color:rgba(255,255,255,.35);}
+.rep-stat-val{font-size:12px;font-weight:800;color:rgba(255,255,255,.7);}
 
 /* ── Donut ── */
 .donut-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
@@ -170,9 +184,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
     body.light .src-leads-lbl{color:#9E9E9E;}
     body.light .src-n{color:#111;}
     body.light .rep-card{background:#FAFAFA;border-color:#E0E0E0;}
-    body.light .rep-card-name{color:#111;border-color:#E0E0E0;}
-    body.light .rep-stat-lbl{color:#9E9E9E;}
-    body.light .rep-stat-val{color:#111;}
+    body.light .rep-card.leader{background:#F4FFE0;border-color:rgba(100,180,0,.4);}
+    body.light .rep-card-name{color:#111;}
+    body.light .rep-rank{background:rgba(0,0,0,.06);color:#999;}
+    body.light .rep-card.leader .rep-rank{background:rgba(100,180,0,.15);color:#5a9900;}
+    body.light .rep-hero-val{color:#111;}
+    body.light .rep-card.leader .rep-hero-val{color:#5a9900;}
+    body.light .rep-hero-lbl{color:#aaa;}
+    body.light .rep-bar-track{background:rgba(0,0,0,.07);}
+    body.light .rep-stat{border-color:#eee;}
+    body.light .rep-stat-lbl{color:#aaa;}
+    body.light .rep-stat-val{color:#444;}
     body.light .dl-name{color:#424242;}
     body.light .dl-meta{color:#9E9E9E;}
     body.light .dl-bar-track{background:rgba(0,0,0,.07);}
@@ -388,26 +410,36 @@ function renderSources(obj){
 
 function renderReps(reps, monthLabel){
   const EXCLUDED=['Unassigned','Nurhan'];
+  const RANK_LABELS=['#1','#2','#3','#4','#5'];
   const active=reps.filter(r=>!EXCLUDED.includes(r.name));
   if(!active.length) return '<div class="empty">No rep data yet</div>';
-  const cards=active.map(r=>{
+  const maxRate=Math.max(...active.map(r=>r.activities>0?Math.round((r.closedWon/r.activities)*100):0),1);
+  const cards=active.map((r,i)=>{
     const acts=r.activities||0;
     const rate=acts>0?Math.round((r.closedWon/acts)*100):0;
-    const rateCol=rate>=30?'var(--g)':rate>0?'var(--amber)':(_light?'rgba(0,0,0,.2)':'rgba(255,255,255,.38)');
-    const rateBg=rate>=30?(_light?'rgba(56,142,60,.1)':'rgba(200,255,0,.1)'):rate>0?(_light?'rgba(56,142,60,.08)':'rgba(251,191,36,.1)'):(_light?'rgba(0,0,0,.04)':'rgba(255,255,255,.05)');
-    return `<div class="rep-card">
-      <div class="rep-card-name">${esc(r.name)}</div>
+    const isLeader=i===0;
+    const rankLabel=RANK_LABELS[i]||`#${i+1}`;
+    const barW=maxRate>0?Math.round((rate/maxRate)*100):0;
+    const rateClass=rate>=30?'':'amber';
+    return `<div class="rep-card${isLeader?' leader':''}">
+      <div class="rep-card-hdr">
+        <div class="rep-card-name">${esc(r.name)}</div>
+        <span class="rep-rank">${rankLabel}</span>
+      </div>
+      <div class="rep-hero">
+        <div class="rep-hero-val">${r.closedWon}</div>
+        <div class="rep-hero-lbl">Closed Won</div>
+      </div>
+      <div class="rep-bar-wrap">
+        <div class="rep-bar-meta">
+          <span class="rep-bar-lbl">Close Rate</span>
+          <span class="rep-bar-pct ${rateClass}">${rate}%</span>
+        </div>
+        <div class="rep-bar-track"><div class="rep-bar-fill" style="width:${barW}%;${!isLeader?'opacity:.6':''}"></div></div>
+      </div>
       <div class="rep-stat">
         <span class="rep-stat-lbl">Activities</span>
         <span class="rep-stat-val">${acts}</span>
-      </div>
-      <div class="rep-stat">
-        <span class="rep-stat-lbl">Closes</span>
-        <span class="rep-stat-val">${r.closedWon}</span>
-      </div>
-      <div class="rep-stat">
-        <span class="rep-stat-lbl">Close Rate</span>
-        <span class="rep-rate-val" style="color:${rateCol};background:${rateBg};">${rate}%</span>
       </div>
     </div>`;
   }).join('');

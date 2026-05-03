@@ -79,6 +79,7 @@ export default async function handler(req, res) {
 
     let newLeads24h = 0, newLeadsWeek = 0
     let overdueResponse = 0, responded2h = 0, eligibleResponse = 0
+    let totalResponseHours = 0
     let pendingQuotations = 0, overdueQuotations = 0
     let followupsToday = 0, followupsNext3Days = 0
     let closedWonMTD = 0
@@ -130,7 +131,7 @@ export default async function handler(req, res) {
           if (quoIssued || status !== 'New Lead') {
             if (quoSentDt) {
               const respH = (new Date(quoSentDt) - submDate) / 3600000
-              if (respH <= 2) responded2h++
+              if (respH <= 2) { responded2h++; totalResponseHours += respH }
             }
           } else if (ageH > 2) {
             overdueResponse++
@@ -184,7 +185,8 @@ export default async function handler(req, res) {
 
     return res.status(200).json({
       total: pages.length,
-      tile1: { newLeads24h, newLeadsWeek, overdueResponse, responseRate2h, eligibleResponse, responded2h },
+      tile1: { newLeads24h, newLeadsWeek, overdueResponse, responseRate2h, eligibleResponse, responded2h,
+        avgResponseHours: responded2h > 0 ? Math.round((totalResponseHours / responded2h) * 10) / 10 : null },
       tile2: { pendingQuotations, overdueQuotations },
       tile3: { followupsToday, followupsNext3Days },
       tile4: {

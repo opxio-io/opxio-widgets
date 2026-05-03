@@ -8,107 +8,127 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html,body{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:18px 18px 32px;background:#111;color:#fff;overflow-y:auto;overflow-x:hidden;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.22);--red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;}
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#0F0F0F;color:#fff;overflow-y:auto;overflow-x:hidden;}
+:root{
+  --g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.09);--gb:rgba(200,255,0,.2);
+  --red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;
+}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 
-.card{background:#1A1A1A;border:1px solid rgba(255,255,255,.07);border-radius:14px;}
+.card{background:#181818;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+.card.accent-left{border-left:2px solid var(--g);}
+.card.accent-left-amber{border-left:2px solid var(--amber);}
+.card.accent-left-red{border-left:2px solid var(--red);}
 
-/* Header */
-.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:8px;}
-.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.2);margin-bottom:3px;}
+/* ── Header ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.18);margin-bottom:4px;}
 .h-title{font-size:22px;font-weight:900;letter-spacing:-.04em;}
 .h-right{display:flex;align-items:center;gap:8px;}
-.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.16);}
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.15);}
+.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
 
-/* Grids */
-.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
-.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
-.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:8px;}
-@media(max-width:720px){.g4{grid-template-columns:repeat(2,1fr);}  .g3{grid-template-columns:1fr 1fr;}}
-@media(max-width:480px){.g4,.g2,.g3{grid-template-columns:1fr;}}
+/* ── Grids ── */
+.row{margin-bottom:10px;}
+.g-hero{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;}
+.g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
+.g2-eq{display:grid;grid-template-columns:2fr 3fr;gap:10px;}
+@media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
+@media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
 
-/* Stat tiles */
-.stat{padding:20px 20px 18px;}
-.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.32);margin-bottom:14px;display:block;line-height:1.5;}
-.s-val{font-size:34px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
-.s-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.18);margin-top:8px;}
+/* ── Hero stat ── */
+.hero{padding:28px 28px 24px;}
+.hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);margin-bottom:10px;display:block;}
+.hero-val{font-size:64px;font-weight:900;letter-spacing:-3px;line-height:1;color:var(--g);filter:drop-shadow(0 0 24px rgba(200,255,0,.25));}
+.hero-label{font-size:13px;font-weight:700;color:rgba(255,255,255,.55);margin-top:10px;}
+.hero-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:5px;}
 
-/* Panels */
-.panel{padding:20px 22px 20px;}
-.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:6px;}
-.panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.6);}
-.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-.badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.22);}
-.badge.amber{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.22);}
-.badge.blue{background:rgba(96,165,250,.1);color:var(--blue);border-color:rgba(96,165,250,.22);}
+/* ── Small KPI ── */
+.kpi{padding:22px 22px 20px;}
+.kpi-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.3);margin-bottom:14px;display:block;line-height:1.5;}
+.kpi-val{font-size:36px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.kpi-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);margin-top:8px;}
 
-/* Response speed */
-.rate-big{font-size:44px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:5px;}
-.rate-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);}
-.rate-track{height:4px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin:14px 0 7px;}
-.rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
-.rate-meta{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.2);}
+/* ── Panel ── */
+.panel{padding:24px 26px 22px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:6px;}
+.panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);}
+.badge.amber{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.2);}
+.badge.blue{background:rgba(96,165,250,.1);color:var(--blue);border-color:rgba(96,165,250,.2);}
 
-/* Funnel */
-.f-item{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+/* ── Pipeline funnel ── */
+.f-item{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
 .f-item:last-child{margin-bottom:0;}
-.f-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.32);width:128px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.f-track{flex:1;height:18px;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden;}
-.f-fill{height:100%;border-radius:5px;transition:width .55s cubic-bezier(.4,0,.2,1);}
-.f-n{font-size:12px;font-weight:900;color:rgba(255,255,255,.45);width:24px;text-align:right;flex-shrink:0;}
+.f-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.3);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-track{flex:1;height:24px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden;position:relative;}
+.f-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.5);width:28px;text-align:right;flex-shrink:0;}
 
-/* Donut */
-.donut-wrap{display:flex;align-items:center;gap:20px;}
-.donut-legend{flex:1;display:flex;flex-direction:column;gap:9px;}
-.leg-row{display:flex;align-items:center;gap:8px;}
-.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.leg-name{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.35);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.leg-val{font-size:12px;font-weight:900;color:rgba(255,255,255,.7);}
-.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.18);margin-left:3px;}
+/* ── Response speed ── */
+.speed-row{display:flex;align-items:flex-end;gap:18px;margin-bottom:16px;}
+.speed-big{font-size:48px;font-weight:900;letter-spacing:-2.5px;line-height:1;}
+.speed-unit{font-size:14px;font-weight:700;color:rgba(255,255,255,.3);margin-bottom:8px;}
+.speed-meta{flex:1;}
+.speed-tag{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;margin-bottom:8px;}
+.speed-desc{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);line-height:1.5;}
+.rate-track{height:5px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin-top:16px;}
+.rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
+.rate-meta{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.2);margin-top:7px;}
 
-/* Sources */
-.src-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.src-item:last-child{border-bottom:none;}
-.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.1);width:14px;text-align:center;flex-shrink:0;}
-.src-stripe{width:3px;height:28px;border-radius:2px;flex-shrink:0;opacity:.6;}
-.src-info{flex:1;min-width:0;}
-.src-name{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.55);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.src-bar{height:3px;background:rgba(255,255,255,.05);border-radius:999px;margin-top:5px;overflow:hidden;}
-.src-bar-fill{height:100%;border-radius:999px;transition:width .5s ease;}
-.src-count{font-size:15px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;}
-.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);width:30px;text-align:right;flex-shrink:0;}
-
-/* Rep leaderboard */
-.rep-item{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.rep-item:last-child{border-bottom:none;}
-.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.12);width:16px;text-align:center;flex-shrink:0;}
-.rep-avatar{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:rgba(255,255,255,.45);flex-shrink:0;letter-spacing:0;}
+/* ── Rep leaderboard ── */
+.rep-item{display:flex;align-items:center;gap:14px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.rep-item:last-child{border-bottom:none;padding-bottom:0;}
+.rep-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.1);width:18px;text-align:center;flex-shrink:0;}
+.rep-av{width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
 .rep-info{flex:1;min-width:0;}
-.rep-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.rep-meta{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.22);margin-top:2px;}
-.rep-stats{display:flex;align-items:center;gap:14px;flex-shrink:0;}
-.rep-stat{text-align:right;}
-.rep-stat-val{font-size:18px;font-weight:900;letter-spacing:-.5px;line-height:1;}
-.rep-stat-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.22);margin-top:2px;}
-.rep-divider{width:1px;height:28px;background:rgba(255,255,255,.06);flex-shrink:0;}
+.rep-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rep-hint{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:2px;}
+.rep-nums{display:flex;align-items:center;gap:6px;flex-shrink:0;}
+.rep-pill{text-align:center;padding:6px 14px;border-radius:8px;}
+.rep-pill-val{font-size:20px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.rep-pill-lbl{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.2);margin-top:3px;}
 
-/* Loading */
-.loading{display:flex;align-items:center;justify-content:center;min-height:280px;flex-direction:column;gap:10px;}
+/* ── Donut ── */
+.donut-wrap{display:flex;align-items:center;gap:22px;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:10px;}
+.leg-row{display:flex;align-items:center;gap:9px;}
+.leg-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.leg-name{font-size:10px;font-weight:600;color:rgba(255,255,255,.38);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.leg-val{font-size:14px;font-weight:900;color:rgba(255,255,255,.75);}
+.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-left:2px;}
+
+/* ── Sources ── */
+.src-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.src-item:last-child{border-bottom:none;padding-bottom:0;}
+.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.1);width:16px;text-align:center;flex-shrink:0;}
+.src-stripe{width:3px;height:30px;border-radius:2px;flex-shrink:0;}
+.src-info{flex:1;min-width:0;}
+.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);}
+.src-bar{height:3px;background:rgba(255,255,255,.05);border-radius:999px;margin-top:5px;overflow:hidden;}
+.src-bar-fill{height:100%;border-radius:999px;transition:width .55s ease;}
+.src-right{text-align:right;flex-shrink:0;}
+.src-count{font-size:18px;font-weight:900;letter-spacing:-.5px;line-height:1;}
+.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-top:2px;}
+
+/* ── Empty / Loading ── */
+.loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.18);font-weight:600;}
+.empty{font-size:11px;color:rgba(255,255,255,.16);font-weight:500;padding:16px 0;}
 
-.footer{text-align:center;padding:24px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.07);}
+.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.07);}
 </style>
 </head>
 <body>
 
-<div class="header">
+<div class="hdr">
   <div>
     <p class="eyebrow">Shin Supplies · CRM</p>
     <h1 class="h-title">Sales Dashboard</h1>
@@ -117,8 +137,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:18px 18px 32px;backg
     <span class="ts" id="ts"></span>
     <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="23 4 23 10 17 10"/>
-        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
       </svg>
     </button>
   </div>
@@ -134,18 +153,18 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:18px 18px 32px;backg
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-const PROD_COLORS  = ['#AAFF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
+const PROD_COLORS  = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES   = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
-const SRC_COLORS   = {'Iklan Facebook':'#60A5FA','TikTok':'#E879F9','Threads':'#F97316','Rujukan / Kenalan':'#AAFF00','Walk-in':'#34D399','Lain-lain':'#9CA3AF'};
-const STAGE_COLORS = ['rgba(255,255,255,.13)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(170,255,0,.55)'];
-const REP_COLORS   = ['#AAFF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
+const SRC_COLORS   = {'Iklan Facebook':'#60A5FA','TikTok':'#E879F9','Threads':'#F97316','Rujukan / Kenalan':'#C8FF00','Walk-in':'#34D399','Lain-lain':'#6B7280'};
+const STAGE_COLORS = ['rgba(255,255,255,.12)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(200,255,0,.55)'];
+const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
-function initials(name){ return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
+function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }
 
 function buildDonut(obj, colors, size) {
   const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,v])=>s+v,0)||1;
-  const cx=size/2,cy=size/2,ro=size/2-4,ri=ro*0.58;
+  const cx=size/2,cy=size/2,ro=size/2-5,ri=ro*0.56;
   let angle=-Math.PI/2;
   return {slices:entries.map(([name,count],i)=>{
     const sweep=(count/total)*Math.PI*2,ea=angle+sweep,large=sweep>Math.PI?1:0;
@@ -159,61 +178,68 @@ function buildDonut(obj, colors, size) {
 }
 
 function renderDonut(obj,colors,size){
-  if(!obj||!Object.keys(obj).length) return '<div style="font-size:11px;color:rgba(255,255,255,.18);padding:24px 0;">No data</div>';
+  if(!obj||!Object.keys(obj).length) return '<div class="empty">No data yet</div>';
   const {slices,total,cx,cy}=buildDonut(obj,colors,size);
+  const glowId='glow'+Math.random().toString(36).slice(2);
   const svg=`<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0;">
-    ${slices.map(s=>`<path d="${s.d}" fill="${s.color}" stroke="#1A1A1A" stroke-width="1.5"/>`).join('')}
-    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="17" font-weight="900" fill="rgba(255,255,255,.85)">${total}</text>
-    <text x="${cx}" y="${cy+9}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.22)" letter-spacing="1">TOTAL</text>
+    <defs>
+      <filter id="${glowId}"><feGaussianBlur stdDeviation="2.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    </defs>
+    ${slices.map((s,i)=>`<path d="${s.d}" fill="${s.color}" stroke="#181818" stroke-width="2" ${i===0?`filter="url(#${glowId})"`:''}/>`).join('')}
+    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="18" font-weight="900" fill="rgba(255,255,255,.88)">${total}</text>
+    <text x="${cx}" y="${cy+10}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.2)" letter-spacing="1.5">TOTAL</text>
   </svg>`;
   const legend=slices.map(s=>{
     const pct=Math.round((s.count/total)*100);
-    return `<div class="leg-row"><div class="leg-dot" style="background:${s.color};"></div><span class="leg-name">${esc(PROD_NAMES[s.name]||s.name)}</span><span class="leg-val">${s.count}</span><span class="leg-pct">${pct}%</span></div>`;
+    return `<div class="leg-row"><div class="leg-dot" style="background:${s.color};box-shadow:0 0 6px ${s.color}55;"></div><span class="leg-name">${esc(PROD_NAMES[s.name]||s.name)}</span><span class="leg-val">${s.count}</span><span class="leg-pct">${pct}%</span></div>`;
   }).join('');
   return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
 }
 
 function renderSources(obj){
-  if(!obj||!Object.keys(obj).length) return '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>';
+  if(!obj||!Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
   const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
   const total=entries.reduce((s,[,v])=>s+v,0)||1;
   const maxVal=entries[0][1]||1;
   return entries.map(([name,count],i)=>{
     const pct=Math.round((count/total)*100),barW=Math.round((count/maxVal)*100);
-    const col=SRC_COLORS[name]||'#9CA3AF';
+    const col=SRC_COLORS[name]||'#6B7280';
     return `<div class="src-item">
       <span class="src-rank">${i+1}</span>
-      <div class="src-stripe" style="background:${col};"></div>
+      <div class="src-stripe" style="background:${col};opacity:.65;"></div>
       <div class="src-info">
         <div class="src-name">${esc(name)}</div>
         <div class="src-bar"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>
       </div>
-      <span class="src-count" style="color:${col};">${count}</span>
-      <span class="src-pct">${pct}%</span>
+      <div class="src-right">
+        <div class="src-count" style="color:${col};">${count}</div>
+        <div class="src-pct">${pct}%</div>
+      </div>
     </div>`;
   }).join('');
 }
 
 function renderReps(reps){
-  if(!reps||!reps.length) return '<div style="font-size:11px;color:rgba(255,255,255,.18);">No rep data</div>';
-  return reps.map((r,i)=>{
+  const active=reps.filter(r=>r.name!=='Unassigned');
+  if(!active.length) return '<div class="empty">No rep data yet</div>';
+  return active.map((r,i)=>{
     const col=REP_COLORS[i%REP_COLORS.length];
+    const fuLabel=r.followupsToday===0?'No follow-ups due':r.followupsToday===1?'1 follow-up due today':`${r.followupsToday} follow-ups due today`;
     return `<div class="rep-item">
       <span class="rep-rank">${i+1}</span>
-      <div class="rep-avatar" style="border-color:${col}22;color:${col};">${initials(r.name)}</div>
+      <div class="rep-av" style="border-color:${col}30;color:${col};">${initials(r.name)}</div>
       <div class="rep-info">
         <div class="rep-name">${esc(r.name)}</div>
-        <div class="rep-meta">${r.followupsToday} follow-up${r.followupsToday!==1?'s':''} due today</div>
+        <div class="rep-hint">${fuLabel}</div>
       </div>
-      <div class="rep-stats">
-        <div class="rep-stat">
-          <div class="rep-stat-val" style="color:${col};">${r.closedWonMTD}</div>
-          <div class="rep-stat-lbl">Won MTD</div>
+      <div class="rep-nums">
+        <div class="rep-pill" style="background:${col}12;">
+          <div class="rep-pill-val" style="color:${col};">${r.closedWonMTD}</div>
+          <div class="rep-pill-lbl">Won MTD</div>
         </div>
-        <div class="rep-divider"></div>
-        <div class="rep-stat">
-          <div class="rep-stat-val" style="color:rgba(255,255,255,.5);">${r.activePipeline}</div>
-          <div class="rep-stat-lbl">Active</div>
+        <div class="rep-pill" style="background:rgba(255,255,255,.04);">
+          <div class="rep-pill-val" style="color:rgba(255,255,255,.5);">${r.activePipeline}</div>
+          <div class="rep-pill-lbl">Active</div>
         </div>
       </div>
     </div>`;
@@ -222,83 +248,128 @@ function renderReps(reps){
 
 function render(d){
   const t1=d.tile1,t2=d.tile2,t3=d.tile3,t4=d.tile4;
-  const rate=t1.responseRate2h,rateOk=rate!==null&&rate>=70;
+  const rate=t1.responseRate2h, rateOk=rate!==null&&rate>=70;
   const rateCol=rateOk?'var(--g)':'var(--red)';
+  const avg=t1.avgResponseHours;
 
-  const stats=`<div class="g4">
-    <div class="card stat">
-      <span class="s-lbl">New Leads<br>Last 24h</span>
-      <div class="s-val" style="color:var(--g);">${t1.newLeads24h}</div>
-      <div class="s-sub">${t1.newLeadsWeek} this week</div>
+  // ── Row 1: Hero + 3 KPI tiles ──
+  const overdueBorder = t1.overdueResponse>0 ? 'accent-left-red' : '';
+  const quoBorder     = t2.pendingQuotations>0 ? 'accent-left-amber' : '';
+
+  const row1=`<div class="g-hero row">
+    <div class="card accent-left hero">
+      <span class="hero-eyebrow">New Leads — Last 24 Hours</span>
+      <div class="hero-val">${t1.newLeads24h}</div>
+      <div class="hero-label">Leads today</div>
+      <div class="hero-sub">${t1.newLeadsWeek} received this week · ${d.total} all time</div>
     </div>
-    <div class="card stat">
-      <span class="s-lbl">Overdue<br>Response</span>
-      <div class="s-val" style="color:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.18)'};">${t1.overdueResponse}</div>
-      <div class="s-sub">no quote &gt;2h old</div>
+    <div class="card ${overdueBorder} kpi">
+      <span class="kpi-lbl">Overdue<br>Response</span>
+      <div class="kpi-val" style="color:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.18)'};">${t1.overdueResponse}</div>
+      <div class="kpi-sub">no quote &gt;2h</div>
     </div>
-    <div class="card stat">
-      <span class="s-lbl">Pending<br>Quotations</span>
-      <div class="s-val" style="color:${t2.pendingQuotations>0?'var(--amber)':'rgba(255,255,255,.18)'};">${t2.pendingQuotations}</div>
-      <div class="s-sub">${t2.overdueQuotations} overdue &gt;24h</div>
+    <div class="card ${quoBorder} kpi">
+      <span class="kpi-lbl">Pending<br>Quotations</span>
+      <div class="kpi-val" style="color:${t2.pendingQuotations>0?'var(--amber)':'rgba(255,255,255,.18)'};">${t2.pendingQuotations}</div>
+      <div class="kpi-sub">${t2.overdueQuotations} overdue &gt;24h</div>
     </div>
-    <div class="card stat">
-      <span class="s-lbl">Follow-ups<br>Due Today</span>
-      <div class="s-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.18)'};">${t3.followupsToday}</div>
-      <div class="s-sub">${t3.followupsNext3Days} next 3 days</div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Follow-ups<br>Due Today</span>
+      <div class="kpi-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.18)'};">${t3.followupsToday}</div>
+      <div class="kpi-sub">${t3.followupsNext3Days} next 3 days</div>
     </div>
   </div>`;
 
-  const funnel=t4.stageFunnel||[],fMax=Math.max(...funnel.map(s=>s.count),1);
-  const fRows=funnel.map((s,i)=>{
+  // ── Row 2: Pipeline (bigger) + Response Speed ──
+  const funnel=t4.stageFunnel||[], fMax=Math.max(...funnel.map(s=>s.count),1);
+  const fRows=funnel.filter(s=>s.count>0||true).map((s,i)=>{
     const w=Math.max(Math.round((s.count/fMax)*100),s.count>0?3:0);
-    return `<div class="f-item"><span class="f-lbl">${esc(s.stage)}</span><div class="f-track"><div class="f-fill" style="width:${w}%;background:${STAGE_COLORS[i]||'rgba(170,255,0,.4)'};"></div></div><span class="f-n">${s.count}</span></div>`;
+    return `<div class="f-item">
+      <span class="f-lbl">${esc(s.stage)}</span>
+      <div class="f-track"><div class="f-fill" style="width:${w}%;background:${STAGE_COLORS[i]||'rgba(200,255,0,.4)'};"></div></div>
+      <span class="f-n">${s.count}</span>
+    </div>`;
   }).join('');
 
-  const row2=`<div class="g2">
+  let speedDisplay='';
+  if(avg!==null){
+    const h=Math.floor(avg), m=Math.round((avg-h)*60);
+    const timeStr=h>0?`${h}h ${m}m`:`${m}m`;
+    const speedCol=avg<=2?'var(--g)':'var(--red)';
+    speedDisplay=`
+      <div class="speed-row">
+        <div class="speed-big" style="color:${speedCol};">${timeStr}</div>
+        <div class="speed-meta">
+          <div class="speed-tag" style="background:${speedCol}15;color:${speedCol};border:1px solid ${speedCol}30;">${rateOk?'On target':'Needs attention'}</div>
+          <div class="speed-desc">${t1.responded2h} of ${t1.eligibleResponse} leads<br>quoted within 2 hours</div>
+        </div>
+      </div>
+      <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${speedCol};"></div></div>
+      <div class="rate-meta"><span>Target: under 2h · 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
+  } else if(rate!==null){
+    speedDisplay=`
+      <div class="speed-row">
+        <div class="speed-big" style="color:${rateCol};">${rate}%</div>
+        <div class="speed-meta">
+          <div class="speed-tag" style="background:${rateCol}15;color:${rateCol};border:1px solid ${rateCol}30;">${rateOk?'On target':'Needs attention'}</div>
+          <div class="speed-desc">${t1.responded2h} of ${t1.eligibleResponse} leads<br>quoted within 2 hours</div>
+        </div>
+      </div>
+      <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${rateCol};"></div></div>
+      <div class="rate-meta"><span>Target: 70%+</span><span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(200,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span></div>`;
+  } else {
+    speedDisplay='<div class="empty">No response data yet — will populate as leads come in</div>';
+  }
+
+  const row2=`<div class="g2 row">
+    <div class="card accent-left panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Pipeline Stages</span>
+        <span class="badge">${t4.closedWonMTD} closed won MTD</span>
+      </div>
+      ${fRows||'<div class="empty">No pipeline data yet</div>'}
+    </div>
     <div class="card panel">
       <div class="panel-hdr">
         <span class="panel-title">Response Speed</span>
-        <span class="badge ${rateOk?'':'red'}">${rate!==null?rate+'% within 2h':'No data'}</span>
+        ${rate!==null?`<span class="badge ${rateOk?'':'red'}">${rate}% within 2h</span>`:''}
       </div>
-      <div class="rate-big" style="color:${rateCol};">${rate!==null?rate+'%':'—'}</div>
-      <div class="rate-sub">${t1.responded2h} of ${t1.eligibleResponse} leads quoted within 2h</div>
-      <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${rateCol};"></div></div>
-      <div class="rate-meta">
-        <span>Target: 70%+</span>
-        <span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(170,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span>
-      </div>
+      ${speedDisplay}
     </div>
+  </div>`;
+
+  // ── Row 3: Rep leaderboard ──
+  const reps=(d.repBreakdown||[]).filter(r=>r.name!=='Unassigned');
+  const row3=reps.length?`<div class="row">
     <div class="card panel">
       <div class="panel-hdr">
-        <span class="panel-title">Pipeline</span>
-        <span class="badge">${t4.closedWonMTD} won MTD</span>
+        <span class="panel-title">Sales Rep Performance</span>
+        <span class="badge blue">${reps.length} rep${reps.length!==1?'s':''}</span>
       </div>
-      ${fRows||'<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
+      ${renderReps(d.repBreakdown||[])}
     </div>
-  </div>`;
+  </div>`:'';
 
-  const repHtml=`<div class="card panel" style="margin-bottom:8px;">
-    <div class="panel-hdr">
-      <span class="panel-title">Sales Rep Performance</span>
-      <span class="badge blue">${(d.repBreakdown||[]).filter(r=>r.name!=='Unassigned').length} reps</span>
-    </div>
-    ${renderReps((d.repBreakdown||[]).filter(r=>r.name!=='Unassigned'))}
-  </div>`;
-
+  // ── Row 4: Product + Sources ──
   const prodTotal=Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
   const srcTotal=Object.values(d.sourceBreakdown||{}).reduce((s,n)=>s+n,0)||0;
-  const row3=`<div class="g2">
-    <div class="card panel">
-      <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
-      ${renderDonut(d.productBreakdown,PROD_COLORS,112)}
-    </div>
-    <div class="card panel">
-      <div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">${srcTotal} total</span></div>
-      ${renderSources(d.sourceBreakdown)}
-    </div>
-  </div>`;
 
-  document.getElementById('main').innerHTML=stats+row2+repHtml+row3;
+  const hasProd=prodTotal>0, hasSrc=srcTotal>0;
+  let row4='';
+  if(hasProd||hasSrc){
+    row4=`<div class="${hasProd&&hasSrc?'g2-eq':'g2'} row">
+      ${hasProd?`<div class="card panel">
+        <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
+        ${renderDonut(d.productBreakdown,PROD_COLORS,124)}
+      </div>`:''}
+      ${hasSrc?`<div class="card panel">
+        <div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">${srcTotal} total</span></div>
+        ${renderSources(d.sourceBreakdown)}
+      </div>`:''}
+    </div>`;
+  }
+
+  document.getElementById('main').innerHTML=row1+row2+row3+row4;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 

@@ -38,9 +38,9 @@ function resolveEnabledSections(config) {
   return order.filter(k => secs[k] !== false)
 }
 
-export default function CRMPipeline({ config, token, bypass = false }) {
+export default function CRMPipeline({ config, token, bypass = false, defaultFilterMonth = null }) {
   const [theme,         setTheme]         = useState('dark')
-  const [filterMonth,   setFilterMonth]   = useState(null)
+  const [filterMonth,   setFilterMonth]   = useState(defaultFilterMonth)
   const [refreshSignal, setRefreshSignal] = useState(0)
 
   const { data, loading, error } = useCRMData({

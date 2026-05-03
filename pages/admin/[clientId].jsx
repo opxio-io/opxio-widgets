@@ -66,6 +66,13 @@ export default function ConfigEditor() {
   const [overSec,     setOverSec]     = useState(null)
   const [activeTab,   setActiveTab]   = useState('identity')
 
+  // Preview month — default to previous month so real data is visible
+  const [previewMonth, setPreviewMonth] = useState(() => {
+    const d = new Date()
+    d.setMonth(d.getMonth() - 1)
+    return { year: d.getFullYear(), month: d.getMonth() }
+  })
+
   const REGISTRY      = WIDGET_SECTIONS['crm-pipeline']?.registry || {}
   const SECTION_ORDER = WIDGET_SECTIONS['crm-pipeline']?.order    || []
 
@@ -142,6 +149,27 @@ export default function ConfigEditor() {
 
   const enabledSet         = new Set(config.enabledSections)
   const availableSections  = SECTION_ORDER.filter(id => !enabledSet.has(id))
+
+  function prevPreviewMonth() {
+    setPreviewMonth(fm => {
+      const d = new Date(fm.year, fm.month - 1, 1)
+      return { year: d.getFullYear(), month: d.getMonth() }
+    })
+  }
+  function nextPreviewMonth() {
+    setPreviewMonth(fm => {
+      const now = new Date()
+      const d   = new Date(fm.year, fm.month + 1, 1)
+      if (d >= new Date(now.getFullYear(), now.getMonth(), 1)) return fm // don't go past current
+      return { year: d.getFullYear(), month: d.getMonth() }
+    })
+  }
+  const previewMonthLabel = new Date(previewMonth.year, previewMonth.month, 1)
+    .toLocaleString('default', { month: 'short', year: 'numeric' })
+  const isPreviewCurrent = (() => {
+    const now = new Date()
+    return previewMonth.year === now.getFullYear() && previewMonth.month === now.getMonth()
+  })()
 
   if (!clientId) return null
 
@@ -287,7 +315,11 @@ export default function ConfigEditor() {
           <div style={S.preview}>
             <div style={S.previewHdr}>
               <span style={{ fontSize:10, fontWeight:700, letterSpacing:'.1em', textTransform:'uppercase', color:'#555' }}>Live Preview</span>
-              <span style={{ fontSize:10, color:'#444' }}>Updates as you edit · Save to persist</span>
+              <div style={{ display:'flex', alignItems:'center', gap:6, marginLeft:'auto' }}>
+                <button style={S.mnBtn} onClick={prevPreviewMonth}>‹</button>
+                <span style={{ fontSize:11, fontWeight:700, color:'#777', minWidth:72, textAlign:'center' }}>{previewMonthLabel}</span>
+                <button style={{ ...S.mnBtn, opacity: isPreviewCurrent ? .3 : 1 }} onClick={nextPreviewMonth} disabled={isPreviewCurrent}>›</button>
+              </div>
             </div>
             <div style={S.previewBody}>
               {clientToken && previewConfig.apiEndpoint ? (
@@ -295,6 +327,7 @@ export default function ConfigEditor() {
                   config={previewConfig}
                   token={clientToken}
                   bypass={true}
+                  defaultFilterMonth={previewMonth}
                 />
               ) : (
                 <div style={S.noPreview}>
@@ -350,4 +383,5 @@ const S = {
   previewHdr:  { padding:'10px 16px', borderBottom:'1px solid #1A1A1A', display:'flex', justifyContent:'space-between', alignItems:'center', flexShrink:0 },
   previewBody: { flex:1, overflowY:'auto', minHeight:0 },
   noPreview:   { flex:1, display:'flex', alignItems:'center', justifyContent:'center', color:'#333', fontSize:12, height:'100%' },
+  mnBtn:       { background:'transparent', border:'1px solid #2A2A2A', borderRadius:5, color:'#666', fontSize:14, width:24, height:24, display:'flex', alignItems:'center', justifyContent:'center', cursor:'pointer' },
 }

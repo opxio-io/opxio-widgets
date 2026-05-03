@@ -635,9 +635,21 @@ const MOON_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strok
 function toggleMode(){_light=!_light;document.body.classList.toggle('light',_light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=_light?MOON_SVG:SUN_SVG;}
 let _loadCtrl=null;
 let _abortedByNav=false;
-async function load(){
+const _monthCache=new Map(); // client-side cache: monthKey → response data
+
+function monthKey(fm){ return fm ? `${fm.year}-${fm.month}` : 'current'; }
+
+async function load(forceNetwork=false){
   if(_loadCtrl){ _abortedByNav=true; _loadCtrl.abort(); }
   _abortedByNav=false;
+
+  // Client cache hit — render instantly, no network needed
+  const ck=monthKey(filterMonth);
+  if(!forceNetwork && _monthCache.has(ck)){
+    render(_monthCache.get(ck));
+    return;
+  }
+
   _loadCtrl=new AbortController();
   const sig=_loadCtrl.signal;
   // 25s timeout — allows for Railway cold start
@@ -650,7 +662,9 @@ async function load(){
     if(filterMonth){ params.set('month',filterMonth.month); params.set('year',filterMonth.year); }
     const r=await fetch('https://api.opxio.io/api/clients/shin-supplies/crm-pipeline?'+params.toString(),{signal:sig});
     if(!r.ok) throw new Error('HTTP '+r.status);
-    render(await r.json());
+    const data=await r.json();
+    _monthCache.set(ck, data); // store in client cache
+    render(data);
   }catch(e){
     if(e.name==='AbortError'){
       if(_abortedByNav) return; // cancelled by new navigation — silent
@@ -663,12 +677,13 @@ async function load(){
     if(!sig.aborted){const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');}
   }
 }
-function doRefresh(){load();}
+// Auto-refresh: clear client cache so all months get fresh data
+function doRefresh(){ _monthCache.clear(); load(true); }
 
 // Init month label
 updateMonthNav();
 load();
-setInterval(load,6*60*1000);
+setInterval(()=>{ _monthCache.clear(); load(true); }, 6*60*1000);
 </script>
 </body>
 </html>

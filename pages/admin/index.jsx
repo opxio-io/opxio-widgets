@@ -1,17 +1,40 @@
 // pages/admin/index.jsx — Opxio widget admin: password gate + client list
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Head from 'next/head'
 
-const API = 'https://api.opxio.io/api/admin'
+const API     = 'https://api.opxio.io/api/admin'
+const LS_KEY  = 'opxio_admin_key'
 
 export default function AdminIndex() {
   const [pw,      setPw]      = useState('')
   const [authed,  setAuthed]  = useState(false)
+  const [savedKey,setSavedKey]= useState('')
   const [err,     setErr]     = useState('')
   const [clients, setClients] = useState([])
   const [loading, setLoading] = useState(false)
   const router = useRouter()
+
+  // Restore session on mount
+  useEffect(() => {
+    const stored = localStorage.getItem(LS_KEY)
+    if (stored) autoLogin(stored)
+  }, [])
+
+  async function autoLogin(key) {
+    try {
+      const r = await fetch(`${API}/clients?adminKey=${encodeURIComponent(key)}`)
+      if (r.ok) {
+        const data = await r.json()
+        setClients(data.filter(c => c.status === 'active'))
+        setSavedKey(key)
+        setPw(key)
+        setAuthed(true)
+      } else {
+        localStorage.removeItem(LS_KEY)
+      }
+    } catch {}
+  }
 
   async function login(e) {
     e.preventDefault()
@@ -21,16 +44,20 @@ export default function AdminIndex() {
       if (r.ok) {
         const data = await r.json()
         setClients(data.filter(c => c.status === 'active'))
+        setSavedKey(pw)
         setAuthed(true)
         setErr('')
+        localStorage.setItem(LS_KEY, pw)
       } else {
         setErr('Wrong password.')
       }
-    } catch {
-      setErr('Connection error.')
-    } finally {
-      setLoading(false)
-    }
+    } catch { setErr('Connection error.') }
+    finally { setLoading(false) }
+  }
+
+  function logout() {
+    localStorage.removeItem(LS_KEY)
+    setAuthed(false); setPw(''); setClients([]); setSavedKey('')
   }
 
   if (!authed) return (
@@ -40,18 +67,10 @@ export default function AdminIndex() {
         <div style={S.logo}>Opxio<span style={{ color: '#C8FF00' }}>.</span></div>
         <div style={S.gateTitle}>Widget Admin</div>
         <form onSubmit={login} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-          <input
-            type="password"
-            placeholder="Admin password"
-            value={pw}
-            onChange={e => setPw(e.target.value)}
-            style={S.input}
-            autoFocus
-          />
+          <input type="password" placeholder="Admin password" value={pw}
+            onChange={e => setPw(e.target.value)} style={S.input} autoFocus />
           {err && <div style={{ color: '#FF6B6B', fontSize: 12 }}>{err}</div>}
-          <button style={S.btn} type="submit" disabled={loading}>
-            {loading ? 'Checking…' : 'Enter'}
-          </button>
+          <button style={S.btn} type="submit" disabled={loading}>{loading ? 'Checking…' : 'Enter'}</button>
         </form>
       </div>
     </div>
@@ -63,33 +82,27 @@ export default function AdminIndex() {
       <div style={S.topbar}>
         <span style={S.logo}>Opxio<span style={{ color: '#C8FF00' }}>.</span></span>
         <span style={{ color: '#444', fontSize: 12 }}>Widget Admin</span>
+        <button style={{ ...S.backBtn, marginLeft: 'auto' }} onClick={logout}>Sign out</button>
       </div>
       <div style={S.content}>
         <div style={S.sectionTitle}>Active Clients — {clients.length}</div>
         <div style={S.grid}>
           {clients.map(c => (
-            <button
-              key={c.slug}
-              style={S.clientCard}
-              onClick={() => router.push(`/admin/${c.slug}?adminKey=${encodeURIComponent(pw)}`)}
-            >
+            <button key={c.slug} style={S.clientCard}
+              onClick={() => router.push(`/admin/${c.slug}?adminKey=${encodeURIComponent(savedKey)}`)}>
               <div style={S.clientName}>{c.client_name}</div>
               <div style={S.clientSlug}>{c.slug}</div>
               <div style={S.clientPill}>Configure widgets →</div>
             </button>
           ))}
-          {clients.length === 0 && (
-            <div style={{ color: '#444', fontSize: 12 }}>No active clients found.</div>
-          )}
+          {clients.length === 0 && <div style={{ color: '#444', fontSize: 12 }}>No active clients found.</div>}
         </div>
       </div>
     </div>
   )
 }
 
-export async function getServerSideProps() {
-  return { props: {} }
-}
+export async function getServerSideProps() { return { props: {} } }
 
 const S = {
   page:        { background: '#111', minHeight: '100vh', fontFamily: "'Satoshi', -apple-system, sans-serif", color: '#fff' },
@@ -102,8 +115,9 @@ const S = {
   content:     { padding: 24, maxWidth: 1000, margin: '0 auto' },
   sectionTitle:{ fontSize: 10, fontWeight: 700, letterSpacing: '.12em', textTransform: 'uppercase', color: '#555', marginBottom: 14 },
   grid:        { display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 },
-  clientCard:  { background: '#1A1A1A', border: '1px solid #1E1E1E', borderRadius: 10, padding: 18, textAlign: 'left', cursor: 'pointer', color: '#fff', display: 'flex', flexDirection: 'column', gap: 6, transition: 'border-color .15s' },
+  clientCard:  { background: '#1A1A1A', border: '1px solid #1E1E1E', borderRadius: 10, padding: 18, textAlign: 'left', cursor: 'pointer', color: '#fff', display: 'flex', flexDirection: 'column', gap: 6 },
   clientName:  { fontSize: 15, fontWeight: 700 },
   clientSlug:  { fontSize: 11, color: '#444', fontFamily: 'monospace' },
   clientPill:  { marginTop: 6, fontSize: 11, color: '#C8FF00', fontWeight: 600 },
+  backBtn:     { background: 'transparent', border: '1px solid #222', borderRadius: 7, padding: '5px 12px', color: '#555', fontSize: 11, cursor: 'pointer' },
 }

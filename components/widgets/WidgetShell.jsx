@@ -1,17 +1,15 @@
 // components/widgets/WidgetShell.jsx
-// Wrapper: iframe guard, theme, font, header slot, loading/error states
 import { useState, useEffect } from 'react'
 import s from '@/styles/widget.module.css'
 
-export default function WidgetShell({ children, theme, onThemeToggle, loading, error }) {
+export default function WidgetShell({ children, theme, loading, error, bypass = false }) {
   const [blocked, setBlocked] = useState(false)
 
   useEffect(() => {
-    // Block direct browser access — must be in Notion iframe
-    if (typeof window !== 'undefined' && window.self === window.top) {
+    if (!bypass && typeof window !== 'undefined' && window.self === window.top) {
       setBlocked(true)
     }
-  }, [])
+  }, [bypass])
 
   if (blocked) return (
     <div className={`${s.shell} ${s.blocked}`} style={{ background: '#191919' }}>

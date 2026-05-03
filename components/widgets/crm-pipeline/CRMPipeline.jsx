@@ -38,7 +38,7 @@ function resolveEnabledSections(config) {
   return order.filter(k => secs[k] !== false)
 }
 
-export default function CRMPipeline({ config, token }) {
+export default function CRMPipeline({ config, token, bypass = false }) {
   const [theme,         setTheme]         = useState('dark')
   const [filterMonth,   setFilterMonth]   = useState(null)
   const [refreshSignal, setRefreshSignal] = useState(0)
@@ -111,7 +111,7 @@ export default function CRMPipeline({ config, token }) {
   const otherSections = enabledSections.filter(id => id !== 'pipeline' && id !== 'liveColumn')
 
   return (
-    <WidgetShell theme={theme} onThemeToggle={toggleTheme} loading={loading} error={error}>
+    <WidgetShell theme={theme} onThemeToggle={toggleTheme} loading={loading} error={error} bypass={bypass}>
       <div className={s.header}>
         <div className={s.headerLeft}>
           <span className={s.eyebrow}>{config.eyebrow}</span>

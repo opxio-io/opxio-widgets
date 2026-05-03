@@ -133,6 +133,41 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .empty{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;padding:16px 0;}
 
 .footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+    /* ── Light mode ── */
+    body.light{background:#F4F4F4;color:#111;}
+    body.light .card{background:#FFFFFF;border-color:rgba(0,0,0,.07);}
+    body.light .panel-title{color:rgba(0,0,0,.4);}
+    body.light .badge{background:rgba(140,200,0,.12);color:#5a8a00;border-color:rgba(140,200,0,.25);}
+    body.light .badge.red{background:rgba(255,80,80,.1);color:#c0392b;border-color:rgba(255,80,80,.2);}
+    body.light .badge.blue{background:rgba(30,80,180,.08);color:#1e50b4;border-color:rgba(30,80,180,.15);}
+    body.light .eyebrow{color:rgba(0,0,0,.4);}
+    body.light .h-title{color:#111;}
+    body.light .kpi-lbl{color:rgba(0,0,0,.4);}
+    body.light .kpi-sub{color:rgba(0,0,0,.35);}
+    body.light .bar-label{color:rgba(0,0,0,.55);}
+    body.light .bar-count{color:#111;}
+    body.light .bar-track{background:rgba(0,0,0,.07);}
+    body.light .rate-track{background:rgba(0,0,0,.07);}
+    body.light .rate-meta{color:rgba(0,0,0,.4);}
+    body.light .src-card{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
+    body.light .src-name{color:rgba(0,0,0,.6);}
+    body.light .src-leads-lbl{color:rgba(0,0,0,.4);}
+    body.light .rep-card{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
+    body.light .rep-card-name{color:#111;}
+    body.light .rep-stat-lbl{color:rgba(0,0,0,.4);}
+    body.light .rep-stat-val{color:#111;}
+    body.light .dl-name{color:rgba(0,0,0,.75);}
+    body.light .dl-meta{color:rgba(0,0,0,.4);}
+    body.light .dl-bar-track{background:rgba(0,0,0,.07);}
+    body.light .donut-total{color:#111;}
+    body.light .donut-total-lbl{color:rgba(0,0,0,.35);}
+    body.light .speed-desc{color:rgba(0,0,0,.55);}
+    body.light .mn-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);color:rgba(0,0,0,.5);}
+    body.light .mn-lbl{color:rgba(0,0,0,.65);}
+    body.light .icon-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.5);}
+    body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#5a8a00;}
+    body.light .wgt-footer{color:rgba(0,0,0,.3);}
+    body.light .empty{color:rgba(0,0,0,.3);}
 </style>
 </head>
 <body>
@@ -149,6 +184,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
       <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>&#8250;</button>
     </div>
     <span class="ts" id="ts"></span>
+    <button class="icon-btn" id="mb" onclick="toggleMode()" title="Toggle light/dark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+      </button>
     <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
@@ -373,12 +411,12 @@ function render(d){
       <div class="kpi-sub">no quote &gt;2h</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Pending Quotations</span>
+      <span class="kpi-lbl">Pending Quotations <span style="font-size:8px;opacity:.4;font-weight:700;">· LIVE</span></span>
       <div class="kpi-val" style="color:${t2.pendingQuotations>0?'var(--amber)':'rgba(255,255,255,.18)'};">${t2.pendingQuotations}</div>
       <div class="kpi-sub">${t2.overdueQuotations} overdue &gt;24h</div>
     </div>
     <div class="card kpi">
-      <span class="kpi-lbl">Follow-ups Due Today</span>
+      <span class="kpi-lbl">Follow-ups Due Today <span style="font-size:8px;opacity:.4;font-weight:700;">· LIVE</span></span>
       <div class="kpi-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.18)'};">${t3.followupsToday}</div>
       <div class="kpi-sub">${t3.followupsNext3Days} next 3 days</div>
     </div>
@@ -429,7 +467,7 @@ function render(d){
     <div class="card panel">
       <div class="panel-hdr">
         <span class="panel-title">Pipeline Stages</span>
-        <span class="badge">${t4.closedWonMTD} Won ${monLabel}</span>
+        <span class="badge">${d.monthLeads||0} Enquiries — ${monLabel}</span>
       </div>
       ${fRows||'<div class="empty">No pipeline data yet</div>'}
     </div>

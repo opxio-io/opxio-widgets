@@ -677,13 +677,13 @@ async function load(forceNetwork=false){
     if(!sig.aborted){const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');}
   }
 }
-// Auto-refresh: clear client cache so all months get fresh data
-function doRefresh(){ _monthCache.clear(); load(true); }
+// Auto-refresh: only invalidate current month — past months never change
+function doRefresh(){ _monthCache.delete('current'); load(true); }
 
 // Init month label
 updateMonthNav();
 load();
-setInterval(()=>{ _monthCache.clear(); load(true); }, 6*60*1000);
+setInterval(()=>{ _monthCache.delete('current'); load(true); }, 6*60*1000);
 </script>
 </body>
 </html>

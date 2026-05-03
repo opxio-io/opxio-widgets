@@ -29,10 +29,8 @@ function fmtLabel(fm) {
   return d.toLocaleString('default', { month: 'short', year: 'numeric' })
 }
 
-// Resolve enabledSections — supports both new (array) and legacy (sections obj + sectionOrder) format
 function resolveEnabledSections(config) {
   if (Array.isArray(config.enabledSections)) return config.enabledSections
-  // Legacy format migration
   const order = config.sectionOrder || DEFAULT_ENABLED_SECTIONS
   const secs  = config.sections || {}
   return order.filter(k => secs[k] !== false)
@@ -56,63 +54,61 @@ export default function CRMPipeline({ config, token, bypass = false, defaultFilt
   const handleRefresh = useCallback(() => setRefreshSignal(n => n + 1), [])
   const toggleTheme   = useCallback(() => setTheme(t => t === 'dark' ? 'light' : 'dark'), [])
 
-  const isCurrentMonth = !filterMonth
-  const monthLabel     = fmtLabel(filterMonth)
+  const isCurrentMonth  = !filterMonth
+  const monthLabel      = fmtLabel(filterMonth)
   const enabledSections = resolveEnabledSections(config)
 
-  const newLeads    = data?.stats?.monthLeads    ?? 0
-  const quotesSent  = data?.stats?.quotesSent    ?? 0
-  const closedWon   = data?.stats?.closedWon     ?? 0
-  const closedLost  = data?.stats?.closedLost    ?? 0
-  const closeRate   = data?.stats?.closeRate     ?? null
-  const followUps   = data?.stats?.followUps     ?? 0
-  const overdue     = data?.stats?.overdueQuotes ?? 0
-  const stageFunnel = data?.stats?.stageFunnel   ?? []
-  const reps        = data?.stats?.reps          ?? []
-  const sources     = data?.stats?.sources       ?? []
-  const stillActive = data?.stats?.stillActive   ?? 0
-  const updatedAt   = data?.meta?.updatedAt      ?? null
-  const totalPipeline = data?.stats?.totalPipeline ?? null
+  // ── Data ──────────────────────────────────────────────────
+  const st = data?.stats || {}
+  const monthLeads      = st.monthLeads      ?? 0
+  const closedWon       = st.closedWon       ?? 0
+  const closedLost      = st.closedLost      ?? 0
+  const closeRate       = st.closeRate       ?? null
+  const avgDaysToClose  = st.avgDaysToClose  ?? null
+  const avgQuoteToWin   = st.avgQuoteToWin   ?? null
+  const followupsToday  = st.followupsToday  ?? 0
+  const followupsNext3  = st.followupsNext3  ?? 0
+  const overdueResponse = st.overdueResponse ?? 0
+  const stageFunnel     = st.stageFunnel     ?? []
+  const reps            = st.reps            ?? []
+  const sources         = st.sources         ?? []
+  const stillActive     = st.stillActive     ?? 0
+  const updatedAt       = data?.meta?.updatedAt ?? null
 
-  const closeRateDisplay = closeRate !== null ? `${Math.round(closeRate * 100)}%` : '—'
-  const closeRateColor   = closeRate !== null
+  // ── KPI display values ────────────────────────────────────
+  const crDisplay = closeRate !== null ? `${Math.round(closeRate * 100)}%` : '—'
+  const crColor   = closeRate !== null
     ? (closeRate >= 0.5 ? 'lime' : closeRate >= 0.3 ? 'amber' : 'red')
     : 'muted'
+  const crSub  = closedLost > 0 ? `${closedWon}W · ${closedLost}L` : 'Closed Won / Quotes Sent'
 
-  // Section renderer
+  const avgDaysDisplay = avgDaysToClose !== null ? `${avgDaysToClose}d` : '—'
+  const avgDaysColor   = avgDaysToClose !== null ? 'amber' : 'muted'
+
+  const quoteWinDisplay = avgQuoteToWin !== null ? `${avgQuoteToWin}d` : '—'
+  const quoteWinColor   = avgQuoteToWin !== null ? 'amber' : 'muted'
+
+  // ── Section layout ────────────────────────────────────────
+  const hasPipeline     = enabledSections.includes('pipeline')
+  const hasLive         = enabledSections.includes('liveColumn')
+  const otherSections   = enabledSections.filter(id => id !== 'pipeline' && id !== 'liveColumn')
+
   function renderSection(id) {
-    switch(id) {
-      case 'pipeline':
-        return isCurrentMonth ? (
-          <div key="pipeline" className={s.row2}>
-            <div className={s.pipelineCol}>
-              <PipelineFunnel stageFunnel={stageFunnel} stages={config.stages} monthLeads={newLeads} monthLabel={monthLabel} stillActive={stillActive} isPastMonth={false} />
-            </div>
-            {enabledSections.includes('liveColumn') ? null : null /* live handled separately */}
-          </div>
-        ) : (
-          <PipelineFunnel key="pipeline" stageFunnel={stageFunnel} stages={config.stages} monthLeads={newLeads} monthLabel={monthLabel} stillActive={stillActive} isPastMonth={true} />
-        )
+    switch (id) {
       case 'salesReps':
         return <SalesRepCards key="reps" reps={reps} monthLabel={monthLabel} empty={reps.length === 0} />
       case 'leadSources':
         return <LeadSources key="sources" sources={sources} monthLabel={monthLabel} empty={sources.length === 0} />
-      case 'liveColumn':
-        return isCurrentMonth
-          ? <LiveColumn key="live" followUps={followUps} overdueQuotes={overdue} totalPipeline={totalPipeline} />
-          : null
       default:
         return null
     }
   }
 
-  // Pipeline + live column special case: they go side-by-side in current month
-  const hasPipeline = enabledSections.includes('pipeline')
-  const hasLive     = enabledSections.includes('liveColumn')
-  const otherSections = enabledSections.filter(id => id !== 'pipeline' && id !== 'liveColumn')
+  const term = config.terminology || {}
 
   return (
-    <WidgetShell theme={theme} onThemeToggle={toggleTheme} loading={loading} error={error} bypass={bypass}>
+    <WidgetShell theme={theme} loading={loading} error={error} bypass={bypass}>
+      {/* Header */}
       <div className={s.header}>
         <div className={s.headerLeft}>
           <span className={s.eyebrow}>{config.eyebrow}</span>
@@ -124,39 +120,73 @@ export default function CRMPipeline({ config, token, bypass = false, defaultFilt
 
       {data && (
         <>
-          {/* KPI row — always shown */}
+          {/* Row 1 — 5 KPI cards (matches HTML widget exactly) */}
           <div className={s.heroRow}>
-            <HeroCard eyebrow={config.eyebrow} value={newLeads} label={`${config.terminology?.newLeads ?? 'New Leads'} — ${monthLabel}`} />
-            <KPICard label={config.terminology?.quotesSent ?? 'Quotations Sent'} value={quotesSent} color="blue" />
-            <KPICard label={config.terminology?.closedWon  ?? 'Closed Won'}      value={closedWon}  color="lime" />
-            <KPICard label={config.terminology?.closeRate  ?? 'Close Rate'} value={closeRateDisplay}
-              subtitle={closedLost > 0 ? `${closedWon}W · ${closedLost}L` : null} color={closeRateColor} />
+            <HeroCard
+              eyebrow={config.eyebrow}
+              value={monthLeads}
+              label={`${term.newLeads ?? 'New Leads'} — ${monthLabel}`}
+            />
+            <KPICard
+              label={term.closedWon ?? 'Closed Won'}
+              value={closedWon}
+              subtitle={`of ${monthLabel} leads`}
+              color={closedWon > 0 ? 'lime' : 'muted'}
+            />
+            <KPICard
+              label={term.closeRate ?? 'Close Rate'}
+              value={crDisplay}
+              subtitle={crSub}
+              color={crColor}
+            />
+            <KPICard
+              label={term.avgDaysToClose ?? 'Avg Days to Close'}
+              value={avgDaysDisplay}
+              subtitle="Lead to Closed Won"
+              color={avgDaysColor}
+            />
+            <KPICard
+              label={term.quoteToWin ?? 'Quote to Win'}
+              value={quoteWinDisplay}
+              subtitle="Quote sent to Closed Won"
+              color={quoteWinColor}
+            />
           </div>
 
-          {/* Pipeline + Live side-by-side (current month) or stacked (past month) */}
+          {/* Row 2 — Pipeline + Live column (current) or Pipeline full-width (past) */}
           {hasPipeline && (
             isCurrentMonth && hasLive ? (
               <div className={s.row2}>
                 <div className={s.pipelineCol}>
-                  <PipelineFunnel stageFunnel={stageFunnel} stages={config.stages} monthLeads={newLeads} monthLabel={monthLabel} stillActive={stillActive} isPastMonth={false} />
+                  <PipelineFunnel
+                    stageFunnel={stageFunnel} stages={config.stages}
+                    monthLeads={monthLeads} monthLabel={monthLabel}
+                    stillActive={stillActive} isPastMonth={false}
+                  />
                 </div>
                 <div className={s.liveCol}>
-                  <LiveColumn followUps={followUps} overdueQuotes={overdue} totalPipeline={totalPipeline} />
+                  <LiveColumn
+                    followupsToday={followupsToday}
+                    followupsNext3={followupsNext3}
+                    overdueResponse={overdueResponse}
+                  />
                 </div>
               </div>
             ) : (
-              <>
-                <PipelineFunnel stageFunnel={stageFunnel} stages={config.stages} monthLeads={newLeads} monthLabel={monthLabel} stillActive={stillActive} isPastMonth={!isCurrentMonth} />
-                {hasLive && isCurrentMonth && (
-                  <LiveColumn followUps={followUps} overdueQuotes={overdue} totalPipeline={totalPipeline} />
-                )}
-              </>
+              <PipelineFunnel
+                stageFunnel={stageFunnel} stages={config.stages}
+                monthLeads={monthLeads} monthLabel={monthLabel}
+                stillActive={stillActive} isPastMonth={!isCurrentMonth}
+              />
             )
           )}
 
-          {/* Remaining sections in configured order */}
+          {/* Row 3 — Remaining sections */}
           {otherSections.length > 0 && (
-            <div className={s.row3} style={otherSections.length === 1 ? { gridTemplateColumns: '1fr' } : {}}>
+            <div
+              className={s.row3}
+              style={otherSections.length === 1 ? { gridTemplateColumns: '1fr' } : {}}
+            >
               {otherSections.map(id => renderSection(id))}
             </div>
           )}

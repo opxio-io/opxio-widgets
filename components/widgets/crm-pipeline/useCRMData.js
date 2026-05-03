@@ -9,17 +9,55 @@ function cacheKey(endpoint, filterMonth) {
   return filterMonth ? `${endpoint}::${filterMonth.year}-${filterMonth.month}` : `${endpoint}::current`
 }
 
+// Normalize flat API response → { stats, meta }
+function normalizeApiResponse(raw) {
+  const sb      = raw.sourceBreakdown || {}
+  const sources = Object.entries(sb)
+    .map(([name, v]) => {
+      const count = v.leads  || 0
+      const won   = v.closed || 0   // API tracks Closed Won as "closed"
+      return { name, count, won, lost: 0, closeRate: count > 0 ? won / count : null }
+    })
+    .sort((a, b) => b.count - a.count)
+
+  const monthLeads  = raw.monthLeads  || 0
+  const closedWon   = raw.closedWon   || 0
+  const closedLost  = raw.closedLost  || 0
+  const stillActive = monthLeads - closedWon - closedLost
+
+  return {
+    stats: {
+      monthLeads,
+      quotationsSent:  raw.quotationsSent  || 0,
+      closedWon,
+      closedLost,
+      closeRate:       raw.closeRate        ?? null,
+      avgDaysToClose:  raw.avgDaysToClose   ?? null,
+      avgQuoteToWin:   raw.avgQuoteToWin    ?? null,
+      followupsToday:  raw.live?.followupsToday  || 0,
+      followupsNext3:  raw.live?.followupsNext3  || 0,
+      overdueResponse: raw.live?.overdueResponse || 0,
+      stageFunnel:     raw.stageFunnel      || [],
+      reps:            (raw.repBreakdown    || []).filter(r => r.name !== 'Unassigned'),
+      sources,
+      stillActive,
+      totalPipeline:   raw.total            || 0,
+    },
+    meta: { updatedAt: raw.updatedAt || null }
+  }
+}
+
 export function useCRMData({ token, apiEndpoint, filterMonth, refreshSignal = 0, mockData = null }) {
   const [state, setState] = useState({ data: mockData || null, loading: !mockData, error: null })
   const abortRef = useRef(null)
 
-  // If mock data provided — return it immediately, no fetch
+  // Mock mode — return immediately, no fetch
   useEffect(() => {
     if (mockData) { setState({ data: mockData, loading: false, error: null }); return }
   }, [mockData])
 
   const fetch_ = useCallback(async (force = false) => {
-    if (mockData) return  // skip fetch in mock mode
+    if (mockData) return
     if (!apiEndpoint || !token) return
 
     if (abortRef.current) abortRef.current.abort()
@@ -43,7 +81,8 @@ export function useCRMData({ token, apiEndpoint, filterMonth, refreshSignal = 0,
       ctrl.signal.addEventListener('abort', () => clearTimeout(t))
       const res = await fetch(`${apiEndpoint}?${params}`, { signal: ctrl.signal })
       if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
+      const raw  = await res.json()
+      const data = normalizeApiResponse(raw)
       _cache.set(ck, { data, ts: Date.now() })
       if (!ctrl.signal.aborted) setState({ data, loading: false, error: null })
     } catch (e) {

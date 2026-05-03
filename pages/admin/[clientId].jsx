@@ -22,7 +22,7 @@ const DEFAULT_CONFIG = {
     { key: 'Closed Won',         label: 'Closed Won',         color: '#22C55E' },
     { key: 'Closed Lost',        label: 'Closed Lost',        color: '#FF6B6B' },
   ],
-  terminology: { newLeads: 'New Leads', quotesSent: 'Quotations Sent', closedWon: 'Closed Won', closeRate: 'Close Rate' },
+  terminology: { newLeads: 'New Leads', closedWon: 'Closed Won', closeRate: 'Close Rate', avgDaysToClose: 'Avg Days to Close', quoteToWin: 'Quote to Win' },
   enabledSections: DEFAULT_ENABLED_SECTIONS,
 }
 

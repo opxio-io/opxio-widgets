@@ -404,7 +404,7 @@ function render(d){
       <div class="speed-row">
         <div class="speed-big" style="color:${speedCol};">${timeStr}</div>
         <div class="speed-meta">
-          <div class="speed-tag" style="background:${speedCol}15;color:${speedCol};border:1px solid ${speedCol}30;">${rateOk?'On target':'Needs attention'}</div>
+          <div class="speed-tag" style="background:${speedCol}15;color:${speedCol};border:1px solid ${speedCol}30;">${avg<=2?'On target':'Too slow'}</div>
           <div class="speed-desc">${t1.responded2h} of ${t1.eligibleResponse} leads<br>quoted within 2 hours</div>
         </div>
       </div>
@@ -415,7 +415,7 @@ function render(d){
       <div class="speed-row">
         <div class="speed-big" style="color:${rateCol};">${rate}%</div>
         <div class="speed-meta">
-          <div class="speed-tag" style="background:${rateCol}15;color:${rateCol};border:1px solid ${rateCol}30;">${rateOk?'On target':'Needs attention'}</div>
+          <div class="speed-tag" style="background:${rateCol}15;color:${rateCol};border:1px solid ${rateCol}30;">${rateOk?'On target':'Rate below target'}</div>
           <div class="speed-desc">${t1.responded2h} of ${t1.eligibleResponse} leads<br>quoted within 2 hours</div>
         </div>
       </div>

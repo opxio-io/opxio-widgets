@@ -181,6 +181,18 @@ export default async function handler(req, res) {
         }
       }
 
+      // Tile 2 — pending quotations (real-time, all-time)
+      if (!isClosed && !quoIssued && status === 'New Lead' && ageH !== null && ageH > 24) {
+        pendingQuotations++
+        overdueQuotations++
+      }
+
+      // Tile 3 — follow-ups (real-time, all open leads)
+      if (nextFU && !isClosed) {
+        if (nextFU <= today) { followupsToday++; repStats[repName].followupsToday++ }
+        if (nextFU <= d3Str) followupsNext3Days++
+      }
+
       // Rep — active pipeline (real-time, not month-scoped)
       if (!isClosed) repStats[repName].activePipeline++
     }

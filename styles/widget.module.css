@@ -1,0 +1,174 @@
+/* styles/widget.module.css — React widget design system */
+
+/* ── Theme variables ──────────────────────────────── */
+.shell {
+  --bg:     #191919;
+  --card:   #222222;
+  --border: rgba(255,255,255,.07);
+  --text:   #ffffff;
+  --muted:  rgba(255,255,255,.4);
+  --sub:    rgba(255,255,255,.3);
+  --g:      #C8FF00;
+  --gm:     rgba(200,255,0,.12);
+  --gb:     rgba(200,255,0,.18);
+  --red:    #FF6B6B;
+  --blue:   #60A5FA;
+  --amber:  #FBBF24;
+  --zero:   rgba(255,255,255,.15);
+  --track:  rgba(255,255,255,.08);
+
+  font-family: 'Satoshi', -apple-system, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 14px 14px 24px;
+  box-sizing: border-box;
+}
+
+/* Light mode overrides */
+.shell.light {
+  --bg:     #F6F5F1;
+  --card:   #FFFFFF;
+  --border: #E3E2DD;
+  --text:   #111110;
+  --muted:  #6B6A63;
+  --sub:    #8A8980;
+  --g:      #5A8C00;
+  --gm:     rgba(90,140,0,.09);
+  --gb:     rgba(90,140,0,.18);
+  --red:    #B91C1C;
+  --blue:   #1565C0;
+  --amber:  #B45309;
+  --zero:   rgba(0,0,0,.15);
+  --track:  rgba(0,0,0,.06);
+}
+
+/* ── Layout ───────────────────────────────────────── */
+.row    { display: flex; gap: 10px; margin-bottom: 10px; }
+.gHero  { display: grid; grid-template-columns: 1.6fr repeat(4,1fr); gap: 10px; margin-bottom: 10px; }
+.g2     { display: grid; grid-template-columns: 1fr 220px; gap: 10px; margin-bottom: 10px; }
+.g2full { grid-template-columns: 1fr; }
+.g3     { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 10px; }
+
+@media (max-width: 1000px) { .gHero { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 640px)  { .gHero, .g2, .g3 { grid-template-columns: 1fr; } }
+
+/* ── Card ─────────────────────────────────────────── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+
+/* ── Header ───────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.headerLeft .eyebrow { font-size: 9px; font-weight: 700; letter-spacing: .12em; color: var(--muted); text-transform: uppercase; margin-bottom: 2px; }
+.headerLeft .title   { font-size: 20px; font-weight: 800; letter-spacing: -.03em; }
+.headerRight { display: flex; align-items: center; gap: 8px; }
+
+/* ── Month nav ────────────────────────────────────── */
+.mnWrap  { display: flex; align-items: center; gap: 6px; }
+.mnBtn   { width: 24px; height: 24px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; }
+.mnBtn:hover { border-color: var(--g); color: var(--g); }
+.mnLbl   { font-size: 11px; font-weight: 700; color: var(--muted); min-width: 72px; text-align: center; letter-spacing: -.01em; }
+.ts      { font-size: 10px; color: var(--sub); }
+
+/* ── Icon buttons ─────────────────────────────────── */
+.iconBtn { width: 28px; height: 28px; border-radius: 7px; border: 1px solid var(--border); background: transparent; color: var(--muted); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: border-color .15s, color .15s; }
+.iconBtn:hover { border-color: var(--g); color: var(--g); }
+.spinning { animation: spin .7s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── KPI cards ────────────────────────────────────── */
+.kpiLbl { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 6px; }
+.kpiVal { font-size: 28px; font-weight: 800; letter-spacing: -.04em; line-height: 1; margin-bottom: 4px; }
+.kpiSub { font-size: 10px; color: var(--sub); }
+.heroEyebrow { font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 4px; }
+.heroVal     { font-size: 44px; font-weight: 900; letter-spacing: -.05em; line-height: 1; color: var(--g); margin-bottom: 4px; }
+.heroLabel   { font-size: 11px; color: var(--muted); }
+
+/* ── Badge ────────────────────────────────────────── */
+.badge { font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 6px; background: var(--gm); color: var(--g); border: 1px solid var(--gb); }
+.badgeBlue  { background: rgba(96,165,250,.1); color: var(--blue); border-color: rgba(96,165,250,.2); }
+.badgeAmber { background: rgba(251,191,36,.1); color: var(--amber); border-color: rgba(251,191,36,.2); }
+
+/* ── Panel ────────────────────────────────────────── */
+.panelHdr   { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--border); }
+.panelTitle { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); }
+
+/* ── Pipeline funnel ──────────────────────────────── */
+.fItem  { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.fLbl   { font-size: 10px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); width: 130px; flex-shrink: 0; }
+.fTrack { flex: 1; height: 14px; border-radius: 4px; background: var(--track); overflow: hidden; }
+.fFill  { height: 100%; border-radius: 4px; transition: width .5s ease; }
+.fN     { font-size: 12px; font-weight: 700; width: 24px; text-align: right; }
+
+/* ── Cohort note ──────────────────────────────────── */
+.cohortNote { display: flex; align-items: center; gap: 8px; margin-top: 12px; padding: 8px 12px; border-radius: 7px; background: rgba(255,255,255,.03); border: 1px solid var(--border); font-size: 10px; color: var(--sub); }
+.cohortDot  { width: 6px; height: 6px; border-radius: 50%; background: var(--amber); flex-shrink: 0; }
+
+/* ── Sales rep cards ──────────────────────────────── */
+.repGrid   { display: grid; gap: 10px; }
+.repGrid2  { grid-template-columns: repeat(2,1fr); }
+.repGrid4  { grid-template-columns: repeat(4,1fr); }
+.repCard   { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 14px; position: relative; }
+.repLeader { border-color: rgba(200,255,0,.35); }
+.shell.light .repLeader { border-color: rgba(90,140,0,.35); background: #F2FFDB; }
+.repTop    { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.repName   { font-size: 13px; font-weight: 700; }
+.repRank   { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 5px; background: rgba(255,255,255,.06); color: var(--muted); }
+.repLeader .repRank { background: var(--gm); color: var(--g); }
+.repHeroVal { font-size: 36px; font-weight: 900; letter-spacing: -.04em; color: var(--g); line-height: 1; }
+.repLeader .repHeroVal { color: var(--g); }
+.repHeroLbl { font-size: 9px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-top: 2px; margin-bottom: 10px; }
+.repMeta    { display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); margin-top: 8px; }
+.repMetaVal { font-weight: 700; color: var(--text); }
+.repBarWrap { margin-top: 8px; }
+.repBarLbl  { display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); margin-bottom: 3px; }
+.repBarTrack { height: 4px; border-radius: 2px; background: var(--track); overflow: hidden; }
+.repBarFill  { height: 100%; border-radius: 2px; background: var(--g); transition: width .4s ease; }
+
+/* ── Pagination ───────────────────────────────────── */
+.paginator { display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 12px; }
+.pageBtn   { padding: 4px 12px; border-radius: 6px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 11px; cursor: pointer; }
+.pageBtn:hover:not(:disabled) { border-color: var(--g); color: var(--g); }
+.pageBtn:disabled { opacity: .35; cursor: default; }
+.pageInfo  { font-size: 10px; color: var(--sub); }
+
+/* ── Lead sources ─────────────────────────────────── */
+.srcGrid { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.srcCard { background: rgba(255,255,255,.03); border: 1px solid var(--border); border-radius: 8px; padding: 12px; }
+.shell.light .srcCard { background: #F9F8F4; }
+.srcIcon  { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 14px; margin-bottom: 6px; }
+.srcName  { font-size: 11px; font-weight: 700; margin-bottom: 4px; }
+.srcN     { font-size: 22px; font-weight: 800; letter-spacing: -.03em; margin-bottom: 4px; }
+.srcMeta  { display: flex; justify-content: space-between; font-size: 10px; color: var(--sub); }
+.srcRate  { font-weight: 700; color: var(--g); }
+
+/* ── Live column ──────────────────────────────────── */
+.liveCol  { display: flex; flex-direction: column; gap: 10px; }
+
+/* ── Loading / error ──────────────────────────────── */
+.loading  { display: flex; align-items: center; justify-content: center; min-height: 300px; color: var(--muted); font-size: 12px; }
+.errMsg   { color: var(--red); font-size: 12px; font-weight: 700; }
+
+/* ── Blocked (direct browser access) ─────────────── */
+.blocked  { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; gap: 8px; }
+.blockedTitle { font-size: 13px; letter-spacing: .5px; color: #555; }
+.blockedSub   { font-size: 12px; color: #333; }
+
+/* ── CRM Pipeline layout classes ──────────────────── */
+.headerLeft   { display: flex; flex-direction: column; }
+.heroRow      { display: grid; grid-template-columns: 1.8fr repeat(3, 1fr); gap: 10px; margin-bottom: 10px; }
+.row2         { display: grid; grid-template-columns: 1fr 220px; gap: 10px; margin-bottom: 10px; }
+.pipelineCol  { min-width: 0; }
+.row3         { display: grid; grid-template-columns: 1fr 260px; gap: 10px; margin-bottom: 10px; }
+
+@media (max-width: 900px)  { .heroRow { grid-template-columns: 1fr 1fr; } .row2, .row3 { grid-template-columns: 1fr; } }
+@media (max-width: 540px)  { .heroRow { grid-template-columns: 1fr; } }

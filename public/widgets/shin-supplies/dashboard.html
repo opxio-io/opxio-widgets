@@ -307,8 +307,8 @@ const SRC_MAP = {
 function srcColor(name){ return (SRC_MAP[name]||{color:'#9CA3AF'}).color; }
 function srcIcon(name){ return (SRC_MAP[name]||SRC_MAP['Others']||{icon:'<span style="font-size:14px;">📋</span>'}).icon; }
 function getStageColors(){return _light
-  ?['rgba(0,0,0,.07)','rgba(25,118,210,.55)','rgba(245,124,0,.55)','rgba(230,74,25,.55)','rgba(46,125,50,.6)','rgba(211,47,47,.55)']
-  :['rgba(255,255,255,.12)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(200,255,0,.55)','rgba(255,107,107,.55)'];}
+  ?['#999999','#1976D2','#FF9800','#9C27B0','#C8FF00','#F44336']
+  :['#999999','#1976D2','#FF9800','#9C27B0','#C8FF00','#F44336'];}
 const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
 function initials(n){ return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase(); }

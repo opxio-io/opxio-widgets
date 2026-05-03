@@ -3,194 +3,155 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>cupTerra — CRM Dashboard</title>
+<title>Shin Supplies — Sales Dashboard</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}html{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 28px;background:#191919;color:#fff;overflow-y:auto;}
-:root{--g:#AAFF00;--gm:rgba(170,255,0,.12);--gb:rgba(170,255,0,.18);--lost:#FF6B35;--amber:#FBBF24;--blue:#60A5FA;}
-.card{background:#222222;border:1px solid rgba(255,255,255,.06);border-radius:16px;transition:border-color .2s;}
-.card:hover{border-color:rgba(170,255,0,.08);}
-.top-bar{display:flex;align-items:center;margin-bottom:14px;gap:8px;flex-wrap:wrap;}
-.top-right{display:flex;align-items:center;gap:6px;margin-left:auto;}
-.eyebrow{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-bottom:2px;}
-.h-title{font-size:22px;font-weight:900;color:#fff;letter-spacing:-.03em;}
-.ts{font-size:9px;font-weight:500;color:rgba(255,255,255,.18);}
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:16px 16px 28px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
+:root{--g:#AAFF00;--gm:rgba(170,255,0,.1);--gb:rgba(170,255,0,.2);--red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
+.card{background:#1E1E1E;border:1px solid rgba(255,255,255,.06);border-radius:14px;transition:border-color .2s;}
+.card:hover{border-color:rgba(170,255,0,.1);}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.22);margin-bottom:3px;}
+.h-title{font-size:21px;font-weight:900;letter-spacing:-.03em;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
-.icon-btn svg{width:14px;height:14px;}
+.icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.stat-row{display:grid;gap:10px;margin-bottom:12px;}
-.stat-row-4{grid-template-columns:repeat(4,1fr);}
-.stat-row-2{grid-template-columns:repeat(2,1fr);}
-@media(max-width:700px){.stat-row-4{grid-template-columns:repeat(2,1fr);}}
-@media(max-width:400px){.stat-row-4,.stat-row-2{grid-template-columns:1fr;}}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:8px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
+@media(max-width:660px){.g4{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:440px){.g4,.g2{grid-template-columns:1fr;}}
 .stat{padding:18px 18px 16px;position:relative;overflow:hidden;}
-.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--accent,var(--g)),transparent);opacity:0;transition:opacity .25s;}
-.stat:hover::before{opacity:1;}
-.s-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.5);margin-bottom:10px;line-height:1.4;display:block;}
-.s-val{font-size:28px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
-.s-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:7px;}
-.panel{padding:18px 20px;display:flex;flex-direction:column;}
-.panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.85);margin-bottom:16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;flex-shrink:0;}
-.panel-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
-/* Funnel bars */
-.f-row{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
-.f-row:last-child{margin-bottom:0;}
-.f-lbl{font-size:8.5px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:rgba(255,255,255,.5);width:118px;flex-shrink:0;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.f-bg{flex:1;height:22px;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden;}
+.stat::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;border-radius:14px 14px 0 0;background:var(--accent,transparent);opacity:.7;}
+.s-dot{position:absolute;top:14px;right:14px;width:7px;height:7px;border-radius:50%;}
+.s-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.38);margin-bottom:12px;display:block;line-height:1.5;}
+.s-val{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.s-sub{font-size:9.5px;font-weight:500;color:rgba(255,255,255,.2);margin-top:7px;}
+.panel{padding:20px 20px 18px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:6px;}
+.panel-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.7);}
+.badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:5px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);}
+.rate-big{font-size:42px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:4px;}
+.rate-track{height:5px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;margin:12px 0 6px;}
+.rate-fill{height:100%;border-radius:999px;transition:width .6s ease;}
+.rate-meta{display:flex;justify-content:space-between;font-size:9.5px;font-weight:700;color:rgba(255,255,255,.22);}
+.f-item{display:flex;align-items:center;gap:10px;margin-bottom:9px;}
+.f-item:last-child{margin-bottom:0;}
+.f-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.38);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-track{flex:1;height:20px;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden;}
 .f-fill{height:100%;border-radius:5px;transition:width .55s cubic-bezier(.4,0,.2,1);}
-.f-n{font-size:11px;font-weight:900;color:rgba(255,255,255,.6);width:22px;text-align:right;flex-shrink:0;}
-/* Rate bar */
-.rate-wrap{margin-top:12px;}
-.rate-track{height:4px;background:rgba(255,255,255,.07);border-radius:999px;overflow:hidden;margin:6px 0 4px;}
-.rate-fill{height:100%;border-radius:999px;background:var(--g);transition:width .6s ease;}
-.rate-fill.bad{background:var(--lost);}
-.rate-meta{display:flex;justify-content:space-between;font-size:9px;font-weight:700;color:rgba(255,255,255,.28);}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-@media(max-width:600px){.grid-2{grid-template-columns:1fr;}}
-/* Donut chart */
-.donut-wrap{display:flex;align-items:center;gap:18px;flex:1;}
-.donut-svg{flex-shrink:0;}
-.donut-legend{flex:1;display:flex;flex-direction:column;gap:7px;}
-.legend-row{display:flex;align-items:center;gap:7px;}
-.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.legend-name{font-size:9px;font-weight:700;color:rgba(255,255,255,.45);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.legend-val{font-size:11px;font-weight:900;color:rgba(255,255,255,.7);}
-.legend-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);margin-left:3px;}
-/* Source ranked list */
-.src-item{display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.f-n{font-size:12px;font-weight:900;color:rgba(255,255,255,.5);width:24px;text-align:right;flex-shrink:0;}
+.donut-wrap{display:flex;align-items:center;gap:20px;}
+.donut-legend{flex:1;display:flex;flex-direction:column;gap:8px;}
+.leg-row{display:flex;align-items:center;gap:8px;}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.leg-name{font-size:9.5px;font-weight:600;color:rgba(255,255,255,.38);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.leg-val{font-size:12px;font-weight:900;color:rgba(255,255,255,.7);}
+.leg-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.2);margin-left:3px;}
+.src-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .src-item:last-child{border-bottom:none;}
-.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.15);width:14px;flex-shrink:0;text-align:center;}
-.src-accent{width:3px;height:28px;border-radius:2px;flex-shrink:0;}
+.src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.12);width:14px;text-align:center;flex-shrink:0;}
+.src-stripe{width:3px;height:28px;border-radius:2px;flex-shrink:0;opacity:.65;}
 .src-info{flex:1;min-width:0;}
-.src-name{font-size:10px;font-weight:700;color:rgba(255,255,255,.7);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.src-bar-wrap{height:3px;background:rgba(255,255,255,.06);border-radius:999px;margin-top:4px;overflow:hidden;}
+.src-name{font-size:10.5px;font-weight:700;color:rgba(255,255,255,.6);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.src-bar{height:3px;background:rgba(255,255,255,.06);border-radius:999px;margin-top:5px;overflow:hidden;}
 .src-bar-fill{height:100%;border-radius:999px;transition:width .5s ease;}
-.src-count{font-size:13px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;}
-.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.25);flex-shrink:0;width:30px;text-align:right;}
-.loading{display:flex;align-items:center;justify-content:center;min-height:220px;flex-direction:column;gap:10px;}
+.src-count{font-size:15px;font-weight:900;letter-spacing:-.5px;flex-shrink:0;}
+.src-pct{font-size:9px;font-weight:700;color:rgba(255,255,255,.22);width:30px;text-align:right;flex-shrink:0;}
+.loading{display:flex;align-items:center;justify-content:center;min-height:260px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
-.loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;}
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
-.wgt-footer{text-align:center;padding:20px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.loading-text{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
+.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.08);}
 </style>
 </head>
 <body>
 
-<div class="top-bar">
+<div class="header">
   <div>
     <p class="eyebrow">Shin Supplies · CRM</p>
     <h1 class="h-title">Sales Dashboard</h1>
   </div>
-  <div class="top-right">
+  <div class="h-right">
     <span class="ts" id="ts"></span>
     <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="23 4 23 10 17 10"/>
+        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+      </svg>
     </button>
   </div>
 </div>
 
 <div id="main">
-  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
+  <div class="loading">
+    <div class="spinner"></div>
+    <div class="loading-text">Loading</div>
+  </div>
 </div>
 
-<div class="wgt-footer">Widgets by Opxio.io</div>
+<div class="footer">Powered by Opxio</div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-const PROD_COLORS = ['#60A5FA','#C084FC','#FBBF24','#AAFF00','#34D399','#F97316'];
+const PROD_COLORS = ['#AAFF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES  = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
-const SRC_COLORS  = {
-  'Iklan Facebook':'#60A5FA','TikTok':'#E879F9',
-  'Threads':'#F97316','Rujukan / Kenalan':'#AAFF00',
-  'Walk-in':'#34D399','Lain-lain':'#9CA3AF',
-};
-const STAGE_COLORS = [
-  'rgba(255,255,255,.18)',
-  'rgba(96,165,250,.55)',
-  'rgba(251,191,36,.55)',
-  'rgba(249,115,22,.55)',
-  'rgba(170,255,0,.65)',
-];
+const SRC_COLORS  = {'Iklan Facebook':'#60A5FA','TikTok':'#E879F9','Threads':'#F97316','Rujukan / Kenalan':'#AAFF00','Walk-in':'#34D399','Lain-lain':'#9CA3AF'};
+const STAGE_COLORS = ['rgba(255,255,255,.14)','rgba(96,165,250,.5)','rgba(251,191,36,.5)','rgba(249,115,22,.5)','rgba(170,255,0,.6)'];
 
-// SVG donut chart builder
-function buildDonut(dataObj, colorList, size) {
-  const entries = Object.entries(dataObj).sort((a,b)=>b[1]-a[1]);
-  const total   = entries.reduce((s,[,v])=>s+v,0) || 1;
+function buildDonut(obj, colors, size) {
+  const entries = Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+  const total   = entries.reduce((s,[,v])=>s+v,0)||1;
   const cx=size/2, cy=size/2, ro=size/2-4, ri=ro*0.58;
   let angle = -Math.PI/2;
-  const slices = entries.map(([name,count],i) => {
-    const sweep = (count/total)*Math.PI*2;
-    const ea = angle+sweep;
-    const large = sweep>Math.PI?1:0;
-    const col = colorList[i % colorList.length];
-    const x1=cx+ro*Math.cos(angle), y1=cy+ro*Math.sin(angle);
-    const x2=cx+ro*Math.cos(ea),    y2=cy+ro*Math.sin(ea);
-    const x3=cx+ri*Math.cos(ea),    y3=cy+ri*Math.sin(ea);
-    const x4=cx+ri*Math.cos(angle), y4=cy+ri*Math.sin(angle);
-    const path = `M${x1},${y1} A${ro},${ro} 0 ${large},1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 ${large},0 ${x4},${y4}Z`;
-    angle = ea;
-    return { name, count, color: col, path };
-  });
-  return { slices, total, cx, cy, ri };
+  return { slices: entries.map(([name,count],i) => {
+    const sweep=(count/total)*Math.PI*2, ea=angle+sweep, large=sweep>Math.PI?1:0;
+    const x1=cx+ro*Math.cos(angle),y1=cy+ro*Math.sin(angle);
+    const x2=cx+ro*Math.cos(ea),  y2=cy+ro*Math.sin(ea);
+    const x3=cx+ri*Math.cos(ea),  y3=cy+ri*Math.sin(ea);
+    const x4=cx+ri*Math.cos(angle),y4=cy+ri*Math.sin(angle);
+    const d=`M${x1},${y1} A${ro},${ro} 0 ${large},1 ${x2},${y2} L${x3},${y3} A${ri},${ri} 0 ${large},0 ${x4},${y4}Z`;
+    angle=ea; return {name,count,color:colors[i%colors.length],d};
+  }), total, cx, cy };
 }
 
-function renderDonut(dataObj, colorList, size) {
-  if (!dataObj || Object.keys(dataObj).length === 0)
-    return '<div style="font-size:11px;color:rgba(255,255,255,.18);padding:20px 0;">No data</div>';
-
-  const { slices, total, cx, cy, ri } = buildDonut(dataObj, colorList, size);
-
-  const paths = slices.map(s =>
-    `<path d="${s.path}" fill="${s.color}" stroke="#222" stroke-width="1.5"/>`
-  ).join('');
-
-  const svgHtml = `
-    <svg class="donut-svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">
-      ${paths}
-      <text x="${cx}" y="${cy-7}" text-anchor="middle" font-family="Satoshi,sans-serif"
-        font-size="18" font-weight="900" fill="rgba(255,255,255,.85)">${total}</text>
-      <text x="${cx}" y="${cy+8}" text-anchor="middle" font-family="Satoshi,sans-serif"
-        font-size="7.5" font-weight="700" fill="rgba(255,255,255,.28)" letter-spacing="1">TOTAL</text>
-    </svg>`;
-
-  const legendHtml = slices.map(s => {
-    const pct = Math.round((s.count/total)*100);
-    return `<div class="legend-row">
-      <div class="legend-dot" style="background:${s.color};"></div>
-      <span class="legend-name">${esc(PROD_NAMES[s.name]||s.name)}</span>
-      <span class="legend-val">${s.count}</span>
-      <span class="legend-pct">${pct}%</span>
-    </div>`;
+function renderDonut(obj, colors, size) {
+  if (!obj||!Object.keys(obj).length) return '<div style="font-size:11px;color:rgba(255,255,255,.18);padding:24px 0;">No data</div>';
+  const {slices,total,cx,cy} = buildDonut(obj,colors,size);
+  const svg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0;">
+    ${slices.map(s=>`<path d="${s.d}" fill="${s.color}" stroke="#1E1E1E" stroke-width="1.5"/>`).join('')}
+    <text x="${cx}" y="${cy-6}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="17" font-weight="900" fill="rgba(255,255,255,.85)">${total}</text>
+    <text x="${cx}" y="${cy+8}" text-anchor="middle" font-family="Satoshi,sans-serif" font-size="7" font-weight="700" fill="rgba(255,255,255,.25)" letter-spacing="1">TOTAL</text>
+  </svg>`;
+  const legend = slices.map(s=>{
+    const pct=Math.round((s.count/total)*100);
+    return `<div class="leg-row"><div class="leg-dot" style="background:${s.color};"></div><span class="leg-name">${esc(PROD_NAMES[s.name]||s.name)}</span><span class="leg-val">${s.count}</span><span class="leg-pct">${pct}%</span></div>`;
   }).join('');
-
-  return `<div class="donut-wrap">
-    ${svgHtml}
-    <div class="donut-legend">${legendHtml}</div>
-  </div>`;
+  return `<div class="donut-wrap">${svg}<div class="donut-legend">${legend}</div></div>`;
 }
 
-function renderSources(dataObj) {
-  if (!dataObj || Object.keys(dataObj).length === 0)
-    return '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>';
-  const entries = Object.entries(dataObj).sort((a,b)=>b[1]-a[1]);
-  const total   = entries.reduce((s,[,v])=>s+v,0) || 1;
-  const maxVal  = entries[0][1] || 1;
-  return entries.map(([name,count],i) => {
-    const pct  = Math.round((count/total)*100);
-    const barW = Math.round((count/maxVal)*100);
-    const col  = SRC_COLORS[name] || '#9CA3AF';
+function renderSources(obj) {
+  if (!obj||!Object.keys(obj).length) return '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>';
+  const entries=Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+  const total=entries.reduce((s,[,v])=>s+v,0)||1;
+  const maxVal=entries[0][1]||1;
+  return entries.map(([name,count],i)=>{
+    const pct=Math.round((count/total)*100), barW=Math.round((count/maxVal)*100);
+    const col=SRC_COLORS[name]||'#9CA3AF';
     return `<div class="src-item">
       <span class="src-rank">${i+1}</span>
-      <div class="src-accent" style="background:${col};opacity:.7;"></div>
+      <div class="src-stripe" style="background:${col};"></div>
       <div class="src-info">
         <div class="src-name">${esc(name)}</div>
-        <div class="src-bar-wrap"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>
+        <div class="src-bar"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>
       </div>
       <span class="src-count" style="color:${col};">${count}</span>
       <span class="src-pct">${pct}%</span>
@@ -200,99 +161,92 @@ function renderSources(dataObj) {
 
 function render(d) {
   const t1=d.tile1, t2=d.tile2, t3=d.tile3, t4=d.tile4;
-  const rate=t1.responseRate2h;
-  const rateOk = rate!==null && rate>=70;
+  const rate=t1.responseRate2h, rateOk=rate!==null&&rate>=70;
+  const rateCol=rateOk?'var(--g)':'var(--red)';
 
-  const row1 = `
-  <div class="stat-row stat-row-4">
+  const stats = `<div class="g4">
     <div class="card stat" style="--accent:var(--g);">
-      <span class="s-lbl">New Leads (24h)</span>
+      <div class="s-dot" style="background:var(--g);opacity:.45;"></div>
+      <span class="s-lbl">New Leads<br>Last 24h</span>
       <div class="s-val" style="color:var(--g);">${t1.newLeads24h}</div>
       <div class="s-sub">${t1.newLeadsWeek} this week</div>
     </div>
-    <div class="card stat" style="--accent:${t1.overdueResponse>0?'var(--lost)':'var(--g)'};">
-      <span class="s-lbl">Overdue Response</span>
-      <div class="s-val" style="color:${t1.overdueResponse>0?'var(--lost)':'rgba(255,255,255,.2)'};">${t1.overdueResponse}</div>
+    <div class="card stat" style="--accent:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.08)'};">
+      <div class="s-dot" style="background:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.12)'};"></div>
+      <span class="s-lbl">Overdue<br>Response</span>
+      <div class="s-val" style="color:${t1.overdueResponse>0?'var(--red)':'rgba(255,255,255,.2)'};">${t1.overdueResponse}</div>
       <div class="s-sub">no quote &gt;2h old</div>
     </div>
     <div class="card stat" style="--accent:var(--amber);">
-      <span class="s-lbl">Pending Quotations</span>
+      <div class="s-dot" style="background:var(--amber);opacity:.45;"></div>
+      <span class="s-lbl">Pending<br>Quotations</span>
       <div class="s-val" style="color:var(--amber);">${t2.pendingQuotations}</div>
       <div class="s-sub">${t2.overdueQuotations} overdue &gt;24h</div>
     </div>
     <div class="card stat" style="--accent:var(--blue);">
-      <span class="s-lbl">Follow-ups Due</span>
+      <div class="s-dot" style="background:var(--blue);opacity:.45;"></div>
+      <span class="s-lbl">Follow-ups<br>Due Today</span>
       <div class="s-val" style="color:${t3.followupsToday>0?'var(--blue)':'rgba(255,255,255,.2)'};">${t3.followupsToday}</div>
       <div class="s-sub">${t3.followupsNext3Days} next 3 days</div>
     </div>
   </div>`;
 
-  const funnel = t4.stageFunnel || [];
-  const funnelMax = Math.max(...funnel.map(s=>s.count), 1);
-  const funnelRows = funnel.map((s,i) => {
-    const pct = Math.max(Math.round((s.count/funnelMax)*100), s.count>0?4:0);
-    return `<div class="f-row">
-      <span class="f-lbl">${esc(s.stage)}</span>
-      <div class="f-bg"><div class="f-fill" style="width:${pct}%;background:${STAGE_COLORS[i]||'rgba(170,255,0,.45)'};"></div></div>
-      <span class="f-n">${s.count}</span>
-    </div>`;
+  const funnel=t4.stageFunnel||[], fMax=Math.max(...funnel.map(s=>s.count),1);
+  const fRows=funnel.map((s,i)=>{
+    const w=Math.max(Math.round((s.count/fMax)*100),s.count>0?3:0);
+    return `<div class="f-item"><span class="f-lbl">${esc(s.stage)}</span><div class="f-track"><div class="f-fill" style="width:${w}%;background:${STAGE_COLORS[i]||'rgba(170,255,0,.4)'};"></div></div><span class="f-n">${s.count}</span></div>`;
   }).join('');
 
-  const row2 = `
-  <div class="stat-row stat-row-2" style="margin-bottom:12px;">
+  const row2=`<div class="g2">
     <div class="card panel">
-      <div class="panel-title">
-        Response Speed
-        <span class="panel-badge" style="${rateOk?'':'background:rgba(255,107,53,.1);color:var(--lost);border-color:rgba(255,107,53,.2);'}">${rate!==null?rate+'%':'—'} within 2h</span>
+      <div class="panel-hdr">
+        <span class="panel-title">Response Speed</span>
+        <span class="badge ${rateOk?'':'red'}">${rate!==null?rate+'% within 2h':'No data'}</span>
       </div>
-      <div>
-        <div style="font-size:36px;font-weight:900;letter-spacing:-2px;color:${rateOk?'var(--g)':'var(--lost)'};">${rate!==null?rate+'%':'—'}</div>
-        <div style="font-size:10px;font-weight:500;color:rgba(255,255,255,.22);margin-top:4px;">${t1.responded2h} of ${t1.eligibleResponse} leads (48h window)</div>
-      </div>
-      <div class="rate-wrap">
-        <div class="rate-track"><div class="rate-fill${rateOk?'':' bad'}" style="width:${rate||0}%;"></div></div>
-        <div class="rate-meta">
-          <span>Target: 70%+</span>
-          <span style="color:${t1.overdueResponse>0?'var(--lost)':'rgba(170,255,0,.5)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span>
-        </div>
+      <div class="rate-big" style="color:${rateCol};">${rate!==null?rate+'%':'—'}</div>
+      <div style="font-size:10px;font-weight:500;color:rgba(255,255,255,.2);">${t1.responded2h} of ${t1.eligibleResponse} leads quoted within 2h</div>
+      <div class="rate-track"><div class="rate-fill" style="width:${rate||0}%;background:${rateCol};"></div></div>
+      <div class="rate-meta">
+        <span>Target: 70%+</span>
+        <span style="color:${t1.overdueResponse>0?'var(--red)':'rgba(170,255,0,.4)'};">${t1.overdueResponse>0?t1.overdueResponse+' overdue now':'All clear'}</span>
       </div>
     </div>
     <div class="card panel">
-      <div class="panel-title">Pipeline<span class="panel-badge">${t4.closedWonMTD} won MTD</span></div>
-      ${funnelRows || '<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
+      <div class="panel-hdr">
+        <span class="panel-title">Pipeline</span>
+        <span class="badge">${t4.closedWonMTD} won MTD</span>
+      </div>
+      ${fRows||'<div style="font-size:11px;color:rgba(255,255,255,.18);">No data</div>'}
     </div>
   </div>`;
 
-  const prodTotal = Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
-  const srcTotal  = Object.values(d.sourceBreakdown||{}).reduce((s,n)=>s+n,0)||0;
-
-  const row3 = `
-  <div class="grid-2">
+  const prodTotal=Object.values(d.productBreakdown||{}).reduce((s,n)=>s+n,0)||0;
+  const srcTotal=Object.values(d.sourceBreakdown||{}).reduce((s,n)=>s+n,0)||0;
+  const row3=`<div class="g2">
     <div class="card panel">
-      <div class="panel-title">Product Breakdown<span class="panel-badge">${prodTotal} enquiries</span></div>
-      ${renderDonut(d.productBreakdown, PROD_COLORS, 120)}
+      <div class="panel-hdr"><span class="panel-title">Product Breakdown</span><span class="badge">${prodTotal} enquiries</span></div>
+      ${renderDonut(d.productBreakdown,PROD_COLORS,112)}
     </div>
     <div class="card panel">
-      <div class="panel-title">Lead Sources<span class="panel-badge">${srcTotal} total</span></div>
+      <div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">${srcTotal} total</span></div>
       ${renderSources(d.sourceBreakdown)}
     </div>
   </div>`;
 
-  document.getElementById('main').innerHTML = row1 + row2 + row3;
+  document.getElementById('main').innerHTML = stats+row2+row3;
   document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 
 async function load(){
   try{
-    const r = await fetch('/api/clients/shin-supplies/enquiry-stats'+(_tok?'?token='+_tok:''));
+    const r=await fetch('/api/clients/shin-supplies/enquiry-stats'+(_tok?'?token='+_tok:''));
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
-  } catch(e){
-    document.getElementById('main').innerHTML=`<div class="loading"><div style="color:#FF6B35;font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
+  }catch(e){
+    document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
   }
 }
 function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');load().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
-
 load();
 setInterval(load,3*60*1000);
 </script>

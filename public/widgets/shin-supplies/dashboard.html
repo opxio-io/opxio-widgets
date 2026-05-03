@@ -110,8 +110,8 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .dl-swatch{width:9px;height:9px;border-radius:3px;flex-shrink:0;}
 .dl-info{flex:1;min-width:0;}
 .dl-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.82);}
-.dl-bar-track{width:100%;height:5px;border-radius:999px;background:rgba(255,255,255,.05);margin-top:4px;overflow:hidden;}
-.dl-bar-fill{height:5px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.dl-bar-track{width:100%;height:8px;border-radius:999px;background:rgba(255,255,255,.05);margin-top:5px;overflow:hidden;}
+.dl-bar-fill{height:8px;border-radius:999px;transition:width .8s cubic-bezier(.4,0,.2,1);}
 .dl-meta{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);flex-shrink:0;text-align:right;min-width:46px;}
 
 /* ── Sources grid ── */
@@ -284,11 +284,20 @@ function renderDonut(obj, colors, _unused) {
 }
 
 
+// Source display name mapping
+const SRC_DISPLAY={
+  'Iklan Facebook':'Facebook Ads',
+  'Rujukan / Kenalan':'Referral',
+  'Lain-lain':'Others',
+  'Walk-in':'Walk-in',
+  'TikTok':'TikTok',
+  'Threads':'Threads',
+};
 // Source count color logic:
 // - Ad channels (Facebook, TikTok, Threads) → lime green
 // - Rujukan/Kenalan → brand color
-// - Walk-in, Lain-lain → muted grey
-const SRC_GREY = new Set(['Lain-lain','Walk-in']);
+// - Lain-lain/Others → muted grey; Walk-in → lime green
+const SRC_GREY = new Set(['Lain-lain']);
 const SRC_BRAND = new Set(['Rujukan / Kenalan']);
 
 function renderSources(obj){
@@ -303,7 +312,7 @@ function renderSources(obj){
     return `<div class="src-card">
       <div class="src-card-top">
         <div class="src-icon">${icon}</div>
-        <div class="src-name">${esc(name)}</div>
+        <div class="src-name">${esc(SRC_DISPLAY[name]||name)}</div>
       </div>
       <div class="src-count" style="color:${numCol};">${leads}</div>
       <div class="src-card-foot">
@@ -465,19 +474,28 @@ function render(d){
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
 }
 
+let _loadCtrl=null;
 async function load(){
+  if(_loadCtrl)_loadCtrl.abort();
+  _loadCtrl=new AbortController();
+  const sig=_loadCtrl.signal;
+  const b=document.getElementById('rb');
+  if(b)b.classList.add('spinning');
   try{
     const params=new URLSearchParams();
     if(_tok) params.set('token',_tok);
     if(filterMonth){ params.set('month',filterMonth.month); params.set('year',filterMonth.year); }
-    const r=await fetch('/api/clients/shin-supplies/enquiry-stats?'+params.toString());
+    const r=await fetch('/api/clients/shin-supplies/enquiry-stats?'+params.toString(),{signal:sig});
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){
+    if(e.name==='AbortError') return;
     document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
+  }finally{
+    if(!sig.aborted){const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');}
   }
 }
-function doRefresh(){const b=document.getElementById('rb');if(b)b.classList.add('spinning');load().finally(()=>{const b2=document.getElementById('rb');if(b2)b2.classList.remove('spinning');});}
+function doRefresh(){load();}
 
 // Init month label
 updateMonthNav();

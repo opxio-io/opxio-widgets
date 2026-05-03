@@ -528,7 +528,6 @@ function render(d){
       <span class="hero-eyebrow">New Leads — ${monLabel}</span>
       <div class="hero-val">${d.monthLeads||0}</div>
       <div class="hero-label">Leads this month</div>
-      <div class="hero-sub">${d.total} all time</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Closed Won</span>
@@ -568,12 +567,12 @@ function render(d){
     <div class="card kpi">
       <span class="kpi-lbl">Follow-ups Due Today</span>
       <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'var(--zero-val)'};">${live.followupsToday||0}</div>
-      <div class="kpi-sub">${live.followupsNext3||0} open leads due within 3 days</div>
+      <div class="kpi-sub">All open leads · ${live.followupsNext3||0} due within 3 days</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Quotations</span>
       <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'var(--zero-val)'};">${live.overdueResponse||0}</div>
-      <div class="kpi-sub">New leads open &gt;2h · no quotation issued</div>
+      <div class="kpi-sub">All open leads · no quote issued after 2h</div>
     </div>
   </div>`:'';
 

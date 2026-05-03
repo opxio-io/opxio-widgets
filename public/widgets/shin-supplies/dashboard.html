@@ -105,7 +105,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .src-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04);}
 .src-item:last-child{border-bottom:none;padding-bottom:0;}
 .src-rank{font-size:10px;font-weight:900;color:rgba(255,255,255,.1);width:16px;text-align:center;flex-shrink:0;}
-.src-stripe{width:3px;height:30px;border-radius:2px;flex-shrink:0;}
+.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.8;}.src-icon svg{width:16px;height:16px;}
 .src-info{flex:1;min-width:0;}
 .src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);}
 .src-bar{height:3px;background:rgba(255,255,255,.05);border-radius:999px;margin-top:5px;overflow:hidden;}
@@ -152,7 +152,16 @@ function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').repla
 
 const PROD_COLORS  = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES   = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
-const SRC_COLORS   = {'Iklan Facebook':'#60A5FA','TikTok':'#E879F9','Threads':'#F97316','Rujukan / Kenalan':'#C8FF00','Walk-in':'#34D399','Lain-lain':'#6B7280'};
+const SRC_MAP = {
+  'Iklan Facebook':    { color:'#60A5FA', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>' },
+  'TikTok':           { color:'#E879F9', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.05a8.16 8.16 0 004.77 1.52V7.12a4.85 4.85 0 01-1-.43z"/></svg>' },
+  'Threads':          { color:'#F97316', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.186 24h-.007c-3.581-.024-6.334-1.205-8.184-3.509C2.35 18.44 1.5 15.586 1.472 12.01v-.017c.03-3.579.879-6.43 2.525-8.482C5.845 1.205 8.6.024 12.18 0h.014c2.746.02 5.043.725 6.826 2.098 1.677 1.29 2.858 3.13 3.509 5.467l-2.04.569c-1.104-3.96-3.898-5.984-8.304-6.015-2.91.022-5.11.936-6.54 2.717C4.307 6.504 3.616 8.914 3.589 12c.027 3.086.718 5.496 2.057 7.164 1.43 1.783 3.631 2.698 6.54 2.717 2.623-.02 4.358-.631 5.8-2.045 1.647-1.613 1.618-3.593 1.09-4.798-.31-.71-.873-1.3-1.634-1.75-.192 1.352-.622 2.446-1.284 3.272-.886 1.102-2.14 1.704-3.73 1.79-1.202.065-2.361-.218-3.259-.801-1.063-.689-1.685-1.74-1.752-2.964-.065-1.19.408-2.285 1.33-3.082.88-.76 2.119-1.207 3.583-1.291a13.853 13.853 0 012.581.188v-.413c0-1.367-.351-2.47-1.044-3.278-.71-.828-1.808-1.27-3.265-1.317h-.034c-.77 0-2.138.198-3.089 1.675l-1.699-1.07C6.484 2.96 8.33 2.19 10.53 2.103h.05c2.068.047 3.808.724 5.04 2.006.795.834 1.376 1.946 1.668 3.245a7.49 7.49 0 011.734-.202c.7 0 1.378.088 2.022.26C20.61 4.48 18.956 2.59 16.29 1.476 14.67.724 12.782.285 10.529.285h-.014C7.404.307 4.66 1.39 2.772 3.458.87 5.54.005 8.474 0 12c.005 3.527.87 6.461 2.772 8.542 1.888 2.068 4.632 3.151 7.743 3.173h.007c2.252 0 4.14-.44 5.76-1.19 2.666-1.115 4.32-3.005 4.738-5.54a8.4 8.4 0 00.12-1.47c-.001-.527-.05-1.04-.145-1.528a13.72 13.72 0 01-2.022-.26 6.7 6.7 0 01.026.545c0 .362-.024.717-.07 1.063-.296 1.965-1.476 3.375-3.518 4.202-1.32.538-2.896.811-4.705.822zm.24-9.386c-.083 0-.166.002-.25.006-1.064.059-1.908.363-2.448.85-.481.432-.716.99-.681 1.614.034.626.332 1.157.84 1.49.556.36 1.29.527 2.139.481 1.056-.057 1.875-.424 2.433-1.09.514-.614.814-1.51.89-2.663a10.73 10.73 0 00-2.923-.688z"/></svg>' },
+  'Rujukan / Kenalan':{ color:'#C8FF00', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>' },
+  'Walk-in':          { color:'#34D399', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.49 5.48c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm-3.6 13.9l1-4.4 2.1 2v6h2v-7.5l-2.1-2 .6-3c1.3 1.5 3.3 2.5 5.5 2.5v-2c-1.9 0-3.5-1-4.3-2.4l-1-1.6c-.4-.6-1-1-1.7-1-.3 0-.5.1-.8.1l-5.2 2.2v4.7h2v-3.4l1.8-.7-1.6 8.1-4.9-1-.4 2 7 1.4z"/></svg>' },
+  'Lain-lain':        { color:'#9CA3AF', icon:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>' },
+};
+function srcColor(name){ return (SRC_MAP[name]||{color:'#9CA3AF'}).color; }
+function srcIcon(name){ return (SRC_MAP[name]||SRC_MAP['Lain-lain']).icon; }
 const STAGE_COLORS = ['rgba(255,255,255,.12)','rgba(96,165,250,.45)','rgba(251,191,36,.45)','rgba(249,115,22,.45)','rgba(200,255,0,.55)'];
 const REP_COLORS   = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399'];
 
@@ -200,10 +209,10 @@ function renderSources(obj){
   const maxVal=entries[0][1]||1;
   return entries.map(([name,count],i)=>{
     const pct=Math.round((count/total)*100),barW=Math.round((count/maxVal)*100);
-    const col=SRC_COLORS[name]||'#6B7280';
+    const col=srcColor(name), icon=srcIcon(name);
     return `<div class="src-item">
       <span class="src-rank">${i+1}</span>
-      <div class="src-stripe" style="background:${col};opacity:.65;"></div>
+      <div class="src-icon" style="color:${col};">${icon}</div>
       <div class="src-info">
         <div class="src-name">${esc(name)}</div>
         <div class="src-bar"><div class="src-bar-fill" style="width:${barW}%;background:${col};opacity:.5;"></div></div>

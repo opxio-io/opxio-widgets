@@ -131,6 +131,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .dl-meta{font-size:11px;font-weight:700;color:rgba(255,255,255,.4);flex-shrink:0;text-align:right;min-width:46px;}
 
 /* ── Sources grid ── */
+.cohort-note{margin-top:14px;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:8px;font-size:11px;font-weight:500;color:rgba(255,255,255,.35);}
+.cohort-note-dot{width:6px;height:6px;border-radius:50%;background:var(--amber);flex-shrink:0;opacity:.7;}
+body.light .cohort-note{background:rgba(0,0,0,.03);border-color:#e0e0e0;color:#aaa;}
 .src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
 .src-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;}
 .src-card-top{display:flex;align-items:center;gap:8px;}
@@ -526,6 +529,7 @@ function render(d){
         <span class="badge">${d.monthLeads||0} Enquiries — ${monLabel}</span>
       </div>
       ${fRows||'<div class="empty">No pipeline data yet</div>'}
+      ${stillActive>0?`<div class="cohort-note"><span class="cohort-note-dot"></span>${stillActive} leads from the ${monLabel} cohort are still open — close rate will update as they resolve.</div>`:''}
     </div>
   </div>`;
 

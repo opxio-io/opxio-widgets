@@ -38,3 +38,30 @@ $$;
 -- RLS: service role only (no public access)
 alter table portal_sessions enable row level security;
 alter table portal_login_attempts enable row level security;
+
+-- ── Widget visual configs (admin-configurable per client+widget) ──────────
+-- Run in Supabase SQL editor
+
+CREATE TABLE IF NOT EXISTS widget_configs (
+  id          UUID                     PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id   TEXT                     NOT NULL,
+  widget_type TEXT                     NOT NULL DEFAULT 'crm-pipeline',
+  config      JSONB                    NOT NULL DEFAULT '{}',
+  created_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at  TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE (client_id, widget_type)
+);
+
+-- Auto-update updated_at on every row change
+CREATE OR REPLACE FUNCTION update_widget_configs_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS widget_configs_updated_at ON widget_configs;
+CREATE TRIGGER widget_configs_updated_at
+  BEFORE UPDATE ON widget_configs
+  FOR EACH ROW EXECUTE FUNCTION update_widget_configs_updated_at();

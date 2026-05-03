@@ -3,13 +3,13 @@
 // Accepts optional query overrides to preview unsaved changes:
 //   ?situation=...&problems_solved=...&os_type=...&fee=...
 
-import { fetchProposalData } from "../../../../lib/pdf"
+import { fetchProposalData } from "../../../../lib/pdf.js"
 import {
   OS_DEFAULT_MODULES,
   OS_DEFAULT_ADDONS_LATER,
   renderProposal,
-} from "../../../../lib/proposal_template"
-import { fetchCatalogueForProposal } from "../../../../lib/catalogue"
+} from "../../../../lib/proposal_template.js"
+import { fetchCatalogueForProposal } from "../../../../lib/catalogue.js"
 
 function fmtDate(iso) {
   if (!iso) return ""

@@ -1,5 +1,5 @@
-// pages/api/cupterra/enquiry-stats.js
-// 4-tile CRM dashboard for cupTerra / Shin Supplies
+// pages/api/clients/shin-supplies/enquiry-stats.js
+// CRM dashboard for Shin Supplies — includes per-rep breakdown
 
 import { getClientByToken, getNotionToken, resolveDB } from "../../../../lib/supabase.js"
 
@@ -30,7 +30,6 @@ async function queryAll(dbId, notionKey, filter) {
 }
 
 const getTitle    = p => (p?.title || []).map(t => t.plain_text).join('')
-const getText     = p => (p?.rich_text || []).map(t => t.plain_text).join('')
 const getStatus   = p => p?.status?.name || p?.select?.name || null
 const getDate     = p => p?.date?.start || null
 const getCheckbox = p => p?.checkbox === true
@@ -50,13 +49,14 @@ export default async function handler(req, res) {
   const client = await getClientByToken(token)
   if (!client) return res.status(403).json({ error: 'Invalid token' })
 
-  const NOTION_KEY  = getNotionToken(client)
-  const ENQUIRY_DB  = resolveDB(client, 'enquiry_submissions', ENQUIRY_DB_DEFAULT)
-  const PEOPLE_DB   = resolveDB(client, 'people', PEOPLE_DB_DEFAULT)
+  const NOTION_KEY = getNotionToken(client)
+  const ENQUIRY_DB = resolveDB(client, 'enquiry_submissions', ENQUIRY_DB_DEFAULT)
+  const PEOPLE_DB  = resolveDB(client, 'people', PEOPLE_DB_DEFAULT)
 
   try {
     const pages = await queryAll(ENQUIRY_DB, NOTION_KEY)
 
+    // Build rep ID → name map
     let repMap = {}
     try {
       const people = await queryAll(PEOPLE_DB, NOTION_KEY)
@@ -65,7 +65,7 @@ export default async function handler(req, res) {
         const name = getTitle(nameProp)
         if (name) {
           repMap[p.id] = name
-          repMap[p.id.replace(/-/g,'')] = name
+          repMap[p.id.replace(/-/g, '')] = name
         }
       }
     } catch(err) { console.error('People DB error:', err.message) }
@@ -74,44 +74,52 @@ export default async function handler(req, res) {
     const today  = now.toISOString().slice(0, 10)
     const mStart = new Date(now.getFullYear(), now.getMonth(), 1)
     const wStart = new Date(now); wStart.setDate(now.getDate() - 6)
+    const d3     = new Date(now); d3.setDate(now.getDate() + 3)
+    const d3Str  = d3.toISOString().slice(0, 10)
 
     let newLeads24h = 0, newLeadsWeek = 0
-    let overdueResponse = 0
-    let responded2h = 0, eligibleResponse = 0
+    let overdueResponse = 0, responded2h = 0, eligibleResponse = 0
     let pendingQuotations = 0, overdueQuotations = 0
     let followupsToday = 0, followupsNext3Days = 0
     let closedWonMTD = 0
-    const stageCount = {}
+
+    const stageCount   = {}
     const productCount = {}
     const sourceCount  = {}
 
-    const d3 = new Date(now); d3.setDate(now.getDate() + 3)
-    const d3Str = d3.toISOString().slice(0, 10)
+    // Per-rep tracking
+    // repStats[repName] = { closedWonMTD, activePipeline, followupsToday }
+    const repStats = {}
+    const UNASSIGNED = 'Unassigned'
 
-    // Stage order for funnel
     const STAGE_ORDER = ['New Lead', 'Quotation Sent', 'Negotiation', 'Sales Order Issued', 'Closed Won', 'Closed Lost']
 
     for (const page of pages) {
-      const p        = page.properties
-      const status   = getStatus(p['Status'])
-      const submAt   = getDate(p['Submitted At'])
+      const p         = page.properties
+      const status    = getStatus(p['Status'])
+      const submAt    = getDate(p['Submitted At'])
       const quoIssued = getCheckbox(p['Quotation Issued'])
       const quoSentDt = getDate(p['Quotation Sent Date'])
-      const nextFU   = getDate(p['Next Follow-up Date'])
-      const assigned = getRelIds(p['Assigned To'])
-      const products = getMultiSel(p['Kategori produk'])
-      const source   = getStatus(p['Lead Source'])
-      const name     = getTitle(p['Nama Penuh'])
+      const nextFU    = getDate(p['Next Follow-up Date'])
+      const assigned  = getRelIds(p['Assigned To'])
+      const products  = getMultiSel(p['Kategori produk'])
+      const source    = getStatus(p['Lead Source'])
 
       if (!status) continue
 
       const isClosed = status === 'Closed Won' || status === 'Closed Lost' || status === 'Done'
-
-      // Stage breakdown (all statuses)
       const stageKey = status === 'Done' ? 'Closed Won' : status
       stageCount[stageKey] = (stageCount[stageKey] || 0) + 1
 
-      // Tile 1
+      // Resolve rep name (first assigned, or Unassigned)
+      let repName = UNASSIGNED
+      if (assigned.length > 0) {
+        const rid = assigned[0]
+        repName = repMap[rid] || repMap[rid.replace(/-/g,'')] || UNASSIGNED
+      }
+      if (!repStats[repName]) repStats[repName] = { closedWonMTD: 0, activePipeline: 0, followupsToday: 0 }
+
+      // Tile 1 — new leads + response speed
       if (submAt) {
         const submDate = new Date(submAt)
         const ageH = (now - submDate) / 3600000
@@ -130,30 +138,37 @@ export default async function handler(req, res) {
         }
       }
 
-      // Tile 2
+      // Tile 2 — quotation backlog
       if (!isClosed && !quoIssued && status === 'New Lead') {
         pendingQuotations++
         if (submAt && (now - new Date(submAt)) / 3600000 > 24) overdueQuotations++
       }
 
-      // Tile 3
+      // Tile 3 — follow-ups
       if (nextFU && !isClosed) {
-        if (nextFU <= today)   followupsToday++
-        if (nextFU <= d3Str)   followupsNext3Days++
+        if (nextFU <= today) { followupsToday++; repStats[repName].followupsToday++ }
+        if (nextFU <= d3Str) followupsNext3Days++
       }
 
-      // Tile 4
+      // Tile 4 + rep — closed won MTD
       if (status === 'Closed Won' || status === 'Done') {
         const ref = submAt || page.created_time
-        if (ref && new Date(ref) >= mStart) closedWonMTD++
+        if (ref && new Date(ref) >= mStart) {
+          closedWonMTD++
+          repStats[repName].closedWonMTD++
+        }
       }
 
-      // Product + source
+      // Rep — active pipeline (not closed)
+      if (!isClosed) {
+        repStats[repName].activePipeline++
+      }
+
+      // Product + source breakdown
       for (const prod of products) productCount[prod] = (productCount[prod] || 0) + 1
       if (source) sourceCount[source] = (sourceCount[source] || 0) + 1
     }
 
-    // Build ordered stage funnel (exclude Closed Lost from main funnel)
     const stageFunnel = STAGE_ORDER
       .filter(s => s !== 'Closed Lost')
       .map(s => ({ stage: s, count: stageCount[s] || 0 }))
@@ -161,6 +176,11 @@ export default async function handler(req, res) {
     const responseRate2h = eligibleResponse > 0
       ? Math.round((responded2h / eligibleResponse) * 100)
       : null
+
+    // Sort reps: most closed MTD first, then most active pipeline
+    const repBreakdown = Object.entries(repStats)
+      .map(([name, stats]) => ({ name, ...stats }))
+      .sort((a, b) => b.closedWonMTD - a.closedWonMTD || b.activePipeline - a.activePipeline)
 
     return res.status(200).json({
       total: pages.length,
@@ -170,16 +190,17 @@ export default async function handler(req, res) {
       tile4: {
         closedWonMTD,
         stuckNegotiation: stageCount['Negotiation'] || 0,
-        stuckSalesOrder: stageCount['Sales Order Issued'] || 0,
+        stuckSalesOrder:  stageCount['Sales Order Issued'] || 0,
         stageFunnel,
       },
+      repBreakdown,
       productBreakdown: productCount,
-      sourceBreakdown: sourceCount,
+      sourceBreakdown:  sourceCount,
       updatedAt: now.toISOString(),
     })
 
   } catch (e) {
-    console.error('cupterra/enquiry-stats error:', e)
+    console.error('shin-supplies/enquiry-stats error:', e)
     return res.status(500).json({ error: e.message })
   }
 }

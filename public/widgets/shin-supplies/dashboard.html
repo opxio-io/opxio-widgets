@@ -268,6 +268,7 @@ body.light .cohort-note{background:rgba(0,0,0,.03);border-color:#e0e0e0;color:#a
 const _tok = new URLSearchParams(location.search).get('token') || '';
 const _now  = new Date();
 let filterMonth = null; // null = current month
+let _navTimer = null; // debounce month navigation
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
@@ -295,6 +296,7 @@ function mnPrev() {
   if (!filterMonth) filterMonth = { year: _now.getFullYear(), month: _now.getMonth() };
   filterMonth.month--;
   if (filterMonth.month < 0) { filterMonth.month = 11; filterMonth.year--; }
+  clearTimeout(_navTimer); _navTimer = setTimeout(load, 300); return;
   updateMonthNav();
   load();
 }
@@ -306,6 +308,7 @@ function mnNext() {
       (filterMonth.year === _now.getFullYear() && filterMonth.month >= _now.getMonth())) {
     filterMonth = null;
   }
+  clearTimeout(_navTimer); _navTimer = setTimeout(load, 300); return;
   updateMonthNav();
   load();
 }
@@ -564,18 +567,15 @@ function render(d){
 
   const isCurrentMonth=!filterMonth;
   const liveCol=isCurrentMonth?`<div style="display:flex;flex-direction:column;gap:10px;">
-    <div style="display:flex;justify-content:flex-end;">
-      <span class="badge blue" style="font-size:9px;">Entire pipeline</span>
-    </div>
     <div class="card kpi">
       <span class="kpi-lbl">Follow-ups Due Today</span>
       <div class="kpi-val" style="color:${(live.followupsToday||0)>0?'var(--blue)':'var(--zero-val)'};">${live.followupsToday||0}</div>
-      <div class="kpi-sub">${live.followupsNext3||0} due within 3 days</div>
+      <div class="kpi-sub">Entire pipeline · ${live.followupsNext3||0} due within 3 days</div>
     </div>
     <div class="card kpi">
       <span class="kpi-lbl">Overdue Quotations</span>
       <div class="kpi-val" style="color:${(live.overdueResponse||0)>0?'var(--red)':'var(--zero-val)'};">${live.overdueResponse||0}</div>
-      <div class="kpi-sub">New leads open &gt;2h · no quote issued</div>
+      <div class="kpi-sub">Entire pipeline · no quote issued after 2h</div>
     </div>
   </div>`:'';
 
@@ -636,12 +636,14 @@ const SUN_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke
 const MOON_SVG=`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
 function toggleMode(){_light=!_light;document.body.classList.toggle('light',_light);const mb=document.getElementById('mb');if(mb)mb.innerHTML=_light?MOON_SVG:SUN_SVG;}
 let _loadCtrl=null;
+let _abortedByNav=false;
 async function load(){
-  if(_loadCtrl)_loadCtrl.abort();
+  if(_loadCtrl){ _abortedByNav=true; _loadCtrl.abort(); }
+  _abortedByNav=false;
   _loadCtrl=new AbortController();
   const sig=_loadCtrl.signal;
-  // 15s timeout — prevents infinite hang if server restarts mid-request
-  const timer=setTimeout(()=>_loadCtrl.abort(),15000);
+  // 25s timeout — allows for Railway cold start
+  const timer=setTimeout(()=>{ _abortedByNav=false; _loadCtrl.abort(); },25000);
   const b=document.getElementById('rb');
   if(b)b.classList.add('spinning');
   try{
@@ -653,6 +655,7 @@ async function load(){
     render(await r.json());
   }catch(e){
     if(e.name==='AbortError'){
+      if(_abortedByNav) return; // cancelled by new navigation — silent
       document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Request timed out — <a href="" style="color:var(--g);" onclick="location.reload();return false;">Reload</a></div></div>`;
       return;
     }

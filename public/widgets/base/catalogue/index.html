@@ -312,7 +312,7 @@ let allItems = [], activeOS = 'All', editMode = false, currency = 'MYR'
 const _tok = new URLSearchParams(location.search).get('token') || ''
 const OPXIO_TOKEN = '04524d18e8ef8f862b64d497e4c6cc52a7991d96029c71546939b5e3ec428edf'
 const isOpxio = _tok === OPXIO_TOKEN
-function apiUrl(p){ return _tok ? p + '?token=' + encodeURIComponent(_tok) : p }
+function apiUrl(p){ p='https://api.opxio.io'+p; return _tok ? p + '?token=' + encodeURIComponent(_tok) : p }
 
 // ── Currency helpers ──────────────────────────────────────────────────────────
 const USD_DIV = 1.3  // market-positioned rate (RM 3,250 ≈ USD 2,500)
@@ -1438,7 +1438,7 @@ async function saveEdit(pageId){
   }
 
   try {
-    const r = await fetch('/api/data/catalogue-update?token=' + encodeURIComponent(_tok), {
+    const r = await fetch('https://api.opxio.io/api/data/catalogue-update?token=' + encodeURIComponent(_tok), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pageId, fields }),

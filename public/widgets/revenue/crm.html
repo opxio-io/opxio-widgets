@@ -497,6 +497,7 @@ function mnNext(){
   updateMonthNav(); doRefresh();
 }
 function apiUrl(p){
+  p='https://api.opxio.io'+p;
   const params=new URLSearchParams();
   if(_tok) params.set('token',_tok);
   if(filterMonth){params.set('month',filterMonth.month+1);params.set('year',filterMonth.year);}
@@ -1118,7 +1119,7 @@ document.getElementById('theme-btn')?.addEventListener('click',()=>{if(currentVi
   const el=document.getElementById('_eyebrow');if(!el)return;
   el.textContent=el.dataset.os.toUpperCase();
   const tok=new URLSearchParams(location.search).get('token');if(!tok)return;
-  fetch('/api/client/info?token='+tok).then(r=>r.ok?r.json():null).then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · '+el.dataset.os.toUpperCase();}).catch(()=>{});
+  fetch('https://api.opxio.io/api/client/info?token='+tok).then(r=>r.ok?r.json():null).then(d=>{if(d?.client)el.textContent=d.client.toUpperCase()+' · '+el.dataset.os.toUpperCase();}).catch(()=>{});
 })();
 </script>
 </body></html>

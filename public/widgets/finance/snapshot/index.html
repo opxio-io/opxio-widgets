@@ -330,7 +330,7 @@ setInterval(loadData, 5 * 60 * 1000);
   el.textContent = el.dataset.os.toUpperCase(); // default until API responds
   const tok = new URLSearchParams(location.search).get('token');
   if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
+  fetch('https://api.opxio.io/api/client/info?token=' + tok)
     .then(r => r.ok ? r.json() : null)
     .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · ' + el.dataset.os.toUpperCase(); })
     .catch(() => {});

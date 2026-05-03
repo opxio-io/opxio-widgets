@@ -83,7 +83,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.25);}
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl(path){ return _tok ? path+'?token='+encodeURIComponent(_tok) : path; }
+function apiUrl(path){ path='https://api.opxio.io'+path; return _tok ? path+'?token='+encodeURIComponent(_tok) : path; }
 let light=false;
 function toggleMode(){light=!light;document.body.classList.toggle('light',light);document.getElementById('mb').textContent=light?'🌙 Dark':'☀ Light';drawChart();}
 function setTs(){document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});}
@@ -271,7 +271,7 @@ window.addEventListener('resize',drawChart);
   el.textContent = el.dataset.os.toUpperCase(); // default until API responds
   const tok = new URLSearchParams(location.search).get('token');
   if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
+  fetch('https://api.opxio.io/api/client/info?token=' + tok)
     .then(r => r.ok ? r.json() : null)
     .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · ' + el.dataset.os.toUpperCase(); })
     .catch(() => {});

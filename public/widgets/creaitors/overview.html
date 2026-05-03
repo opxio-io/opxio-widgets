@@ -265,7 +265,7 @@ const ROLE_TITLES = {
   el.textContent = 'CUSTOM OS' + roleLabel;
   if(ROLE_TITLES[_role]) document.getElementById('dash-title').textContent = ROLE_TITLES[_role];
   if(!_tok) return;
-  fetch('/api/client/info?token=' + _tok)
+  fetch('https://api.opxio.io/api/client/info?token=' + _tok)
     .then(r => r.ok ? r.json() : null)
     .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · CUSTOM OS' + roleLabel; })
     .catch(() => {});
@@ -924,8 +924,8 @@ async function load(){
     if(needKol)      fetchMap.kol      = fetch('https://api.opxio.io/api/clients/creaitors/kol-data?token='+_tok).then(r=>r.json());
     if(needContent)  fetchMap.content  = fetch('https://api.opxio.io/api/clients/creaitors/content-stats?token='+_tok).then(r=>r.json());
     if(needRevenue){
-      fetchMap.pipe  = fetch('/api/data/pipeline?token='+_tok).then(r=>r.json());
-      fetchMap.deals = fetch('/api/data/deals?token='+_tok).then(r=>r.json());
+      fetchMap.pipe  = fetch('https://api.opxio.io/api/data/pipeline?token='+_tok).then(r=>r.json());
+      fetchMap.deals = fetch('https://api.opxio.io/api/data/deals?token='+_tok).then(r=>r.json());
     }
 
     const keys    = Object.keys(fetchMap);

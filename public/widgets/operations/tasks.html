@@ -155,7 +155,7 @@ body.light .wgt-footer{color:rgba(0,0,0,.2);}
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
-function apiUrl(p) { return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
+function apiUrl(p) { p='https://api.opxio.io'+p; return _tok ? p + '?token=' + encodeURIComponent(_tok) : p; }
 
 let light = false, currentTab = 'active';
 let activeTasks = [], doneTasks = [];

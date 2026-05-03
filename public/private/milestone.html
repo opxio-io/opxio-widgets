@@ -223,7 +223,7 @@ footer{display:block;text-align:center;padding:20px 0 0;font-size:8px;font-weigh
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token')||'';
-function apiUrl(){ return '/api/private/milestone'+(_tok?'?token='+encodeURIComponent(_tok):''); }
+function apiUrl(){ return 'https://api.opxio.io/api/private/milestone'+(_tok?'?token='+encodeURIComponent(_tok):''); }
 const CAT_CSS={'Main Meal':'main-meal','Dessert':'dessert','Drinks':'drinks','Fine Dining':'fine-dining','Snack':'snack'};
 const START=125;
 
@@ -449,7 +449,7 @@ async function submitLog(){
   btn.disabled=true; btn.textContent='Saving…';
   msgEl.style.display='none';
   try{
-    const res=await fetch('/api/private/log-weight?token='+encodeURIComponent(_tok),{
+    const res=await fetch('https://api.opxio.io/api/private/log-weight?token='+encodeURIComponent(_tok),{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({weight:w, date:dEl.value||undefined})

@@ -293,7 +293,7 @@ setInterval(loadData, 600000);
   if(!el) return;
   const tok = new URLSearchParams(location.search).get('token');
   if(!tok) return;
-  fetch('/api/client/info?token=' + tok)
+  fetch('https://api.opxio.io/api/client/info?token=' + tok)
     .then(r => r.ok ? r.json() : null)
     .then(d => { if(d?.client) el.textContent = d.client.toUpperCase() + ' · CUSTOM OS'; })
     .catch(() => {});

@@ -437,7 +437,7 @@ async function loadData() {
     return;
   }
   try {
-    const r = await fetch('/api/data/progress?project=' + encodeURIComponent(projectId));
+    const r = await fetch('https://api.opxio.io/api/data/progress?project=' + encodeURIComponent(projectId));
     const j = await r.json();
     if (j.error) { document.getElementById('app').innerHTML = `<div class="error">${esc(j.error)}</div>`; return; }
 

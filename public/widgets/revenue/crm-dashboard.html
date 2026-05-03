@@ -532,7 +532,7 @@ async function load(){
     const params=new URLSearchParams();
     if(_tok) params.set('token',_tok);
     if(filterMonth){ params.set('month',filterMonth.month); params.set('year',filterMonth.year); }
-    const r=await fetch('/api/clients/shin-supplies/enquiry-stats?'+params.toString(),{signal:sig});
+    const r=await fetch('https://api.opxio.io/api/clients/shin-supplies/enquiry-stats?'+params.toString(),{signal:sig});
     if(!r.ok) throw new Error('HTTP '+r.status);
     render(await r.json());
   }catch(e){

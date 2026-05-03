@@ -82,7 +82,7 @@ function setTs(){ document.getElementById('ts').textContent = 'Updated ' + new D
 
 async function loadData(){
   try{
-    const r = await fetch('/api/data/settings?token='+encodeURIComponent(_tok));
+    const r = await fetch('https://api.opxio.io/api/data/settings?token='+encodeURIComponent(_tok));
     if(!r.ok) throw new Error(await r.text());
     allData = await r.json();
     buildTabs();
@@ -168,7 +168,7 @@ async function saveRow(row){
   status.textContent = 'Saving…';
 
   try{
-    const r = await fetch('/api/data/settings-update?token='+encodeURIComponent(_tok), {
+    const r = await fetch('https://api.opxio.io/api/data/settings-update?token='+encodeURIComponent(_tok), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pageId, value }),

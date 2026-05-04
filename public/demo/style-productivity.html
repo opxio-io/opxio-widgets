@@ -49,12 +49,13 @@
   .funnel-track { height: 28px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
   .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
-  .stage-new .funnel-fill  { background: rgba(255,255,255,0.18); }
-  .stage-quote .funnel-fill { background: rgba(255,255,255,0.18); }
-  .stage-neg .funnel-fill  { background: rgba(255,255,255,0.18); }
-  .stage-so .funnel-fill   { background: rgba(255,255,255,0.18); }
-  .stage-won .funnel-fill  { background: var(--g); }
-  .stage-lost .funnel-fill { background: rgba(255,255,255,0.07); }
+  .stage-incoming .funnel-fill    { background: rgba(255,255,255,0.18); }
+  .stage-contacted .funnel-fill   { background: rgba(255,255,255,0.18); }
+  .stage-booked .funnel-fill      { background: rgba(255,255,255,0.18); }
+  .stage-done .funnel-fill        { background: rgba(255,255,255,0.18); }
+  .stage-converted .funnel-fill   { background: var(--g); }
+  .stage-ghosted .funnel-fill     { background: rgba(255,255,255,0.07); }
+  .stage-unqualified .funnel-fill { background: rgba(255,255,255,0.05); }
 
   /* Meetings Panel */
   .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -223,29 +224,33 @@
       <span class="section-title">Pipeline Funnel</span>
       <span class="section-label">Current month leads</span>
     </div>
-    <div class="funnel-item stage-new">
-      <div class="funnel-meta"><span class="funnel-stage">New Lead</span><span class="funnel-count">18</span></div>
+    <div class="funnel-item stage-incoming">
+      <div class="funnel-meta"><span class="funnel-stage">Incoming</span><span class="funnel-count">47</span></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:100%"></div></div>
     </div>
-    <div class="funnel-item stage-quote">
-      <div class="funnel-meta"><span class="funnel-stage">Quotation Sent</span><span class="funnel-count">12</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:67%"></div></div>
+    <div class="funnel-item stage-contacted">
+      <div class="funnel-meta"><span class="funnel-stage">Contacted</span><span class="funnel-count">31</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:66%"></div></div>
     </div>
-    <div class="funnel-item stage-neg">
-      <div class="funnel-meta"><span class="funnel-stage">Negotiation</span><span class="funnel-count">8</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:44%"></div></div>
+    <div class="funnel-item stage-booked">
+      <div class="funnel-meta"><span class="funnel-stage">Discovery Booked</span><span class="funnel-count">18</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:38%"></div></div>
     </div>
-    <div class="funnel-item stage-so">
-      <div class="funnel-meta"><span class="funnel-stage">Sales Order Issued</span><span class="funnel-count">4</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:22%"></div></div>
+    <div class="funnel-item stage-done">
+      <div class="funnel-meta"><span class="funnel-stage">Discovery Done</span><span class="funnel-count">12</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:26%"></div></div>
     </div>
-    <div class="funnel-item stage-won">
-      <div class="funnel-meta"><span class="funnel-stage">Closed Won</span><span class="funnel-count">12</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:67%"></div></div>
+    <div class="funnel-item stage-converted">
+      <div class="funnel-meta"><span class="funnel-stage">Converted</span><span class="funnel-count">7</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:15%"></div></div>
     </div>
-    <div class="funnel-item stage-lost">
-      <div class="funnel-meta"><span class="funnel-stage">Closed Lost</span><span class="funnel-count">9</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:50%"></div></div>
+    <div class="funnel-item stage-ghosted">
+      <div class="funnel-meta"><span class="funnel-stage">Ghosted</span><span class="funnel-count">6</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:13%"></div></div>
+    </div>
+    <div class="funnel-item stage-unqualified">
+      <div class="funnel-meta"><span class="funnel-stage">Unqualified</span><span class="funnel-count">4</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:9%"></div></div>
     </div>
   </div>
 

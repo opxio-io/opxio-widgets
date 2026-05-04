@@ -36,10 +36,10 @@
   .kpi-sub { font-size: 11px; font-weight: 500; color: var(--sub); }
 
   .main-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; margin-bottom: 14px; }
-  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; }
-  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-card { background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; overflow: hidden; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin: -22px -24px 20px; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .section-title { font-size: 13px; font-weight: 700; }
-  .section-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+  .section-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--muted); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); border-radius: 100px; padding: 3px 10px; }
 
   .funnel-item { margin-bottom: 16px; }
   .funnel-item:last-child { margin-bottom: 0; }
@@ -70,8 +70,8 @@
   .drop-tag span { color: rgba(255,255,255,0.4); margin-left: 4px; }
 
   /* Meetings Panel — Timeline style */
-  .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-  .meet-today-lbl { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; }
+  .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin: -22px -24px 14px; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .meet-today-lbl { font-size: 10px; font-weight: 700; color: var(--muted); background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.07); border-radius: 100px; padding: 3px 10px; letter-spacing: .04em; }
 
   /* Timeline */
   .cal-timeline { position: relative; }
@@ -150,7 +150,7 @@
   .meet-contact { font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
   .meet-time-badge { font-size: 10px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
 
-  .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+  .bottom-grid { display: grid; grid-template-columns: 1.6fr 1fr 1.5fr; gap: 14px; }
 
   /* ── Rep Leaderboard ── */
   .reps-container {
@@ -240,9 +240,9 @@
   .day-tab.has-events:not(.active) .dt-num { color: var(--text); }
 
   /* Leads Chart Row */
-  .chart-row { margin-top: 14px; }
-  .chart-card-inner { padding: 22px 24px; }
-  .chart-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+
+
+  .chart-hdr { display: flex; align-items: center; justify-content: space-between; margin: -22px -24px 18px; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
   .chart-title { font-size: 9.5px; font-weight: 700; text-transform: uppercase; letter-spacing:.1em; color: rgba(255,255,255,.6); }
   .chart-badge { font-size: 10px; font-weight: 700; padding: 2px 10px; border-radius: 5px; background: rgba(184,255,64,0.1); color: var(--g); border: 1px solid rgba(184,255,64,0.2); }
   .chart-wrap { position: relative; width: 100%; height: 160px; }
@@ -447,71 +447,21 @@
 </div>
 
 <div class="bottom-grid">
-  <div class="reps-container">
-    <div class="reps-header">
-      <span class="reps-title">Sales Rep Performance</span>
-      <span class="reps-badge">May 2026</span>
-    </div>
 
-    <div class="rep-row">
-      <div class="rep-rank-num top">01</div>
-      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=FaraAin&backgroundColor=d1fae5" alt="FA" />
-      <div class="rep-mid">
-        <div class="rep-name-txt">Fara Ain</div>
-        <div class="rep-sub">14 leads · Sales Rep</div>
-        <div class="rep-prog-track"><div class="rep-prog-fill pf-1" style="width:100%"></div></div>
-      </div>
-      <div class="rep-stat-block">
-        <span class="rep-stat-won c1">7</span>
-        <span class="rep-stat-rate">71% close rate</span>
-      </div>
+  <!-- Col 1: Leads Chart -->
+  <div class="section-card">
+    <div class="chart-hdr">
+      <span class="chart-title">Leads Incoming by Month</span>
+      <span class="chart-badge" id="cbadge">519 leads this year</span>
     </div>
-
-    <div class="rep-row">
-      <div class="rep-rank-num">02</div>
-      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=ZaraHana&backgroundColor=dbeafe" alt="ZH" />
-      <div class="rep-mid">
-        <div class="rep-name-txt">Zara Hana</div>
-        <div class="rep-sub">11 leads · Sales Rep</div>
-        <div class="rep-prog-track"><div class="rep-prog-fill pf-2" style="width:72%"></div></div>
-      </div>
-      <div class="rep-stat-block">
-        <span class="rep-stat-won">5</span>
-        <span class="rep-stat-rate">58% close rate</span>
-      </div>
+    <div class="chart-wrap" id="cwrap">
+      <svg id="leads-chart" style="display:block;overflow:visible;"></svg>
+      <div class="chart-tip" id="ctip"></div>
     </div>
-
-    <div class="rep-row">
-      <div class="rep-rank-num">03</div>
-      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=AhmadMuiz&backgroundColor=fef3c7" alt="AM" />
-      <div class="rep-mid">
-        <div class="rep-name-txt">Ahmad Muiz</div>
-        <div class="rep-sub">10 leads · Sales Rep</div>
-        <div class="rep-prog-track"><div class="rep-prog-fill pf-3" style="width:57%"></div></div>
-      </div>
-      <div class="rep-stat-block">
-        <span class="rep-stat-won">4</span>
-        <span class="rep-stat-rate">44% close rate</span>
-      </div>
-    </div>
-
-    <div class="rep-row">
-      <div class="rep-rank-num">04</div>
-      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=RinaNor&backgroundColor=fce7f3" alt="RN" />
-      <div class="rep-mid">
-        <div class="rep-name-txt">Rina Nor</div>
-        <div class="rep-sub">8 leads · Sales Rep</div>
-        <div class="rep-prog-track"><div class="rep-prog-fill pf-4" style="width:43%"></div></div>
-      </div>
-      <div class="rep-stat-block">
-        <span class="rep-stat-won">3</span>
-        <span class="rep-stat-rate">38% close rate</span>
-      </div>
-    </div>
-
   </div>
 
-    <div class="section-card">
+  <!-- Col 2: Lead Sources -->
+  <div class="section-card">
     <div class="section-header">
       <span class="section-title">Lead Sources</span>
       <span class="section-label">May 2026</span>
@@ -549,164 +499,186 @@
       </div>
     </div>
   </div>
-</div>
 
-  <!-- Leads Incoming Chart -->
-  <div class="chart-row">
-    <div class="section-card chart-card-inner">
-      <div class="chart-hdr">
-        <span class="chart-title">Leads Incoming by Month</span>
-        <span class="chart-badge" id="cbadge">519 total this year</span>
+  <!-- Col 3: Sales Rep Performance -->
+  <div class="reps-container">
+    <div class="reps-header">
+      <span class="reps-title">Sales Rep Performance</span>
+      <span class="reps-badge">May 2026</span>
+    </div>
+    <div class="rep-row">
+      <div class="rep-rank-num top">01</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=FaraAin&backgroundColor=d1fae5" alt="FA" />
+      <div class="rep-mid">
+        <div class="rep-name-txt">Fara Ain</div>
+        <div class="rep-sub">14 leads · Sales Rep</div>
+        <div class="rep-prog-track"><div class="rep-prog-fill pf-1" style="width:100%"></div></div>
       </div>
-      <div class="chart-wrap" id="cwrap">
-        <svg id="leads-chart" style="display:block;overflow:visible;"></svg>
-        <div class="chart-tip" id="ctip"></div>
+      <div class="rep-stat-block"><span class="rep-stat-won c1">7</span><span class="rep-stat-rate">71% close rate</span></div>
+    </div>
+    <div class="rep-row">
+      <div class="rep-rank-num">02</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=ZaraHana&backgroundColor=dbeafe" alt="ZH" />
+      <div class="rep-mid">
+        <div class="rep-name-txt">Zara Hana</div>
+        <div class="rep-sub">11 leads · Sales Rep</div>
+        <div class="rep-prog-track"><div class="rep-prog-fill pf-2" style="width:72%"></div></div>
       </div>
+      <div class="rep-stat-block"><span class="rep-stat-won">5</span><span class="rep-stat-rate">58% close rate</span></div>
+    </div>
+    <div class="rep-row">
+      <div class="rep-rank-num">03</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=AhmadMuiz&backgroundColor=fef3c7" alt="AM" />
+      <div class="rep-mid">
+        <div class="rep-name-txt">Ahmad Muiz</div>
+        <div class="rep-sub">10 leads · Sales Rep</div>
+        <div class="rep-prog-track"><div class="rep-prog-fill pf-3" style="width:57%"></div></div>
+      </div>
+      <div class="rep-stat-block"><span class="rep-stat-won">4</span><span class="rep-stat-rate">44% close rate</span></div>
+    </div>
+    <div class="rep-row">
+      <div class="rep-rank-num">04</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=RinaNor&backgroundColor=fce7f3" alt="RN" />
+      <div class="rep-mid">
+        <div class="rep-name-txt">Rina Nor</div>
+        <div class="rep-sub">8 leads · Sales Rep</div>
+        <div class="rep-prog-track"><div class="rep-prog-fill pf-4" style="width:43%"></div></div>
+      </div>
+      <div class="rep-stat-block"><span class="rep-stat-won">3</span><span class="rep-stat-rate">38% close rate</span></div>
     </div>
   </div>
 
-  <script>
-  const chartData = [
-    {m:'Jun',v:28},{m:'Jul',v:35},{m:'Aug',v:31},{m:'Sep',v:42},
-    {m:'Oct',v:38},{m:'Nov',v:52},{m:'Dec',v:44},{m:'Jan',v:47},
-    {m:'Feb',v:55},{m:'Mar',v:61},{m:'Apr',v:58},{m:'May',v:47}
-  ];
-  const AC = '#AAFF00';
-  const ACA = a => `rgba(170,255,0,${a})`;
+</div>
 
-  function drawLeadsChart() {
-    const wrap = document.getElementById('cwrap');
-    const svg  = document.getElementById('leads-chart');
-    const ns   = 'http://www.w3.org/2000/svg';
-    const W    = wrap.offsetWidth || 900;
-    const H    = wrap.offsetHeight || 160;
-    svg.setAttribute('width', W);
-    svg.setAttribute('height', H);
-    svg.innerHTML = '';
+<script>
+const CHART_DATA = [
+  {m:'Jun',v:28},{m:'Jul',v:35},{m:'Aug',v:31},{m:'Sep',v:42},
+  {m:'Oct',v:38},{m:'Nov',v:52},{m:'Dec',v:44},{m:'Jan',v:47},
+  {m:'Feb',v:55},{m:'Mar',v:61},{m:'Apr',v:58},{m:'May',v:47}
+];
+const AC = '#AAFF00';
+const ACA = a => `rgba(170,255,0,${a})`;
 
-    const PAD = {t:14, r:20, b:30, l:32};
-    const cW  = W - PAD.l - PAD.r;
-    const cH  = H - PAD.t - PAD.b;
-    const maxV = Math.max(...chartData.map(d => d.v), 1);
-    const xP  = i => PAD.l + (i / (chartData.length - 1)) * cW;
-    const yP  = v => PAD.t + cH - (v / maxV) * cH;
+function drawLeadsChart() {
+  const wrap = document.getElementById('cwrap');
+  const svg  = document.getElementById('leads-chart');
+  if (!wrap || !svg) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  const W  = wrap.getBoundingClientRect().width || wrap.offsetWidth || 400;
+  const H  = 160;
+  svg.setAttribute('width', W); svg.setAttribute('height', H);
+  svg.innerHTML = '';
 
-    const dim  = 'rgba(255,255,255,.35)';
-    const grid = 'rgba(255,255,255,.04)';
+  const PAD = {t:14, r:16, b:28, l:30};
+  const cW  = W - PAD.l - PAD.r;
+  const cH  = H - PAD.t - PAD.b;
+  const maxV = Math.max(...CHART_DATA.map(d => d.v), 1);
+  const xP = i => PAD.l + (i / (CHART_DATA.length - 1)) * cW;
+  const yP = v => PAD.t + cH - (v / maxV) * cH;
+  const dim  = 'rgba(255,255,255,.3)';
+  const grid = 'rgba(255,255,255,.04)';
 
-    // Grid lines + y-labels
-    for (let i = 0; i <= 4; i++) {
-      const y  = PAD.t + (i / 4) * cH;
-      const gl = document.createElementNS(ns, 'line');
-      gl.setAttribute('x1', PAD.l); gl.setAttribute('x2', W - PAD.r);
-      gl.setAttribute('y1', y);     gl.setAttribute('y2', y);
-      gl.setAttribute('stroke', grid); gl.setAttribute('stroke-dasharray', '3,5');
-      svg.appendChild(gl);
-      if (i < 4) {
-        const t = document.createElementNS(ns, 'text');
-        t.setAttribute('x', PAD.l - 6); t.setAttribute('y', y + 4);
-        t.setAttribute('text-anchor', 'end'); t.setAttribute('fill', dim);
-        t.setAttribute('font-size', '9'); t.setAttribute('font-weight', '500');
-        t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
-        t.textContent = Math.round(maxV - (i / 4) * maxV);
-        svg.appendChild(t);
-      }
-    }
-
-    // Month labels
-    chartData.forEach((d, i) => {
-      const isCur = i === chartData.length - 1;
+  for (let i = 0; i <= 4; i++) {
+    const y = PAD.t + (i / 4) * cH;
+    const gl = document.createElementNS(ns, 'line');
+    gl.setAttribute('x1', PAD.l); gl.setAttribute('x2', W - PAD.r);
+    gl.setAttribute('y1', y);     gl.setAttribute('y2', y);
+    gl.setAttribute('stroke', grid); gl.setAttribute('stroke-dasharray', '3,5');
+    svg.appendChild(gl);
+    if (i < 4) {
       const t = document.createElementNS(ns, 'text');
-      t.setAttribute('x', xP(i)); t.setAttribute('y', H - PAD.b + 16);
-      t.setAttribute('text-anchor', 'middle');
-      t.setAttribute('fill', isCur ? AC : dim);
-      t.setAttribute('font-size', '10');
-      t.setAttribute('font-weight', isCur ? '700' : '500');
-      t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
-      t.textContent = d.m;
+      t.setAttribute('x', PAD.l - 5); t.setAttribute('y', y + 4);
+      t.setAttribute('text-anchor', 'end'); t.setAttribute('fill', dim);
+      t.setAttribute('font-size', '9'); t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
+      t.textContent = Math.round(maxV - (i / 4) * maxV);
       svg.appendChild(t);
-    });
-
-    // Smooth bezier
-    function smooth(pts) {
-      if (pts.length < 2) return \`M \${pts[0][0]} \${pts[0][1]}\`;
-      let d = \`M \${pts[0][0]} \${pts[0][1]}\`;
-      for (let i = 1; i < pts.length; i++) {
-        const [x1, y1] = pts[i-1], [x2, y2] = pts[i], cx = (x1 + x2) / 2;
-        d += \` C \${cx} \${y1} \${cx} \${y2} \${x2} \${y2}\`;
-      }
-      return d;
     }
-
-    const pts   = chartData.map((d, i) => [xP(i), yP(d.v)]);
-    const pathD = smooth(pts);
-    const last  = pts[pts.length - 1];
-    const first = pts[0];
-
-    // Gradient fill
-    const defs = document.createElementNS(ns, 'defs');
-    const grad = document.createElementNS(ns, 'linearGradient');
-    grad.setAttribute('id', 'lgF'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
-    grad.setAttribute('x2','0');    grad.setAttribute('y2','1');
-    const s1 = document.createElementNS(ns, 'stop');
-    s1.setAttribute('offset','0%'); s1.setAttribute('stop-color', AC); s1.setAttribute('stop-opacity','0.2');
-    const s2 = document.createElementNS(ns, 'stop');
-    s2.setAttribute('offset','100%'); s2.setAttribute('stop-color', AC); s2.setAttribute('stop-opacity','0.01');
-    grad.appendChild(s1); grad.appendChild(s2); defs.appendChild(grad);
-    svg.insertBefore(defs, svg.firstChild);
-
-    // Area fill
-    const area = document.createElementNS(ns, 'path');
-    area.setAttribute('d', pathD + \` L \${last[0]} \${H-PAD.b} L \${first[0]} \${H-PAD.b} Z\`);
-    area.setAttribute('fill', 'url(#lgF)');
-    svg.appendChild(area);
-
-    // Line
-    const line = document.createElementNS(ns, 'path');
-    line.setAttribute('d', pathD); line.setAttribute('fill','none');
-    line.setAttribute('stroke', AC); line.setAttribute('stroke-width','2');
-    line.setAttribute('stroke-linecap','round');
-    svg.appendChild(line);
-
-    // Dots
-    chartData.forEach((d, i) => {
-      const isCur = i === chartData.length - 1;
-      const dot = document.createElementNS(ns, 'circle');
-      dot.setAttribute('cx', xP(i)); dot.setAttribute('cy', yP(d.v));
-      dot.setAttribute('r', isCur ? '5' : '3.5');
-      dot.setAttribute('fill', isCur ? AC : '#222222');
-      dot.setAttribute('stroke', AC); dot.setAttribute('stroke-width','2');
-      if (isCur) dot.setAttribute('filter', \`drop-shadow(0 0 6px \${ACA(0.6)})\`);
-      svg.appendChild(dot);
-    });
-
-    // Hover line
-    const hL = document.createElementNS(ns, 'line');
-    hL.setAttribute('stroke', ACA(0.25)); hL.setAttribute('stroke-width','1');
-    hL.setAttribute('y1', PAD.t); hL.setAttribute('y2', H - PAD.b);
-    hL.style.opacity = '0';
-    svg.appendChild(hL);
-
-    const tip = document.getElementById('ctip');
-    wrap.onmousemove = function(e) {
-      const rect = wrap.getBoundingClientRect(), mx = e.clientX - rect.left;
-      let bi = null, bd = Infinity;
-      chartData.forEach((d, i) => { const dist = Math.abs(xP(i) - mx); if (dist < bd) { bd = dist; bi = i; } });
-      if (bi === null || bd > 60) { hide(); return; }
-      const d = chartData[bi], px = xP(bi);
-      hL.setAttribute('x1', px); hL.setAttribute('x2', px); hL.style.opacity = '1';
-      tip.style.display = 'block';
-      tip.style.left = Math.min(mx + 14, rect.width - 120) + 'px';
-      tip.style.top  = (e.clientY - rect.top - 46) + 'px';
-      tip.innerHTML  = \`<span style="color:rgba(255,255,255,.4);font-size:9px;">\${d.m}</span>&nbsp;&nbsp;\${d.v} leads\`;
-    };
-    wrap.onmouseleave = hide;
-    function hide() { tip.style.display = 'none'; hL.style.opacity = '0'; }
   }
 
-  window.addEventListener('load', () => setTimeout(drawLeadsChart, 80));
-  window.addEventListener('resize', drawLeadsChart);
-  </script>
+  CHART_DATA.forEach((d, i) => {
+    const isCur = i === CHART_DATA.length - 1;
+    const t = document.createElementNS(ns, 'text');
+    t.setAttribute('x', xP(i)); t.setAttribute('y', H - PAD.b + 14);
+    t.setAttribute('text-anchor', 'middle');
+    t.setAttribute('fill', isCur ? AC : dim);
+    t.setAttribute('font-size', '10');
+    t.setAttribute('font-weight', isCur ? '700' : '500');
+    t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
+    t.textContent = d.m;
+    svg.appendChild(t);
+  });
+
+  function smooth(pts) {
+    let d = `M ${pts[0][0]} ${pts[0][1]}`;
+    for (let i = 1; i < pts.length; i++) {
+      const [x1,y1] = pts[i-1], [x2,y2] = pts[i], cx = (x1+x2)/2;
+      d += ` C ${cx} ${y1} ${cx} ${y2} ${x2} ${y2}`;
+    }
+    return d;
+  }
+
+  const pts   = CHART_DATA.map((d,i) => [xP(i), yP(d.v)]);
+  const pathD = smooth(pts);
+  const last  = pts[pts.length-1], first = pts[0];
+
+  const defs = document.createElementNS(ns,'defs');
+  const grad = document.createElementNS(ns,'linearGradient');
+  grad.setAttribute('id','lgF'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
+  grad.setAttribute('x2','0');   grad.setAttribute('y2','1');
+  [[0,'0.18'],[100,'0.01']].forEach(([off,op]) => {
+    const s = document.createElementNS(ns,'stop');
+    s.setAttribute('offset', off+'%'); s.setAttribute('stop-color', AC); s.setAttribute('stop-opacity', op);
+    grad.appendChild(s);
+  });
+  defs.appendChild(grad); svg.insertBefore(defs, svg.firstChild);
+
+  const area = document.createElementNS(ns,'path');
+  area.setAttribute('d', pathD + ` L ${last[0]} ${H-PAD.b} L ${first[0]} ${H-PAD.b} Z`);
+  area.setAttribute('fill','url(#lgF)'); svg.appendChild(area);
+
+  const line = document.createElementNS(ns,'path');
+  line.setAttribute('d', pathD); line.setAttribute('fill','none');
+  line.setAttribute('stroke', AC); line.setAttribute('stroke-width','2');
+  line.setAttribute('stroke-linecap','round'); svg.appendChild(line);
+
+  CHART_DATA.forEach((d,i) => {
+    const isCur = i === CHART_DATA.length - 1;
+    const dot = document.createElementNS(ns,'circle');
+    dot.setAttribute('cx', xP(i)); dot.setAttribute('cy', yP(d.v));
+    dot.setAttribute('r', isCur ? '5' : '3.5');
+    dot.setAttribute('fill', isCur ? AC : '#222');
+    dot.setAttribute('stroke', AC); dot.setAttribute('stroke-width','2');
+    if (isCur) dot.setAttribute('filter', `drop-shadow(0 0 6px ${ACA(0.7)})`);
+    svg.appendChild(dot);
+  });
+
+  const hL = document.createElementNS(ns,'line');
+  hL.setAttribute('stroke', ACA(0.2)); hL.setAttribute('stroke-width','1');
+  hL.setAttribute('y1', PAD.t); hL.setAttribute('y2', H - PAD.b);
+  hL.style.opacity = '0'; svg.appendChild(hL);
+
+  const tip = document.getElementById('ctip');
+  wrap.onmousemove = e => {
+    const rect = wrap.getBoundingClientRect(), mx = e.clientX - rect.left;
+    let bi = null, bd = Infinity;
+    CHART_DATA.forEach((d,i) => { const dist = Math.abs(xP(i)-mx); if (dist < bd) { bd=dist; bi=i; }});
+    if (bi===null || bd>60) { hide(); return; }
+    const d = CHART_DATA[bi], px = xP(bi);
+    hL.setAttribute('x1',px); hL.setAttribute('x2',px); hL.style.opacity='1';
+    tip.style.display='block';
+    tip.style.left = Math.min(mx+14, rect.width-110)+'px';
+    tip.style.top  = (e.clientY-rect.top-40)+'px';
+    tip.innerHTML  = `<span style="color:rgba(255,255,255,.4);font-size:9px;">${d.m}</span>&nbsp;&nbsp;${d.v} leads`;
+  };
+  wrap.onmouseleave = hide;
+  function hide() { tip.style.display='none'; hL.style.opacity='0'; }
+}
+
+// Use ResizeObserver so chart draws once the element has real width
+const ro = new ResizeObserver(() => drawLeadsChart());
+ro.observe(document.getElementById('cwrap'));
+window.addEventListener('resize', drawLeadsChart);
+</script>
 
 </body>
 </html>

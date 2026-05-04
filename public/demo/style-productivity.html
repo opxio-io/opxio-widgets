@@ -47,14 +47,14 @@
   .funnel-stage { font-size: 12px; font-weight: 600; color: var(--sub); }
   .funnel-count { font-size: 12px; font-weight: 800; }
   .funnel-pct { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 36px; text-align: right; }
-  .funnel-track { height: 26px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
+  .funnel-track { height: 26px; background: rgba(255,255,255,0.07); border-radius: 8px; overflow: hidden; }
   .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
-  .stage-incoming .funnel-fill  { background: rgba(255,255,255,0.18); }
-  .stage-contacted .funnel-fill { background: rgba(255,255,255,0.18); }
-  .stage-booked .funnel-fill    { background: rgba(255,255,255,0.18); }
-  .stage-done .funnel-fill      { background: rgba(255,255,255,0.18); }
-  .stage-proposal .funnel-fill  { background: rgba(255,255,255,0.18); }
+  .stage-incoming .funnel-fill  { background: rgba(255,255,255,0.32); }
+  .stage-contacted .funnel-fill { background: rgba(255,255,255,0.28); }
+  .stage-booked .funnel-fill    { background: rgba(255,255,255,0.25); }
+  .stage-done .funnel-fill      { background: rgba(255,255,255,0.22); }
+  .stage-proposal .funnel-fill  { background: rgba(255,255,255,0.20); }
   .stage-converted .funnel-fill { background: var(--g); }
   .funnel-dropped {
     display: flex; align-items: center; justify-content: space-between;
@@ -290,7 +290,7 @@
   <div class="kpi-card">
     <div class="kpi-label">Pipeline Value</div>
     <div class="kpi-val" style="font-size:28px">RM 284K</div>
-    <div class="kpi-sub">Active leads</div>
+    <div class="kpi-sub" style="display:flex;align-items:center;gap:6px;">Active leads <span style="color:#4ADE80;font-weight:700;font-size:11px;">↑ 12% vs Apr</span></div>
   </div>
 </div>
 
@@ -482,31 +482,31 @@
         <img class="src-icon" src="/icons/social/social.png" onerror="this.style.display='none'" />
         <span class="src-name">WhatsApp</span>
         <span class="src-count">24</span>
-        <span class="src-pill">8 closed</span>
+        <span class="src-pill">8 closed · 33%</span>
       </div>
       <div class="src-row">
         <img class="src-icon" src="/icons/social/instagram.png" onerror="this.style.display='none'" />
         <span class="src-name">Instagram</span>
         <span class="src-count">11</span>
-        <span class="src-pill">3 closed</span>
+        <span class="src-pill">3 closed · 27%</span>
       </div>
       <div class="src-row">
         <img class="src-icon" src="/icons/social/facebook.png" onerror="this.style.display='none'" />
         <span class="src-name">Facebook</span>
         <span class="src-count">7</span>
-        <span class="src-pill">1 closed</span>
+        <span class="src-pill">1 closed · 14%</span>
       </div>
       <div class="src-row">
         <img class="src-icon" src="/icons/social/shopee.png" onerror="this.style.display='none'" />
         <span class="src-name">Shopee</span>
         <span class="src-count">3</span>
-        <span class="src-pill zero">0 closed</span>
+        <span class="src-pill zero">0 closed · 0%</span>
       </div>
       <div class="src-row">
         <img class="src-icon" src="/icons/social/referral.png" onerror="this.style.display='none'" />
         <span class="src-name">Referral</span>
         <span class="src-count">2</span>
-        <span class="src-pill">1 closed</span>
+        <span class="src-pill">1 closed · 50%</span>
       </div>
     </div>
   </div>
@@ -580,13 +580,13 @@ function drawLeadsChart() {
   svg.setAttribute('width', W); svg.setAttribute('height', H);
   svg.innerHTML = '';
 
-  const PAD = {t:14, r:16, b:28, l:30};
+  const PAD = {t:14, r:16, b:28, l:36};
   const cW  = W - PAD.l - PAD.r;
   const cH  = H - PAD.t - PAD.b;
   const maxV = Math.max(...CHART_DATA.map(d => d.v), 1);
   const xP = i => PAD.l + (i / (CHART_DATA.length - 1)) * cW;
   const yP = v => PAD.t + cH - (v / maxV) * cH;
-  const dim  = 'rgba(255,255,255,.5)';
+  const dim  = 'rgba(255,255,255,.6)';
   const grid = 'rgba(255,255,255,.04)';
 
   for (let i = 0; i <= 4; i++) {
@@ -600,7 +600,7 @@ function drawLeadsChart() {
       const t = document.createElementNS(ns, 'text');
       t.setAttribute('x', PAD.l - 5); t.setAttribute('y', y + 4);
       t.setAttribute('text-anchor', 'end'); t.setAttribute('fill', dim);
-      t.setAttribute('font-size', '9'); t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
+      t.setAttribute('font-size', '11'); t.setAttribute('font-family', 'Satoshi,-apple-system,sans-serif');
       t.textContent = Math.round(maxV - (i / 4) * maxV);
       svg.appendChild(t);
     }

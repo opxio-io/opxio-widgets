@@ -14,8 +14,9 @@ const CrownSVG = () => (
     height={24}
     style={{
       position: 'absolute',
-      top: '-12px',
-      right: '14px',
+      top: '-16px',
+      left: '50%',
+      transform: 'translateX(-50%)',
       filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.6))',
       pointerEvents: 'none',
     }}

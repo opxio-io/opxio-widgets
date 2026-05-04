@@ -46,8 +46,9 @@
   .funnel-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .funnel-stage { font-size: 12px; font-weight: 600; color: var(--sub); }
   .funnel-count { font-size: 12px; font-weight: 800; }
-  .funnel-track { height: 18px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; }
-  .funnel-fill { height: 100%; border-radius: 6px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .funnel-pct { font-size: 10px; font-weight: 700; color: var(--muted); min-width: 36px; text-align: right; }
+  .funnel-track { height: 26px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
+  .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
   .stage-incoming .funnel-fill  { background: rgba(255,255,255,0.18); }
   .stage-contacted .funnel-fill { background: rgba(255,255,255,0.18); }
@@ -60,14 +61,15 @@
     margin-top: 14px; padding: 10px 14px;
     border-radius: 8px; border: 1px dashed rgba(255,255,255,0.08);
   }
-  .funnel-dropped-lbl { font-size: 11px; font-weight: 600; color: var(--muted); }
+  .funnel-dropped-lbl { font-size: 11px; font-weight: 700; color: var(--sub); }
   .funnel-dropped-tags { display: flex; gap: 6px; }
   .drop-tag {
-    font-size: 10px; font-weight: 700; padding: 2px 8px;
-    border-radius: 100px; background: rgba(255,255,255,0.05);
-    color: var(--muted);
+    font-size: 11px; font-weight: 700; padding: 4px 10px;
+    border-radius: 100px; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.1);
+    color: var(--sub);
   }
-  .drop-tag span { color: rgba(255,255,255,0.4); margin-left: 4px; }
+  .drop-tag span { color: rgba(255,255,255,0.5); margin-left: 4px; }
 
   /* Meetings Panel — Timeline style */
   .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin: -22px -24px 14px; padding: 16px 24px; border-bottom: 1px solid rgba(255,255,255,0.06); }
@@ -260,7 +262,11 @@
   <div class="top-bar-left">
     <div class="logo-dot"></div>
     <span class="client-name">Shin Supplies</span>
-    <div class="period-badge">May 2026</div>
+    <div style="display:flex;align-items:center;gap:0;background:var(--card);border:1px solid var(--border);border-radius:100px;overflow:hidden;">
+      <button onclick="shiftMonth(-1)" style="background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:13px;font-weight:700;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">‹</button>
+      <span id="period-lbl" style="font-size:12px;font-weight:600;color:var(--sub);padding:0 4px;">May 2026</span>
+      <button onclick="shiftMonth(1)" style="background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:13px;font-weight:700;transition:color 0.15s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.55)'">›</button>
+    </div>
   </div>
   <div class="period-badge"><span class="live-dot"></span>Live data</div>
 </div>
@@ -277,9 +283,9 @@
     <div class="kpi-sub">Deals won</div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">Conversion Rate</div>
-    <div class="kpi-val" style="font-size:34px">57%</div>
-    <div class="kpi-sub">Leads → Converted</div>
+    <div class="kpi-label">Proposal Win Rate</div>
+    <div class="kpi-val" style="font-size:34px">78%</div>
+    <div class="kpi-sub">7 of 9 proposals won</div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">Pipeline Value</div>
@@ -295,28 +301,33 @@
       <span class="section-label">Current month leads</span>
     </div>
     <div class="funnel-item stage-incoming">
-      <div class="funnel-meta"><span class="funnel-stage">Incoming</span><span class="funnel-count">47</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Incoming</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">47</span><span class="funnel-pct">100%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:100%"></div></div>
     </div>
     <div class="funnel-item stage-contacted">
-      <div class="funnel-meta"><span class="funnel-stage">Contacted</span><span class="funnel-count">31</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Contacted</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">31</span><span class="funnel-pct">66%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:66%"></div></div>
     </div>
     <div class="funnel-item stage-booked">
-      <div class="funnel-meta"><span class="funnel-stage">Discovery Booked</span><span class="funnel-count">18</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Discovery Booked</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">18</span><span class="funnel-pct">38%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:38%"></div></div>
     </div>
     <div class="funnel-item stage-done">
-      <div class="funnel-meta"><span class="funnel-stage">Discovery Done</span><span class="funnel-count">12</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Discovery Done</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">12</span><span class="funnel-pct">26%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:26%"></div></div>
     </div>
     <div class="funnel-item stage-proposal">
-      <div class="funnel-meta"><span class="funnel-stage">Proposal Sent</span><span class="funnel-count">9</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Proposal Sent</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">9</span><span class="funnel-pct">19%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:19%"></div></div>
     </div>
     <div class="funnel-item stage-converted">
-      <div class="funnel-meta"><span class="funnel-stage">Converted</span><span class="funnel-count">7</span></div>
+      <div class="funnel-meta"><span class="funnel-stage">Converted</span><div style="display:flex;align-items:center;gap:8px"><span class="funnel-count">7</span><span class="funnel-pct">15%</span></div></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:15%"></div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;margin-top:14px;padding:10px 12px;border-radius:8px;background:rgba(255,179,64,0.07);border:1px solid rgba(255,179,64,0.18);">
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--amber);flex-shrink:0;box-shadow:0 0 6px rgba(255,179,64,0.5);"></div>
+      <span style="font-size:12px;font-weight:700;color:var(--amber);">6 leads overdue</span>
+      <span style="font-size:11px;color:rgba(255,179,64,0.6);font-weight:500;">— not contacted in 3+ days</span>
     </div>
     <div class="funnel-dropped">
       <span class="funnel-dropped-lbl">Dropped this month</span>
@@ -514,7 +525,7 @@
         <div class="rep-sub">14 leads · Sales Rep</div>
         <div class="rep-prog-track"><div class="rep-prog-fill pf-1" style="width:100%"></div></div>
       </div>
-      <div class="rep-stat-block"><span class="rep-stat-won c1">7</span><span class="rep-stat-rate">71% close rate</span></div>
+      <div class="rep-stat-block"><span class="rep-stat-won c1">7</span><span class="rep-stat-rate">50% close rate</span></div>
     </div>
     <div class="rep-row">
       <div class="rep-rank-num">02</div>
@@ -524,7 +535,7 @@
         <div class="rep-sub">11 leads · Sales Rep</div>
         <div class="rep-prog-track"><div class="rep-prog-fill pf-2" style="width:72%"></div></div>
       </div>
-      <div class="rep-stat-block"><span class="rep-stat-won">5</span><span class="rep-stat-rate">58% close rate</span></div>
+      <div class="rep-stat-block"><span class="rep-stat-won">5</span><span class="rep-stat-rate">45% close rate</span></div>
     </div>
     <div class="rep-row">
       <div class="rep-rank-num">03</div>
@@ -534,7 +545,7 @@
         <div class="rep-sub">10 leads · Sales Rep</div>
         <div class="rep-prog-track"><div class="rep-prog-fill pf-3" style="width:57%"></div></div>
       </div>
-      <div class="rep-stat-block"><span class="rep-stat-won">4</span><span class="rep-stat-rate">44% close rate</span></div>
+      <div class="rep-stat-block"><span class="rep-stat-won">4</span><span class="rep-stat-rate">40% close rate</span></div>
     </div>
     <div class="rep-row">
       <div class="rep-rank-num">04</div>
@@ -575,7 +586,7 @@ function drawLeadsChart() {
   const maxV = Math.max(...CHART_DATA.map(d => d.v), 1);
   const xP = i => PAD.l + (i / (CHART_DATA.length - 1)) * cW;
   const yP = v => PAD.t + cH - (v / maxV) * cH;
-  const dim  = 'rgba(255,255,255,.3)';
+  const dim  = 'rgba(255,255,255,.5)';
   const grid = 'rgba(255,255,255,.04)';
 
   for (let i = 0; i <= 4; i++) {
@@ -680,5 +691,16 @@ ro.observe(document.getElementById('cwrap'));
 window.addEventListener('resize', drawLeadsChart);
 </script>
 
+
+<script>
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+let curMonth = 4, curYear = 2026; // 0-indexed month = May
+function shiftMonth(dir) {
+  curMonth += dir;
+  if (curMonth < 0) { curMonth = 11; curYear--; }
+  if (curMonth > 11) { curMonth = 0; curYear++; }
+  document.getElementById('period-lbl').textContent = MONTHS[curMonth] + ' ' + curYear;
+}
+</script>
 </body>
 </html>

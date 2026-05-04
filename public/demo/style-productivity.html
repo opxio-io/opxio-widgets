@@ -46,8 +46,8 @@
   .funnel-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
   .funnel-stage { font-size: 12px; font-weight: 600; color: var(--sub); }
   .funnel-count { font-size: 12px; font-weight: 800; }
-  .funnel-track { height: 28px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
-  .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .funnel-track { height: 18px; background: rgba(255,255,255,0.04); border-radius: 6px; overflow: hidden; }
+  .funnel-fill { height: 100%; border-radius: 6px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
   .stage-incoming .funnel-fill  { background: rgba(255,255,255,0.18); }
   .stage-contacted .funnel-fill { background: rgba(255,255,255,0.18); }
@@ -221,6 +221,23 @@
   .src-count { font-size: 16px; font-weight: 900; letter-spacing:-0.5px; }
   .src-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; background: rgba(184,255,64,0.12); color: var(--g); }
   .src-pill.zero { background: rgba(255,255,255,0.06); color: var(--muted); }
+
+  /* Day tabs */
+  .day-tabs { display: flex; gap: 4px; margin-bottom: 12px; }
+  .day-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 2px; padding: 7px 4px; border-radius: 8px; cursor: pointer;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    transition: all 0.15s;
+  }
+  .day-tab:hover:not(.active) { background: rgba(255,255,255,0.06); }
+  .day-tab.active { background: var(--g); border-color: transparent; }
+  .day-tab.active .dt-name { color: rgba(0,0,0,0.5); }
+  .day-tab.active .dt-num  { color: #000; }
+  .dt-name { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.06em; color: var(--muted); }
+  .dt-num  { font-size: 13px; font-weight: 900; color: var(--sub); }
+  .day-tab.has-events:not(.active) .dt-num { color: var(--text); }
 </style>
 </head>
 <body>
@@ -298,8 +315,17 @@
 
   <div class="section-card">
     <div class="meet-hdr">
-      <span class="section-title">Today's Schedule</span>
-      <span class="meet-today-lbl">Tue, 5 May</span>
+      <span class="section-title">Schedule</span>
+      <span class="meet-today-lbl" id="cal-date-lbl">Tue, 5 May</span>
+    </div>
+
+    <!-- Day tabs -->
+    <div class="day-tabs">
+      <div class="day-tab has-events" onclick="switchDay(0)"><span class="dt-name">Mon</span><span class="dt-num">4</span></div>
+      <div class="day-tab has-events active" onclick="switchDay(1)"><span class="dt-name">Tue</span><span class="dt-num">5</span></div>
+      <div class="day-tab has-events" onclick="switchDay(2)"><span class="dt-name">Wed</span><span class="dt-num">6</span></div>
+      <div class="day-tab has-events" onclick="switchDay(3)"><span class="dt-name">Thu</span><span class="dt-num">7</span></div>
+      <div class="day-tab" onclick="switchDay(4)"><span class="dt-name">Fri</span><span class="dt-num">8</span></div>
     </div>
 
     <!-- Timeline -->
@@ -308,73 +334,97 @@
         <span class="cal-time-lbl">9:00</span>
         <span class="cal-time-lbl">10:00</span>
         <span class="cal-time-lbl">11:00</span>
-        <span class="cal-time-lbl now-lbl">12:30</span>
+        <span class="cal-time-lbl now-lbl" id="now-lbl">12:30</span>
         <span class="cal-time-lbl">13:00</span>
         <span class="cal-time-lbl">14:00</span>
         <span class="cal-time-lbl">15:00</span>
         <span class="cal-time-lbl">16:00</span>
       </div>
-      <div class="cal-grid">
-        <div class="now-line"></div>
-        <!-- Discovery Call 10:00–11:00 → left 12.5%, width 12.5% -->
-        <div class="cal-event ev-discovery" style="left:12.5%;width:12.5%">
-          <div class="cal-event-title">Discovery Call</div>
-          <div class="cal-event-sub">Hafiz · 10:00–11:00</div>
-        </div>
-        <!-- Proposal 11:30–12:30 → left 31.25%, width 12.5% -->
-        <div class="cal-event ev-proposal" style="left:31.25%;width:12.5%">
-          <div class="cal-event-title">Proposal Review</div>
-          <div class="cal-event-sub">Lina · 11:30–12:30</div>
-        </div>
-        <!-- Follow-up 13:30–14:30 → left 56.25%, width 12.5% -->
-        <div class="cal-event ev-followup" style="left:56.25%;width:12.5%">
-          <div class="cal-event-title">Follow-up Call</div>
-          <div class="cal-event-sub">Razif · 13:30–14:30</div>
-        </div>
-        <!-- Closing 15:00–16:00 → left 75%, width 12.5% -->
-        <div class="cal-event ev-closing" style="left:75%;width:12.5%">
-          <div class="cal-event-title">Closing Call</div>
-          <div class="cal-event-sub">Syira · 15:00–16:00</div>
-        </div>
+      <div class="cal-grid" id="cal-grid">
+        <div class="now-line" id="now-line"></div>
+        <div id="cal-events"></div>
       </div>
     </div>
 
-    <!-- Upcoming list -->
-    <div class="meet-list">
-      <div class="meet-item active">
-        <div class="meet-dot dot-discovery"></div>
-        <div class="meet-body">
-          <div class="meet-name">Discovery Call — Hafiz Rahman</div>
-          <div class="meet-contact">Creativo Studio</div>
-        </div>
-        <span class="meet-time-badge">10:00 AM</span>
-      </div>
-      <div class="meet-item">
-        <div class="meet-dot dot-proposal"></div>
-        <div class="meet-body">
-          <div class="meet-name">Proposal Review — Lina Tan</div>
-          <div class="meet-contact">Brandcraft Agency</div>
-        </div>
-        <span class="meet-time-badge">11:30 AM</span>
-      </div>
-      <div class="meet-item">
-        <div class="meet-dot dot-followup"></div>
-        <div class="meet-body">
-          <div class="meet-name">Follow-up Call — Razif Omar</div>
-          <div class="meet-contact">Omegas Digital</div>
-        </div>
-        <span class="meet-time-badge">1:30 PM</span>
-      </div>
-      <div class="meet-item">
-        <div class="meet-dot dot-closing"></div>
-        <div class="meet-body">
-          <div class="meet-name">Closing Call — Syira Malik</div>
-          <div class="meet-contact">Pixelhaus KL</div>
-        </div>
-        <span class="meet-time-badge">3:00 PM</span>
-      </div>
-    </div>
+    <!-- Meeting list -->
+    <div class="meet-list" id="meet-list"></div>
   </div>
+
+  <script>
+  const DAYS = [
+    { label: 'Mon, 4 May', showNow: false, events: [
+      { type:'followup',  title:'Follow-up Call',    sub:'Amir · 9:30–10:00',  left:6.25,  width:6.25,  row:'top', name:'Follow-up — Amir Fadzil',    co:'Nexus Creative',    time:'9:30 AM'  },
+      { type:'discovery', title:'Discovery Call',    sub:'Priya · 11:00–12:00', left:25,    width:12.5,  row:'top', name:'Discovery — Priya Nair',     co:'Bold Studio KL',    time:'11:00 AM' },
+    ]},
+    { label: 'Tue, 5 May', showNow: true, events: [
+      { type:'discovery', title:'Discovery Call',    sub:'Hafiz · 10:00–11:00', left:12.5,  width:12.5,  row:'top', name:'Discovery — Hafiz Rahman',   co:'Creativo Studio',   time:'10:00 AM' },
+      { type:'proposal',  title:'Proposal Review',   sub:'Lina · 11:30–12:30',  left:31.25, width:12.5,  row:'bot', name:'Proposal — Lina Tan',        co:'Brandcraft Agency', time:'11:30 AM' },
+      { type:'followup',  title:'Follow-up Call',    sub:'Razif · 13:30–14:30', left:56.25, width:12.5,  row:'top', name:'Follow-up — Razif Omar',     co:'Omegas Digital',    time:'1:30 PM'  },
+      { type:'closing',   title:'Closing Call',      sub:'Syira · 15:00–16:00', left:75,    width:12.5,  row:'bot', name:'Closing — Syira Malik',      co:'Pixelhaus KL',      time:'3:00 PM'  },
+    ]},
+    { label: 'Wed, 6 May', showNow: false, events: [
+      { type:'discovery', title:'Discovery Call',    sub:'Kevin · 10:00–11:00', left:12.5,  width:12.5,  row:'top', name:'Discovery — Kevin Loh',      co:'Framehaus Studio',  time:'10:00 AM' },
+      { type:'followup',  title:'Follow-up',         sub:'Nur · 14:00–14:30',   left:62.5,  width:6.25,  row:'top', name:'Follow-up — Nur Aisyah',     co:'Grids Agency',      time:'2:00 PM'  },
+    ]},
+    { label: 'Thu, 7 May', showNow: false, events: [
+      { type:'proposal',  title:'Proposal Walkthrough', sub:'Sam · 11:00–12:00', left:25,   width:12.5,  row:'top', name:'Proposal — Sam Yuen',        co:'Motif Creative',    time:'11:00 AM' },
+      { type:'closing',   title:'Closing Call',      sub:'Dana · 15:30–16:30', left:81.25, width:12.5,  row:'top', name:'Closing — Dana Razak',       co:'Kreativ House',     time:'3:30 PM'  },
+    ]},
+    { label: 'Fri, 8 May', showNow: false, events: [] },
+  ];
+
+  const typeColors = {
+    discovery: 'ev-discovery', proposal: 'ev-proposal',
+    followup:  'ev-followup',  closing:  'ev-closing',
+  };
+  const dotColors = {
+    discovery: 'dot-discovery', proposal: 'dot-proposal',
+    followup:  'dot-followup',  closing:  'dot-closing',
+  };
+
+  function switchDay(idx) {
+    // Update tabs
+    document.querySelectorAll('.day-tab').forEach((t,i) => t.classList.toggle('active', i===idx));
+    const day = DAYS[idx];
+    document.getElementById('cal-date-lbl').textContent = day.label;
+
+    // Now line
+    const nowLine = document.getElementById('now-line');
+    const nowLbl  = document.getElementById('now-lbl');
+    nowLine.style.display = day.showNow ? 'block' : 'none';
+    nowLbl.style.display  = day.showNow ? 'inline' : 'none';
+
+    // Events
+    const grid = document.getElementById('cal-events');
+    grid.innerHTML = day.events.map(e => {
+      const top = e.row === 'top' ? '8px' : '58px';
+      return `<div class="cal-event ${typeColors[e.type]}" style="left:${e.left}%;width:${e.width}%;top:${top}">
+        <div class="cal-event-title">${e.title}</div>
+        <div class="cal-event-sub">${e.sub}</div>
+      </div>`;
+    }).join('');
+
+    // List
+    const list = document.getElementById('meet-list');
+    if (day.events.length === 0) {
+      list.innerHTML = '<div style="text-align:center;padding:20px 0;font-size:12px;color:rgba(255,255,255,0.2);font-weight:600;">No meetings scheduled</div>';
+    } else {
+      list.innerHTML = day.events.map((e,i) =>
+        `<div class="meet-item${i===0&&day.showNow?' active':''}">
+          <div class="meet-dot ${dotColors[e.type]}"></div>
+          <div class="meet-body">
+            <div class="meet-name">${e.name}</div>
+            <div class="meet-contact">${e.co}</div>
+          </div>
+          <span class="meet-time-badge">${e.time}</span>
+        </div>`
+      ).join('');
+    }
+  }
+
+  // Init on Tuesday
+  switchDay(1);
+  </script>
 </div>
 
 <div class="bottom-grid">

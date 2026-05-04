@@ -49,12 +49,12 @@
   .funnel-track { height: 28px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
   .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
-  .stage-new .funnel-fill { background: var(--g); }
-  .stage-quote .funnel-fill { background: #6EC6FF; }
-  .stage-neg .funnel-fill { background: var(--amber); }
-  .stage-so .funnel-fill { background: #B88EFF; }
-  .stage-won .funnel-fill { background: var(--g); opacity:0.7; }
-  .stage-lost .funnel-fill { background: rgba(255,255,255,0.12); }
+  .stage-new .funnel-fill  { background: rgba(255,255,255,0.18); }
+  .stage-quote .funnel-fill { background: rgba(255,255,255,0.18); }
+  .stage-neg .funnel-fill  { background: rgba(255,255,255,0.18); }
+  .stage-so .funnel-fill   { background: rgba(255,255,255,0.18); }
+  .stage-won .funnel-fill  { background: var(--g); }
+  .stage-lost .funnel-fill { background: rgba(255,255,255,0.07); }
 
   .live-stack { display: flex; flex-direction: column; gap: 10px; }
   .live-item { background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
@@ -110,22 +110,22 @@
     width: 42px; height: 42px; border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 13px; font-weight: 900; letter-spacing: -0.5px;
-    color: rgba(0,0,0,0.75); flex-shrink: 0;
+    color: rgba(255,255,255,0.5); flex-shrink: 0;
   }
-  .av-1 { background: linear-gradient(135deg, #70E000, #CCFF00); }
-  .av-2 { background: linear-gradient(135deg, #4F8EF7, #A78BFA); }
-  .av-3 { background: linear-gradient(135deg, #FB923C, #FBBF24); }
-  .av-4 { background: linear-gradient(135deg, #F472B6, #C084FC); }
+  .av-1 { background: rgba(184,255,64,0.12); color: var(--g); }
+  .av-2 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
+  .av-3 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
+  .av-4 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
 
   .rep-mid { min-width: 0; }
   .rep-name-txt { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .rep-sub { font-size: 10px; font-weight: 600; color: var(--muted); margin-bottom: 9px; }
   .rep-prog-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
   .rep-prog-fill { height: 100%; border-radius: 100px; transition: width 0.7s cubic-bezier(0.4,0,0.2,1); }
-  .pf-1 { background: linear-gradient(90deg, #70E000, #CCFF00); }
-  .pf-2 { background: linear-gradient(90deg, #4F8EF7, #A78BFA); }
-  .pf-3 { background: linear-gradient(90deg, #FB923C, #FBBF24); }
-  .pf-4 { background: linear-gradient(90deg, #F472B6, #C084FC); }
+  .pf-1 { background: var(--g); }
+  .pf-2 { background: rgba(255,255,255,0.2); }
+  .pf-3 { background: rgba(255,255,255,0.2); }
+  .pf-4 { background: rgba(255,255,255,0.2); }
 
   .rep-stat-block { text-align: right; }
   .rep-stat-won { font-size: 20px; font-weight: 900; letter-spacing: -1px; line-height: 1; display: block; }
@@ -217,21 +217,21 @@
           <span class="live-item-lbl">Follow-ups due today</span>
           <span class="live-item-val ok">8</span>
         </div>
-        <div class="live-icon green">🔔</div>
+        
       </div>
       <div class="live-item">
         <div class="live-item-left">
           <span class="live-item-lbl">Follow-ups next 3 days</span>
           <span class="live-item-val" style="color:var(--sub)">15</span>
         </div>
-        <div class="live-icon green">📅</div>
+        
       </div>
       <div class="live-item">
         <div class="live-item-left">
           <span class="live-item-lbl">Overdue response</span>
           <span class="live-item-val warn">3</span>
         </div>
-        <div class="live-icon amber">⚠️</div>
+        
       </div>
     </div>
   </div>

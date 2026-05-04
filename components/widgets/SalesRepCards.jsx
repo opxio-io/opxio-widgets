@@ -4,19 +4,17 @@ import s from '@/styles/widget.module.css'
 
 const PAGE_SIZE = 4
 
-// Crown icon — positioned on top edge of card
-// NOTE: replace /icons/crown.png with actual file once added to public/icons/
-const CrownSVG = () => (
+// Crown — absolutely positioned on top edge above #1 rank badge
+const Crown = () => (
   <img
     src="/icons/crown.png"
     alt="crown"
-    width={24}
-    height={24}
+    width={22}
+    height={22}
     style={{
       position: 'absolute',
-      top: '-16px',
-      left: '50%',
-      transform: 'translateX(-50%)',
+      top: '-14px',
+      right: '10px',
       filter: 'drop-shadow(0 1px 3px rgba(0,0,0,.6))',
       pointerEvents: 'none',
     }}
@@ -63,9 +61,7 @@ export default function SalesRepCards({ reps = [], monthLabel, empty }) {
                   className={`${s.repCard}${isLeader ? ` ${s.repLeader}` : ''}`}
                   style={{ position: 'relative' }}
                 >
-                  {isLeader && <CrownSVG />}
-
-                  {/* Header */}
+                  {/* Header */
                   <div className={s.repCardHdr}>
                     <div className={s.repCardName}>{rep.name}</div>
                     <span className={s.repRank}>#{globalRank}</span>

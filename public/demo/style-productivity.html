@@ -69,23 +69,50 @@
 
   .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 
-  .reps-grid { display: flex; flex-direction: column; gap: 10px; }
-  .rep-row { display: flex; align-items: center; gap: 14px; }
-  .rep-rank { width: 24px; text-align: center; font-size: 11px; font-weight: 800; color: var(--muted); flex-shrink: 0; }
+  .reps-grid { display: flex; flex-direction: column; gap: 8px; }
+  .rep-card {
+    display: flex; align-items: center; gap: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px; padding: 14px 16px;
+    position: relative; overflow: hidden;
+    transition: border-color 0.2s;
+  }
+  .rep-card.leader {
+    background: rgba(184,255,64,0.05);
+    border-color: rgba(184,255,64,0.25);
+  }
+  .rep-card.leader::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--g); border-radius: 12px 0 0 12px;
+  }
+  .rep-rank {
+    font-size: 11px; font-weight: 800; color: var(--muted);
+    width: 20px; text-align: center; flex-shrink: 0;
+  }
   .rep-rank.gold { color: var(--g); }
-  .rep-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--sub); flex-shrink: 0; }
-  .rep-avatar.leader { background: rgba(184,255,64,0.15); color: var(--g); }
+  .rep-avatar {
+    width: 38px; height: 38px; border-radius: 10px;
+    background: rgba(255,255,255,0.07);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 800; color: var(--sub); flex-shrink: 0;
+    letter-spacing: -0.5px;
+  }
+  .rep-avatar.leader { background: rgba(184,255,64,0.15); color: var(--g); border-radius: 10px; }
   .rep-info { flex: 1; min-width: 0; }
-  .rep-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .rep-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
-  .rep-bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s ease; }
+  .rep-name-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .rep-name { font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rep-acts { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .rep-bar-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+  .rep-bar-fill { height: 100%; border-radius: 100px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .rep-bar-fill.leader { background: var(--g); }
-  .rep-bar-fill.other { background: rgba(255,255,255,0.25); }
-  .rep-stats { display: flex; gap: 14px; flex-shrink: 0; }
-  .rep-stat { text-align: right; }
-  .rep-stat-val { font-size: 14px; font-weight: 800; display: block; }
+  .rep-bar-fill.other { background: rgba(255,255,255,0.2); }
+  .rep-stats { display: flex; gap: 18px; flex-shrink: 0; text-align: right; }
+  .rep-stat { }
+  .rep-stat-val { font-size: 18px; font-weight: 900; letter-spacing: -0.8px; display: block; line-height: 1.1; }
   .rep-stat-val.leader { color: var(--g); }
-  .rep-stat-lbl { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing:.08em; display: block; }
+  .rep-stat-lbl { font-size: 9px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing:.09em; display: block; margin-top: 1px; }
 
   .sources-grid { display: flex; flex-direction: column; gap: 8px; }
   .src-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; }
@@ -199,11 +226,14 @@
       <span class="section-label">By leads closed</span>
     </div>
     <div class="reps-grid">
-      <div class="rep-row">
+      <div class="rep-card leader">
         <div class="rep-rank gold">#1</div>
         <div class="rep-avatar leader">FA</div>
         <div class="rep-info">
-          <div class="rep-name">Fara Ain</div>
+          <div class="rep-name-row">
+            <span class="rep-name">Fara Ain</span>
+            <span class="rep-acts">14 leads</span>
+          </div>
           <div class="rep-bar-track"><div class="rep-bar-fill leader" style="width:100%"></div></div>
         </div>
         <div class="rep-stats">
@@ -211,11 +241,14 @@
           <div class="rep-stat"><span class="rep-stat-val leader">71%</span><span class="rep-stat-lbl">rate</span></div>
         </div>
       </div>
-      <div class="rep-row">
+      <div class="rep-card">
         <div class="rep-rank">#2</div>
         <div class="rep-avatar">ZH</div>
         <div class="rep-info">
-          <div class="rep-name">Zara Hana</div>
+          <div class="rep-name-row">
+            <span class="rep-name">Zara Hana</span>
+            <span class="rep-acts">11 leads</span>
+          </div>
           <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:72%"></div></div>
         </div>
         <div class="rep-stats">
@@ -223,11 +256,14 @@
           <div class="rep-stat"><span class="rep-stat-val">58%</span><span class="rep-stat-lbl">rate</span></div>
         </div>
       </div>
-      <div class="rep-row">
+      <div class="rep-card">
         <div class="rep-rank">#3</div>
         <div class="rep-avatar">AM</div>
         <div class="rep-info">
-          <div class="rep-name">Ahmad Muiz</div>
+          <div class="rep-name-row">
+            <span class="rep-name">Ahmad Muiz</span>
+            <span class="rep-acts">10 leads</span>
+          </div>
           <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:57%"></div></div>
         </div>
         <div class="rep-stats">
@@ -235,11 +271,14 @@
           <div class="rep-stat"><span class="rep-stat-val">44%</span><span class="rep-stat-lbl">rate</span></div>
         </div>
       </div>
-      <div class="rep-row">
+      <div class="rep-card">
         <div class="rep-rank">#4</div>
         <div class="rep-avatar">RN</div>
         <div class="rep-info">
-          <div class="rep-name">Rina Nor</div>
+          <div class="rep-name-row">
+            <span class="rep-name">Rina Nor</span>
+            <span class="rep-acts">8 leads</span>
+          </div>
           <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:43%"></div></div>
         </div>
         <div class="rep-stats">

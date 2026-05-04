@@ -49,13 +49,25 @@
   .funnel-track { height: 28px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
   .funnel-fill { height: 100%; border-radius: 8px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
   .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
-  .stage-incoming .funnel-fill    { background: rgba(255,255,255,0.18); }
-  .stage-contacted .funnel-fill   { background: rgba(255,255,255,0.18); }
-  .stage-booked .funnel-fill      { background: rgba(255,255,255,0.18); }
-  .stage-done .funnel-fill        { background: rgba(255,255,255,0.18); }
-  .stage-converted .funnel-fill   { background: var(--g); }
-  .stage-ghosted .funnel-fill     { background: rgba(255,255,255,0.07); }
-  .stage-unqualified .funnel-fill { background: rgba(255,255,255,0.05); }
+  .stage-incoming .funnel-fill  { background: rgba(255,255,255,0.18); }
+  .stage-contacted .funnel-fill { background: rgba(255,255,255,0.18); }
+  .stage-booked .funnel-fill    { background: rgba(255,255,255,0.18); }
+  .stage-done .funnel-fill      { background: rgba(255,255,255,0.18); }
+  .stage-proposal .funnel-fill  { background: rgba(255,255,255,0.18); }
+  .stage-converted .funnel-fill { background: var(--g); }
+  .funnel-dropped {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 14px; padding: 10px 14px;
+    border-radius: 8px; border: 1px dashed rgba(255,255,255,0.08);
+  }
+  .funnel-dropped-lbl { font-size: 11px; font-weight: 600; color: var(--muted); }
+  .funnel-dropped-tags { display: flex; gap: 6px; }
+  .drop-tag {
+    font-size: 10px; font-weight: 700; padding: 2px 8px;
+    border-radius: 100px; background: rgba(255,255,255,0.05);
+    color: var(--muted);
+  }
+  .drop-tag span { color: rgba(255,255,255,0.4); margin-left: 4px; }
 
   /* Meetings Panel */
   .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
@@ -240,17 +252,21 @@
       <div class="funnel-meta"><span class="funnel-stage">Discovery Done</span><span class="funnel-count">12</span></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:26%"></div></div>
     </div>
+    <div class="funnel-item stage-proposal">
+      <div class="funnel-meta"><span class="funnel-stage">Proposal Sent</span><span class="funnel-count">9</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:19%"></div></div>
+    </div>
     <div class="funnel-item stage-converted">
       <div class="funnel-meta"><span class="funnel-stage">Converted</span><span class="funnel-count">7</span></div>
       <div class="funnel-track"><div class="funnel-fill" style="width:15%"></div></div>
     </div>
-    <div class="funnel-item stage-ghosted">
-      <div class="funnel-meta"><span class="funnel-stage">Ghosted</span><span class="funnel-count">6</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:13%"></div></div>
-    </div>
-    <div class="funnel-item stage-unqualified">
-      <div class="funnel-meta"><span class="funnel-stage">Unqualified</span><span class="funnel-count">4</span></div>
-      <div class="funnel-track"><div class="funnel-fill" style="width:9%"></div></div>
+    <div class="funnel-dropped">
+      <span class="funnel-dropped-lbl">Dropped this month</span>
+      <div class="funnel-dropped-tags">
+        <span class="drop-tag">Ghosted<span>6</span></span>
+        <span class="drop-tag">Unqualified<span>4</span></span>
+        <span class="drop-tag">Not interested<span>3</span></span>
+      </div>
     </div>
   </div>
 

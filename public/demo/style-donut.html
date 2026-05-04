@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shin Supplies — Style B: Ring Stats</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0F0F14; --card: #16161e; --border: rgba(255,255,255,0.06);
+    --g: #AAFF00; --amber: #FFAA33; --blue: #5B9EFF; --purple: #9D7FFF;
+    --text: #ffffff; --muted: rgba(255,255,255,0.35); --sub: rgba(255,255,255,0.55);
+    --r: 20px;
+  }
+  body { background: var(--bg); font-family: 'Satoshi', sans-serif; color: var(--text); min-height: 100vh; padding: 28px; }
+
+  .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+  .header-left { display: flex; align-items: center; gap: 10px; }
+  .header-pill { background: rgba(170,255,0,0.1); border: 1px solid rgba(170,255,0,0.2); border-radius: 100px; padding: 5px 12px; font-size: 11px; font-weight: 700; color: var(--g); letter-spacing:.08em; }
+  .header-title { font-size: 18px; font-weight: 900; letter-spacing:-0.5px; }
+  .header-sub { font-size: 12px; font-weight: 500; color: var(--muted); }
+  .upd { font-size: 11px; color: var(--muted); font-weight: 500; }
+
+  .row1 { display: grid; grid-template-columns: 280px 1fr; gap: 16px; margin-bottom: 16px; }
+
+  .ring-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 28px 24px; display: flex; flex-direction: column; align-items: center; }
+  .ring-title { font-size: 11px; font-weight: 700; color: var(--muted); letter-spacing:.1em; text-transform: uppercase; margin-bottom: 20px; }
+  .ring-wrap { position: relative; width: 180px; height: 180px; margin-bottom: 22px; }
+  .ring-wrap svg { transform: rotate(-90deg); }
+  .ring-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .ring-big { font-size: 40px; font-weight: 900; letter-spacing:-2px; color: var(--g); }
+  .ring-lbl { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 2px; }
+  .ring-legend { width: 100%; display: flex; flex-direction: column; gap: 8px; }
+  .legend-row { display: flex; align-items: center; gap: 10px; }
+  .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .legend-name { font-size: 12px; font-weight: 600; color: var(--sub); flex: 1; }
+  .legend-n { font-size: 12px; font-weight: 800; }
+
+  .stats-grid { display: grid; grid-template-columns: repeat(3,1fr); grid-template-rows: repeat(2,1fr); gap: 12px; }
+  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; }
+  .stat-card::after { content:''; position: absolute; bottom:0; left:0; right:0; height:3px; border-radius: 0 0 16px 16px; }
+  .stat-card.c-g::after { background: var(--g); }
+  .stat-card.c-b::after { background: var(--blue); }
+  .stat-card.c-a::after { background: var(--amber); }
+  .stat-card.c-p::after { background: var(--purple); }
+  .stat-card.c-w::after { background: rgba(255,255,255,0.2); }
+  .stat-eyebrow { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .stat-val { font-size: 36px; font-weight: 900; letter-spacing:-2px; line-height:1; }
+  .stat-val.c-g { color: var(--g); }
+  .stat-val.c-b { color: var(--blue); }
+  .stat-val.c-a { color: var(--amber); }
+  .stat-val.c-p { color: var(--purple); }
+  .stat-sub { font-size: 11px; font-weight: 500; color: var(--muted); margin-top: 6px; }
+
+  .row2 { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; }
+  .section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+  .section-ttl { font-size: 13px; font-weight: 700; }
+  .section-sub { font-size: 11px; color: var(--muted); font-weight: 600; }
+
+  .rep-list { display: flex; flex-direction: column; gap: 14px; }
+  .rep-item { display: flex; align-items: center; gap: 12px; }
+  .rep-num { font-size: 11px; font-weight: 800; color: var(--muted); width: 20px; flex-shrink:0; }
+  .rep-num.g { color: var(--g); }
+  .rep-info { flex:1; min-width:0; }
+  .rep-name-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .rep-nm { font-size: 13px; font-weight: 700; }
+  .rep-acts { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .rep-track { height: 5px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+  .rep-fill { height: 100%; border-radius: 100px; }
+  .rep-fill.g { background: var(--g); }
+  .rep-fill.o { background: rgba(255,255,255,0.18); }
+  .rep-right { text-align: right; flex-shrink:0; }
+  .rep-won { font-size: 16px; font-weight: 900; display: block; letter-spacing:-0.5px; }
+  .rep-won.g { color: var(--g); }
+  .rep-rate { font-size: 10px; font-weight: 700; color: var(--muted); display: block; }
+
+  .src-grid { display: flex; flex-direction: column; gap: 8px; }
+  .src-item { display: flex; align-items: center; gap: 12px; padding: 10px 12px; background: rgba(255,255,255,0.025); border: 1px solid var(--border); border-radius: 12px; }
+  .src-img { width: 26px; height: 26px; border-radius: 7px; object-fit: contain; background: rgba(255,255,255,0.06); padding: 4px; flex-shrink:0; }
+  .src-nm { font-size: 12px; font-weight: 600; color: var(--sub); flex:1; }
+  .src-bar-wrap { width: 80px; }
+  .src-bar-track { height: 4px; background: rgba(255,255,255,0.06); border-radius: 100px; margin-bottom: 4px; overflow: hidden; }
+  .src-bar-fill { height: 100%; border-radius: 100px; background: var(--g); }
+  .src-bar-pct { font-size: 10px; font-weight: 700; color: var(--muted); text-align: right; display: block; }
+  .src-n { font-size: 15px; font-weight: 900; letter-spacing:-0.5px; flex-shrink:0; width:28px; text-align:right; }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="header-left">
+    <div class="header-pill">CRM</div>
+    <div>
+      <div class="header-title">Shin Supplies</div>
+      <div class="header-sub">Sales Pipeline — May 2026</div>
+    </div>
+  </div>
+  <div class="upd">Updated just now</div>
+</div>
+
+<div class="row1">
+  <div class="ring-card">
+    <div class="ring-title">Pipeline Breakdown</div>
+    <div class="ring-wrap">
+      <svg viewBox="0 0 180 180" width="180" height="180">
+        <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="22"/>
+        <circle cx="90" cy="90" r="70" fill="none" stroke="#AAFF00" stroke-width="22" stroke-dasharray="168.4 439.82" stroke-dashoffset="0"/>
+        <circle cx="90" cy="90" r="70" fill="none" stroke="#5B9EFF" stroke-width="22" stroke-dasharray="112.3 439.82" stroke-dashoffset="-168.4"/>
+        <circle cx="90" cy="90" r="70" fill="none" stroke="#FFAA33" stroke-width="22" stroke-dasharray="74.8 439.82" stroke-dashoffset="-280.7"/>
+        <circle cx="90" cy="90" r="70" fill="none" stroke="#9D7FFF" stroke-width="22" stroke-dasharray="37.4 439.82" stroke-dashoffset="-355.5"/>
+        <circle cx="90" cy="90" r="70" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="22" stroke-dasharray="84.2 439.82" stroke-dashoffset="-392.9"/>
+      </svg>
+      <div class="ring-center">
+        <div class="ring-big">47</div>
+        <div class="ring-lbl">total leads</div>
+      </div>
+    </div>
+    <div class="ring-legend">
+      <div class="legend-row"><div class="legend-dot" style="background:#AAFF00"></div><span class="legend-name">New Lead</span><span class="legend-n">18</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#5B9EFF"></div><span class="legend-name">Quotation Sent</span><span class="legend-n">12</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#FFAA33"></div><span class="legend-name">Negotiation</span><span class="legend-n">8</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:#9D7FFF"></div><span class="legend-name">Sales Order Issued</span><span class="legend-n">4</span></div>
+      <div class="legend-row"><div class="legend-dot" style="background:rgba(255,255,255,0.14)"></div><span class="legend-name">Closed Lost</span><span class="legend-n">9</span></div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card c-g"><div class="stat-eyebrow">New Leads</div><div class="stat-val c-g">47</div><div class="stat-sub">This month</div></div>
+    <div class="stat-card c-b"><div class="stat-eyebrow">Quotations</div><div class="stat-val c-b">24</div><div class="stat-sub">Sent to clients</div></div>
+    <div class="stat-card c-a"><div class="stat-eyebrow">Overdue</div><div class="stat-val c-a">3</div><div class="stat-sub">Response now</div></div>
+    <div class="stat-card c-g"><div class="stat-eyebrow">Closed Won</div><div class="stat-val c-g">12</div><div class="stat-sub">Deals won</div></div>
+    <div class="stat-card c-w"><div class="stat-eyebrow">Close Rate</div><div class="stat-val" style="color:var(--text)">57%</div><div class="stat-sub">Won ÷ decided</div></div>
+    <div class="stat-card c-p"><div class="stat-eyebrow">Follow-ups Today</div><div class="stat-val c-p">8</div><div class="stat-sub">Due right now</div></div>
+  </div>
+</div>
+
+<div class="row2">
+  <div class="section-card">
+    <div class="section-hdr"><span class="section-ttl">Rep Performance</span><span class="section-sub">May 2026</span></div>
+    <div class="rep-list">
+      <div class="rep-item">
+        <div class="rep-num g">#1</div>
+        <div class="rep-info">
+          <div class="rep-name-row"><span class="rep-nm">Fara Ain</span><span class="rep-acts">14 activities</span></div>
+          <div class="rep-track"><div class="rep-fill g" style="width:100%"></div></div>
+        </div>
+        <div class="rep-right"><span class="rep-won g">7</span><span class="rep-rate">71% close</span></div>
+      </div>
+      <div class="rep-item">
+        <div class="rep-num">#2</div>
+        <div class="rep-info">
+          <div class="rep-name-row"><span class="rep-nm">Zara Hana</span><span class="rep-acts">11 activities</span></div>
+          <div class="rep-track"><div class="rep-fill o" style="width:72%"></div></div>
+        </div>
+        <div class="rep-right"><span class="rep-won">5</span><span class="rep-rate">58% close</span></div>
+      </div>
+      <div class="rep-item">
+        <div class="rep-num">#3</div>
+        <div class="rep-info">
+          <div class="rep-name-row"><span class="rep-nm">Ahmad Muiz</span><span class="rep-acts">10 activities</span></div>
+          <div class="rep-track"><div class="rep-fill o" style="width:57%"></div></div>
+        </div>
+        <div class="rep-right"><span class="rep-won">4</span><span class="rep-rate">44% close</span></div>
+      </div>
+      <div class="rep-item">
+        <div class="rep-num">#4</div>
+        <div class="rep-info">
+          <div class="rep-name-row"><span class="rep-nm">Rina Nor</span><span class="rep-acts">8 activities</span></div>
+          <div class="rep-track"><div class="rep-fill o" style="width:43%"></div></div>
+        </div>
+        <div class="rep-right"><span class="rep-won">3</span><span class="rep-rate">38% close</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-hdr"><span class="section-ttl">Lead Sources</span><span class="section-sub">May 2026</span></div>
+    <div class="src-grid">
+      <div class="src-item"><img class="src-img" src="/icons/social/social.png" onerror="this.style.display='none'" /><span class="src-nm">WhatsApp</span><div class="src-bar-wrap"><div class="src-bar-track"><div class="src-bar-fill" style="width:100%"></div></div><span class="src-bar-pct">51%</span></div><span class="src-n">24</span></div>
+      <div class="src-item"><img class="src-img" src="/icons/social/instagram.png" onerror="this.style.display='none'" /><span class="src-nm">Instagram</span><div class="src-bar-wrap"><div class="src-bar-track"><div class="src-bar-fill" style="width:46%"></div></div><span class="src-bar-pct">23%</span></div><span class="src-n">11</span></div>
+      <div class="src-item"><img class="src-img" src="/icons/social/facebook.png" onerror="this.style.display='none'" /><span class="src-nm">Facebook</span><div class="src-bar-wrap"><div class="src-bar-track"><div class="src-bar-fill" style="width:29%"></div></div><span class="src-bar-pct">15%</span></div><span class="src-n">7</span></div>
+      <div class="src-item"><img class="src-img" src="/icons/social/shopee.png" onerror="this.style.display='none'" /><span class="src-nm">Shopee</span><div class="src-bar-wrap"><div class="src-bar-track"><div class="src-bar-fill" style="width:13%"></div></div><span class="src-bar-pct">6%</span></div><span class="src-n">3</span></div>
+      <div class="src-item"><img class="src-img" src="/icons/social/referral.png" onerror="this.style.display='none'" /><span class="src-nm">Referral</span><div class="src-bar-wrap"><div class="src-bar-track"><div class="src-bar-fill" style="width:8%"></div></div><span class="src-bar-pct">4%</span></div><span class="src-n">2</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

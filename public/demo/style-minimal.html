@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shin Supplies — Style C: Minimal Dark</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #090909; --card: #111111; --card2: #141414; --border: rgba(255,255,255,0.06);
+    --g: #AAFF00; --orange: #FF6B35;
+    --text: #ffffff; --muted: rgba(255,255,255,0.28); --sub: rgba(255,255,255,0.5);
+    --r: 16px;
+  }
+  body { background: var(--bg); font-family: 'Satoshi', sans-serif; color: var(--text); min-height: 100vh; padding: 28px; }
+
+  .hdr { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 32px; }
+  .hdr-tag { font-size: 10px; font-weight: 700; letter-spacing:.2em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px; }
+  .hdr-name { font-size: 22px; font-weight: 900; letter-spacing:-0.8px; }
+  .hdr-right { display: flex; align-items: center; gap: 16px; }
+  .month-btn { font-size: 12px; font-weight: 600; color: var(--muted); background: none; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+  .month-btn.active { color: var(--text); border-color: rgba(255,255,255,0.2); }
+  .live-ind { display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; color: var(--muted); }
+  .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--g); animation: p 2s ease-in-out infinite; }
+  @keyframes p { 0%,100%{opacity:1}50%{opacity:.3} }
+
+  .hero-strip { display: grid; grid-template-columns: repeat(5,1fr); border: 1px solid var(--border); border-radius: var(--r); background: var(--card); overflow: hidden; margin-bottom: 16px; }
+  .hero-stat { padding: 24px 22px; border-right: 1px solid var(--border); position: relative; }
+  .hero-stat:last-child { border-right: none; }
+  .hero-stat.accent { background: var(--g); }
+  .hero-stat.accent .hs-val { color: #000; }
+  .hero-stat.accent .hs-lbl { color: rgba(0,0,0,0.45); }
+  .hero-stat.accent .hs-eyebrow { color: rgba(0,0,0,0.4); }
+  .hs-eyebrow { font-size: 9px; font-weight: 700; letter-spacing:.14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .hs-val { font-size: 44px; font-weight: 900; letter-spacing:-2.5px; line-height:1; margin-bottom: 4px; }
+  .hs-lbl { font-size: 11px; font-weight: 500; color: var(--muted); }
+
+  .mid { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; margin-bottom: 16px; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; }
+  .s-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .s-ttl { font-size: 12px; font-weight: 700; letter-spacing:.05em; text-transform: uppercase; color: var(--muted); }
+  .s-sub { font-size: 11px; font-weight: 600; color: var(--muted); }
+
+  .pipeline-h { display: flex; gap: 0; align-items: stretch; height: 90px; border-radius: 10px; overflow: hidden; }
+  .stage-block { display: flex; flex-direction: column; justify-content: flex-end; padding: 12px; position: relative; flex:1; background: var(--card2); border-right: 1px solid var(--border); }
+  .stage-block:last-child { border-right: none; }
+  .stage-block.won { background: rgba(170,255,0,0.08); }
+  .stage-block.won .sb-count { color: var(--g); }
+  .stage-block.lost .sb-count { color: rgba(255,255,255,0.25); }
+  .sb-top { position: absolute; top: 10px; left: 12px; right: 12px; }
+  .sb-bar { height: 3px; border-radius: 100px; background: rgba(255,255,255,0.1); overflow: hidden; }
+  .sb-bar-fill { height: 100%; border-radius: 100px; }
+  .sb-stage { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.08em; color: var(--muted); margin-top: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-count { font-size: 26px; font-weight: 900; letter-spacing:-1px; line-height:1; }
+
+  .live-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; display: flex; flex-direction: column; gap: 14px; }
+  .live-stat-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing:.1em; color: var(--muted); margin-bottom: 8px; }
+  .live-stat-val { font-size: 42px; font-weight: 900; letter-spacing:-2.5px; line-height:1; }
+  .live-stat-val.green { color: var(--g); }
+  .live-stat-val.orange { color: var(--orange); }
+  .live-divider { height: 1px; background: var(--border); }
+
+  .bot { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; }
+
+  .rep-table { width: 100%; }
+  .rep-table-hdr { display: grid; grid-template-columns: 24px 1fr 60px 60px 80px; gap: 10px; padding-bottom: 10px; border-bottom: 1px solid var(--border); margin-bottom: 10px; }
+  .rep-th { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.1em; color: var(--muted); }
+  .rep-th.r { text-align: right; }
+  .rep-row { display: grid; grid-template-columns: 24px 1fr 60px 60px 80px; gap: 10px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .rep-row:last-child { border-bottom: none; }
+  .rep-idx { font-size: 11px; font-weight: 800; color: var(--muted); }
+  .rep-idx.g { color: var(--g); }
+  .rep-nm { font-size: 13px; font-weight: 700; }
+  .rep-cell { font-size: 14px; font-weight: 800; text-align: right; }
+  .rep-cell.g { color: var(--g); }
+  .rep-bar-tr { height: 3px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+  .rep-bar-fl { height: 100%; border-radius: 100px; background: var(--g); }
+  .rep-bar-fl.o { background: rgba(255,255,255,0.18); }
+  .rep-rate-txt { font-size: 11px; font-weight: 700; color: var(--muted); text-align: right; margin-top: 3px; }
+
+  .src-list { display: flex; flex-direction: column; }
+  .src-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.04); }
+  .src-item:last-child { border-bottom: none; }
+  .src-rank { font-size: 10px; font-weight: 800; color: var(--muted); width: 14px; flex-shrink:0; }
+  .src-img { width: 24px; height: 24px; border-radius: 6px; object-fit: contain; background: rgba(255,255,255,0.05); padding: 3px; flex-shrink:0; }
+  .src-nm { font-size: 13px; font-weight: 700; flex:1; }
+  .src-bar-area { width: 70px; }
+  .src-bar-t { height: 3px; background: rgba(255,255,255,0.06); border-radius: 100px; margin-bottom: 3px; overflow: hidden; }
+  .src-bar-f { height: 100%; border-radius: 100px; background: var(--orange); }
+  .src-pct { font-size: 10px; font-weight: 700; color: var(--muted); text-align: right; display: block; }
+  .src-big { font-size: 20px; font-weight: 900; letter-spacing:-1px; flex-shrink:0; width: 32px; text-align: right; }
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div>
+    <div class="hdr-tag">Opxio · CRM Dashboard</div>
+    <div class="hdr-name">Shin Supplies</div>
+  </div>
+  <div class="hdr-right">
+    <button class="month-btn">Apr 2026</button>
+    <button class="month-btn active">May 2026</button>
+    <div class="live-ind"><span class="live-dot"></span>Live</div>
+  </div>
+</div>
+
+<div class="hero-strip">
+  <div class="hero-stat accent">
+    <div class="hs-eyebrow">New Leads · May 2026</div>
+    <div class="hs-val">47</div>
+    <div class="hs-lbl">This month</div>
+  </div>
+  <div class="hero-stat">
+    <div class="hs-eyebrow">Quotations</div>
+    <div class="hs-val">24</div>
+    <div class="hs-lbl">Sent</div>
+  </div>
+  <div class="hero-stat">
+    <div class="hs-eyebrow">Closed Won</div>
+    <div class="hs-val" style="color:var(--g)">12</div>
+    <div class="hs-lbl">Deals won</div>
+  </div>
+  <div class="hero-stat">
+    <div class="hs-eyebrow">Close Rate</div>
+    <div class="hs-val">57%</div>
+    <div class="hs-lbl">Won ÷ decided</div>
+  </div>
+  <div class="hero-stat">
+    <div class="hs-eyebrow">Avg Days to Close</div>
+    <div class="hs-val">4.2</div>
+    <div class="hs-lbl">Days</div>
+  </div>
+</div>
+
+<div class="mid">
+  <div class="section-card">
+    <div class="s-hdr"><span class="s-ttl">Pipeline Stages</span><span class="s-sub">May 2026 leads</span></div>
+    <div class="pipeline-h">
+      <div class="stage-block">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:100%;background:var(--g)"></div></div><div class="sb-stage">New Lead</div></div>
+        <div class="sb-count">18</div>
+      </div>
+      <div class="stage-block">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:67%;background:#5B9EFF"></div></div><div class="sb-stage">Quot. Sent</div></div>
+        <div class="sb-count">12</div>
+      </div>
+      <div class="stage-block">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:44%;background:var(--orange)"></div></div><div class="sb-stage">Negotiation</div></div>
+        <div class="sb-count">8</div>
+      </div>
+      <div class="stage-block">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:22%;background:#9D7FFF"></div></div><div class="sb-stage">Sales Order</div></div>
+        <div class="sb-count">4</div>
+      </div>
+      <div class="stage-block won">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:67%;background:var(--g)"></div></div><div class="sb-stage">Closed Won</div></div>
+        <div class="sb-count">12</div>
+      </div>
+      <div class="stage-block lost">
+        <div class="sb-top"><div class="sb-bar"><div class="sb-bar-fill" style="width:50%;background:rgba(255,255,255,0.1)"></div></div><div class="sb-stage">Closed Lost</div></div>
+        <div class="sb-count">9</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="live-card">
+    <div class="s-hdr" style="margin-bottom:0"><span class="s-ttl">Live Pulse</span><div class="live-ind"><span class="live-dot"></span>Now</div></div>
+    <div class="live-divider"></div>
+    <div>
+      <div class="live-stat-lbl">Follow-ups today</div>
+      <div class="live-stat-val green">8</div>
+    </div>
+    <div class="live-divider"></div>
+    <div>
+      <div class="live-stat-lbl">Overdue response</div>
+      <div class="live-stat-val orange">3</div>
+    </div>
+  </div>
+</div>
+
+<div class="bot">
+  <div class="section-card">
+    <div class="s-hdr"><span class="s-ttl">Rep Performance</span><span class="s-sub">May 2026</span></div>
+    <div class="rep-table">
+      <div class="rep-table-hdr">
+        <span class="rep-th">#</span>
+        <span class="rep-th">Name</span>
+        <span class="rep-th r">Won</span>
+        <span class="rep-th r">Rate</span>
+        <span class="rep-th r">Progress</span>
+      </div>
+      <div class="rep-row">
+        <span class="rep-idx g">1</span><span class="rep-nm">Fara Ain</span>
+        <span class="rep-cell g">7</span><span class="rep-cell" style="color:var(--g)">71%</span>
+        <div><div class="rep-bar-tr"><div class="rep-bar-fl" style="width:100%"></div></div><div class="rep-rate-txt">14 leads</div></div>
+      </div>
+      <div class="rep-row">
+        <span class="rep-idx">2</span><span class="rep-nm">Zara Hana</span>
+        <span class="rep-cell">5</span><span class="rep-cell">58%</span>
+        <div><div class="rep-bar-tr"><div class="rep-bar-fl o" style="width:72%"></div></div><div class="rep-rate-txt">11 leads</div></div>
+      </div>
+      <div class="rep-row">
+        <span class="rep-idx">3</span><span class="rep-nm">Ahmad Muiz</span>
+        <span class="rep-cell">4</span><span class="rep-cell">44%</span>
+        <div><div class="rep-bar-tr"><div class="rep-bar-fl o" style="width:57%"></div></div><div class="rep-rate-txt">10 leads</div></div>
+      </div>
+      <div class="rep-row">
+        <span class="rep-idx">4</span><span class="rep-nm">Rina Nor</span>
+        <span class="rep-cell">3</span><span class="rep-cell">38%</span>
+        <div><div class="rep-bar-tr"><div class="rep-bar-fl o" style="width:43%"></div></div><div class="rep-rate-txt">8 leads</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="s-hdr"><span class="s-ttl">Lead Sources</span><span class="s-sub">May 2026</span></div>
+    <div class="src-list">
+      <div class="src-item"><span class="src-rank">1</span><img class="src-img" src="/icons/social/social.png" onerror="this.style.display='none'" /><span class="src-nm">WhatsApp</span><div class="src-bar-area"><div class="src-bar-t"><div class="src-bar-f" style="width:100%"></div></div><span class="src-pct">51%</span></div><span class="src-big">24</span></div>
+      <div class="src-item"><span class="src-rank">2</span><img class="src-img" src="/icons/social/instagram.png" onerror="this.style.display='none'" /><span class="src-nm">Instagram</span><div class="src-bar-area"><div class="src-bar-t"><div class="src-bar-f" style="width:46%"></div></div><span class="src-pct">23%</span></div><span class="src-big">11</span></div>
+      <div class="src-item"><span class="src-rank">3</span><img class="src-img" src="/icons/social/facebook.png" onerror="this.style.display='none'" /><span class="src-nm">Facebook</span><div class="src-bar-area"><div class="src-bar-t"><div class="src-bar-f" style="width:29%"></div></div><span class="src-pct">15%</span></div><span class="src-big">7</span></div>
+      <div class="src-item"><span class="src-rank">4</span><img class="src-img" src="/icons/social/shopee.png" onerror="this.style.display='none'" /><span class="src-nm">Shopee</span><div class="src-bar-area"><div class="src-bar-t"><div class="src-bar-f" style="width:13%"></div></div><span class="src-pct">6%</span></div><span class="src-big">3</span></div>
+      <div class="src-item"><span class="src-rank">5</span><img class="src-img" src="/icons/social/referral.png" onerror="this.style.display='none'" /><span class="src-nm">Referral</span><div class="src-bar-area"><div class="src-bar-t"><div class="src-bar-f" style="width:8%"></div></div><span class="src-pct">4%</span></div><span class="src-big">2</span></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

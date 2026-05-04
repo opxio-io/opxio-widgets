@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Shin Supplies — Style A: Productivity</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #111318; --panel: #181b22; --card: #1e222b;
+    --border: rgba(255,255,255,0.07);
+    --g: #B8FF40; --amber: #FFB340;
+    --text: #ffffff; --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
+    --r: 18px;
+  }
+  body { background: var(--bg); font-family: 'Satoshi', sans-serif; color: var(--text); min-height: 100vh; padding: 28px; }
+
+  .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 28px; }
+  .top-bar-left { display: flex; align-items: center; gap: 14px; }
+  .logo-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--g); box-shadow: 0 0 10px var(--g); }
+  .client-name { font-size: 16px; font-weight: 700; letter-spacing: -0.3px; }
+  .period-badge { background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 6px 14px; font-size: 12px; font-weight: 600; color: var(--sub); }
+  .live-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--g); display: inline-block; margin-right: 6px; animation: pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+
+  .kpi-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .kpi-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 20px 22px 18px; }
+  .kpi-card.hero { background: var(--g); border-color: transparent; position: relative; overflow: hidden; }
+  .kpi-card.hero::before { content:''; position: absolute; top:-30px; right:-30px; width:120px; height:120px; border-radius:50%; background:rgba(0,0,0,0.08); }
+  .kpi-card.hero .kpi-label { color: rgba(0,0,0,0.5); }
+  .kpi-card.hero .kpi-val { color: #000; }
+  .kpi-card.hero .kpi-sub { color: rgba(0,0,0,0.45); }
+  .kpi-label { font-size: 10px; font-weight: 700; letter-spacing:.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+  .kpi-val { font-size: 40px; font-weight: 900; letter-spacing:-2px; line-height:1; margin-bottom: 6px; }
+  .kpi-sub { font-size: 11px; font-weight: 500; color: var(--sub); }
+
+  .main-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; margin-bottom: 14px; }
+  .section-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 22px 24px; }
+  .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .section-title { font-size: 13px; font-weight: 700; }
+  .section-label { font-size: 11px; font-weight: 600; color: var(--muted); }
+
+  .funnel-item { margin-bottom: 16px; }
+  .funnel-item:last-child { margin-bottom: 0; }
+  .funnel-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .funnel-stage { font-size: 12px; font-weight: 600; color: var(--sub); }
+  .funnel-count { font-size: 12px; font-weight: 800; }
+  .funnel-track { height: 28px; background: rgba(255,255,255,0.04); border-radius: 8px; overflow: hidden; }
+  .funnel-fill { height: 100%; border-radius: 8px; display: flex; align-items: center; padding-left: 12px; transition: width 0.6s cubic-bezier(0.4,0,0.2,1); }
+  .funnel-fill-label { font-size: 10px; font-weight: 700; color: rgba(0,0,0,0.6); }
+  .stage-new .funnel-fill { background: var(--g); }
+  .stage-quote .funnel-fill { background: #6EC6FF; }
+  .stage-neg .funnel-fill { background: var(--amber); }
+  .stage-so .funnel-fill { background: #B88EFF; }
+  .stage-won .funnel-fill { background: var(--g); opacity:0.7; }
+  .stage-lost .funnel-fill { background: rgba(255,255,255,0.12); }
+
+  .live-stack { display: flex; flex-direction: column; gap: 10px; }
+  .live-item { background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
+  .live-item-left { display: flex; flex-direction: column; gap: 3px; }
+  .live-item-lbl { font-size: 11px; font-weight: 600; color: var(--muted); }
+  .live-item-val { font-size: 22px; font-weight: 900; letter-spacing:-1px; }
+  .live-item-val.warn { color: var(--amber); }
+  .live-item-val.ok { color: var(--g); }
+  .live-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+  .live-icon.green { background: rgba(184,255,64,0.12); }
+  .live-icon.amber { background: rgba(255,179,64,0.12); }
+
+  .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
+
+  .reps-grid { display: flex; flex-direction: column; gap: 10px; }
+  .rep-row { display: flex; align-items: center; gap: 14px; }
+  .rep-rank { width: 24px; text-align: center; font-size: 11px; font-weight: 800; color: var(--muted); flex-shrink: 0; }
+  .rep-rank.gold { color: var(--g); }
+  .rep-avatar { width: 34px; height: 34px; border-radius: 50%; background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 800; color: var(--sub); flex-shrink: 0; }
+  .rep-avatar.leader { background: rgba(184,255,64,0.15); color: var(--g); }
+  .rep-info { flex: 1; min-width: 0; }
+  .rep-name { font-size: 12px; font-weight: 700; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rep-bar-track { height: 6px; background: rgba(255,255,255,0.06); border-radius: 100px; overflow: hidden; }
+  .rep-bar-fill { height: 100%; border-radius: 100px; transition: width 0.5s ease; }
+  .rep-bar-fill.leader { background: var(--g); }
+  .rep-bar-fill.other { background: rgba(255,255,255,0.25); }
+  .rep-stats { display: flex; gap: 14px; flex-shrink: 0; }
+  .rep-stat { text-align: right; }
+  .rep-stat-val { font-size: 14px; font-weight: 800; display: block; }
+  .rep-stat-val.leader { color: var(--g); }
+  .rep-stat-lbl { font-size: 9px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing:.08em; display: block; }
+
+  .sources-grid { display: flex; flex-direction: column; gap: 8px; }
+  .src-row { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 10px; }
+  .src-icon { width: 28px; height: 28px; border-radius: 8px; object-fit: contain; background: rgba(255,255,255,0.06); padding: 4px; flex-shrink: 0; }
+  .src-name { font-size: 12px; font-weight: 600; color: var(--sub); flex: 1; }
+  .src-count { font-size: 16px; font-weight: 900; letter-spacing:-0.5px; }
+  .src-pill { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; background: rgba(184,255,64,0.12); color: var(--g); }
+  .src-pill.zero { background: rgba(255,255,255,0.06); color: var(--muted); }
+</style>
+</head>
+<body>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="logo-dot"></div>
+    <span class="client-name">Shin Supplies</span>
+    <div class="period-badge">May 2026</div>
+  </div>
+  <div class="period-badge"><span class="live-dot"></span>Live data</div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-card hero">
+    <div class="kpi-label">New Leads — May 2026</div>
+    <div class="kpi-val">47</div>
+    <div class="kpi-sub">Leads this month</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Closed Won</div>
+    <div class="kpi-val" style="font-size:34px">12</div>
+    <div class="kpi-sub">Deals won</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Close Rate</div>
+    <div class="kpi-val" style="font-size:34px">57%</div>
+    <div class="kpi-sub">Won ÷ decided</div>
+  </div>
+  <div class="kpi-card">
+    <div class="kpi-label">Avg Days to Close</div>
+    <div class="kpi-val" style="font-size:34px">4.2</div>
+    <div class="kpi-sub">Days per deal</div>
+  </div>
+</div>
+
+<div class="main-grid">
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Pipeline Funnel</span>
+      <span class="section-label">Current month leads</span>
+    </div>
+    <div class="funnel-item stage-new">
+      <div class="funnel-meta"><span class="funnel-stage">New Lead</span><span class="funnel-count">18</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:100%"><span class="funnel-fill-label">New Lead</span></div></div>
+    </div>
+    <div class="funnel-item stage-quote">
+      <div class="funnel-meta"><span class="funnel-stage">Quotation Sent</span><span class="funnel-count">12</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:67%"><span class="funnel-fill-label">Quotation Sent</span></div></div>
+    </div>
+    <div class="funnel-item stage-neg">
+      <div class="funnel-meta"><span class="funnel-stage">Negotiation</span><span class="funnel-count">8</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:44%"><span class="funnel-fill-label">Negotiation</span></div></div>
+    </div>
+    <div class="funnel-item stage-so">
+      <div class="funnel-meta"><span class="funnel-stage">Sales Order Issued</span><span class="funnel-count">4</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:22%"><span class="funnel-fill-label">Sales Order</span></div></div>
+    </div>
+    <div class="funnel-item stage-won">
+      <div class="funnel-meta"><span class="funnel-stage">Closed Won</span><span class="funnel-count">12</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:67%"><span class="funnel-fill-label">Closed Won</span></div></div>
+    </div>
+    <div class="funnel-item stage-lost">
+      <div class="funnel-meta"><span class="funnel-stage">Closed Lost</span><span class="funnel-count">9</span></div>
+      <div class="funnel-track"><div class="funnel-fill" style="width:50%"></div></div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Live Pulse</span>
+      <span class="section-label"><span class="live-dot"></span>Right now</span>
+    </div>
+    <div class="live-stack">
+      <div class="live-item">
+        <div class="live-item-left">
+          <span class="live-item-lbl">Follow-ups due today</span>
+          <span class="live-item-val ok">8</span>
+        </div>
+        <div class="live-icon green">🔔</div>
+      </div>
+      <div class="live-item">
+        <div class="live-item-left">
+          <span class="live-item-lbl">Follow-ups next 3 days</span>
+          <span class="live-item-val" style="color:var(--sub)">15</span>
+        </div>
+        <div class="live-icon green">📅</div>
+      </div>
+      <div class="live-item">
+        <div class="live-item-left">
+          <span class="live-item-lbl">Overdue response</span>
+          <span class="live-item-val warn">3</span>
+        </div>
+        <div class="live-icon amber">⚠️</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="bottom-grid">
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Sales Rep Performance</span>
+      <span class="section-label">By leads closed</span>
+    </div>
+    <div class="reps-grid">
+      <div class="rep-row">
+        <div class="rep-rank gold">#1</div>
+        <div class="rep-avatar leader">FA</div>
+        <div class="rep-info">
+          <div class="rep-name">Fara Ain</div>
+          <div class="rep-bar-track"><div class="rep-bar-fill leader" style="width:100%"></div></div>
+        </div>
+        <div class="rep-stats">
+          <div class="rep-stat"><span class="rep-stat-val leader">7</span><span class="rep-stat-lbl">won</span></div>
+          <div class="rep-stat"><span class="rep-stat-val leader">71%</span><span class="rep-stat-lbl">rate</span></div>
+        </div>
+      </div>
+      <div class="rep-row">
+        <div class="rep-rank">#2</div>
+        <div class="rep-avatar">ZH</div>
+        <div class="rep-info">
+          <div class="rep-name">Zara Hana</div>
+          <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:72%"></div></div>
+        </div>
+        <div class="rep-stats">
+          <div class="rep-stat"><span class="rep-stat-val">5</span><span class="rep-stat-lbl">won</span></div>
+          <div class="rep-stat"><span class="rep-stat-val">58%</span><span class="rep-stat-lbl">rate</span></div>
+        </div>
+      </div>
+      <div class="rep-row">
+        <div class="rep-rank">#3</div>
+        <div class="rep-avatar">AM</div>
+        <div class="rep-info">
+          <div class="rep-name">Ahmad Muiz</div>
+          <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:57%"></div></div>
+        </div>
+        <div class="rep-stats">
+          <div class="rep-stat"><span class="rep-stat-val">4</span><span class="rep-stat-lbl">won</span></div>
+          <div class="rep-stat"><span class="rep-stat-val">44%</span><span class="rep-stat-lbl">rate</span></div>
+        </div>
+      </div>
+      <div class="rep-row">
+        <div class="rep-rank">#4</div>
+        <div class="rep-avatar">RN</div>
+        <div class="rep-info">
+          <div class="rep-name">Rina Nor</div>
+          <div class="rep-bar-track"><div class="rep-bar-fill other" style="width:43%"></div></div>
+        </div>
+        <div class="rep-stats">
+          <div class="rep-stat"><span class="rep-stat-val">3</span><span class="rep-stat-lbl">won</span></div>
+          <div class="rep-stat"><span class="rep-stat-val">38%</span><span class="rep-stat-lbl">rate</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-card">
+    <div class="section-header">
+      <span class="section-title">Lead Sources</span>
+      <span class="section-label">May 2026</span>
+    </div>
+    <div class="sources-grid">
+      <div class="src-row">
+        <img class="src-icon" src="/icons/social/social.png" onerror="this.style.display='none'" />
+        <span class="src-name">WhatsApp</span>
+        <span class="src-count">24</span>
+        <span class="src-pill">8 closed</span>
+      </div>
+      <div class="src-row">
+        <img class="src-icon" src="/icons/social/instagram.png" onerror="this.style.display='none'" />
+        <span class="src-name">Instagram</span>
+        <span class="src-count">11</span>
+        <span class="src-pill">3 closed</span>
+      </div>
+      <div class="src-row">
+        <img class="src-icon" src="/icons/social/facebook.png" onerror="this.style.display='none'" />
+        <span class="src-name">Facebook</span>
+        <span class="src-count">7</span>
+        <span class="src-pill">1 closed</span>
+      </div>
+      <div class="src-row">
+        <img class="src-icon" src="/icons/social/shopee.png" onerror="this.style.display='none'" />
+        <span class="src-name">Shopee</span>
+        <span class="src-count">3</span>
+        <span class="src-pill zero">0 closed</span>
+      </div>
+      <div class="src-row">
+        <img class="src-icon" src="/icons/social/referral.png" onerror="this.style.display='none'" />
+        <span class="src-name">Referral</span>
+        <span class="src-count">2</span>
+        <span class="src-pill">1 closed</span>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

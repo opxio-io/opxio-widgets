@@ -4,7 +4,7 @@ import s from '@/styles/widget.module.css'
 
 const PAGE_SIZE = 4
 
-// Crown — absolutely positioned on top edge above #1 rank badge
+// Crown — absolute, sits on top edge above the #1 rank badge (top-right)
 const Crown = () => (
   <img
     src="/icons/crown.png"
@@ -28,7 +28,6 @@ export default function SalesRepCards({ reps = [], monthLabel, empty }) {
   const slice = reps.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
   const cols  = slice.length <= 2 ? 2 : 4
 
-  // Close rate relative to max across all reps (by activities)
   const maxRate = Math.max(
     ...reps.map(r => {
       const acts = r.activities || r.leads || 0
@@ -57,17 +56,20 @@ export default function SalesRepCards({ reps = [], monthLabel, empty }) {
               const rateAmber  = rate < 30
 
               return (
-                <div key={rep.name}
+                <div
+                  key={rep.name}
                   className={`${s.repCard}${isLeader ? ` ${s.repLeader}` : ''}`}
                   style={{ position: 'relative' }}
                 >
-                  {/* Header */
+                  {isLeader && <Crown />}
+
+                  {/* Header: name + rank badge */}
                   <div className={s.repCardHdr}>
                     <div className={s.repCardName}>{rep.name}</div>
                     <span className={s.repRank}>#{globalRank}</span>
                   </div>
 
-                  {/* Hero number — centered */}
+                  {/* Hero number */}
                   <div className={s.repHero}>
                     <div className={s.repHeroVal}>{rep.closedWon ?? 0}</div>
                     <div className={s.repHeroLbl}>Closed Won</div>
@@ -89,7 +91,7 @@ export default function SalesRepCards({ reps = [], monthLabel, empty }) {
                     </div>
                   </div>
 
-                  {/* Activities stat */}
+                  {/* Activities */}
                   <div className={s.repStat}>
                     <span className={s.repStatLbl}>Activities</span>
                     <span className={s.repStatVal}>{acts}</span>

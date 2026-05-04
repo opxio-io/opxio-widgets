@@ -56,24 +56,60 @@
   .stage-won .funnel-fill  { background: var(--g); }
   .stage-lost .funnel-fill { background: rgba(255,255,255,0.07); }
 
-  /* Live Pulse */
-  .pulse-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-  .pulse-live-badge { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; }
-  .pulse-metrics { display: flex; flex-direction: column; gap: 10px; }
-  .pulse-metric {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 16px; border-radius: 12px;
+  /* Meetings Panel */
+  .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .meet-today-lbl { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; }
+
+  /* Week strip */
+  .week-strip { display: flex; gap: 4px; margin-bottom: 18px; }
+  .week-day {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    gap: 6px; padding: 8px 4px; border-radius: 10px;
     background: rgba(255,255,255,0.03);
-    border-left: 3px solid transparent;
+    border: 1px solid rgba(255,255,255,0.05);
   }
-  .pulse-metric.ok  { border-left-color: var(--g); }
-  .pulse-metric.neutral { border-left-color: rgba(255,255,255,0.15); }
-  .pulse-metric.warn { border-left-color: var(--amber); background: rgba(255,179,64,0.04); }
-  .pulse-lbl { font-size: 11px; font-weight: 600; color: var(--muted); }
-  .pulse-num { font-size: 24px; font-weight: 900; letter-spacing: -1px; line-height: 1; }
-  .pulse-num.ok   { color: var(--g); }
-  .pulse-num.warn { color: var(--amber); }
-  .pulse-num.dim  { color: var(--text); }
+  .week-day.today {
+    background: var(--g); border-color: transparent;
+  }
+  .week-day.has-event:not(.today) { border-color: rgba(255,255,255,0.12); }
+  .wd-name { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.08em; color: var(--muted); }
+  .week-day.today .wd-name { color: rgba(0,0,0,0.5); }
+  .wd-num { font-size: 13px; font-weight: 900; color: var(--text); }
+  .week-day.today .wd-num { color: #000; }
+  .week-day:not(.today) .wd-num { color: var(--sub); }
+  .wd-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); }
+  .week-day.today .wd-dot { background: rgba(0,0,0,0.3); }
+  .week-day.has-event:not(.today) .wd-dot { background: var(--g); }
+  .week-day:not(.has-event) .wd-dot { opacity: 0; }
+
+  /* Meeting list */
+  .meet-list { display: flex; flex-direction: column; gap: 8px; }
+  .meet-item {
+    display: flex; align-items: flex-start; gap: 12px;
+    padding: 11px 13px; border-radius: 11px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.05);
+    position: relative; overflow: hidden;
+  }
+  .meet-item.active {
+    background: rgba(184,255,64,0.04);
+    border-color: rgba(184,255,64,0.15);
+  }
+  .meet-time-col { text-align: center; flex-shrink: 0; width: 36px; }
+  .meet-time { font-size: 11px; font-weight: 800; color: var(--sub); line-height: 1.2; }
+  .meet-time span { display: block; font-size: 9px; font-weight: 600; color: var(--muted); }
+  .meet-body { flex: 1; min-width: 0; }
+  .meet-name { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
+  .meet-contact { font-size: 10px; font-weight: 600; color: var(--muted); }
+  .meet-badge {
+    font-size: 9px; font-weight: 700; letter-spacing:.06em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 100px; flex-shrink: 0;
+    align-self: flex-start; margin-top: 1px;
+  }
+  .badge-discovery { background: rgba(184,255,64,0.12); color: var(--g); }
+  .badge-followup  { background: rgba(255,255,255,0.07); color: var(--muted); }
+  .badge-proposal  { background: rgba(100,160,255,0.12); color: #7ABAFF; }
+  .badge-closing   { background: rgba(255,179,64,0.12); color: var(--amber); }
 
   .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 
@@ -214,22 +250,63 @@
   </div>
 
   <div class="section-card">
-    <div class="pulse-title-row">
-      <span class="section-title">Live Pulse</span>
-      <span class="pulse-live-badge"><span class="live-dot"></span>Now</span>
+    <div class="meet-hdr">
+      <span class="section-title">Upcoming Meetings</span>
+      <span class="meet-today-lbl">This week</span>
     </div>
-    <div class="pulse-metrics">
-      <div class="pulse-metric ok">
-        <span class="pulse-lbl">Follow-ups due today</span>
-        <span class="pulse-num ok">8</span>
+
+    <!-- Week strip -->
+    <div class="week-strip">
+      <div class="week-day"><span class="wd-name">Mon</span><span class="wd-num">4</span><span class="wd-dot"></span></div>
+      <div class="week-day today has-event"><span class="wd-name">Tue</span><span class="wd-num">5</span><span class="wd-dot"></span></div>
+      <div class="week-day has-event"><span class="wd-name">Wed</span><span class="wd-num">6</span><span class="wd-dot"></span></div>
+      <div class="week-day has-event"><span class="wd-name">Thu</span><span class="wd-num">7</span><span class="wd-dot"></span></div>
+      <div class="week-day"><span class="wd-name">Fri</span><span class="wd-num">8</span><span class="wd-dot"></span></div>
+      <div class="week-day"><span class="wd-name">Sat</span><span class="wd-num">9</span><span class="wd-dot"></span></div>
+      <div class="week-day"><span class="wd-name">Sun</span><span class="wd-num">10</span><span class="wd-dot"></span></div>
+    </div>
+
+    <!-- Meeting list -->
+    <div class="meet-list">
+      <div class="meet-item active">
+        <div class="meet-time-col">
+          <div class="meet-time">10<span>AM</span></div>
+        </div>
+        <div class="meet-body">
+          <div class="meet-name">Discovery Call</div>
+          <div class="meet-contact">Hafiz Rahman · Creativo Studio</div>
+        </div>
+        <span class="meet-badge badge-discovery">Discovery</span>
       </div>
-      <div class="pulse-metric neutral">
-        <span class="pulse-lbl">Due in next 3 days</span>
-        <span class="pulse-num dim">15</span>
+      <div class="meet-item">
+        <div class="meet-time-col">
+          <div class="meet-time">2<span>PM</span></div>
+        </div>
+        <div class="meet-body">
+          <div class="meet-name">Proposal Review</div>
+          <div class="meet-contact">Lina Tan · Brandcraft Agency</div>
+        </div>
+        <span class="meet-badge badge-proposal">Proposal</span>
       </div>
-      <div class="pulse-metric warn">
-        <span class="pulse-lbl">Overdue response</span>
-        <span class="pulse-num warn">3</span>
+      <div class="meet-item">
+        <div class="meet-time-col">
+          <div class="meet-time">Wed<span>11 AM</span></div>
+        </div>
+        <div class="meet-body">
+          <div class="meet-name">Follow-up Call</div>
+          <div class="meet-contact">Razif Omar · Omegas Digital</div>
+        </div>
+        <span class="meet-badge badge-followup">Follow-up</span>
+      </div>
+      <div class="meet-item">
+        <div class="meet-time-col">
+          <div class="meet-time">Thu<span>3 PM</span></div>
+        </div>
+        <div class="meet-body">
+          <div class="meet-name">Closing Call</div>
+          <div class="meet-contact">Syira Malik · Pixelhaus KL</div>
+        </div>
+        <span class="meet-badge badge-closing">Closing</span>
       </div>
     </div>
   </div>

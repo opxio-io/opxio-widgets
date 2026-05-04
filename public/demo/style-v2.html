@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Opxio Widget — Style V2</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@900,800,700,500,400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0D0D0F;
+  --s1:#131316;
+  --s2:#18181C;
+  --s3:#1E1E24;
+  --border:rgba(255,255,255,.06);
+  --g:#C8FF00;
+  --glow:rgba(200,255,0,.12);
+  --amber:#FF9B35;
+  --blue:#5B9CF6;
+  --red:#FF5C5C;
+  --text:#FFFFFF;
+  --muted:rgba(255,255,255,.38);
+  --sub:rgba(255,255,255,.22);
+}
+body{
+  font-family:'Satoshi',-apple-system,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  padding:24px;
+  min-height:100vh;
+}
+
+/* ── Layout ── */
+.header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px;}
+.eyebrow{font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:4px;}
+.title{font-size:22px;font-weight:900;letter-spacing:-.04em;}
+.nav{display:flex;align-items:center;gap:8px;}
+.nav-btn{width:30px;height:30px;border-radius:8px;background:var(--s2);border:1px solid var(--border);color:var(--muted);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.nav-lbl{font-size:11px;font-weight:700;color:var(--muted);min-width:80px;text-align:center;}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:10px;margin-bottom:10px;}
+
+/* ── Cards ── */
+.card{background:var(--s1);border-radius:20px;padding:20px 22px 18px;border:1px solid var(--border);}
+.card-sm{padding:18px 20px 16px;}
+
+/* ── Hero KPI ── */
+.kpi-eyebrow{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:block;}
+.kpi-num{font-size:52px;font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--g);text-shadow:0 0 40px rgba(200,255,0,.25);}
+.kpi-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.5);margin-top:10px;}
+
+/* ── Regular KPI ── */
+.stat-lbl{font-size:9px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:16px;display:block;}
+.stat-num{font-size:44px;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.stat-sub{font-size:10px;font-weight:500;color:var(--sub);margin-top:10px;}
+
+/* ── Row 2 ── */
+.row2{display:grid;grid-template-columns:3fr 2fr;gap:10px;margin-bottom:10px;}
+.panel-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.panel-title{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:var(--glow);color:var(--g);border:1px solid rgba(200,255,0,.2);}
+.badge-blue{background:rgba(91,156,246,.1);color:var(--blue);border-color:rgba(91,156,246,.2);}
+
+/* ── Pipeline bars ── */
+.f-item{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.f-item:last-child{margin-bottom:0;}
+.f-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-track{flex:1;height:28px;border-radius:8px;background:rgba(255,255,255,.04);overflow:hidden;position:relative;}
+.f-fill{height:100%;border-radius:8px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.6);width:28px;text-align:right;flex-shrink:0;}
+
+/* ── Live column ── */
+.live-col{display:flex;flex-direction:column;gap:10px;}
+
+/* ── Row 3 ── */
+.row3{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
+
+/* ── Rep cards ── */
+.rep-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.rep-card{background:var(--s2);border-radius:16px;padding:16px;border:1px solid var(--border);position:relative;overflow:visible;transition:border-color .2s;}
+.rep-leader{border-color:rgba(200,255,0,.3);background:rgba(200,255,0,.035);}
+.rep-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.rep-name{font-size:13px;font-weight:800;color:rgba(255,255,255,.88);}
+.rep-rank{font-size:14px;font-weight:900;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.45);letter-spacing:-.3px;}
+.rep-leader .rep-rank{background:rgba(200,255,0,.15);color:var(--g);}
+.rep-hero{text-align:center;padding:8px 0 12px;}
+.rep-val{font-size:44px;font-weight:900;letter-spacing:-2px;line-height:1;color:rgba(255,255,255,.88);}
+.rep-leader .rep-val{color:var(--g);text-shadow:0 0 30px rgba(200,255,0,.2);}
+.rep-val-lbl{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);margin-top:5px;}
+.rep-bar-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;}
+.rep-bar-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.rep-bar-pct{font-size:13px;font-weight:800;color:var(--g);}
+.rep-bar-pct.amber{color:var(--amber);}
+.rep-bar-track{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:8px;}
+.rep-bar-fill{height:100%;border-radius:3px;background:var(--g);transition:width .5s ease;}
+.rep-stat{display:flex;justify-content:space-between;align-items:center;padding-top:6px;border-top:1px solid rgba(255,255,255,.05);}
+.rep-stat-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.3);}
+.rep-stat-val{font-size:12px;font-weight:800;color:rgba(255,255,255,.65);}
+.rep-crown{position:absolute;top:-13px;right:10px;width:22px;height:22px;object-fit:contain;filter:drop-shadow(0 1px 4px rgba(0,0,0,.7));pointer-events:none;}
+
+/* ── Lead sources ── */
+.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.src-card{background:var(--s2);border-radius:12px;padding:14px;border:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.src-top{display:flex;align-items:center;gap:8px;}
+.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.src-icon img{width:20px;height:20px;object-fit:contain;opacity:.9;}
+.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);}
+.src-count{font-size:26px;font-weight:900;letter-spacing:-.8px;line-height:1;color:var(--g);}
+.src-foot{display:flex;justify-content:space-between;align-items:center;}
+.src-closed-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.3);}
+.src-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div>
+    <span class="eyebrow">Shin Supplies · Cupterra</span>
+    <div class="title">CRM &amp; Pipeline</div>
+  </div>
+  <div class="nav">
+    <button class="nav-btn">←</button>
+    <span class="nav-lbl">May 2026</span>
+    <button class="nav-btn">→</button>
+  </div>
+</div>
+
+<!-- Row 1 — KPI -->
+<div class="kpi-row">
+  <div class="card">
+    <span class="kpi-eyebrow">New Leads — May 2026</span>
+    <div class="kpi-num">31</div>
+    <div class="kpi-label">Leads this month</div>
+  </div>
+  <div class="card card-sm">
+    <span class="stat-lbl">Closed Won</span>
+    <div class="stat-num" style="color:var(--g)">12</div>
+    <div class="stat-sub">of May 2026 leads</div>
+  </div>
+  <div class="card card-sm">
+    <span class="stat-lbl">Close Rate</span>
+    <div class="stat-num" style="color:var(--g)">71%</div>
+    <div class="stat-sub">12W · 5L</div>
+  </div>
+  <div class="card card-sm">
+    <span class="stat-lbl">Avg Days to Close</span>
+    <div class="stat-num" style="color:var(--amber)">1d</div>
+    <div class="stat-sub">Lead to Closed Won</div>
+  </div>
+  <div class="card card-sm">
+    <span class="stat-lbl">Quote to Win</span>
+    <div class="stat-num" style="color:var(--amber)">2d</div>
+    <div class="stat-sub">Quote sent to Closed Won</div>
+  </div>
+</div>
+
+<!-- Row 2 — Pipeline + Live -->
+<div class="row2">
+  <div class="card">
+    <div class="panel-hdr">
+      <span class="panel-title">Pipeline Stages</span>
+      <span class="badge">31 Enquiries — May 2026</span>
+    </div>
+    <script>
+      const stages=[
+        {label:'New Lead',count:7,color:'#6B7280'},
+        {label:'Quotation Sent',count:12,color:'#5B9CF6'},
+        {label:'Negotiation',count:5,color:'#FF9B35'},
+        {label:'Sales Order Issued',count:3,color:'#A78BFA'},
+        {label:'Closed Won',count:12,color:'#C8FF00'},
+        {label:'Closed Lost',count:5,color:'#FF5C5C'},
+      ];
+      const max=Math.max(...stages.map(s=>s.count));
+      document.write(stages.map(s=>{
+        const w=Math.max(Math.round(s.count/max*100),s.count>0?3:0);
+        return `<div class="f-item">
+          <span class="f-lbl">${s.label}</span>
+          <div class="f-track"><div class="f-fill" style="width:${w}%;background:${s.color};"></div></div>
+          <span class="f-n">${s.count}</span>
+        </div>`;
+      }).join(''));
+    </script>
+  </div>
+
+  <div class="live-col">
+    <div class="card" style="flex:1;">
+      <span class="stat-lbl">Follow-ups Due Today</span>
+      <div class="stat-num" style="color:var(--blue);font-size:52px;">8</div>
+      <div class="stat-sub">Entire pipeline · 15 due within 3 days</div>
+    </div>
+    <div class="card" style="flex:1;">
+      <span class="stat-lbl">Overdue Quotations</span>
+      <div class="stat-num" style="color:var(--red);font-size:52px;">3</div>
+      <div class="stat-sub">Entire pipeline · no quote issued after 2h</div>
+    </div>
+  </div>
+</div>
+
+<!-- Row 3 — Reps + Sources -->
+<div class="row3">
+  <div class="card">
+    <div class="panel-hdr">
+      <span class="panel-title">Sales Rep Performance</span>
+      <span class="badge badge-blue">3 reps</span>
+    </div>
+    <div class="rep-grid" style="grid-template-columns:repeat(3,1fr);">
+      <script>
+        const reps=[
+          {name:'Saiful',won:7,acts:12,rate:58,leader:true},
+          {name:'Nik',won:4,acts:8,rate:50,leader:false},
+          {name:'Amirul',won:1,acts:4,rate:25,leader:false},
+        ];
+        const maxR=Math.max(...reps.map(r=>r.rate));
+        document.write(reps.map((r,i)=>{
+          const bw=Math.round(r.rate/maxR*100);
+          const amber=r.rate<30;
+          return `<div class="rep-card${r.leader?' rep-leader':''}">
+            ${r.leader?`<img class="rep-crown" src="/icons/crown.png" onerror="this.style.display='none'" />`:''}
+            <div class="rep-hdr">
+              <div class="rep-name">${r.name}</div>
+              <span class="rep-rank">#${i+1}</span>
+            </div>
+            <div class="rep-hero">
+              <div class="rep-val">${r.won}</div>
+              <div class="rep-val-lbl">Closed Won</div>
+            </div>
+            <div class="rep-bar-row">
+              <span class="rep-bar-lbl">Close Rate</span>
+              <span class="rep-bar-pct${amber?' amber':''}">${r.rate}%</span>
+            </div>
+            <div class="rep-bar-track"><div class="rep-bar-fill" style="width:${bw}%;opacity:${r.leader?1:.6};"></div></div>
+            <div class="rep-stat">
+              <span class="rep-stat-lbl">Activities</span>
+              <span class="rep-stat-val">${r.acts}</span>
+            </div>
+          </div>`;
+        }).join(''));
+      </script>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="panel-hdr">
+      <span class="panel-title">Lead Sources</span>
+      <span class="badge">31 total</span>
+    </div>
+    <div class="src-grid">
+      <script>
+        const sources=[
+          {name:'WhatsApp',icon:'/icons/social/social.png',count:14,won:7},
+          {name:'Instagram',icon:'/icons/social/instagram.png',count:8,won:5},
+          {name:'Referral',icon:'/icons/social/referral.png',count:5,won:3},
+          {name:'Walk-in',icon:'/icons/social/walk-in.png',count:4,won:0},
+        ];
+        document.write(sources.map(s=>{
+          const rate=s.count>0?Math.round(s.won/s.count*100):0;
+          const col=rate>=25?'var(--g)':rate>0?'var(--amber)':'rgba(255,255,255,.3)';
+          const bg=rate>=25?'rgba(200,255,0,.1)':rate>0?'rgba(255,155,53,.1)':'rgba(255,255,255,.05)';
+          return `<div class="src-card">
+            <div class="src-top">
+              <div class="src-icon"><img src="${s.icon}" /></div>
+              <div class="src-name">${s.name}</div>
+            </div>
+            <div class="src-count">${s.count}</div>
+            <div class="src-foot">
+              <span class="src-closed-lbl">${s.won} closed</span>
+              <span class="src-pill" style="color:${col};background:${bg};">${rate}%</span>
+            </div>
+          </div>`;
+        }).join(''));
+      </script>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

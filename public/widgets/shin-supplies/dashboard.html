@@ -112,7 +112,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 body.light .rep-page-btn{border-color:#E3E2DD;background:#F6F5F1;color:#8A8980;}
 body.light .rep-page-btn:hover:not(:disabled){border-color:#5A8C00;color:#527800;}
 body.light .rep-page-info{color:#A8A79F;}
-.rep-card{flex:1;min-width:180px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:hidden;transition:border-color .2s;}
+.rep-card{flex:1;min-width:180px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:18px;position:relative;overflow:visible;transition:border-color .2s;}
 .rep-card.leader{border-color:rgba(200,255,0,.35);background:rgba(200,255,0,.04);}
 .rep-card-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
 .rep-rank{font-size:16px;font-weight:900;letter-spacing:-.5px;padding:3px 10px;border-radius:20px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);}
@@ -126,6 +126,7 @@ body.light .rep-page-info{color:#A8A79F;}
 .rep-bar-wrap{margin-bottom:8px;}
 .rep-bar-track{height:5px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;margin:6px 0 4px;}
 .rep-bar-fill{height:100%;border-radius:3px;background:var(--g);transition:width .6s ease;}
+.rep-crown{position:absolute;top:-12px;right:14px;width:24px;height:24px;object-fit:contain;filter:drop-shadow(0 1px 3px rgba(0,0,0,.6));pointer-events:none;}
 .rep-bar-meta{display:flex;justify-content:space-between;align-items:center;}
 .rep-bar-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.06em;}
 .rep-bar-pct{font-size:13px;font-weight:800;color:var(--g);}
@@ -314,10 +315,15 @@ function mnNext() {
 const PROD_COLORS  = ['#C8FF00','#60A5FA','#C084FC','#FBBF24','#34D399','#F97316'];
 const PROD_NAMES   = {'Paper Cup':'Paper Cup','Plastic Cup':'Plastic Cup','Greaseproof Paper':'Grease Paper','PET Can':'PET Can'};
 const SRC_MAP = {
+  'WhatsApp':          { color:'#25D366', icon:'<img src="https://widgets.opxio.io/icons/social/social.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Instagram':         { color:'#E1306C', icon:'<img src="https://widgets.opxio.io/icons/social/instagram.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Facebook':          { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/facebook.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Facebook Ads':      { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/facebook.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Iklan Facebook':    { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/facebook.png" width="18" height="18" style="object-fit:contain;"/>' },
   'TikTok':            { color:'#E879F9', icon:'<img src="https://widgets.opxio.io/icons/social/tiktok.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Threads':           { color:'#F97316', icon:'<img src="https://widgets.opxio.io/icons/social/threads.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'LinkedIn':          { color:'#60A5FA', icon:'<img src="https://widgets.opxio.io/icons/social/linkedin.png" width="18" height="18" style="object-fit:contain;"/>' },
+  'Shopee':            { color:'#F97316', icon:'<img src="https://widgets.opxio.io/icons/social/shopee.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Referral':          { color:'#C8FF00', icon:'<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Rujukan / Kenalan': { color:'#C8FF00', icon:'<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>' },
   'Walk-in':           { color:'#34D399', icon:'<img src="https://widgets.opxio.io/icons/social/walk-in.png" width="18" height="18" style="object-fit:contain;"/>' },
@@ -447,6 +453,7 @@ function renderReps(reps, monthLabel){
     const barW=maxRate>0?Math.round((rate/maxRate)*100):0;
     const rateClass=rate>=30?'':'amber';
     return `<div class="rep-card${isLeader?' leader':''}">
+      ${isLeader?'<img class="rep-crown" src="https://widgets.opxio.io/icons/crown.png" alt=""/>':''}
       <div class="rep-card-hdr">
         <div class="rep-card-name">${esc(r.name)}</div>
         <span class="rep-rank">${rankLabel}</span>

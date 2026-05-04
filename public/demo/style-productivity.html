@@ -69,60 +69,86 @@
   }
   .drop-tag span { color: rgba(255,255,255,0.4); margin-left: 4px; }
 
-  /* Meetings Panel */
-  .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  /* Meetings Panel — Timeline style */
+  .meet-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
   .meet-today-lbl { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; }
 
-  /* Week strip */
-  .week-strip { display: flex; gap: 4px; margin-bottom: 18px; }
-  .week-day {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    gap: 6px; padding: 8px 4px; border-radius: 10px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
+  /* Timeline */
+  .cal-timeline { position: relative; }
+  .cal-time-axis {
+    display: flex; justify-content: space-between;
+    margin-bottom: 8px; padding: 0 0;
   }
-  .week-day.today {
-    background: var(--g); border-color: transparent;
+  .cal-time-lbl {
+    font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.2);
+    letter-spacing: .04em;
   }
-  .week-day.has-event:not(.today) { border-color: rgba(255,255,255,0.12); }
-  .wd-name { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing:.08em; color: var(--muted); }
-  .week-day.today .wd-name { color: rgba(0,0,0,0.5); }
-  .wd-num { font-size: 13px; font-weight: 900; color: var(--text); }
-  .week-day.today .wd-num { color: #000; }
-  .week-day:not(.today) .wd-num { color: var(--sub); }
-  .wd-dot { width: 5px; height: 5px; border-radius: 50%; background: rgba(255,255,255,0.2); }
-  .week-day.today .wd-dot { background: rgba(0,0,0,0.3); }
-  .week-day.has-event:not(.today) .wd-dot { background: var(--g); }
-  .week-day:not(.has-event) .wd-dot { opacity: 0; }
+  .cal-time-lbl.now-lbl {
+    color: #5BC8FF;
+    background: rgba(91,200,255,0.12);
+    padding: 2px 6px; border-radius: 4px;
+  }
+  .cal-grid {
+    position: relative; height: 110px;
+    background: rgba(255,255,255,0.02);
+    border-radius: 10px; overflow: visible;
+  }
+  /* Vertical hour lines */
+  .cal-grid::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0%, transparent calc(12.5% - 1px),
+      rgba(255,255,255,0.04) calc(12.5% - 1px), rgba(255,255,255,0.04) 12.5%
+    );
+    border-radius: 10px;
+  }
+  /* Now line */
+  .now-line {
+    position: absolute; top: -8px; bottom: -4px;
+    width: 1.5px; background: #5BC8FF;
+    left: 43%;
+    z-index: 10;
+  }
+  .now-line::before {
+    content: '';
+    position: absolute; top: 0; left: 50%;
+    transform: translateX(-50%);
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #5BC8FF;
+  }
+  /* Event blocks */
+  .cal-event {
+    position: absolute; top: 10px;
+    border-radius: 7px; padding: 7px 10px;
+    overflow: hidden; cursor: default;
+  }
+  .cal-event-title { font-size: 11px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+  .cal-event-sub { font-size: 9px; font-weight: 600; opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .ev-discovery { background: rgba(184,255,64,0.18); border: 1px solid rgba(184,255,64,0.3); color: var(--g); top: 10px; height: 40px; }
+  .ev-proposal  { background: rgba(91,200,255,0.14); border: 1px solid rgba(91,200,255,0.25); color: #7ABAFF; top: 58px; height: 40px; }
+  .ev-followup  { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); top: 10px; height: 40px; }
+  .ev-closing   { background: rgba(255,179,64,0.14); border: 1px solid rgba(255,179,64,0.25); color: var(--amber); top: 58px; height: 40px; }
 
-  /* Meeting list */
-  .meet-list { display: flex; flex-direction: column; gap: 8px; }
+  /* Upcoming list */
+  .meet-list { display: flex; flex-direction: column; gap: 7px; margin-top: 16px; }
   .meet-item {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 11px 13px; border-radius: 11px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 9px 12px; border-radius: 10px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.05);
-    position: relative; overflow: hidden;
   }
-  .meet-item.active {
-    background: rgba(184,255,64,0.04);
-    border-color: rgba(184,255,64,0.15);
-  }
-  .meet-time-col { text-align: center; flex-shrink: 0; width: 36px; }
-  .meet-time { font-size: 11px; font-weight: 800; color: var(--sub); line-height: 1.2; }
-  .meet-time span { display: block; font-size: 9px; font-weight: 600; color: var(--muted); }
+  .meet-item.active { background: rgba(184,255,64,0.04); border-color: rgba(184,255,64,0.15); }
+  .meet-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-discovery { background: var(--g); }
+  .dot-proposal  { background: #5BC8FF; }
+  .dot-followup  { background: rgba(255,255,255,0.3); }
+  .dot-closing   { background: var(--amber); }
   .meet-body { flex: 1; min-width: 0; }
-  .meet-name { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 4px; }
-  .meet-contact { font-size: 10px; font-weight: 600; color: var(--muted); }
-  .meet-badge {
-    font-size: 9px; font-weight: 700; letter-spacing:.06em; text-transform: uppercase;
-    padding: 2px 7px; border-radius: 100px; flex-shrink: 0;
-    align-self: flex-start; margin-top: 1px;
-  }
-  .badge-discovery { background: rgba(184,255,64,0.12); color: var(--g); }
-  .badge-followup  { background: rgba(255,255,255,0.07); color: var(--muted); }
-  .badge-proposal  { background: rgba(100,160,255,0.12); color: #7ABAFF; }
-  .badge-closing   { background: rgba(255,179,64,0.12); color: var(--amber); }
+  .meet-name { font-size: 12px; font-weight: 700; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .meet-contact { font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  .meet-time-badge { font-size: 10px; font-weight: 700; color: var(--muted); flex-shrink: 0; }
 
   .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 
@@ -219,14 +245,14 @@
     <div class="kpi-sub">Deals won</div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">Close Rate</div>
+    <div class="kpi-label">Conversion Rate</div>
     <div class="kpi-val" style="font-size:34px">57%</div>
-    <div class="kpi-sub">Won ÷ decided</div>
+    <div class="kpi-sub">Leads → Converted</div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">Avg Days to Close</div>
-    <div class="kpi-val" style="font-size:34px">4.2</div>
-    <div class="kpi-sub">Days per deal</div>
+    <div class="kpi-label">Pipeline Value</div>
+    <div class="kpi-val" style="font-size:28px">RM 284K</div>
+    <div class="kpi-sub">Active leads</div>
   </div>
 </div>
 
@@ -272,62 +298,80 @@
 
   <div class="section-card">
     <div class="meet-hdr">
-      <span class="section-title">Upcoming Meetings</span>
-      <span class="meet-today-lbl">This week</span>
+      <span class="section-title">Today's Schedule</span>
+      <span class="meet-today-lbl">Tue, 5 May</span>
     </div>
 
-    <!-- Week strip -->
-    <div class="week-strip">
-      <div class="week-day"><span class="wd-name">Mon</span><span class="wd-num">4</span><span class="wd-dot"></span></div>
-      <div class="week-day today has-event"><span class="wd-name">Tue</span><span class="wd-num">5</span><span class="wd-dot"></span></div>
-      <div class="week-day has-event"><span class="wd-name">Wed</span><span class="wd-num">6</span><span class="wd-dot"></span></div>
-      <div class="week-day has-event"><span class="wd-name">Thu</span><span class="wd-num">7</span><span class="wd-dot"></span></div>
-      <div class="week-day"><span class="wd-name">Fri</span><span class="wd-num">8</span><span class="wd-dot"></span></div>
-      <div class="week-day"><span class="wd-name">Sat</span><span class="wd-num">9</span><span class="wd-dot"></span></div>
-      <div class="week-day"><span class="wd-name">Sun</span><span class="wd-num">10</span><span class="wd-dot"></span></div>
+    <!-- Timeline -->
+    <div class="cal-timeline">
+      <div class="cal-time-axis">
+        <span class="cal-time-lbl">9:00</span>
+        <span class="cal-time-lbl">10:00</span>
+        <span class="cal-time-lbl">11:00</span>
+        <span class="cal-time-lbl now-lbl">12:30</span>
+        <span class="cal-time-lbl">13:00</span>
+        <span class="cal-time-lbl">14:00</span>
+        <span class="cal-time-lbl">15:00</span>
+        <span class="cal-time-lbl">16:00</span>
+      </div>
+      <div class="cal-grid">
+        <div class="now-line"></div>
+        <!-- Discovery Call 10:00–11:00 → left 12.5%, width 12.5% -->
+        <div class="cal-event ev-discovery" style="left:12.5%;width:12.5%">
+          <div class="cal-event-title">Discovery Call</div>
+          <div class="cal-event-sub">Hafiz · 10:00–11:00</div>
+        </div>
+        <!-- Proposal 11:30–12:30 → left 31.25%, width 12.5% -->
+        <div class="cal-event ev-proposal" style="left:31.25%;width:12.5%">
+          <div class="cal-event-title">Proposal Review</div>
+          <div class="cal-event-sub">Lina · 11:30–12:30</div>
+        </div>
+        <!-- Follow-up 13:30–14:30 → left 56.25%, width 12.5% -->
+        <div class="cal-event ev-followup" style="left:56.25%;width:12.5%">
+          <div class="cal-event-title">Follow-up Call</div>
+          <div class="cal-event-sub">Razif · 13:30–14:30</div>
+        </div>
+        <!-- Closing 15:00–16:00 → left 75%, width 12.5% -->
+        <div class="cal-event ev-closing" style="left:75%;width:12.5%">
+          <div class="cal-event-title">Closing Call</div>
+          <div class="cal-event-sub">Syira · 15:00–16:00</div>
+        </div>
+      </div>
     </div>
 
-    <!-- Meeting list -->
+    <!-- Upcoming list -->
     <div class="meet-list">
       <div class="meet-item active">
-        <div class="meet-time-col">
-          <div class="meet-time">10<span>AM</span></div>
-        </div>
+        <div class="meet-dot dot-discovery"></div>
         <div class="meet-body">
-          <div class="meet-name">Discovery Call</div>
-          <div class="meet-contact">Hafiz Rahman · Creativo Studio</div>
+          <div class="meet-name">Discovery Call — Hafiz Rahman</div>
+          <div class="meet-contact">Creativo Studio</div>
         </div>
-        <span class="meet-badge badge-discovery">Discovery</span>
+        <span class="meet-time-badge">10:00 AM</span>
       </div>
       <div class="meet-item">
-        <div class="meet-time-col">
-          <div class="meet-time">2<span>PM</span></div>
-        </div>
+        <div class="meet-dot dot-proposal"></div>
         <div class="meet-body">
-          <div class="meet-name">Proposal Review</div>
-          <div class="meet-contact">Lina Tan · Brandcraft Agency</div>
+          <div class="meet-name">Proposal Review — Lina Tan</div>
+          <div class="meet-contact">Brandcraft Agency</div>
         </div>
-        <span class="meet-badge badge-proposal">Proposal</span>
+        <span class="meet-time-badge">11:30 AM</span>
       </div>
       <div class="meet-item">
-        <div class="meet-time-col">
-          <div class="meet-time">Wed<span>11 AM</span></div>
-        </div>
+        <div class="meet-dot dot-followup"></div>
         <div class="meet-body">
-          <div class="meet-name">Follow-up Call</div>
-          <div class="meet-contact">Razif Omar · Omegas Digital</div>
+          <div class="meet-name">Follow-up Call — Razif Omar</div>
+          <div class="meet-contact">Omegas Digital</div>
         </div>
-        <span class="meet-badge badge-followup">Follow-up</span>
+        <span class="meet-time-badge">1:30 PM</span>
       </div>
       <div class="meet-item">
-        <div class="meet-time-col">
-          <div class="meet-time">Thu<span>3 PM</span></div>
-        </div>
+        <div class="meet-dot dot-closing"></div>
         <div class="meet-body">
-          <div class="meet-name">Closing Call</div>
-          <div class="meet-contact">Syira Malik · Pixelhaus KL</div>
+          <div class="meet-name">Closing Call — Syira Malik</div>
+          <div class="meet-contact">Pixelhaus KL</div>
         </div>
-        <span class="meet-badge badge-closing">Closing</span>
+        <span class="meet-time-badge">3:00 PM</span>
       </div>
     </div>
   </div>

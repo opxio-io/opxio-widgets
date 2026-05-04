@@ -56,16 +56,27 @@
   .stage-won .funnel-fill  { background: var(--g); }
   .stage-lost .funnel-fill { background: rgba(255,255,255,0.07); }
 
-  .live-stack { display: flex; flex-direction: column; gap: 10px; }
-  .live-item { background: rgba(255,255,255,0.035); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; }
-  .live-item-left { display: flex; flex-direction: column; gap: 3px; }
-  .live-item-lbl { font-size: 11px; font-weight: 600; color: var(--muted); }
-  .live-item-val { font-size: 22px; font-weight: 900; letter-spacing:-1px; }
-  .live-item-val.warn { color: var(--amber); }
-  .live-item-val.ok { color: var(--g); }
-  .live-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
-  .live-icon.green { background: rgba(184,255,64,0.12); }
-  .live-icon.amber { background: rgba(255,179,64,0.12); }
+  /* Live Pulse redesign */
+  .pulse-card { display: flex; flex-direction: column; }
+  .pulse-header { margin-bottom: 20px; }
+  .pulse-title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px; }
+  .pulse-live-badge { display: flex; align-items: center; gap: 5px; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing:.08em; text-transform: uppercase; }
+  .pulse-sub { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .pulse-metrics { display: flex; align-items: flex-end; gap: 0; flex: 1; }
+  .pulse-metric { flex: 1; display: flex; align-items: flex-end; gap: 10px; padding: 12px 14px; border-radius: 12px; }
+  .pulse-metric.urgent { background: rgba(255,179,64,0.05); border: 1px solid rgba(255,179,64,0.12); }
+  .pulse-metric-left { flex: 1; }
+  .pulse-num { font-size: 36px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 6px; }
+  .pulse-num.ok { color: var(--g); }
+  .pulse-num.warn { color: var(--amber); }
+  .pulse-num.dim { color: var(--text); }
+  .pulse-lbl { font-size: 10px; font-weight: 600; color: var(--muted); line-height: 1.4; }
+  .pulse-bar-vert { width: 4px; border-radius: 100px; height: 60px; background: rgba(255,255,255,0.05); display: flex; align-items: flex-end; overflow: hidden; flex-shrink: 0; }
+  .pulse-bar-fill-vert { width: 100%; border-radius: 100px; transition: height 0.8s cubic-bezier(0.4,0,0.2,1); }
+  .pulse-bar-fill-vert.ok { background: var(--g); }
+  .pulse-bar-fill-vert.warn { background: var(--amber); }
+  .pulse-bar-fill-vert.dim { background: rgba(255,255,255,0.25); }
+  .pulse-divider { width: 1px; background: rgba(255,255,255,0.05); align-self: stretch; margin: 0 2px; flex-shrink: 0; }
 
   .bottom-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 14px; }
 
@@ -107,15 +118,14 @@
   .rep-rank-num.top { color: var(--g); }
 
   .rep-av {
-    width: 42px; height: 42px; border-radius: 12px;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 900; letter-spacing: -0.5px;
-    color: rgba(255,255,255,0.5); flex-shrink: 0;
+    width: 42px; height: 42px; border-radius: 50%;
+    object-fit: cover; flex-shrink: 0;
+    border: 2px solid rgba(255,255,255,0.08);
   }
-  .av-1 { background: rgba(184,255,64,0.12); color: var(--g); }
-  .av-2 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
-  .av-3 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
-  .av-4 { background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.5); }
+  .rep-row:first-of-type .rep-av {
+    border-color: rgba(184,255,64,0.4);
+    box-shadow: 0 0 10px rgba(184,255,64,0.15);
+  }
 
   .rep-mid { min-width: 0; }
   .rep-name-txt { font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -206,33 +216,50 @@
     </div>
   </div>
 
-  <div class="section-card">
-    <div class="section-header">
-      <span class="section-title">Live Pulse</span>
-      <span class="section-label"><span class="live-dot"></span>Right now</span>
+  <div class="section-card pulse-card">
+    <div class="pulse-header">
+      <div class="pulse-title-row">
+        <span class="section-title">Live Pulse</span>
+        <span class="pulse-live-badge"><span class="live-dot"></span>Now</span>
+      </div>
+      <div class="pulse-sub">Real-time activity</div>
     </div>
-    <div class="live-stack">
-      <div class="live-item">
-        <div class="live-item-left">
-          <span class="live-item-lbl">Follow-ups due today</span>
-          <span class="live-item-val ok">8</span>
+    <div class="pulse-metrics">
+
+      <div class="pulse-metric">
+        <div class="pulse-metric-left">
+          <div class="pulse-num ok">8</div>
+          <div class="pulse-lbl">Follow-ups<br>due today</div>
         </div>
-        
-      </div>
-      <div class="live-item">
-        <div class="live-item-left">
-          <span class="live-item-lbl">Follow-ups next 3 days</span>
-          <span class="live-item-val" style="color:var(--sub)">15</span>
+        <div class="pulse-bar-vert">
+          <div class="pulse-bar-fill-vert ok" style="height:100%"></div>
         </div>
-        
       </div>
-      <div class="live-item">
-        <div class="live-item-left">
-          <span class="live-item-lbl">Overdue response</span>
-          <span class="live-item-val warn">3</span>
+
+      <div class="pulse-divider"></div>
+
+      <div class="pulse-metric">
+        <div class="pulse-metric-left">
+          <div class="pulse-num dim">15</div>
+          <div class="pulse-lbl">Due in<br>next 3 days</div>
         </div>
-        
+        <div class="pulse-bar-vert">
+          <div class="pulse-bar-fill-vert dim" style="height:65%"></div>
+        </div>
       </div>
+
+      <div class="pulse-divider"></div>
+
+      <div class="pulse-metric urgent">
+        <div class="pulse-metric-left">
+          <div class="pulse-num warn">3</div>
+          <div class="pulse-lbl">Overdue<br>response</div>
+        </div>
+        <div class="pulse-bar-vert">
+          <div class="pulse-bar-fill-vert warn" style="height:25%"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
@@ -246,7 +273,7 @@
 
     <div class="rep-row">
       <div class="rep-rank-num top">01</div>
-      <div class="rep-av av-1">FA</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=FaraAin&backgroundColor=d1fae5" alt="FA" />
       <div class="rep-mid">
         <div class="rep-name-txt">Fara Ain</div>
         <div class="rep-sub">14 leads · Sales Rep</div>
@@ -260,7 +287,7 @@
 
     <div class="rep-row">
       <div class="rep-rank-num">02</div>
-      <div class="rep-av av-2">ZH</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=ZaraHana&backgroundColor=dbeafe" alt="ZH" />
       <div class="rep-mid">
         <div class="rep-name-txt">Zara Hana</div>
         <div class="rep-sub">11 leads · Sales Rep</div>
@@ -274,7 +301,7 @@
 
     <div class="rep-row">
       <div class="rep-rank-num">03</div>
-      <div class="rep-av av-3">AM</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=AhmadMuiz&backgroundColor=fef3c7" alt="AM" />
       <div class="rep-mid">
         <div class="rep-name-txt">Ahmad Muiz</div>
         <div class="rep-sub">10 leads · Sales Rep</div>
@@ -288,7 +315,7 @@
 
     <div class="rep-row">
       <div class="rep-rank-num">04</div>
-      <div class="rep-av av-4">RN</div>
+      <img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=RinaNor&backgroundColor=fce7f3" alt="RN" />
       <div class="rep-mid">
         <div class="rep-name-txt">Rina Nor</div>
         <div class="rep-sub">8 leads · Sales Rep</div>

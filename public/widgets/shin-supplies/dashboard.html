@@ -49,16 +49,31 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 @media(max-width:1000px){.g-hero{grid-template-columns:repeat(3,1fr);}}
 @media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
 @media(max-width:600px){.g3{grid-template-columns:1fr;}}
-@media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
+@media(max-width:480px){
+  .g-hero{grid-template-columns:1fr;}
+  /* Tighter padding — gives ~319px usable content width on a 343px embed */
+  body{padding:12px 12px 24px;}
+  /* Hide timestamp — it pushes h-right over 300px and causes silent overflow */
+  .ts{display:none;}
+  /* h-right without timestamp: ~220px — fits fine */
+  .h-right{flex-wrap:wrap;justify-content:flex-end;}
+  /* KPI labels: allow wrap so long strings don't force card wider */
+  .kpi-lbl{white-space:normal;}
+  /* Hero font size: slightly smaller to prevent wrap */
+  .h-title{font-size:18px;}
+  /* Rep cards: single column */
+  .rep-cards.layout-4,.rep-cards.layout-2{grid-template-columns:1fr;}
+  /* Source grid: single column */
+  .src-grid{grid-template-columns:1fr;}
+  /* Funnel label: narrower so bar has room */
+  .f-lbl{width:100px;}
+  /* Speed row stack */
+  .speed-row{flex-direction:column;align-items:flex-start;gap:10px;}
+}
 @media(max-width:600px){
   .rep-cards.layout-4{grid-template-columns:1fr 1fr;}
   .src-grid{grid-template-columns:1fr 1fr;}
   .speed-row{flex-direction:column;align-items:flex-start;gap:10px;}
-}
-@media(max-width:420px){
-  .rep-cards.layout-4,.rep-cards.layout-2{grid-template-columns:1fr;}
-  .src-grid{grid-template-columns:1fr;}
-  .f-lbl{width:90px;}
 }
 
 /* ── Hero stat ── */

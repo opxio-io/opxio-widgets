@@ -50,24 +50,42 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 @media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2,.g2-eq{grid-template-columns:1fr;}}
 @media(max-width:600px){.g3{grid-template-columns:1fr;}}
 @media(max-width:480px){
-  .g-hero{grid-template-columns:1fr;}
-  /* Tighter padding — gives ~319px usable content width on a 343px embed */
-  body{padding:12px 12px 24px;}
-  /* Hide timestamp — it pushes h-right over 300px and causes silent overflow */
+  /* Compact body — ~319px usable width */
+  body{padding:10px 10px 16px;}
   .ts{display:none;}
-  /* h-right without timestamp: ~220px — fits fine */
   .h-right{flex-wrap:wrap;justify-content:flex-end;}
-  /* KPI labels: allow wrap so long strings don't force card wider */
+  .h-title{font-size:17px;}
+
+  /* 2-col KPI grid — 5 cards become 3 rows instead of 5 rows */
+  .g-hero{grid-template-columns:1fr 1fr;gap:6px;}
+  .hero{padding:9px 10px 8px;}
+  .kpi{padding:9px 10px 8px;}
+  .hero-val{font-size:22px;}
+  .kpi-val{font-size:26px;letter-spacing:-1px;}
+  .hero-eyebrow,.kpi-lbl{font-size:8.5px;margin-bottom:6px;}
   .kpi-lbl{white-space:normal;}
-  /* Hero font size: slightly smaller to prevent wrap */
-  .h-title{font-size:18px;}
-  /* Rep cards: single column */
+  .hero-label{font-size:10px;margin-top:4px;}
+  .hero-sub,.kpi-sub{font-size:9px;margin-top:3px;}
+
+  /* Compact card/panel padding */
+  .card{border-radius:10px;}
+  .panel{padding:9px 10px 9px;}
+
+  /* Pipeline rows tighter */
+  .f-item{margin-bottom:5px;}
+  .f-track{height:18px;}
+  .f-lbl{font-size:10px;width:86px;}
+  .f-n{font-size:11px;width:22px;}
+
+  /* Live tiles compact */
+  .row{margin-bottom:6px;}
+
+  /* Hide rep breakdown + sources on mobile — too tall for Notion embed */
+  .mob-hide{display:none;}
+
+  /* Rep/source inside panels — single col if shown */
   .rep-cards.layout-4,.rep-cards.layout-2{grid-template-columns:1fr;}
-  /* Source grid: single column */
   .src-grid{grid-template-columns:1fr;}
-  /* Funnel label: narrower so bar has room */
-  .f-lbl{width:100px;}
-  /* Speed row stack */
   .speed-row{flex-direction:column;align-items:flex-start;gap:10px;}
 }
 @media(max-width:600px){
@@ -647,7 +665,7 @@ function render(d){
   </div>`:'';
 
   const row3panels=[repPanel,srcPanel].filter(Boolean);
-  const row3=row3panels.length?`<div class="g2 row">${row3panels.join('')}</div>`:'';
+  const row3=row3panels.length?`<div class="g2 row mob-hide">${row3panels.join('')}</div>`:'';
 
   document.getElementById('main').innerHTML=row1+row2+row3;
   document.getElementById('ts').textContent='Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});

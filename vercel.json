@@ -44,11 +44,11 @@
       "headers": [
         {
           "key": "Content-Security-Policy",
-          "value": "frame-ancestors https://www.notion.so https://*.notion.so https://notion.com https://*.notion.com;"
+          "value": "frame-ancestors *;"
         },
         {
           "key": "X-Frame-Options",
-          "value": "ALLOW-FROM https://www.notion.so"
+          "value": "ALLOWALL"
         },
         {
           "key": "X-Robots-Tag",

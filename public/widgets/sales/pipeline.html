@@ -309,12 +309,16 @@ function drawChart(trend, totalLeads){
   svg.setAttribute('width',W); svg.setAttribute('height',H); svg.innerHTML='';
   var AC='#C8FF00';
   var ACA=function(a){return 'rgba(200,255,0,'+a+')';};
-  var PAD={t:14,r:16,b:36,l:44};
+  var PAD={t:14,r:16,b:44,l:44};
   var cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
-  var maxV=Math.max.apply(null,trend.map(function(d){return d.count;}).concat([1]));
+  var rawMax=Math.max.apply(null,trend.map(function(d){return d.count;}).concat([1]));
+  // Round up to a nice number so Y axis ticks are meaningful integers
+  var niceMax=rawMax<=4?4:rawMax<=8?8:rawMax<=10?10:Math.ceil(rawMax/5)*5;
+  var maxV=niceMax;
   var xP=function(i){return PAD.l+(i/(trend.length-1||1))*cW;};
   var yP=function(v){return PAD.t+cH-(v/maxV)*cH;};
   var dim='rgba(255,255,255,.35)';
+  var seenY=[];
   for(var gi=0;gi<=4;gi++){
     var gy=PAD.t+(gi/4)*cH;
     var gl=document.createElementNS(ns,'line');
@@ -323,18 +327,22 @@ function drawChart(trend, totalLeads){
     gl.setAttribute('stroke','rgba(255,255,255,.04)'); gl.setAttribute('stroke-dasharray','3,5');
     svg.appendChild(gl);
     if(gi<4){
-      var gt=document.createElementNS(ns,'text');
-      gt.setAttribute('x',PAD.l-5); gt.setAttribute('y',gy+4);
-      gt.setAttribute('text-anchor','end'); gt.setAttribute('fill',dim);
-      gt.setAttribute('font-size','12'); gt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
-      gt.textContent=Math.round(maxV-(gi/4)*maxV);
-      svg.appendChild(gt);
+      var yVal=Math.round(maxV-(gi/4)*maxV);
+      if(seenY.indexOf(yVal)===-1){
+        seenY.push(yVal);
+        var gt=document.createElementNS(ns,'text');
+        gt.setAttribute('x',PAD.l-5); gt.setAttribute('y',gy+4);
+        gt.setAttribute('text-anchor','end'); gt.setAttribute('fill',dim);
+        gt.setAttribute('font-size','12'); gt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
+        gt.textContent=yVal;
+        svg.appendChild(gt);
+      }
     }
   }
   trend.forEach(function(d,i){
     var isCur=i===trend.length-1;
     var xt=document.createElementNS(ns,'text');
-    xt.setAttribute('x',xP(i)); xt.setAttribute('y',H-PAD.b+16);
+    xt.setAttribute('x',xP(i)); xt.setAttribute('y',H-PAD.b+20);
     xt.setAttribute('text-anchor','middle');
     xt.setAttribute('fill',isCur?AC:dim);
     xt.setAttribute('font-size','12'); xt.setAttribute('font-weight',isCur?'700':'500');

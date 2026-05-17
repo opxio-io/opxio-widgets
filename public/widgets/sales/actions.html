@@ -41,17 +41,20 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 @media(max-width:860px){.actions-grid{grid-template-columns:1fr;}}
 
 /* Column card */
-.col-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.col-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;}
 
 /* Column header */
-.col-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.col-hdr{padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
 .col-hdr-left{display:flex;align-items:center;gap:8px;}
-.col-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.col-icon{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
 .col-title{font-size:13px;font-weight:700;}
 .col-count{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;}
 
-/* Item list */
-.item-list{padding:10px;display:flex;flex-direction:column;gap:6px;}
+/* Item list — scrollable */
+.item-list{padding:10px;display:flex;flex-direction:column;gap:6px;max-height:300px;overflow-y:auto;}
+.item-list::-webkit-scrollbar{width:3px;}
+.item-list::-webkit-scrollbar-track{background:transparent;}
+.item-list::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:999px;}
 
 /* Item row */
 .item-row{border-radius:10px;padding:11px 14px;border-left:3px solid transparent;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.05);border-right:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;transition:background .12s;}
@@ -119,7 +122,7 @@ function renderCol(cfg, items){
   }
 
   return '<div class="col-card">'
-    +'<div class="col-hdr" style="border-bottom-color:'+cfg.borderColor+';">'
+    +'<div class="col-hdr" style="background:'+cfg.hdrBg+';border-bottom:1px solid '+cfg.borderColor+';">'
       +'<div class="col-hdr-left">'
         +'<div class="col-icon" style="background:'+cfg.iconBg+';color:'+cfg.color+';">'+cfg.icon+'</div>'
         +'<span class="col-title">'+cfg.title+'</span>'
@@ -151,17 +154,17 @@ function render(d){
   var cfgHot = {
     title:'Hot Leads', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 3z"/></svg>',
     color:'var(--red)', countBg:'rgba(255,107,107,.12)',
-    iconBg:'rgba(255,107,107,.1)', borderColor:'rgba(255,107,107,.12)'
+    iconBg:'rgba(255,107,107,.15)', hdrBg:'rgba(255,107,107,.07)', borderColor:'rgba(255,107,107,.15)'
   };
   var cfgStalled = {
     title:'Stalled Deals', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>',
     color:'var(--amber)', countBg:'rgba(251,191,36,.12)',
-    iconBg:'rgba(251,191,36,.1)', borderColor:'rgba(251,191,36,.12)'
+    iconBg:'rgba(251,191,36,.15)', hdrBg:'rgba(251,191,36,.07)', borderColor:'rgba(251,191,36,.15)'
   };
   var cfgFollow = {
     title:'Follow-up Due', icon:'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 8 22 2 16 2"/><line x1="22" y1="2" x2="15" y2="9"/><path d="M21 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2.23h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l.77-.77a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 17z"/></svg>',
     color:'var(--blue)', countBg:'rgba(96,165,250,.12)',
-    iconBg:'rgba(96,165,250,.1)', borderColor:'rgba(96,165,250,.12)'
+    iconBg:'rgba(96,165,250,.15)', hdrBg:'rgba(96,165,250,.07)', borderColor:'rgba(96,165,250,.15)'
   };
 
   document.getElementById('main').innerHTML =

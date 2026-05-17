@@ -21,8 +21,8 @@ if (window.self === window.top) {
   --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
   --r:18px;
 }
-html, body { width:100%; }
-body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; padding:18px 20px 28px; }
+html,body{width:100%;}
+body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18px 20px 28px;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 
@@ -57,10 +57,9 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; paddi
 
 /* Grids */
 .row{margin-bottom:10px;}
-.main-grid{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:10px;}
 .bottom-grid{display:grid;grid-template-columns:1.7fr 1fr 1.4fr;gap:12px;}
 @media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:900px){.main-grid{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr;}}
+@media(max-width:900px){.bottom-grid{grid-template-columns:1fr;}}
 
 /* Section card */
 .section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
@@ -82,24 +81,13 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; paddi
 .funnel-stage{font-size:12px;font-weight:600;color:var(--sub);}
 .funnel-count{font-size:12px;font-weight:800;}
 .funnel-pct{font-size:10px;font-weight:700;color:var(--muted);min-width:34px;text-align:right;}
-.funnel-track{height:14px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
+.funnel-track{height:14px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
 .funnel-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .funnel-dropped{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:9px 13px;border-radius:8px;border:1px dashed rgba(255,255,255,.08);}
 .funnel-dropped-lbl{font-size:11px;font-weight:700;color:var(--sub);}
 .funnel-dropped-tags{display:flex;gap:6px;flex-wrap:wrap;}
 .drop-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--sub);}
 .drop-tag span{color:rgba(255,255,255,.5);margin-left:4px;}
-
-/* Action items */
-.meet-hdr{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
-.meet-list{display:flex;flex-direction:column;gap:7px;}
-.meet-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);}
-.meet-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.meet-body{flex:1;min-width:0;}
-.meet-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.meet-sub{font-size:10px;color:var(--muted);font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.meet-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;flex-shrink:0;}
-.empty-state{text-align:center;padding:24px 0;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
 
 /* Sources */
 .sources-grid{display:flex;flex-direction:column;gap:8px;}
@@ -128,8 +116,6 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; paddi
 .rep-prog-track{height:4px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
 .rep-prog-fill{height:100%;border-radius:100px;transition:width .7s cubic-bezier(.4,0,.2,1);}
 .pf-1{background:var(--g);}
-.pf-2{background:rgba(255,255,255,.2);}
-.pf-3{background:rgba(255,255,255,.2);}
 .rep-stat-block{text-align:right;}
 .rep-stat-won{font-size:20px;font-weight:900;letter-spacing:-1px;line-height:1;display:block;}
 .rep-stat-won.c1{color:var(--g);}
@@ -137,7 +123,7 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; paddi
 .rep-stat-mini{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.04);}
 .rep-stat-mini-cell{padding:13px 20px;border-right:1px solid rgba(255,255,255,.04);}
 .rep-stat-mini-cell:last-child{border-right:none;}
-.rep-stat-mini-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.rep-stat-mini-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
 .rep-stat-mini-val{font-size:18px;font-weight:900;letter-spacing:-1px;}
 
 /* Chart */
@@ -147,7 +133,8 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; paddi
 .chart-wrap{position:relative;width:100%;height:140px;}
 .chart-tip{display:none;position:absolute;pointer-events:none;background:#2a2a2a;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:7px 11px;font-size:12px;font-weight:700;color:#fff;white-space:nowrap;z-index:10;}
 
-/* Loading */
+/* Misc */
+.empty-state{text-align:center;padding:24px 0;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
 .loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
@@ -208,17 +195,14 @@ function mnNext(){
   updateMonthNav(); clearTimeout(_navTimer); _navTimer=setTimeout(load,300); load();
 }
 
-// Lead fills — 7 stages, Converted = lime green
 var LEAD_FILLS = [
   'rgba(255,255,255,.32)','rgba(255,255,255,.28)','rgba(255,255,255,.25)',
   'rgba(255,255,255,.22)','rgba(255,255,255,.18)','rgba(255,255,255,.14)','var(--g)',
 ];
-// Deal fills — 5 stages, Closed-Won = lime green
 var DEAL_FILLS = [
   'rgba(255,255,255,.30)','rgba(255,255,255,.25)','rgba(255,255,255,.20)',
   'rgba(255,255,255,.15)','var(--g)',
 ];
-
 var SRC_ICONS = {
   'LinkedIn':          'https://widgets.opxio.io/icons/social/linkedin.png',
   'Referral':          'https://widgets.opxio.io/icons/social/referral.png',
@@ -259,7 +243,7 @@ function updateFunnelDisplay(d){
 }
 
 function renderFunnel(items, fills, topCount){
-  if(!items||!items.length) return '<div class="empty-state">No pipeline data yet</div>';
+  if(!items||!items.length) return '<div class="empty-state">No data yet</div>';
   var max=Math.max.apply(null,items.map(function(i){return i.count;}).concat([1]));
   var total=topCount||max;
   return items.map(function(item,idx){
@@ -274,28 +258,6 @@ function renderFunnel(items, fills, topCount){
       +'<span class="funnel-pct">'+pct+'%</span>'
       +'</div></div>'
       +'<div class="funnel-track"><div class="funnel-fill" style="width:'+w+'%;background:'+fill+';"></div></div>'
-      +'</div>';
-  }).join('');
-}
-
-function renderActions(actions){
-  var hotLeads=actions.hotLeads||[], stalled=actions.stalledDeals||[], followups=actions.followupDue||[];
-  var items=[];
-  hotLeads.forEach(function(name){
-    items.push({dot:'var(--red)',name:name,sub:'Hot lead — needs attention',badge:'HOT',bc:'rgba(255,107,107,.12)',tc:'var(--red)'});
-  });
-  stalled.forEach(function(d){
-    items.push({dot:'var(--amber)',name:d.name,sub:d.stage+(d.os?' · '+d.os:''),badge:d.daysStale+'d stale',bc:'rgba(251,191,36,.12)',tc:'var(--amber)'});
-  });
-  followups.forEach(function(f){
-    items.push({dot:'var(--blue)',name:f.name,sub:'Follow-up overdue',badge:'Follow up',bc:'rgba(96,165,250,.12)',tc:'var(--blue)'});
-  });
-  if(!items.length) return '<div class="empty-state">Pipeline is clean — no actions needed</div>';
-  return items.map(function(i){
-    return '<div class="meet-item">'
-      +'<div class="meet-dot" style="background:'+i.dot+';"></div>'
-      +'<div class="meet-body"><div class="meet-name">'+esc(i.name)+'</div><div class="meet-sub">'+esc(i.sub)+'</div></div>'
-      +'<span class="meet-badge" style="background:'+i.bc+';color:'+i.tc+';">'+esc(i.badge)+'</span>'
       +'</div>';
   }).join('');
 }
@@ -358,7 +320,6 @@ function drawChart(trend, totalLeads){
   var xP=function(i){return PAD.l+(i/(trend.length-1||1))*cW;};
   var yP=function(v){return PAD.t+cH-(v/maxV)*cH;};
   var dim='rgba(255,255,255,.35)';
-
   for(var gi=0;gi<=4;gi++){
     var gy=PAD.t+(gi/4)*cH;
     var gl=document.createElementNS(ns,'line');
@@ -381,12 +342,10 @@ function drawChart(trend, totalLeads){
     xt.setAttribute('x',xP(i)); xt.setAttribute('y',H-PAD.b+13);
     xt.setAttribute('text-anchor','middle');
     xt.setAttribute('fill',isCur?AC:dim);
-    xt.setAttribute('font-size','10');
-    xt.setAttribute('font-weight',isCur?'700':'500');
+    xt.setAttribute('font-size','10'); xt.setAttribute('font-weight',isCur?'700':'500');
     xt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
     xt.textContent=d.label; svg.appendChild(xt);
   });
-
   var pts=trend.map(function(d,i){return [xP(i),yP(d.count)];});
   function smooth(p){
     var dd='M '+p[0][0]+' '+p[0][1];
@@ -398,7 +357,6 @@ function drawChart(trend, totalLeads){
   }
   var pathD=smooth(pts);
   var last=pts[pts.length-1], first=pts[0];
-
   var defs=document.createElementNS(ns,'defs');
   var grad=document.createElementNS(ns,'linearGradient');
   grad.setAttribute('id','lgF'); grad.setAttribute('x1','0'); grad.setAttribute('y1','0');
@@ -409,21 +367,17 @@ function drawChart(trend, totalLeads){
     grad.appendChild(s);
   });
   defs.appendChild(grad); svg.insertBefore(defs,svg.firstChild);
-
   var area=document.createElementNS(ns,'path');
   area.setAttribute('d',pathD+' L '+last[0]+' '+(H-PAD.b)+' L '+first[0]+' '+(H-PAD.b)+' Z');
   area.setAttribute('fill','url(#lgF)'); svg.appendChild(area);
-
   var line=document.createElementNS(ns,'path');
   line.setAttribute('d',pathD); line.setAttribute('fill','none');
   line.setAttribute('stroke',AC); line.setAttribute('stroke-width','2');
   line.setAttribute('stroke-linecap','round'); svg.appendChild(line);
-
   var hL=document.createElementNS(ns,'line');
   hL.setAttribute('stroke',ACA(0.2)); hL.setAttribute('stroke-width','1');
   hL.setAttribute('y1',PAD.t); hL.setAttribute('y2',H-PAD.b);
   hL.style.opacity='0'; svg.appendChild(hL);
-
   trend.forEach(function(d,i){
     var isCur=i===trend.length-1;
     var dot=document.createElementNS(ns,'circle');
@@ -434,7 +388,6 @@ function drawChart(trend, totalLeads){
     if(isCur) dot.setAttribute('filter','drop-shadow(0 0 6px '+ACA(0.7)+')');
     svg.appendChild(dot);
   });
-
   wrap.onmousemove=function(e){
     var rect=wrap.getBoundingClientRect(),mx=e.clientX-rect.left;
     var bi=null,bd=Infinity;
@@ -458,7 +411,6 @@ function render(d){
   var crCol=kpi.convRate>=30?'var(--g)':kpi.convRate>0?'var(--amber)':'rgba(255,255,255,.2)';
   var pvSize=(kpi.pipelineValue||0)>=100000?'28px':'38px';
 
-  // KPI row
   var kpiRow='<div class="kpi-row row">'
     +'<div class="kpi-card hero"><div class="kpi-label">New Leads — '+esc(monLabel)+'</div><div class="kpi-val">'+(kpi.newLeadsMTD||0)+'</div><div class="kpi-sub">Leads this month</div></div>'
     +'<div class="kpi-card"><div class="kpi-label">Closed Won</div><div class="kpi-val" style="color:'+cwCol+';font-size:34px;">'+(kpi.closedWonMTD||0)+'</div><div class="kpi-sub">Deals won</div></div>'
@@ -466,35 +418,20 @@ function render(d){
     +'<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';">'+fmtRM(kpi.pipelineValue)+'</div><div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div></div>'
     +'</div>';
 
-  // Actions badge
-  var actions=d.actions||{};
-  var actionCount=(actions.hotLeads||[]).length+(actions.stalledDeals||[]).length+(actions.followupDue||[]).length;
-  var actBadge=actionCount>0
-    ?'<span class="section-label" style="background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);">'+actionCount+' pending</span>'
-    :'<span class="section-label green">All clear</span>';
-
-  // Main grid — funnel (with tabs) + actions
-  var mainGrid='<div class="main-grid row">'
-    +'<div class="section-card">'
-      +'<div class="section-header">'
-        +'<div style="display:flex;align-items:center;gap:10px;">'
-          +'<span class="section-title">Pipeline Funnel</span>'
-          +'<div class="funnel-tabs">'
-            +'<button class="funnel-tab active" id="tab-leads" onclick="switchFunnelTab(\'leads\')">Leads</button>'
-            +'<button class="funnel-tab" id="tab-deals" onclick="switchFunnelTab(\'deals\')">Deals</button>'
-          +'</div>'
+  var funnelSection='<div class="section-card row">'
+    +'<div class="section-header">'
+      +'<div style="display:flex;align-items:center;gap:10px;">'
+        +'<span class="section-title">Pipeline Funnel</span>'
+        +'<div class="funnel-tabs">'
+          +'<button class="funnel-tab active" id="tab-leads" onclick="switchFunnelTab(\'leads\')">Leads</button>'
+          +'<button class="funnel-tab" id="tab-deals" onclick="switchFunnelTab(\'deals\')">Deals</button>'
         +'</div>'
-        +'<span class="section-label green" id="funnel-badge">'+(kpi.openLeads||0)+' open leads</span>'
       +'</div>'
-      +'<div id="funnel-body"></div>'
+      +'<span class="section-label green" id="funnel-badge">'+(kpi.openLeads||0)+' open leads</span>'
     +'</div>'
-    +'<div class="section-card">'
-      +'<div class="meet-hdr"><span class="section-title">Action Items</span>'+actBadge+'</div>'
-      +'<div class="meet-list">'+renderActions(actions)+'</div>'
-    +'</div>'
+    +'<div id="funnel-body"></div>'
     +'</div>';
 
-  // Bottom grid — chart + sources + rep performance
   var bottomGrid='<div class="bottom-grid row">'
     +'<div class="section-card">'
       +'<div class="chart-hdr"><span class="chart-title">Leads Incoming by Month</span><span class="chart-badge" id="cbadge">loading…</span></div>'
@@ -510,12 +447,9 @@ function render(d){
     +'</div>'
     +'</div>';
 
-  document.getElementById('main').innerHTML=kpiRow+mainGrid+bottomGrid;
-
-  // Restore funnel tab state
+  document.getElementById('main').innerHTML=kpiRow+funnelSection+bottomGrid;
   updateFunnelDisplay(d);
 
-  // Draw chart
   _chartData=d.monthlyTrend||[];
   _chartTotal=(d.totals&&d.totals.leads)||0;
   if(_chartRO) _chartRO.disconnect();
@@ -539,15 +473,12 @@ function load(forceNetwork){
   var cached=_monthCache.get(ck);
   var ttl=!filterMonth?CURRENT_TTL:PAST_TTL;
   if(!forceNetwork&&cached&&(Date.now()-cached.ts)<ttl){render(cached.data);return;}
-
   _loadCtrl=new AbortController();
   var sig=_loadCtrl.signal;
   var timer=setTimeout(function(){_abortedByNav=false;_loadCtrl.abort();},25000);
-
   var params=new URLSearchParams();
   if(_tok) params.set('token',_tok);
   if(filterMonth){params.set('month',filterMonth.month);params.set('year',filterMonth.year);}
-
   fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+params.toString(),{signal:sig})
     .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
     .then(function(data){_monthCache.set(ck,{data:data,ts:Date.now()});render(data);})
@@ -561,8 +492,6 @@ function load(forceNetwork){
     })
     .finally(function(){clearTimeout(timer);});
 }
-
-function doRefresh(){_monthCache.delete('current');load(true);}
 
 updateMonthNav();
 load();

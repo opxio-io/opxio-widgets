@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if (window.self === window.top) {
+  window.stop(); document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
+}
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Action Items</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#191919; --card:#222222;
+  --border:rgba(255,255,255,0.07);
+  --g:#C8FF00; --amber:#FBBF24; --red:#FF6B6B; --blue:#60A5FA;
+  --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
+  --r:18px;
+}
+html,body{width:100%;}
+body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18px 20px 28px;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+@keyframes glow{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 14px var(--g)}}
+
+/* Top bar */
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
+.top-bar-left{display:flex;align-items:center;gap:12px;}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);flex-shrink:0;animation:glow 2s ease-in-out infinite;}
+.client-name{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.live-badge{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--sub);}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0;animation:pulse 1.8s ease-in-out infinite;}
+
+/* Grid — 3 equal columns */
+.actions-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+@media(max-width:900px){.actions-grid{grid-template-columns:1fr;}}
+
+/* Section card */
+.section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.section-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+.section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.section-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+
+/* Item list */
+.item-list{display:flex;flex-direction:column;gap:7px;}
+.item-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);transition:background .12s;}
+.item-row:hover{background:rgba(255,255,255,.05);}
+.item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
+.item-body{flex:1;min-width:0;}
+.item-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.item-sub{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.item-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:1px;}
+
+/* Clear state */
+.clear-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 0;gap:8px;}
+.clear-icon{font-size:22px;opacity:.3;}
+.clear-txt{font-size:12px;font-weight:600;color:rgba(255,255,255,.2);}
+
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-bar-left">
+    <div class="logo-dot"></div>
+    <span class="client-name">Opxio</span>
+  </div>
+  <div class="live-badge"><span class="live-dot"></span>Live data</div>
+</div>
+
+<div id="main">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
+</div>
+
+<div class="footer">Widgets by Opxio.io</div>
+
+<script>
+var _tok = new URLSearchParams(location.search).get('token') || '';
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderSection(title, dot, badgeBg, badgeTc, items){
+  var count = items.length;
+  var badgeHtml = count > 0
+    ? '<span class="section-badge" style="background:'+badgeBg+';color:'+badgeTc+';">'+count+' item'+(count>1?'s':'')+'</span>'
+    : '<span class="section-badge" style="background:rgba(255,255,255,.05);color:var(--muted);">Clear</span>';
+
+  var body = count === 0
+    ? '<div class="clear-state"><div class="clear-icon">✓</div><div class="clear-txt">Nothing here</div></div>'
+    : '<div class="item-list">'+items.map(function(i){
+        return '<div class="item-row">'
+          +'<div class="item-dot" style="background:'+dot+';"></div>'
+          +'<div class="item-body">'
+            +'<div class="item-name">'+esc(i.name)+'</div>'
+            +'<div class="item-sub">'+esc(i.sub)+'</div>'
+          +'</div>'
+          +(i.badge ? '<span class="item-badge" style="background:'+badgeBg+';color:'+badgeTc+';">'+esc(i.badge)+'</span>' : '')
+          +'</div>';
+      }).join('')+'</div>';
+
+  return '<div class="section-card">'
+    +'<div class="section-header">'
+      +'<span class="section-title"><span class="section-dot" style="background:'+dot+';box-shadow:0 0 6px '+dot+';"></span>'+esc(title)+'</span>'
+      +badgeHtml
+    +'</div>'
+    +body
+    +'</div>';
+}
+
+function render(d){
+  var actions = d.actions || {};
+  var hotLeads    = actions.hotLeads    || [];
+  var stalledDeals= actions.stalledDeals|| [];
+  var followupDue = actions.followupDue || [];
+
+  var hotItems = hotLeads.map(function(name){
+    return { name: name, sub: 'Hot lead — needs attention', badge: 'HOT' };
+  });
+
+  var stalledItems = stalledDeals.map(function(deal){
+    return { name: deal.name, sub: (deal.stage||'') + (deal.os ? ' · ' + deal.os : ''), badge: deal.daysStale + 'd stale' };
+  });
+
+  var followItems = followupDue.map(function(f){
+    return { name: f.name, sub: 'Follow-up overdue', badge: null };
+  });
+
+  var html = '<div class="actions-grid">'
+    + renderSection('Hot Leads',    'var(--red)',  'rgba(255,107,107,.12)', 'var(--red)',  hotItems)
+    + renderSection('Stalled Deals','var(--amber)','rgba(251,191,36,.12)',  'var(--amber)',stalledItems)
+    + renderSection('Follow-up Due','var(--blue)', 'rgba(96,165,250,.12)',  'var(--blue)', followItems)
+    + '</div>';
+
+  document.getElementById('main').innerHTML = html;
+}
+
+var _loadCtrl = null;
+var _cache    = null;
+var CACHE_TTL = 5 * 60 * 1000;
+
+function load(){
+  if(_loadCtrl) _loadCtrl.abort();
+  if(_cache && (Date.now() - _cache.ts) < CACHE_TTL){ render(_cache.data); return; }
+
+  _loadCtrl = new AbortController();
+  var sig = _loadCtrl.signal;
+  var timer = setTimeout(function(){ _loadCtrl.abort(); }, 25000);
+
+  var params = new URLSearchParams();
+  if(_tok) params.set('token', _tok);
+
+  fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?' + params.toString(), { signal: sig })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(data){ _cache = { data: data, ts: Date.now() }; render(data); })
+    .catch(function(e){
+      if(e.name === 'AbortError') return;
+      document.getElementById('main').innerHTML = '<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — '+esc(e.message)+'</div></div>';
+    })
+    .finally(function(){ clearTimeout(timer); });
+}
+
+load();
+setInterval(load, 5 * 60 * 1000);
+</script>
+</body>
+</html>

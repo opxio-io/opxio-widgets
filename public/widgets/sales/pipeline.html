@@ -29,9 +29,9 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
 .top-bar-left{display:flex;align-items:center;gap:12px;}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);flex-shrink:0;animation:glow 2s ease-in-out infinite;}
-@keyframes glow{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 14px var(--g)}}
-.client-name{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+/* logo-dot removed */
+.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
+.wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
 .mn-pill{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:100px;overflow:hidden;}
 .mn-btn{background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:14px;font-weight:700;transition:color .15s;line-height:1;font-family:inherit;}
 .mn-btn:hover:not(:disabled){color:#fff;}
@@ -145,8 +145,8 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 
 <div class="top-bar">
   <div class="top-bar-left">
-    <div class="logo-dot"></div>
-    <span class="client-name">Opxio</span>
+    <span class="wgt-title">Sales Pipeline</span>
+    <span class="wgt-org">Opxio</span>
     <div class="mn-pill">
       <button class="mn-btn" onclick="mnPrev()">&#8249;</button>
       <span class="mn-lbl" id="mn-lbl"></span>

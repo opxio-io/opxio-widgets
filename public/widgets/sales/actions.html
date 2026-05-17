@@ -19,7 +19,7 @@ if (window.self === window.top) {
   --border:rgba(255,255,255,0.07);
   --g:#C8FF00; --amber:#FBBF24; --red:#FF6B6B; --blue:#60A5FA;
   --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
-  --r:18px;
+  --r:16px;
 }
 html,body{width:100%;}
 body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18px 20px 28px;}
@@ -27,44 +27,46 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
-@keyframes glow{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 14px var(--g)}}
 
 /* Top bar */
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;}
-.top-bar-left{display:flex;align-items:center;gap:12px;}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);flex-shrink:0;animation:glow 2s ease-in-out infinite;}
-.client-name{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;}
+.top-bar-left{display:flex;align-items:center;gap:10px;}
+.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
+.wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
 .live-badge{display:flex;align-items:center;gap:6px;background:var(--card);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:12px;font-weight:600;color:var(--sub);}
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0;animation:pulse 1.8s ease-in-out infinite;}
 
-/* Grid — 3 equal columns */
-.actions-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
-@media(max-width:900px){.actions-grid{grid-template-columns:1fr;}}
+/* 3-col grid */
+.actions-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:start;}
+@media(max-width:860px){.actions-grid{grid-template-columns:1fr;}}
 
-/* Section card */
-.section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
-.section-title{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
-.section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.section-badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:100px;white-space:nowrap;}
+/* Column card */
+.col-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+
+/* Column header */
+.col-hdr{padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.col-hdr-left{display:flex;align-items:center;gap:8px;}
+.col-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.col-title{font-size:13px;font-weight:700;}
+.col-count{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;}
 
 /* Item list */
-.item-list{display:flex;flex-direction:column;gap:7px;}
-.item-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);transition:background .12s;}
-.item-row:hover{background:rgba(255,255,255,.05);}
-.item-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:4px;}
-.item-body{flex:1;min-width:0;}
-.item-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.item-list{padding:10px;display:flex;flex-direction:column;gap:6px;}
+
+/* Item row */
+.item-row{border-radius:10px;padding:11px 14px;border-left:3px solid transparent;background:rgba(255,255,255,.03);border-top:1px solid rgba(255,255,255,.05);border-right:1px solid rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:flex-start;justify-content:space-between;gap:10px;transition:background .12s;}
+.item-row:hover{background:rgba(255,255,255,.055);}
+.item-body{min-width:0;flex:1;}
+.item-name{font-size:12px;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px;}
 .item-sub{font-size:10px;color:var(--muted);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.item-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:1px;}
+.item-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;flex-shrink:0;margin-top:1px;white-space:nowrap;}
 
 /* Clear state */
-.clear-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 0;gap:8px;}
-.clear-icon{font-size:22px;opacity:.3;}
-.clear-txt{font-size:12px;font-weight:600;color:rgba(255,255,255,.2);}
+.clear-state{padding:28px 18px;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.clear-label{font-size:11px;font-weight:600;color:rgba(255,255,255,.15);}
 
 /* Loading */
-.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:10px;}
+.loading{display:flex;align-items:center;justify-content:center;min-height:180px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
 .footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
@@ -74,8 +76,8 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 
 <div class="top-bar">
   <div class="top-bar-left">
-    <div class="logo-dot"></div>
-    <span class="client-name">Opxio</span>
+    <span class="wgt-title">Action Items</span>
+    <span class="wgt-org">Opxio</span>
   </div>
   <div class="live-badge"><span class="live-dot"></span>Live data</div>
 </div>
@@ -91,59 +93,83 @@ var _tok = new URLSearchParams(location.search).get('token') || '';
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-function renderSection(title, dot, badgeBg, badgeTc, items){
+function renderCol(cfg, items){
   var count = items.length;
-  var badgeHtml = count > 0
-    ? '<span class="section-badge" style="background:'+badgeBg+';color:'+badgeTc+';">'+count+' item'+(count>1?'s':'')+'</span>'
-    : '<span class="section-badge" style="background:rgba(255,255,255,.05);color:var(--muted);">Clear</span>';
+  var countHtml = count > 0
+    ? '<span class="col-count" style="background:'+cfg.countBg+';color:'+cfg.color+';">'+count+'</span>'
+    : '<span class="col-count" style="background:rgba(255,255,255,.05);color:var(--muted);">0</span>';
 
-  var body = count === 0
-    ? '<div class="clear-state"><div class="clear-icon">✓</div><div class="clear-txt">Nothing here</div></div>'
-    : '<div class="item-list">'+items.map(function(i){
-        return '<div class="item-row">'
-          +'<div class="item-dot" style="background:'+dot+';"></div>'
-          +'<div class="item-body">'
-            +'<div class="item-name">'+esc(i.name)+'</div>'
-            +'<div class="item-sub">'+esc(i.sub)+'</div>'
-          +'</div>'
-          +(i.badge ? '<span class="item-badge" style="background:'+badgeBg+';color:'+badgeTc+';">'+esc(i.badge)+'</span>' : '')
-          +'</div>';
-      }).join('')+'</div>';
+  var bodyHtml;
+  if(count === 0){
+    bodyHtml = '<div class="clear-state"><div class="clear-label">Nothing here right now</div></div>';
+  } else {
+    bodyHtml = '<div class="item-list">'
+      + items.map(function(item){
+          return '<div class="item-row" style="border-left-color:'+cfg.color+';">'
+            +'<div class="item-body">'
+            +'<div class="item-name">'+esc(item.name)+'</div>'
+            +'<div class="item-sub">'+esc(item.sub)+'</div>'
+            +'</div>'
+            +(item.badge
+              ? '<span class="item-badge" style="background:'+cfg.countBg+';color:'+cfg.color+';">'+esc(item.badge)+'</span>'
+              : '')
+            +'</div>';
+        }).join('')
+      +'</div>';
+  }
 
-  return '<div class="section-card">'
-    +'<div class="section-header">'
-      +'<span class="section-title"><span class="section-dot" style="background:'+dot+';box-shadow:0 0 6px '+dot+';"></span>'+esc(title)+'</span>'
-      +badgeHtml
+  return '<div class="col-card">'
+    +'<div class="col-hdr" style="border-bottom-color:'+cfg.borderColor+';">'
+      +'<div class="col-hdr-left">'
+        +'<div class="col-icon" style="background:'+cfg.iconBg+';">'+cfg.icon+'</div>'
+        +'<span class="col-title">'+cfg.title+'</span>'
+      +'</div>'
+      +countHtml
     +'</div>'
-    +body
+    +bodyHtml
     +'</div>';
 }
 
 function render(d){
   var actions = d.actions || {};
-  var hotLeads    = actions.hotLeads    || [];
-  var stalledDeals= actions.stalledDeals|| [];
-  var followupDue = actions.followupDue || [];
+  var hotLeads    = actions.hotLeads     || [];
+  var stalledDeals= actions.stalledDeals || [];
+  var followupDue = actions.followupDue  || [];
 
   var hotItems = hotLeads.map(function(name){
     return { name: name, sub: 'Hot lead — needs attention', badge: 'HOT' };
   });
-
   var stalledItems = stalledDeals.map(function(deal){
-    return { name: deal.name, sub: (deal.stage||'') + (deal.os ? ' · ' + deal.os : ''), badge: deal.daysStale + 'd stale' };
+    var sub = deal.stage || '';
+    if(deal.os && deal.os !== '—') sub += ' · ' + deal.os;
+    return { name: deal.name, sub: sub, badge: deal.daysStale + 'd stale' };
   });
-
   var followItems = followupDue.map(function(f){
     return { name: f.name, sub: 'Follow-up overdue', badge: null };
   });
 
-  var html = '<div class="actions-grid">'
-    + renderSection('Hot Leads',    'var(--red)',  'rgba(255,107,107,.12)', 'var(--red)',  hotItems)
-    + renderSection('Stalled Deals','var(--amber)','rgba(251,191,36,.12)',  'var(--amber)',stalledItems)
-    + renderSection('Follow-up Due','var(--blue)', 'rgba(96,165,250,.12)',  'var(--blue)', followItems)
-    + '</div>';
+  var cfgHot = {
+    title:'Hot Leads', icon:'🔥',
+    color:'var(--red)', countBg:'rgba(255,107,107,.12)',
+    iconBg:'rgba(255,107,107,.1)', borderColor:'rgba(255,107,107,.12)'
+  };
+  var cfgStalled = {
+    title:'Stalled Deals', icon:'⏸',
+    color:'var(--amber)', countBg:'rgba(251,191,36,.12)',
+    iconBg:'rgba(251,191,36,.1)', borderColor:'rgba(251,191,36,.12)'
+  };
+  var cfgFollow = {
+    title:'Follow-up Due', icon:'📋',
+    color:'var(--blue)', countBg:'rgba(96,165,250,.12)',
+    iconBg:'rgba(96,165,250,.1)', borderColor:'rgba(96,165,250,.12)'
+  };
 
-  document.getElementById('main').innerHTML = html;
+  document.getElementById('main').innerHTML =
+    '<div class="actions-grid">'
+    + renderCol(cfgHot,     hotItems)
+    + renderCol(cfgStalled, stalledItems)
+    + renderCol(cfgFollow,  followItems)
+    + '</div>';
 }
 
 var _loadCtrl = null;
@@ -153,20 +179,17 @@ var CACHE_TTL = 5 * 60 * 1000;
 function load(){
   if(_loadCtrl) _loadCtrl.abort();
   if(_cache && (Date.now() - _cache.ts) < CACHE_TTL){ render(_cache.data); return; }
-
   _loadCtrl = new AbortController();
   var sig = _loadCtrl.signal;
   var timer = setTimeout(function(){ _loadCtrl.abort(); }, 25000);
-
   var params = new URLSearchParams();
   if(_tok) params.set('token', _tok);
-
   fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?' + params.toString(), { signal: sig })
     .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
     .then(function(data){ _cache = { data: data, ts: Date.now() }; render(data); })
     .catch(function(e){
       if(e.name === 'AbortError') return;
-      document.getElementById('main').innerHTML = '<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — '+esc(e.message)+'</div></div>';
+      document.getElementById('main').innerHTML='<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — '+esc(e.message)+'</div></div>';
     })
     .finally(function(){ clearTimeout(timer); });
 }

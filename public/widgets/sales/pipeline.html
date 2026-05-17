@@ -21,17 +21,19 @@ if (window.self === window.top) {
   --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
   --r:18px;
 }
-body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; min-height:100vh; padding:24px 24px 40px; }
+html, body { width:100%; }
+body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; padding:18px 20px 28px; }
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 
 /* Top bar */
-.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:10px;flex-wrap:wrap;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
 .top-bar-left{display:flex;align-items:center;gap:12px;}
-.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);flex-shrink:0;}
+.logo-dot{width:10px;height:10px;border-radius:50%;background:var(--g);box-shadow:0 0 10px var(--g);flex-shrink:0;animation:glow 2s ease-in-out infinite;}
+@keyframes glow{0%,100%{box-shadow:0 0 6px var(--g)}50%{box-shadow:0 0 14px var(--g)}}
 .client-name{font-size:16px;font-weight:700;letter-spacing:-0.3px;}
 .mn-pill{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:100px;overflow:hidden;}
-.mn-btn{background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:14px;font-weight:700;transition:color .15s;line-height:1;}
+.mn-btn{background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:14px;font-weight:700;transition:color .15s;line-height:1;font-family:inherit;}
 .mn-btn:hover:not(:disabled){color:#fff;}
 .mn-btn:disabled{opacity:.25;cursor:default;}
 .mn-lbl{font-size:12px;font-weight:600;color:var(--sub);padding:0 4px;min-width:76px;text-align:center;}
@@ -54,22 +56,27 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; min-h
 .kpi-sub{font-size:11px;font-weight:500;color:var(--sub);}
 
 /* Grids */
-.row{margin-bottom:12px;}
-.main-grid{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:12px;}
-.bottom-grid{display:grid;grid-template-columns:1.6fr 1fr 1.5fr;gap:12px;}
-@media(max-width:1000px){.kpi-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:800px){.main-grid{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr;}}
-@media(max-width:480px){.kpi-row{grid-template-columns:1fr 1fr;}.kpi-val{font-size:28px;}.kpi-card{padding:14px 16px 12px;}body{padding:14px 14px 28px;}}
+.row{margin-bottom:10px;}
+.main-grid{display:grid;grid-template-columns:3fr 2fr;gap:12px;margin-bottom:10px;}
+.bottom-grid{display:grid;grid-template-columns:1.7fr 1fr 1.4fr;gap:12px;}
+@media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.main-grid{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr;}}
 
 /* Section card */
 .section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
-.section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:15px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
 .section-title{font-size:13px;font-weight:700;}
-.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;white-space:nowrap;}
 .section-label.green{background:rgba(200,255,0,.1);color:var(--g);border-color:rgba(200,255,0,.2);}
 
+/* Funnel tabs */
+.funnel-tabs{display:flex;gap:4px;}
+.funnel-tab{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--sub);font-size:11px;font-weight:700;padding:5px 14px;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.02em;}
+.funnel-tab:hover:not(.active){background:rgba(255,255,255,.08);}
+.funnel-tab.active{background:var(--g);color:#000;border-color:transparent;}
+
 /* Funnel */
-.funnel-item{margin-bottom:14px;}
+.funnel-item{margin-bottom:13px;}
 .funnel-item:last-child{margin-bottom:0;}
 .funnel-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
 .funnel-stage{font-size:12px;font-weight:600;color:var(--sub);}
@@ -77,14 +84,14 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; min-h
 .funnel-pct{font-size:10px;font-weight:700;color:var(--muted);min-width:34px;text-align:right;}
 .funnel-track{height:26px;background:rgba(255,255,255,.07);border-radius:8px;overflow:hidden;}
 .funnel-fill{height:100%;border-radius:8px;transition:width .6s cubic-bezier(.4,0,.2,1);}
-.funnel-dropped{display:flex;align-items:center;justify-content:space-between;margin-top:14px;padding:10px 14px;border-radius:8px;border:1px dashed rgba(255,255,255,.08);}
+.funnel-dropped{display:flex;align-items:center;justify-content:space-between;margin-top:13px;padding:10px 14px;border-radius:8px;border:1px dashed rgba(255,255,255,.08);}
 .funnel-dropped-lbl{font-size:11px;font-weight:700;color:var(--sub);}
 .funnel-dropped-tags{display:flex;gap:6px;flex-wrap:wrap;}
 .drop-tag{font-size:11px;font-weight:700;padding:4px 10px;border-radius:100px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:var(--sub);}
 .drop-tag span{color:rgba(255,255,255,.5);margin-left:4px;}
 
-/* Action items panel */
-.meet-hdr{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 16px;padding:15px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+/* Action items */
+.meet-hdr{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 16px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
 .meet-list{display:flex;flex-direction:column;gap:7px;}
 .meet-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);}
 .meet-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
@@ -103,22 +110,38 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; min-h
 .src-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;background:rgba(200,255,0,.12);color:var(--g);white-space:nowrap;}
 .src-pill.zero{background:rgba(255,255,255,.06);color:var(--muted);}
 
-/* Deal stages panel */
-.deal-panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.deal-panel-hdr{padding:16px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
-.deal-panel-title{font-size:13px;font-weight:700;}
-.deal-panel-badge{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;}
-.deal-row{display:flex;align-items:center;gap:12px;padding:12px 20px;border-bottom:1px solid rgba(255,255,255,.04);}
-.deal-row:last-child{border-bottom:none;}
-.deal-rank{font-size:11px;font-weight:900;color:rgba(255,255,255,.2);width:22px;flex-shrink:0;font-variant-numeric:tabular-nums;}
-.deal-mid{flex:1;min-width:0;}
-.deal-stage-name{font-size:12px;font-weight:600;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px;}
-.deal-prog-track{height:4px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
-.deal-prog-fill{height:100%;border-radius:100px;transition:width .7s cubic-bezier(.4,0,.2,1);}
-.deal-count{font-size:18px;font-weight:900;letter-spacing:-1px;flex-shrink:0;}
+/* Rep Leaderboard */
+.reps-container{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:var(--r);overflow:hidden;}
+.reps-header{padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;}
+.reps-title{font-size:13px;font-weight:700;}
+.reps-badge{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;}
+.rep-row{display:grid;grid-template-columns:28px 40px 1fr 60px;gap:12px;align-items:center;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,.04);transition:background .15s;}
+.rep-row:last-child{border-bottom:none;}
+.rep-row:hover{background:rgba(255,255,255,.02);}
+.rep-rank-num{font-size:12px;font-weight:900;color:rgba(255,255,255,.18);text-align:center;font-variant-numeric:tabular-nums;}
+.rep-rank-num.top{color:var(--g);}
+.rep-av{width:40px;height:40px;border-radius:50%;object-fit:cover;flex-shrink:0;border:2px solid rgba(255,255,255,.08);}
+.rep-row:first-of-type .rep-av{border-color:rgba(200,255,0,.4);box-shadow:0 0 10px rgba(200,255,0,.15);}
+.rep-mid{min-width:0;}
+.rep-name-txt{font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.rep-sub{font-size:10px;font-weight:600;color:var(--muted);margin-bottom:8px;}
+.rep-prog-track{height:4px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
+.rep-prog-fill{height:100%;border-radius:100px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.pf-1{background:var(--g);}
+.pf-2{background:rgba(255,255,255,.2);}
+.pf-3{background:rgba(255,255,255,.2);}
+.rep-stat-block{text-align:right;}
+.rep-stat-won{font-size:20px;font-weight:900;letter-spacing:-1px;line-height:1;display:block;}
+.rep-stat-won.c1{color:var(--g);}
+.rep-stat-rate{font-size:10px;font-weight:600;color:var(--muted);display:block;margin-top:3px;}
+.rep-stat-mini{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid rgba(255,255,255,.04);}
+.rep-stat-mini-cell{padding:13px 20px;border-right:1px solid rgba(255,255,255,.04);}
+.rep-stat-mini-cell:last-child{border-right:none;}
+.rep-stat-mini-lbl{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.rep-stat-mini-val{font-size:18px;font-weight:900;letter-spacing:-1px;}
 
 /* Chart */
-.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:15px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.chart-hdr{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
 .chart-title{font-size:13px;font-weight:700;}
 .chart-badge{font-size:10px;font-weight:700;padding:2px 10px;border-radius:5px;background:rgba(200,255,0,.1);color:var(--g);border:1px solid rgba(200,255,0,.2);}
 .chart-wrap{position:relative;width:100%;height:140px;}
@@ -128,7 +151,7 @@ body { background:var(--bg); font-family:'Satoshi',sans-serif; color:#fff; min-h
 .loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
-.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
@@ -157,6 +180,8 @@ var _tok = new URLSearchParams(location.search).get('token') || '';
 var _now  = new Date();
 var filterMonth = null;
 var _navTimer = null;
+var _lastData = null;
+var _funnelTab = 'leads';
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function fmtRM(n){ if(!n) return '—'; if(n>=1000000) return 'RM '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'RM '+(n/1000).toFixed(0)+'K'; return 'RM '+n; }
@@ -183,11 +208,16 @@ function mnNext(){
   updateMonthNav(); clearTimeout(_navTimer); _navTimer=setTimeout(load,300); load();
 }
 
+// Lead fills — 7 stages, Converted = lime green
 var LEAD_FILLS = [
   'rgba(255,255,255,.32)','rgba(255,255,255,.28)','rgba(255,255,255,.25)',
-  'rgba(255,255,255,.22)','rgba(255,255,255,.20)','var(--g)',
+  'rgba(255,255,255,.22)','rgba(255,255,255,.18)','rgba(255,255,255,.14)','var(--g)',
 ];
-var DEAL_FILLS = ['rgba(96,165,250,.6)','rgba(192,132,252,.6)','rgba(251,191,36,.6)','rgba(249,115,22,.6)','var(--g)'];
+// Deal fills — 5 stages, Closed-Won = lime green
+var DEAL_FILLS = [
+  'rgba(255,255,255,.30)','rgba(255,255,255,.25)','rgba(255,255,255,.20)',
+  'rgba(255,255,255,.15)','var(--g)',
+];
 
 var SRC_ICONS = {
   'LinkedIn':          'https://widgets.opxio.io/icons/social/linkedin.png',
@@ -201,6 +231,32 @@ var SRC_ICONS = {
   'Ads':               'https://widgets.opxio.io/icons/social/other-sources.png',
   'Notion Marketplace':'https://widgets.opxio.io/icons/social/other-sources.png',
 };
+
+function switchFunnelTab(tab){
+  _funnelTab = tab;
+  var tabs = document.querySelectorAll('.funnel-tab');
+  for(var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', tabs[i].id==='tab-'+tab);
+  if(_lastData) updateFunnelDisplay(_lastData);
+}
+
+function updateFunnelDisplay(d){
+  var body = document.getElementById('funnel-body');
+  var badge = document.getElementById('funnel-badge');
+  if(!body) return;
+  if(_funnelTab==='deals'){
+    var top = (d.dealFunnel&&d.dealFunnel[0]) ? d.dealFunnel[0].count : 1;
+    body.innerHTML = renderFunnel(d.dealFunnel||[], DEAL_FILLS, top);
+    if(badge){badge.textContent=(d.kpi&&d.kpi.openDeals||0)+' open deals';badge.className='section-label';}
+  } else {
+    var top = (d.leadFunnel&&d.leadFunnel[0]) ? d.leadFunnel[0].count : 1;
+    var dropped = (d.dropped&&d.dropped.unqualified)||0;
+    var droppedHtml = dropped>0
+      ? '<div class="funnel-dropped"><span class="funnel-dropped-lbl">Dropped this period</span><div class="funnel-dropped-tags"><span class="drop-tag">Unqualified<span>'+dropped+'</span></span></div></div>'
+      : '';
+    body.innerHTML = renderFunnel(d.leadFunnel||[], LEAD_FILLS, top) + droppedHtml;
+    if(badge){badge.textContent=(d.kpi&&d.kpi.openLeads||0)+' open leads';badge.className='section-label green';}
+  }
+}
 
 function renderFunnel(items, fills, topCount){
   if(!items||!items.length) return '<div class="empty-state">No pipeline data yet</div>';
@@ -261,22 +317,25 @@ function renderSources(obj){
   }).join('');
 }
 
-function renderDealStages(funnel){
-  if(!funnel||!funnel.length) return '<div style="padding:16px 20px;font-size:11px;color:rgba(255,255,255,.2);">No deals yet</div>';
-  var max=Math.max.apply(null,funnel.map(function(f){return f.count;}).concat([1]));
-  return funnel.map(function(f,i){
-    var w=Math.round((f.count/max)*100);
-    var fill=DEAL_FILLS[i]||DEAL_FILLS[DEAL_FILLS.length-1];
-    var isTop=i===0&&f.count>0;
-    return '<div class="deal-row">'
-      +'<div class="deal-rank" style="'+(isTop?'color:var(--g);':'')+'">'+('0'+(i+1)).slice(-2)+'</div>'
-      +'<div class="deal-mid">'
-        +'<div class="deal-stage-name">'+esc(f.stage)+'</div>'
-        +'<div class="deal-prog-track"><div class="deal-prog-fill" style="width:'+w+'%;background:'+fill+';"></div></div>'
-      +'</div>'
-      +'<div class="deal-count">'+f.count+'</div>'
-      +'</div>';
-  }).join('');
+function renderReps(kpi){
+  var won=kpi.closedWonMTD||0;
+  var rate=kpi.convRate||0;
+  var newL=kpi.newLeadsMTD||0;
+  var wonCls=won>0?' c1':'';
+  return '<div class="rep-row">'
+    +'<div class="rep-rank-num top">01</div>'
+    +'<img class="rep-av" src="https://api.dicebear.com/9.x/notionists/svg?seed=KaiOpxio&backgroundColor=d1fae5" alt="K" onerror="this.style.background=\'rgba(200,255,0,.12)\'" />'
+    +'<div class="rep-mid">'
+    +'<div class="rep-name-txt">Kai</div>'
+    +'<div class="rep-sub">'+newL+' leads this month · Founder</div>'
+    +'<div class="rep-prog-track"><div class="rep-prog-fill pf-1" style="width:100%"></div></div>'
+    +'</div>'
+    +'<div class="rep-stat-block"><span class="rep-stat-won'+wonCls+'">'+won+'</span><span class="rep-stat-rate">'+rate+'% close rate</span></div>'
+    +'</div>'
+    +'<div class="rep-stat-mini">'
+    +'<div class="rep-stat-mini-cell"><div class="rep-stat-mini-lbl">Pipeline Value</div><div class="rep-stat-mini-val" style="color:var(--blue);font-size:16px;">'+fmtRM(kpi.pipelineValue||0)+'</div></div>'
+    +'<div class="rep-stat-mini-cell"><div class="rep-stat-mini-lbl">Open Deals</div><div class="rep-stat-mini-val">'+(kpi.openDeals||0)+'</div></div>'
+    +'</div>';
 }
 
 var _chartData=null, _chartTotal=0, _chartRO=null;
@@ -392,6 +451,7 @@ function drawChart(trend, totalLeads){
 }
 
 function render(d){
+  _lastData = d;
   var kpi=d.kpi||{};
   var monLabel=fmtMonthLbl(filterMonth);
   var cwCol=(kpi.closedWonMTD||0)>0?'var(--g)':'rgba(255,255,255,.2)';
@@ -406,26 +466,27 @@ function render(d){
     +'<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';">'+fmtRM(kpi.pipelineValue)+'</div><div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div></div>'
     +'</div>';
 
-  // Funnel
-  var topCount=(d.leadFunnel&&d.leadFunnel[0])?d.leadFunnel[0].count:1;
-  var droppedCount=(d.dropped&&d.dropped.unqualified)||0;
-  var droppedHtml=droppedCount>0
-    ?'<div class="funnel-dropped"><span class="funnel-dropped-lbl">Dropped this period</span><div class="funnel-dropped-tags"><span class="drop-tag">Unqualified<span>'+droppedCount+'</span></span></div></div>'
-    :'';
-
-  // Actions
+  // Actions badge
   var actions=d.actions||{};
   var actionCount=(actions.hotLeads||[]).length+(actions.stalledDeals||[]).length+(actions.followupDue||[]).length;
   var actBadge=actionCount>0
     ?'<span class="section-label" style="background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);">'+actionCount+' pending</span>'
     :'<span class="section-label green">All clear</span>';
 
-  // Main grid
+  // Main grid — funnel (with tabs) + actions
   var mainGrid='<div class="main-grid row">'
     +'<div class="section-card">'
-      +'<div class="section-header"><span class="section-title">Pipeline Funnel</span><span class="section-label green">'+(kpi.openLeads||0)+' open leads</span></div>'
-      +renderFunnel(d.leadFunnel||[],LEAD_FILLS,topCount)
-      +droppedHtml
+      +'<div class="section-header">'
+        +'<div style="display:flex;align-items:center;gap:10px;">'
+          +'<span class="section-title">Pipeline Funnel</span>'
+          +'<div class="funnel-tabs">'
+            +'<button class="funnel-tab active" id="tab-leads" onclick="switchFunnelTab(\'leads\')">Leads</button>'
+            +'<button class="funnel-tab" id="tab-deals" onclick="switchFunnelTab(\'deals\')">Deals</button>'
+          +'</div>'
+        +'</div>'
+        +'<span class="section-label green" id="funnel-badge">'+(kpi.openLeads||0)+' open leads</span>'
+      +'</div>'
+      +'<div id="funnel-body"></div>'
     +'</div>'
     +'<div class="section-card">'
       +'<div class="meet-hdr"><span class="section-title">Action Items</span>'+actBadge+'</div>'
@@ -433,8 +494,7 @@ function render(d){
     +'</div>'
     +'</div>';
 
-  // Bottom
-  var srcTotal=Object.values(d.sourceBreakdown||{}).reduce(function(s,v){return s+(v.leads||0);},0)||0;
+  // Bottom grid — chart + sources + rep performance
   var bottomGrid='<div class="bottom-grid row">'
     +'<div class="section-card">'
       +'<div class="chart-hdr"><span class="chart-title">Leads Incoming by Month</span><span class="chart-badge" id="cbadge">loading…</span></div>'
@@ -444,13 +504,16 @@ function render(d){
       +'<div class="section-header"><span class="section-title">Lead Sources</span><span class="section-label">'+esc(monLabel)+'</span></div>'
       +'<div class="sources-grid">'+renderSources(d.sourceBreakdown)+'</div>'
     +'</div>'
-    +'<div class="deal-panel">'
-      +'<div class="deal-panel-hdr"><span class="deal-panel-title">Deal Stages</span><span class="deal-panel-badge">'+(kpi.openDeals||0)+' open</span></div>'
-      +renderDealStages(d.dealFunnel||[])
+    +'<div class="reps-container">'
+      +'<div class="reps-header"><span class="reps-title">Sales Performance</span><span class="reps-badge">'+esc(monLabel)+'</span></div>'
+      +renderReps(kpi)
     +'</div>'
     +'</div>';
 
   document.getElementById('main').innerHTML=kpiRow+mainGrid+bottomGrid;
+
+  // Restore funnel tab state
+  updateFunnelDisplay(d);
 
   // Draw chart
   _chartData=d.monthlyTrend||[];

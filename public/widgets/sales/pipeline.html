@@ -1,454 +1,478 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>
-if (window.self === window.top) {
-  window.stop(); document.open();
-  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div></body></html>');
-  document.close();
-}
-</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Opxio — Sales Pipeline</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-html,body{height:100%;}
-body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#fff;padding:16px 16px 32px;overflow-y:auto;overflow-x:hidden;}
-:root{--g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.1);--gb:rgba(200,255,0,.22);--red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;}
-::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+html{height:auto;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;min-height:420px;}
+:root{
+  --g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.09);--gb:rgba(200,255,0,.2);
+  --red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;
+  --zero-val:rgba(255,255,255,.18);
+}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 
-/* ── Top bar ── */
-.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
-.topbar-left{display:flex;align-items:center;gap:10px;}
-.brand{font-size:13px;font-weight:900;letter-spacing:-.02em;color:rgba(255,255,255,.9);}
-.mon-pill{display:flex;align-items:center;gap:4px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px 10px;gap:0;}
-.mon-btn{background:none;border:none;color:rgba(255,255,255,.4);font-size:14px;cursor:pointer;padding:0 5px;line-height:1;transition:color .15s;}
-.mon-btn:hover:not(:disabled){color:var(--g);}
-.mon-btn:disabled{opacity:.25;cursor:default;}
-.mon-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);min-width:68px;text-align:center;}
-.topbar-right{display:flex;align-items:center;gap:8px;}
-.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;}
+.card{background:#222222;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;}
+.h-title{font-size:22px;font-weight:900;letter-spacing:-.04em;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
+.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn svg{width:13px;height:13px;}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
-.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
 
-/* ── Grid layouts ── */
-.row{margin-bottom:10px;}
-.g4{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;}
-.g2-main{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
+/* Month nav */
+.mn-nav{display:flex;align-items:center;gap:6px;}
+.mn-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);font-size:14px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;flex-shrink:0;}
+.mn-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
+.mn-btn:disabled{opacity:.25;cursor:default;}
+.mn-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);min-width:72px;text-align:center;letter-spacing:-.01em;}
+
+/* Grids */
+.row{margin-bottom:8px;}
+.g-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
 .g3{display:grid;grid-template-columns:2fr 1.5fr 1.5fr;gap:10px;}
-@media(max-width:900px){.g4{grid-template-columns:1fr 1fr;}.g2-main{grid-template-columns:1fr;}.g3{grid-template-columns:1fr;}}
+@media(max-width:1000px){.g-hero{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2{grid-template-columns:1fr;}.g3{grid-template-columns:1fr;}}
+@media(max-width:480px){body{padding:10px 10px 16px;}.ts{display:none;}.h-title{font-size:17px;}.g-hero{grid-template-columns:1fr 1fr;gap:6px;}.hero{padding:9px 10px 8px;}.kpi{padding:9px 10px 8px;}.hero-val{font-size:22px;}.kpi-val{font-size:26px;letter-spacing:-1px;}.row{margin-bottom:6px;}}
 
-/* ── Cards ── */
-.card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:14px;padding:20px 22px 18px;}
-.card-hero{background:var(--g);border:none;border-radius:14px;padding:20px 22px 18px;position:relative;overflow:hidden;}
-.card-hero::before{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(0,0,0,.08);top:-60px;right:-40px;}
-.card-hero::after{content:'';position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(0,0,0,.05);bottom:-30px;right:60px;}
+/* Hero stat */
+.hero{padding:16px 18px 14px;}
+.hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px;display:block;}
+.hero-val{font-size:32px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.hero-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.6);margin-top:8px;}
+.hero-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.45);margin-top:4px;}
 
-/* ── Hero stat ── */
-.hero-eyebrow{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:rgba(0,0,0,.5);margin-bottom:12px;display:block;position:relative;z-index:1;}
-.hero-val{font-size:52px;font-weight:900;letter-spacing:-3px;line-height:1;color:#000;position:relative;z-index:1;}
-.hero-sub{font-size:11px;font-weight:600;color:rgba(0,0,0,.5);margin-top:10px;position:relative;z-index:1;}
+/* Small KPI */
+.kpi{padding:16px 18px 14px;}
+.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px;display:block;white-space:nowrap;}
+.kpi-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.kpi-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.45);margin-top:8px;}
 
-/* ── Small KPI ── */
-.kpi-lbl{font-size:9px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:16px;display:block;}
-.kpi-val{font-size:42px;font-weight:900;letter-spacing:-2px;line-height:1;}
-.kpi-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.35);margin-top:8px;}
+/* Panel */
+.panel{padding:14px 18px 14px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px;}
+.panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);}
+.badge.amber{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.2);}
+.badge.blue{background:rgba(96,165,250,.1);color:var(--blue);border-color:rgba(96,165,250,.2);}
 
-/* ── Panel header ── */
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
-.ph-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.9);letter-spacing:-.01em;}
-.ph-badge{font-size:10px;font-weight:700;padding:3px 9px;border-radius:6px;background:rgba(255,255,255,.07);color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.09);}
-.ph-badge.green{background:var(--gm);color:var(--g);border-color:var(--gb);}
-
-/* ── Pipeline funnel ── */
-.f-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.f-row:last-child{margin-bottom:0;}
-.f-name{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.f-track{flex:1;height:20px;background:rgba(255,255,255,.04);border-radius:5px;overflow:hidden;}
-.f-fill{height:100%;border-radius:5px;transition:width .7s cubic-bezier(.4,0,.2,1);}
-.f-count{font-size:12px;font-weight:800;color:rgba(255,255,255,.55);width:22px;text-align:right;flex-shrink:0;}
-.f-divider{height:1px;background:rgba(255,255,255,.05);margin:12px 0;}
-.f-dropped{display:flex;align-items:center;gap:16px;padding-top:4px;}
+/* Pipeline funnel */
+.f-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.f-item:last-child{margin-bottom:0;}
+.f-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.5);width:140px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-track{flex:1;height:24px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden;}
+.f-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.6);width:28px;text-align:right;flex-shrink:0;}
+.f-divider{height:1px;background:rgba(255,255,255,.05);margin:10px 0;}
+.f-dropped{display:flex;align-items:center;gap:12px;}
 .f-drop-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.25);}
 .f-drop-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(255,107,107,.1);color:var(--red);}
 
-/* ── Action items ── */
-.action-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.action-row:last-child{border-bottom:none;}
-.action-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
-.action-info{flex:1;min-width:0;}
-.action-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.82);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.action-sub{font-size:10px;font-weight:500;color:rgba(255,255,255,.3);margin-top:2px;}
-.action-tag{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;flex-shrink:0;}
-.action-empty{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;padding:8px 0;}
+/* Sources grid */
+.src-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+@media(max-width:600px){.src-grid{grid-template-columns:1fr 1fr;}}
+.src-card{background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.06);border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;}
+.src-card-top{display:flex;align-items:center;gap:8px;}
+.src-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0;opacity:.95;}
+.src-icon img{width:22px;height:22px;object-fit:contain;}
+.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.78);line-height:1.2;}
+.src-count{font-size:22px;font-weight:900;letter-spacing:-.8px;line-height:1;color:var(--g);}
+.src-card-foot{display:flex;align-items:center;justify-content:space-between;}
+.src-leads-lbl{font-size:10px;font-weight:600;color:rgba(255,255,255,.35);}
+.src-close-pill{font-size:10px;font-weight:700;padding:2px 7px;border-radius:5px;display:inline-block;}
 
-/* ── Line chart ── */
+/* SVG chart */
 .chart-wrap{position:relative;width:100%;margin-top:4px;}
 .chart-wrap svg{width:100%;display:block;}
-.chart-xaxis{display:flex;justify-content:space-between;margin-top:8px;padding:0 2px;}
+.chart-xaxis{display:flex;justify-content:space-between;margin-top:6px;padding:0 2px;}
 .chart-xaxis span{font-size:9px;font-weight:600;color:rgba(255,255,255,.22);flex:1;text-align:center;}
 .chart-xaxis span.cur{color:var(--g);font-weight:800;}
 
-/* ── Lead sources ── */
-.src-row{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.src-row:last-child{border-bottom:none;}
-.src-icon-wrap{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.05);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.src-icon-wrap img{width:16px;height:16px;object-fit:contain;}
-.src-icon-fallback{font-size:12px;}
-.src-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.75);flex:1;}
-.src-count{font-size:16px;font-weight:900;color:#fff;letter-spacing:-.5px;flex-shrink:0;}
-.src-closed-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;background:rgba(200,255,0,.1);color:var(--g);flex-shrink:0;}
-.src-closed-pill.zero{background:rgba(255,255,255,.05);color:rgba(255,255,255,.3);}
-
-/* ── Deal stage panel ── */
-.ds-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
-.ds-row:last-child{border-bottom:none;}
-.ds-stage{font-size:11px;font-weight:600;color:rgba(255,255,255,.45);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.ds-bar-wrap{width:90px;flex-shrink:0;}
-.ds-bar-track{height:5px;background:rgba(255,255,255,.06);border-radius:999px;overflow:hidden;}
-.ds-bar-fill{height:5px;border-radius:999px;transition:width .7s ease;}
-.ds-count{font-size:13px;font-weight:900;color:rgba(255,255,255,.7);width:20px;text-align:right;flex-shrink:0;}
-
-/* ── Loading ── */
-.loading{display:flex;align-items:center;justify-content:center;min-height:280px;flex-direction:column;gap:10px;}
+/* Loading */
+.loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
 .spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
-.ld-txt{font-size:11px;color:rgba(255,255,255,.2);font-weight:600;}
-
-.footer{text-align:center;padding:24px 0 2px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.08);}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.empty{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;padding:16px 0;}
+.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 
 /* Light mode */
-body.light{background:#F0F0F0;color:#111;}
-body.light .card{background:#fff;border-color:rgba(0,0,0,.07);}
-body.light .kpi-lbl{color:rgba(0,0,0,.4);}
-body.light .kpi-sub{color:rgba(0,0,0,.35);}
-body.light .kpi-val{color:#111;}
-body.light .ph-title{color:#111;}
-body.light .ph-badge{background:rgba(0,0,0,.05);color:rgba(0,0,0,.45);border-color:rgba(0,0,0,.09);}
-body.light .f-name{color:rgba(0,0,0,.45);}
+body.light{background:#F6F5F1;color:#111110;--g:#388E3C;--gd:#2E7D32;--gm:rgba(56,142,60,.08);--gb:rgba(56,142,60,.2);--red:#D32F2F;--amber:#E65100;--blue:#1976D2;--zero-val:rgba(0,0,0,.15);}
+body.light .card{background:#FFFFFF;border-color:#E3E2DD;}
+body.light .eyebrow{color:#9C9B93;}
+body.light .h-title{color:#111110;}
+body.light .ts{color:#A8A79F;}
+body.light .kpi-lbl{color:#6B6A63;}
+body.light .kpi-sub{color:#8A8980;}
+body.light .kpi-val{color:#111110;}
+body.light .hero-val{color:#111110;}
+body.light .hero-label{color:#5A5952;}
+body.light .hero-sub{color:#8A8980;}
+body.light .hero-eyebrow{color:#8A8980;}
+body.light .panel-title{color:#4E4D48;}
+body.light .badge{background:rgba(90,140,0,.09);color:#5A8C00;border-color:rgba(90,140,0,.18);}
+body.light .badge.red{background:rgba(185,28,28,.07);color:#B91C1C;border-color:rgba(185,28,28,.16);}
+body.light .badge.blue{background:rgba(21,101,192,.08);color:#1565C0;border-color:rgba(21,101,192,.18);}
+body.light .f-lbl{color:#5A5952;}
+body.light .f-n{color:#111110;}
 body.light .f-track{background:rgba(0,0,0,.06);}
-body.light .f-count{color:rgba(0,0,0,.5);}
 body.light .f-divider{background:rgba(0,0,0,.06);}
 body.light .f-drop-lbl{color:rgba(0,0,0,.3);}
-body.light .action-row{border-color:rgba(0,0,0,.05);}
-body.light .action-name{color:rgba(0,0,0,.8);}
-body.light .action-sub{color:rgba(0,0,0,.35);}
-body.light .action-empty{color:rgba(0,0,0,.3);}
-body.light .src-row{border-color:rgba(0,0,0,.05);}
-body.light .src-icon-wrap{background:rgba(0,0,0,.05);}
-body.light .src-name{color:rgba(0,0,0,.65);}
-body.light .src-count{color:#111;}
-body.light .ds-row{border-color:rgba(0,0,0,.05);}
-body.light .ds-stage{color:rgba(0,0,0,.45);}
-body.light .ds-bar-track{background:rgba(0,0,0,.07);}
-body.light .ds-count{color:rgba(0,0,0,.65);}
-body.light .mon-pill{background:rgba(0,0,0,.05);border-color:rgba(0,0,0,.1);}
-body.light .mon-btn{color:rgba(0,0,0,.45);}
-body.light .mon-lbl{color:rgba(0,0,0,.65);}
-body.light .icon-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.5);}
-body.light .ts{color:rgba(0,0,0,.25);}
-body.light .brand{color:#111;}
-body.light .footer{color:rgba(0,0,0,.12);}
+body.light .src-card{background:#F9F8F4;border-color:#E3E2DD;}
+body.light .src-name{color:#3A3933;}
+body.light .src-count{color:#111110;}
+body.light .src-leads-lbl{color:#8A8980;}
+body.light .mn-btn{background:rgba(0,0,0,.04);border-color:#E0E0E0;color:#616161;}
+body.light .mn-lbl{color:#3A3933;}
+body.light .icon-btn{background:rgba(0,0,0,.04);border-color:#E0E0E0;color:#616161;}
+body.light .icon-btn:hover{background:rgba(0,0,0,.07);color:#388E3C;}
+body.light .loading-text{color:#9E9E9E;}
+body.light .empty{color:#BDBDBD;}
 body.light .chart-xaxis span{color:rgba(0,0,0,.3);}
+body.light .footer{color:rgba(0,0,0,.12);}
 </style>
 </head>
 <body>
 
-<!-- Top bar -->
-<div class="topbar">
-  <div class="topbar-left">
-    <span class="brand">Opxio</span>
-    <div class="mon-pill">
-      <button class="mon-btn" onclick="mnPrev()">&#8249;</button>
-      <span class="mon-lbl" id="mn-lbl"></span>
-      <button class="mon-btn" id="mn-next" onclick="mnNext()" disabled>&#8250;</button>
-    </div>
+<div class="hdr">
+  <div>
+    <p class="eyebrow">Opxio &middot; Internal</p>
+    <h1 class="h-title">Sales Pipeline</h1>
   </div>
-  <div class="topbar-right">
+  <div class="h-right">
+    <div class="mn-nav">
+      <button class="mn-btn" onclick="mnPrev()">&#8249;</button>
+      <span class="mn-lbl" id="mn-lbl"></span>
+      <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>&#8250;</button>
+    </div>
     <span class="ts" id="ts"></span>
-    <button class="icon-btn" id="mb" onclick="toggleMode()">
+    <button class="icon-btn" id="mb" onclick="toggleMode()" title="Toggle light/dark">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
     </button>
-    <button class="icon-btn" id="rb" onclick="doRefresh()">
+    <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
     </button>
   </div>
 </div>
 
 <div id="main">
-  <div class="loading"><div class="spinner"></div><div class="ld-txt">Loading pipeline</div></div>
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
 </div>
 
-<div class="footer">Opxio.io</div>
+<div class="footer">Widgets by Opxio.io</div>
 
 <script>
 const _tok = new URLSearchParams(location.search).get('token') || '';
 const _now  = new Date();
 let filterMonth = null;
-
-const SRC_ICONS = {
-  'LinkedIn':          'https://widgets.opxio.io/icons/social/linkedin.png',
-  'Referral':          'https://widgets.opxio.io/icons/social/referral.png',
-  'WhatsApp':          'https://widgets.opxio.io/icons/social/whatsapp.png',
-  'Threads':           'https://widgets.opxio.io/icons/social/threads.png',
-  'Instagram':         'https://widgets.opxio.io/icons/social/instagram.png',
-  'TikTok':            'https://widgets.opxio.io/icons/social/tiktok.png',
-  'Cold Outreach':     'https://widgets.opxio.io/icons/social/other-sources.png',
-  'Website / Organic': 'https://widgets.opxio.io/icons/social/other-sources.png',
-  'Ads':               'https://widgets.opxio.io/icons/social/other-sources.png',
-  'Notion Marketplace':'https://widgets.opxio.io/icons/social/other-sources.png',
-};
-const LEAD_COLORS = [
-  'rgba(255,255,255,.13)',
-  'rgba(200,255,0,.22)',
-  'rgba(200,255,0,.35)',
-  'rgba(200,255,0,.5)',
-  'rgba(200,255,0,.65)',
-  'rgba(200,255,0,.85)',
-];
-const DEAL_COLORS = ['rgba(96,165,250,.5)','rgba(192,132,252,.5)','rgba(251,191,36,.5)','rgba(249,115,22,.5)','rgba(200,255,0,.8)'];
+let _navTimer = null;
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function fmtRM(n){ if(n>=1000000) return 'RM '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'RM '+(n/1000).toFixed(0)+'K'; return n?'RM '+n:'—'; }
-function fmtMon(fm){ const d=fm?new Date(fm.year,fm.month,1):new Date(); return d.toLocaleString('default',{month:'long',year:'numeric'}); }
-function fmtMonShort(fm){ const d=fm?new Date(fm.year,fm.month,1):new Date(); return d.toLocaleString('default',{month:'short',year:'numeric'}); }
+function fmtRM(n){ if(!n) return '&mdash;'; if(n>=1000000) return 'RM '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'RM '+(n/1000).toFixed(0)+'K'; return 'RM '+n; }
 
-function updateNav(){
-  document.getElementById('mn-lbl').textContent = fmtMonShort(filterMonth);
-  const isCur=!filterMonth||(filterMonth.year===_now.getFullYear()&&filterMonth.month===_now.getMonth());
-  document.getElementById('mn-next').disabled=isCur;
+function fmtMonthLbl(fm){
+  const d = fm ? new Date(fm.year, fm.month, 1) : new Date();
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' });
 }
-function mnPrev(){ if(!filterMonth) filterMonth={year:_now.getFullYear(),month:_now.getMonth()}; filterMonth.month--; if(filterMonth.month<0){filterMonth.month=11;filterMonth.year--;} updateNav(); load(); }
-function mnNext(){ if(!filterMonth) return; filterMonth.month++; if(filterMonth.month>11){filterMonth.month=0;filterMonth.year++;} if(filterMonth.year>_now.getFullYear()||(filterMonth.year===_now.getFullYear()&&filterMonth.month>=_now.getMonth())) filterMonth=null; updateNav(); load(); }
-
-// ── SVG Line Chart ────────────────────────────────────────────────────────
-function renderLineChart(trend) {
-  const W=520, H=90, pL=6, pR=6, pT=10, pB=4;
-  const cW=W-pL-pR, cH=H-pT-pB;
-  const vals = trend.map(t=>t.count);
-  const maxV = Math.max(...vals, 1);
-  const pts  = vals.map((v,i) => ({
-    x: pL + (i/(vals.length-1))*cW,
-    y: pT + (1 - v/maxV)*cH
-  }));
-
-  // Smooth bezier path
-  let path = `M${pts[0].x},${pts[0].y}`;
-  for(let i=1;i<pts.length;i++){
-    const cp1x=pts[i-1].x+(pts[i].x-pts[i-1].x)*0.4;
-    const cp1y=pts[i-1].y;
-    const cp2x=pts[i].x-(pts[i].x-pts[i-1].x)*0.4;
-    const cp2y=pts[i].y;
-    path+=` C${cp1x},${cp1y} ${cp2x},${cp2y} ${pts[i].x},${pts[i].y}`;
-  }
-  const areaPath=path+` L${pts[pts.length-1].x},${pT+cH} L${pts[0].x},${pT+cH} Z`;
-
-  const dots = pts.map((p,i)=>`<circle cx="${p.x}" cy="${p.y}" r="${i===pts.length-1?4:2.5}" fill="${i===pts.length-1?'var(--g)':'rgba(200,255,0,.6)'}" stroke="${i===pts.length-1?'#191919':'none'}" stroke-width="2"/>`).join('');
-
-  const svgId = 'cg_'+Math.random().toString(36).slice(2,7);
-  return `<div class="chart-wrap">
-    <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" style="height:${H}px;">
-      <defs>
-        <linearGradient id="${svgId}" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#C8FF00" stop-opacity="0.18"/>
-          <stop offset="100%" stop-color="#C8FF00" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path d="${areaPath}" fill="url(#${svgId})"/>
-      <path d="${path}" fill="none" stroke="var(--g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-      ${dots}
-    </svg>
-    <div class="chart-xaxis">
-      ${trend.map((t,i)=>`<span${i===trend.length-1?' class="cur"':''}>${esc(t.label)}</span>`).join('')}
-    </div>
-  </div>`;
+function currentMonthShort(){
+  const d = filterMonth ? new Date(filterMonth.year, filterMonth.month, 1) : new Date();
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' });
 }
 
-// ── Renderers ─────────────────────────────────────────────────────────────
-function renderFunnel(items, colors, showDivider, dropped) {
-  const max = Math.max(...items.map(i=>i.count), 1);
-  const rows = items.map((item,idx) => {
-    const w = item.count>0 ? Math.max(Math.round((item.count/max)*100),2) : 0;
-    return `<div class="f-row">
-      <span class="f-name">${esc(item.stage)}</span>
-      <div class="f-track"><div class="f-fill" style="width:${w}%;background:${colors[idx]||colors[colors.length-1]};"></div></div>
-      <span class="f-count">${item.count}</span>
-    </div>`;
-  }).join('');
-
-  let footer = '';
-  if (showDivider && dropped !== undefined) {
-    footer = `<div class="f-divider"></div>
-      <div class="f-dropped">
-        <span class="f-drop-lbl">Dropped this period</span>
-        <span class="f-drop-pill">Unqualified ${dropped.unqualified||0}</span>
-      </div>`;
+function updateMonthNav(){
+  document.getElementById('mn-lbl').textContent = fmtMonthLbl(filterMonth);
+  const isCur = !filterMonth ||
+    (filterMonth.year === _now.getFullYear() && filterMonth.month === _now.getMonth());
+  document.getElementById('mn-next').disabled = isCur;
+}
+function mnPrev(){
+  if (!filterMonth) filterMonth = { year: _now.getFullYear(), month: _now.getMonth() };
+  filterMonth.month--;
+  if (filterMonth.month < 0) { filterMonth.month = 11; filterMonth.year--; }
+  updateMonthNav(); clearTimeout(_navTimer); _navTimer = setTimeout(load, 300);
+  load();
+}
+function mnNext(){
+  if (!filterMonth) return;
+  filterMonth.month++;
+  if (filterMonth.month > 11) { filterMonth.month = 0; filterMonth.year++; }
+  if (filterMonth.year > _now.getFullYear() ||
+      (filterMonth.year === _now.getFullYear() && filterMonth.month >= _now.getMonth())) {
+    filterMonth = null;
   }
-  return rows + footer;
+  updateMonthNav(); clearTimeout(_navTimer); _navTimer = setTimeout(load, 300);
+  load();
 }
 
-function renderActions(actions) {
-  const rows = [];
-  for (const name of (actions.hotLeads||[])) {
-    rows.push({ dot:'var(--red)', name, sub:'Hot lead', tag:'HOT', tagBg:'rgba(255,107,107,.12)', tagCol:'var(--red)' });
-  }
-  for (const d of (actions.stalledDeals||[])) {
-    rows.push({ dot:'var(--amber)', name:d.name, sub:d.stage, tag:`${d.daysStale}d stale`, tagBg:'rgba(251,191,36,.12)', tagCol:'var(--amber)' });
-  }
-  for (const f of (actions.followupDue||[])) {
-    rows.push({ dot:'var(--blue)', name:f.name, sub:'Follow-up overdue', tag:'Follow up', tagBg:'rgba(96,165,250,.12)', tagCol:'var(--blue)' });
-  }
-  if (!rows.length) return `<div class="action-empty">No actions needed — pipeline looks clean</div>`;
-  return rows.map(r=>`<div class="action-row">
-    <div class="action-dot" style="background:${r.dot};"></div>
-    <div class="action-info">
-      <div class="action-name">${esc(r.name)}</div>
-      <div class="action-sub">${esc(r.sub)}</div>
-    </div>
-    <span class="action-tag" style="background:${r.tagBg};color:${r.tagCol};">${esc(r.tag)}</span>
-  </div>`).join('');
-}
+const LEAD_COLORS = [
+  'rgba(255,255,255,.13)','rgba(200,255,0,.22)','rgba(200,255,0,.35)',
+  'rgba(200,255,0,.5)','rgba(200,255,0,.65)','rgba(200,255,0,.85)',
+];
+const DEAL_COLORS = [
+  'rgba(96,165,250,.5)','rgba(192,132,252,.5)','rgba(251,191,36,.5)',
+  'rgba(249,115,22,.5)','rgba(200,255,0,.8)',
+];
 
-function renderSources(obj) {
-  if (!obj || !Object.keys(obj).length) return `<div class="action-empty">No source data yet</div>`;
-  const entries = Object.entries(obj).sort((a,b)=>b[1].leads-a[1].leads).slice(0,6);
-  return entries.map(([name,{leads,closed}])=>{
-    const icon = SRC_ICONS[name];
-    const iconEl = icon
-      ? `<img src="${icon}" width="16" height="16" onerror="this.style.display='none'">`
-      : `<span class="src-icon-fallback">●</span>`;
-    return `<div class="src-row">
-      <div class="src-icon-wrap">${iconEl}</div>
-      <span class="src-name">${esc(name)}</span>
-      <span class="src-count">${leads}</span>
-      <span class="src-closed-pill${closed===0?' zero':''}">${closed} closed</span>
-    </div>`;
+const SRC_MAP = {
+  'LinkedIn':           '<img src="https://widgets.opxio.io/icons/social/linkedin.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Referral':           '<img src="https://widgets.opxio.io/icons/social/referral.png" width="18" height="18" style="object-fit:contain;"/>',
+  'WhatsApp':           '<img src="https://widgets.opxio.io/icons/social/social.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Threads':            '<img src="https://widgets.opxio.io/icons/social/threads.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Instagram':          '<img src="https://widgets.opxio.io/icons/social/instagram.png" width="18" height="18" style="object-fit:contain;"/>',
+  'TikTok':             '<img src="https://widgets.opxio.io/icons/social/tiktok.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Cold Outreach':      '<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Website / Organic':  '<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Ads':                '<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>',
+  'Notion Marketplace': '<img src="https://widgets.opxio.io/icons/social/other-sources.png" width="18" height="18" style="object-fit:contain;"/>',
+};
+function srcIcon(n){ return SRC_MAP[n] || SRC_MAP['Cold Outreach']; }
+
+function renderFunnel(items, colors){
+  if (!items || !items.length) return '<div class="empty">No pipeline data yet</div>';
+  const max = Math.max(...items.map(i => i.count), 1);
+  return items.map((item, idx) => {
+    const w = item.count > 0 ? Math.max(Math.round((item.count/max)*100), 3) : 0;
+    return '<div class="f-item">'
+      + '<span class="f-lbl">'+esc(item.stage)+'</span>'
+      + '<div class="f-track"><div class="f-fill" style="width:'+w+'%;background:'+(colors[idx]||colors[colors.length-1])+'"></div></div>'
+      + '<span class="f-n">'+item.count+'</span>'
+      + '</div>';
   }).join('');
 }
 
-function renderDealStages(funnel) {
-  const max = Math.max(...funnel.map(f=>f.count),1);
-  return funnel.map((f,i)=>{
-    const w = Math.round((f.count/max)*100);
-    return `<div class="ds-row">
-      <span class="ds-stage">${esc(f.stage)}</span>
-      <div class="ds-bar-wrap"><div class="ds-bar-track"><div class="ds-bar-fill" style="width:${w}%;background:${DEAL_COLORS[i]||DEAL_COLORS[DEAL_COLORS.length-1]};"></div></div></div>
-      <span class="ds-count">${f.count}</span>
-    </div>`;
+function renderSources(obj){
+  if (!obj || !Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
+  const entries = Object.entries(obj).sort((a,b) => b[1].leads - a[1].leads).slice(0,6);
+  const cards = entries.map(function(e){
+    const name = e[0], leads = e[1].leads, closed = e[1].closed;
+    const rate   = leads > 0 ? Math.round((closed/leads)*100) : 0;
+    const rateCol = rate >= 25 ? 'var(--g)' : rate > 0 ? 'var(--amber)' : 'rgba(255,255,255,.35)';
+    const rateBg  = rate >= 25 ? 'rgba(200,255,0,.1)' : rate > 0 ? 'rgba(251,191,36,.1)' : 'rgba(255,255,255,.05)';
+    return '<div class="src-card">'
+      + '<div class="src-card-top"><div class="src-icon">'+srcIcon(name)+'</div><div class="src-name">'+esc(name)+'</div></div>'
+      + '<div class="src-count">'+leads+'</div>'
+      + '<div class="src-card-foot"><span class="src-leads-lbl">'+closed+' closed</span><span class="src-close-pill" style="color:'+rateCol+';background:'+rateBg+';">'+rate+'%</span></div>'
+      + '</div>';
   }).join('');
+  return '<div class="src-grid">'+cards+'</div>';
 }
 
-// ── Main render ───────────────────────────────────────────────────────────
-function render(d) {
-  const kpi = d.kpi || {};
-  const mon = fmtMonShort(filterMonth);
-  const convCol = kpi.convRate>=30?'var(--g)':kpi.convRate>0?'var(--amber)':'rgba(255,255,255,.25)';
-
-  // Row 1 — KPIs
-  const row1 = `<div class="g4 row">
-    <div class="card-hero">
-      <span class="hero-eyebrow">New Leads — ${mon}</span>
-      <div class="hero-val">${kpi.newLeadsMTD??0}</div>
-      <div class="hero-sub">Leads this month</div>
-    </div>
-    <div class="card">
-      <span class="kpi-lbl">Closed Won</span>
-      <div class="kpi-val" style="color:${kpi.closedWonMTD>0?'var(--g)':'rgba(255,255,255,.2)'};">${kpi.closedWonMTD??0}</div>
-      <div class="kpi-sub">Deals won</div>
-    </div>
-    <div class="card">
-      <span class="kpi-lbl">Conversion Rate</span>
-      <div class="kpi-val" style="color:${convCol};">${kpi.convRate??0}%</div>
-      <div class="kpi-sub">Leads → Converted</div>
-    </div>
-    <div class="card">
-      <span class="kpi-lbl">Pipeline Value</span>
-      <div class="kpi-val" style="font-size:28px;letter-spacing:-1px;color:var(--blue);">${fmtRM(kpi.pipelineValue)}</div>
-      <div class="kpi-sub">Active leads</div>
-    </div>
-  </div>`;
-
-  // Row 2 — Funnel + Actions
-  const row2 = `<div class="g2-main row">
-    <div class="card">
-      <div class="ph">
-        <span class="ph-title">Pipeline Funnel</span>
-        <span class="ph-badge green">Current month leads</span>
-      </div>
-      ${renderFunnel(d.leadFunnel||[], LEAD_COLORS, true, d.dropped)}
-    </div>
-    <div class="card">
-      <div class="ph">
-        <span class="ph-title">Action Items</span>
-        ${(d.actions?.hotLeads?.length||d.actions?.stalledDeals?.length||d.actions?.followupDue?.length)?`<span class="ph-badge" style="background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);">Needs attention</span>`:''}
-      </div>
-      ${renderActions(d.actions||{})}
-    </div>
-  </div>`;
-
-  // Row 3 — Chart + Sources + Deal stages
-  const totalSrcLeads = Object.values(d.sourceBreakdown||{}).reduce((s,v)=>s+(v.leads||0),0);
-  const row3 = `<div class="g3 row">
-    <div class="card">
-      <div class="ph">
-        <span class="ph-title">Leads Incoming by Month</span>
-        <span class="ph-badge green">${d.totals?.leads||0} leads total</span>
-      </div>
-      ${renderLineChart(d.monthlyTrend||[])}
-    </div>
-    <div class="card">
-      <div class="ph">
-        <span class="ph-title">Lead Sources</span>
-        <span class="ph-badge">${fmtMonShort(filterMonth)}</span>
-      </div>
-      ${renderSources(d.sourceBreakdown)}
-    </div>
-    <div class="card">
-      <div class="ph">
-        <span class="ph-title">Deal Pipeline</span>
-        <span class="ph-badge">${kpi.openDeals||0} open · ${fmtRM(kpi.pipelineValue)}</span>
-      </div>
-      ${renderDealStages(d.dealFunnel||[])}
-    </div>
-  </div>`;
-
-  document.getElementById('main').innerHTML = row1 + row2 + row3;
-  document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
-}
-
-let _light=false;
-function toggleMode(){ _light=!_light; document.body.classList.toggle('light',_light); }
-
-let _ctrl=null;
-async function load(){
-  if(_ctrl) _ctrl.abort();
-  _ctrl=new AbortController();
-  const sig=_ctrl.signal;
-  const rb=document.getElementById('rb');
-  if(rb) rb.classList.add('spinning');
-  try{
-    const p=new URLSearchParams();
-    if(_tok) p.set('token',_tok);
-    if(filterMonth){ p.set('month',filterMonth.month); p.set('year',filterMonth.year); }
-    const r=await fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+p.toString(),{signal:sig});
-    if(!r.ok) throw new Error('HTTP '+r.status);
-    render(await r.json());
-  }catch(e){
-    if(e.name==='AbortError') return;
-    document.getElementById('main').innerHTML=`<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
-  }finally{
-    if(!sig.aborted){ const b=document.getElementById('rb'); if(b) b.classList.remove('spinning'); }
+function renderLineChart(trend){
+  if (!trend || !trend.length) return '<div class="empty">No trend data yet</div>';
+  var W=520, H=90, pL=6, pR=6, pT=10, pB=4;
+  var cW=W-pL-pR, cH=H-pT-pB;
+  var vals = trend.map(function(t){ return t.count; });
+  var maxV = Math.max.apply(null, vals.concat([1]));
+  var pts = vals.map(function(v,i){
+    return { x: pL+(i/(vals.length-1||1))*cW, y: pT+(1-v/maxV)*cH };
+  });
+  var path = 'M'+pts[0].x+','+pts[0].y;
+  for(var i=1;i<pts.length;i++){
+    var cp1x=pts[i-1].x+(pts[i].x-pts[i-1].x)*0.4, cp1y=pts[i-1].y;
+    var cp2x=pts[i].x-(pts[i].x-pts[i-1].x)*0.4,   cp2y=pts[i].y;
+    path+=' C'+cp1x+','+cp1y+' '+cp2x+','+cp2y+' '+pts[i].x+','+pts[i].y;
   }
+  var areaPath=path+' L'+pts[pts.length-1].x+','+(pT+cH)+' L'+pts[0].x+','+(pT+cH)+' Z';
+  var dots=pts.map(function(p,i){
+    return '<circle cx="'+p.x+'" cy="'+p.y+'" r="'+(i===pts.length-1?4:2.5)+'" fill="'+(i===pts.length-1?'var(--g)':'rgba(200,255,0,.6)')+'" stroke="'+(i===pts.length-1?'#191919':'none')+'" stroke-width="2"/>';
+  }).join('');
+  var gId='cg'+Math.random().toString(36).slice(2,7);
+  return '<div class="chart-wrap">'
+    +'<svg viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" style="height:'+H+'px;">'
+    +'<defs><linearGradient id="'+gId+'" x1="0" y1="0" x2="0" y2="1">'
+    +'<stop offset="0%" stop-color="#C8FF00" stop-opacity="0.18"/>'
+    +'<stop offset="100%" stop-color="#C8FF00" stop-opacity="0"/>'
+    +'</linearGradient></defs>'
+    +'<path d="'+areaPath+'" fill="url(#'+gId+')"/>'
+    +'<path d="'+path+'" fill="none" stroke="var(--g)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+    +dots+'</svg>'
+    +'<div class="chart-xaxis">'
+    +trend.map(function(t,i){ return '<span'+(i===trend.length-1?' class="cur"':'')+'>'+esc(t.label)+'</span>'; }).join('')
+    +'</div></div>';
 }
-function doRefresh(){ load(); }
 
-updateNav();
+function render(d){
+  var kpi = d.kpi || {};
+  var monLabel = currentMonthShort();
+  var isCurrentMonth = !filterMonth;
+
+  var cwCol  = (kpi.closedWonMTD||0) > 0 ? 'var(--g)' : 'var(--zero-val)';
+  var crCol  = kpi.convRate >= 30 ? 'var(--g)' : kpi.convRate > 0 ? 'var(--amber)' : 'var(--zero-val)';
+  var pvSize = (kpi.pipelineValue||0) >= 100000 ? '26px' : '38px';
+
+  // Row 1
+  var row1 = '<div class="g-hero row">'
+    +'<div class="card hero">'
+    +'<span class="hero-eyebrow">New Leads &mdash; '+monLabel+'</span>'
+    +'<div class="hero-val">'+(kpi.newLeadsMTD||0)+'</div>'
+    +'<div class="hero-label">Leads this month</div>'
+    +'</div>'
+    +'<div class="card kpi">'
+    +'<span class="kpi-lbl">Closed Won</span>'
+    +'<div class="kpi-val" style="color:'+cwCol+';">'+(kpi.closedWonMTD||0)+'</div>'
+    +'<div class="kpi-sub">of '+monLabel+' deals</div>'
+    +'</div>'
+    +'<div class="card kpi">'
+    +'<span class="kpi-lbl">Conversion Rate</span>'
+    +'<div class="kpi-val" style="color:'+crCol+';">'+(kpi.convRate||0)+'%</div>'
+    +'<div class="kpi-sub">Leads &rarr; Converted</div>'
+    +'</div>'
+    +'<div class="card kpi">'
+    +'<span class="kpi-lbl">Pipeline Value</span>'
+    +'<div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';letter-spacing:-1px;">'+fmtRM(kpi.pipelineValue)+'</div>'
+    +'<div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div>'
+    +'</div>'
+    +'</div>';
+
+  // Row 2: Funnel + live tiles (current) or full-width (past)
+  var fRows = renderFunnel(d.leadFunnel||[], LEAD_COLORS);
+  var droppedCount = (d.dropped && d.dropped.unqualified) || 0;
+  var droppedNote = droppedCount > 0
+    ? '<div class="f-divider"></div><div class="f-dropped"><span class="f-drop-lbl">Dropped this period</span><span class="f-drop-pill">Unqualified '+droppedCount+'</span></div>'
+    : '';
+
+  var actions = d.actions || {};
+  var hotLeads    = actions.hotLeads    || [];
+  var stalledDeals = actions.stalledDeals || [];
+  var followupDue  = actions.followupDue  || [];
+
+  var liveCol = '';
+  if (isCurrentMonth) {
+    var hc = hotLeads.length, sc = stalledDeals.length, fc = followupDue.length;
+    var hotNames = hotLeads.slice(0,2).map(esc).join(', ') + (hc > 2 ? '&hellip;' : '');
+    liveCol = '<div style="display:flex;flex-direction:column;gap:10px;">'
+      +'<div class="card kpi">'
+      +'<span class="kpi-lbl">Hot Leads</span>'
+      +'<div class="kpi-val" style="color:'+(hc>0?'var(--red)':'var(--zero-val)')+';">'+hc+'</div>'
+      +'<div class="kpi-sub">'+(hc>0 ? hotNames : 'No hot leads right now')+'</div>'
+      +'</div>'
+      +'<div class="card kpi">'
+      +'<span class="kpi-lbl">Stalled Deals</span>'
+      +'<div class="kpi-val" style="color:'+(sc>0?'var(--amber)':'var(--zero-val)')+';">'+sc+'</div>'
+      +'<div class="kpi-sub">'+(sc>0?'Inactive 7+ days':'All deals moving')+'</div>'
+      +'</div>'
+      +'<div class="card kpi">'
+      +'<span class="kpi-lbl">Follow-ups Due</span>'
+      +'<div class="kpi-val" style="color:'+(fc>0?'var(--blue)':'var(--zero-val)')+';">'+fc+'</div>'
+      +'<div class="kpi-sub">'+(fc>0?'Overdue follow-up':'All follow-ups on track')+'</div>'
+      +'</div>'
+      +'</div>';
+  }
+
+  var row2 = isCurrentMonth
+    ? '<div class="g2 row">'
+        +'<div class="card panel">'
+        +'<div class="panel-hdr"><span class="panel-title">Lead Pipeline</span><span class="badge">'+(kpi.openLeads||0)+' open &middot; '+monLabel+'</span></div>'
+        +fRows+droppedNote
+        +'</div>'
+        +liveCol
+        +'</div>'
+    : '<div class="row">'
+        +'<div class="card panel" style="width:100%;">'
+        +'<div class="panel-hdr"><span class="panel-title">Lead Pipeline</span><span class="badge">'+(kpi.openLeads||0)+' open &middot; '+monLabel+'</span></div>'
+        +fRows+droppedNote
+        +'</div>'
+        +'</div>';
+
+  // Row 3: Line chart + Sources + Deal stages
+  var srcTotal = Object.values(d.sourceBreakdown||{}).reduce(function(s,v){ return s+(v.leads||0); },0);
+
+  var row3 = '<div class="g3 row">'
+    +'<div class="card panel">'
+    +'<div class="panel-hdr"><span class="panel-title">Leads by Month</span><span class="badge">'+((d.totals&&d.totals.leads)||0)+' total</span></div>'
+    +renderLineChart(d.monthlyTrend||[])
+    +'</div>'
+    +'<div class="card panel">'
+    +'<div class="panel-hdr"><span class="panel-title">Lead Sources</span><span class="badge">'+srcTotal+' leads</span></div>'
+    +renderSources(d.sourceBreakdown)
+    +'</div>'
+    +'<div class="card panel">'
+    +'<div class="panel-hdr"><span class="panel-title">Deal Stages</span><span class="badge">'+(kpi.openDeals||0)+' open</span></div>'
+    +renderFunnel(d.dealFunnel||[], DEAL_COLORS)
+    +'</div>'
+    +'</div>';
+
+  document.getElementById('main').innerHTML = row1+row2+row3;
+  document.getElementById('ts').textContent = 'Updated '+new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+var _light = false;
+var SUN_SVG  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>';
+var MOON_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+function toggleMode(){
+  _light = !_light;
+  document.body.classList.toggle('light', _light);
+  var mb = document.getElementById('mb');
+  if (mb) mb.innerHTML = _light ? MOON_SVG : SUN_SVG;
+}
+
+var _loadCtrl = null;
+var _abortedByNav = false;
+var _monthCache = new Map();
+var CURRENT_TTL = 6*60*1000;
+var PAST_TTL    = 30*60*1000;
+
+function monthKey(fm){ return fm ? fm.year+'-'+fm.month : 'current'; }
+
+function load(forceNetwork){
+  if (_loadCtrl){ _abortedByNav = true; _loadCtrl.abort(); }
+  _abortedByNav = false;
+  forceNetwork = !!forceNetwork;
+
+  var ck = monthKey(filterMonth);
+  var cached = _monthCache.get(ck);
+  var ttl = !filterMonth ? CURRENT_TTL : PAST_TTL;
+  if (!forceNetwork && cached && (Date.now()-cached.ts) < ttl){
+    render(cached.data); return;
+  }
+
+  _loadCtrl = new AbortController();
+  var sig = _loadCtrl.signal;
+  var timer = setTimeout(function(){ _abortedByNav=false; _loadCtrl.abort(); }, 25000);
+  var b = document.getElementById('rb');
+  if (b) b.classList.add('spinning');
+
+  var params = new URLSearchParams();
+  if (_tok) params.set('token', _tok);
+  if (filterMonth){ params.set('month', filterMonth.month); params.set('year', filterMonth.year); }
+
+  fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+params.toString(), {signal:sig})
+    .then(function(r){ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); })
+    .then(function(data){
+      _monthCache.set(ck, {data:data, ts:Date.now()});
+      render(data);
+    })
+    .catch(function(e){
+      if (e.name==='AbortError'){
+        if (_abortedByNav) return;
+        document.getElementById('main').innerHTML='<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Request timed out &mdash; <a href="" style="color:var(--g);" onclick="location.reload();return false;">Reload</a></div></div>';
+        return;
+      }
+      document.getElementById('main').innerHTML='<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed &mdash; '+esc(e.message)+'</div></div>';
+    })
+    .finally(function(){
+      clearTimeout(timer);
+      if (!sig.aborted){ var b2=document.getElementById('rb'); if(b2) b2.classList.remove('spinning'); }
+    });
+}
+
+function doRefresh(){ _monthCache.delete('current'); load(true); }
+
+updateMonthNav();
 load();
-setInterval(load, 3*60*1000);
+setInterval(function(){ _monthCache.delete('current'); load(true); }, 6*60*1000);
 </script>
 </body>
 </html>

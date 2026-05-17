@@ -76,13 +76,12 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .funnel-tab.active{background:var(--g);color:#000;border-color:transparent;}
 
 /* Funnel */
-.funnel-item{margin-bottom:11px;}
+.funnel-item{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
 .funnel-item:last-child{margin-bottom:0;}
-.funnel-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
-.funnel-stage{font-size:12px;font-weight:600;color:var(--sub);}
-.funnel-count{font-size:12px;font-weight:800;}
-.funnel-track{height:14px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
-.funnel-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.funnel-stage{font-size:11px;font-weight:600;color:var(--sub);width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.funnel-track{flex:1;height:10px;background:rgba(255,255,255,.07);border-radius:5px;overflow:hidden;}
+.funnel-fill{height:100%;border-radius:5px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.funnel-count{font-size:12px;font-weight:800;width:20px;text-align:right;flex-shrink:0;}
 .funnel-dropped{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:9px 13px;border-radius:8px;border:1px dashed rgba(255,255,255,.08);}
 .funnel-dropped-lbl{font-size:11px;font-weight:700;color:var(--sub);}
 .funnel-dropped-tags{display:flex;gap:6px;flex-wrap:wrap;}
@@ -251,11 +250,9 @@ function renderFunnel(items, fills, topCount){
     var w=item.count>0?Math.max(Math.round((item.count/max)*100),3):0;
     var fill=fills[idx]||fills[fills.length-1];
     return '<div class="funnel-item">'
-      +'<div class="funnel-meta">'
       +'<span class="funnel-stage">'+esc(item.stage)+'</span>'
-      +'<span class="funnel-count">'+item.count+'</span>'
-      +'</div>'
       +'<div class="funnel-track"><div class="funnel-fill" style="width:'+w+'%;background:'+fill+';"></div></div>'
+      +'<span class="funnel-count">'+item.count+'</span>'
       +'</div>';
   }).join('');
 }

@@ -57,9 +57,10 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 
 /* Grids */
 .row{margin-bottom:10px;}
-.bottom-grid{display:grid;grid-template-columns:1.7fr 1fr 1.4fr;gap:12px;}
+.mid-grid{display:grid;grid-template-columns:3fr 1.4fr;gap:12px;margin-bottom:10px;}
+.bottom-grid{display:grid;grid-template-columns:1.7fr 1fr;gap:12px;}
 @media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr;}}
-@media(max-width:900px){.bottom-grid{grid-template-columns:1fr;}}
+@media(max-width:900px){.mid-grid{grid-template-columns:1fr;}.bottom-grid{grid-template-columns:1fr;}}
 
 /* Section card */
 .section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
@@ -80,7 +81,6 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .funnel-meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
 .funnel-stage{font-size:12px;font-weight:600;color:var(--sub);}
 .funnel-count{font-size:12px;font-weight:800;}
-.funnel-pct{font-size:10px;font-weight:700;color:var(--muted);min-width:34px;text-align:right;}
 .funnel-track{height:14px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
 .funnel-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .funnel-dropped{display:flex;align-items:center;justify-content:space-between;margin-top:10px;padding:9px 13px;border-radius:8px;border:1px dashed rgba(255,255,255,.08);}
@@ -248,15 +248,12 @@ function renderFunnel(items, fills, topCount){
   var total=topCount||max;
   return items.map(function(item,idx){
     var w=item.count>0?Math.max(Math.round((item.count/max)*100),3):0;
-    var pct=Math.round((item.count/total)*100);
     var fill=fills[idx]||fills[fills.length-1];
     return '<div class="funnel-item">'
       +'<div class="funnel-meta">'
       +'<span class="funnel-stage">'+esc(item.stage)+'</span>'
-      +'<div style="display:flex;align-items:center;gap:8px;">'
       +'<span class="funnel-count">'+item.count+'</span>'
-      +'<span class="funnel-pct">'+pct+'%</span>'
-      +'</div></div>'
+      +'</div>'
       +'<div class="funnel-track"><div class="funnel-fill" style="width:'+w+'%;background:'+fill+';"></div></div>'
       +'</div>';
   }).join('');
@@ -418,18 +415,24 @@ function render(d){
     +'<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';">'+fmtRM(kpi.pipelineValue)+'</div><div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div></div>'
     +'</div>';
 
-  var funnelSection='<div class="section-card row">'
+  var midGrid='<div class="mid-grid row">'
+    +'<div class="section-card">'
     +'<div class="section-header">'
-      +'<div style="display:flex;align-items:center;gap:10px;">'
-        +'<span class="section-title">Pipeline Funnel</span>'
+      +'<span class="section-title">Pipeline Funnel</span>'
+      +'<div style="display:flex;align-items:center;gap:8px;">'
         +'<div class="funnel-tabs">'
           +'<button class="funnel-tab active" id="tab-leads" onclick="switchFunnelTab(\'leads\')">Leads</button>'
           +'<button class="funnel-tab" id="tab-deals" onclick="switchFunnelTab(\'deals\')">Deals</button>'
         +'</div>'
+        +'<span class="section-label green" id="funnel-badge">'+(kpi.openLeads||0)+' open leads</span>'
       +'</div>'
-      +'<span class="section-label green" id="funnel-badge">'+(kpi.openLeads||0)+' open leads</span>'
     +'</div>'
     +'<div id="funnel-body"></div>'
+    +'</div>'
+    +'<div class="reps-container">'
+      +'<div class="reps-header"><span class="reps-title">Sales Performance</span><span class="reps-badge">'+esc(monLabel)+'</span></div>'
+      +renderReps(kpi)
+    +'</div>'
     +'</div>';
 
   var bottomGrid='<div class="bottom-grid row">'
@@ -441,13 +444,9 @@ function render(d){
       +'<div class="section-header"><span class="section-title">Lead Sources</span><span class="section-label">'+esc(monLabel)+'</span></div>'
       +'<div class="sources-grid">'+renderSources(d.sourceBreakdown)+'</div>'
     +'</div>'
-    +'<div class="reps-container">'
-      +'<div class="reps-header"><span class="reps-title">Sales Performance</span><span class="reps-badge">'+esc(monLabel)+'</span></div>'
-      +renderReps(kpi)
-    +'</div>'
     +'</div>';
 
-  document.getElementById('main').innerHTML=kpiRow+funnelSection+bottomGrid;
+  document.getElementById('main').innerHTML=kpiRow+midGrid+bottomGrid;
   updateFunnelDisplay(d);
 
   _chartData=d.monthlyTrend||[];

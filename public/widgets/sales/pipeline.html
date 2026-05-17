@@ -309,7 +309,7 @@ function drawChart(trend, totalLeads){
   svg.setAttribute('width',W); svg.setAttribute('height',H); svg.innerHTML='';
   var AC='#C8FF00';
   var ACA=function(a){return 'rgba(200,255,0,'+a+')';};
-  var PAD={t:14,r:16,b:28,l:36};
+  var PAD={t:14,r:16,b:36,l:44};
   var cW=W-PAD.l-PAD.r, cH=H-PAD.t-PAD.b;
   var maxV=Math.max.apply(null,trend.map(function(d){return d.count;}).concat([1]));
   var xP=function(i){return PAD.l+(i/(trend.length-1||1))*cW;};
@@ -326,7 +326,7 @@ function drawChart(trend, totalLeads){
       var gt=document.createElementNS(ns,'text');
       gt.setAttribute('x',PAD.l-5); gt.setAttribute('y',gy+4);
       gt.setAttribute('text-anchor','end'); gt.setAttribute('fill',dim);
-      gt.setAttribute('font-size','10'); gt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
+      gt.setAttribute('font-size','12'); gt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
       gt.textContent=Math.round(maxV-(gi/4)*maxV);
       svg.appendChild(gt);
     }
@@ -334,10 +334,10 @@ function drawChart(trend, totalLeads){
   trend.forEach(function(d,i){
     var isCur=i===trend.length-1;
     var xt=document.createElementNS(ns,'text');
-    xt.setAttribute('x',xP(i)); xt.setAttribute('y',H-PAD.b+13);
+    xt.setAttribute('x',xP(i)); xt.setAttribute('y',H-PAD.b+16);
     xt.setAttribute('text-anchor','middle');
     xt.setAttribute('fill',isCur?AC:dim);
-    xt.setAttribute('font-size','10'); xt.setAttribute('font-weight',isCur?'700':'500');
+    xt.setAttribute('font-size','12'); xt.setAttribute('font-weight',isCur?'700':'500');
     xt.setAttribute('font-family','Satoshi,-apple-system,sans-serif');
     xt.textContent=d.label; svg.appendChild(xt);
   });

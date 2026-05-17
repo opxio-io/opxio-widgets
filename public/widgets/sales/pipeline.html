@@ -90,12 +90,13 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .drop-tag span{color:rgba(255,255,255,.5);margin-left:4px;}
 
 /* Sources */
-.sources-grid{display:flex;flex-direction:column;gap:8px;}
-.src-row{display:flex;align-items:center;gap:12px;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;}
-.src-icon{width:28px;height:28px;border-radius:8px;object-fit:contain;background:rgba(255,255,255,.06);padding:4px;flex-shrink:0;}
-.src-name{font-size:12px;font-weight:600;color:var(--sub);flex:1;}
-.src-count{font-size:16px;font-weight:900;letter-spacing:-.5px;}
-.src-pill{font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;background:rgba(200,255,0,.12);color:var(--g);white-space:nowrap;}
+.sources-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.src-row{display:flex;flex-direction:column;gap:6px;padding:10px 12px;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;}
+.src-row-top{display:flex;align-items:center;gap:8px;}
+.src-icon{width:22px;height:22px;border-radius:6px;object-fit:contain;background:rgba(255,255,255,.06);padding:3px;flex-shrink:0;}
+.src-name{font-size:11px;font-weight:600;color:var(--sub);flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.src-count{font-size:22px;font-weight:900;letter-spacing:-1px;line-height:1;}
+.src-pill{font-size:9px;font-weight:700;padding:2px 7px;border-radius:100px;background:rgba(200,255,0,.12);color:var(--g);white-space:nowrap;align-self:flex-start;}
 .src-pill.zero{background:rgba(255,255,255,.06);color:var(--muted);}
 
 /* Rep Leaderboard */
@@ -261,15 +262,15 @@ function renderFunnel(items, fills, topCount){
 
 function renderSources(obj){
   if(!obj||!Object.keys(obj).length) return '<div class="empty-state">No source data yet</div>';
-  var entries=Object.entries(obj).sort(function(a,b){return b[1].leads-a[1].leads;}).slice(0,6);
+  var entries=Object.entries(obj).sort(function(a,b){return b[1].leads-a[1].leads;}).slice(0,9);
   return entries.map(function(e){
     var name=e[0],leads=e[1].leads,closed=e[1].closed;
     var rate=leads>0?Math.round((closed/leads)*100):0;
     var icon=SRC_ICONS[name]||SRC_ICONS['Cold Outreach'];
     var pClass=closed===0?'src-pill zero':'src-pill';
     return '<div class="src-row">'
-      +'<img class="src-icon" src="'+icon+'" onerror="this.style.display=\'none\'" />'
-      +'<span class="src-name">'+esc(name)+'</span>'
+      +'<div class="src-row-top"><img class="src-icon" src="'+icon+'" onerror="this.style.display=\'none\'" />'
+      +'<span class="src-name">'+esc(name)+'</span></div>'
       +'<span class="src-count">'+leads+'</span>'
       +'<span class="'+pClass+'">'+closed+' closed · '+rate+'%</span>'
       +'</div>';

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if (window.self === window.top) {
+  window.stop();
+  document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
+}
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Sales Pipeline</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{height:100%;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
+:root{--g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.09);--gb:rgba(200,255,0,.2);--red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+
+.card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:16px;}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:4px;}
+.h-title{font-size:22px;font-weight:900;letter-spacing:-.04em;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.18);}
+.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Month nav */
+.mn-nav{display:flex;align-items:center;gap:6px;}
+.mn-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
+.mn-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
+.mn-btn:disabled{opacity:.25;cursor:default;}
+.mn-lbl{font-size:11px;font-weight:700;color:rgba(255,255,255,.6);min-width:72px;text-align:center;letter-spacing:-.01em;}
+
+/* Grids */
+.row{margin-bottom:10px;}
+.g-hero{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.g2{display:grid;grid-template-columns:3fr 2fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+@media(max-width:800px){.g-hero{grid-template-columns:1fr 1fr;}.g2{grid-template-columns:1fr;}.g3{grid-template-columns:1fr;}}
+@media(max-width:480px){.g-hero{grid-template-columns:1fr;}}
+
+/* Hero KPI */
+.hero{padding:24px 24px 22px;}
+.hero-eyebrow{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px;display:block;}
+.hero-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;color:var(--g);}
+.hero-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.4);margin-top:8px;}
+
+/* Small KPI */
+.kpi{padding:24px 24px 22px;}
+.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px;display:block;}
+.kpi-val{font-size:38px;font-weight:900;letter-spacing:-1.5px;line-height:1;}
+.kpi-sub{font-size:11px;font-weight:500;color:rgba(255,255,255,.4);margin-top:8px;}
+
+/* Panel */
+.panel{padding:22px 24px 20px;}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:6px;}
+.panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.55);}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:6px;background:var(--gm);color:var(--g);border:1px solid var(--gb);}
+.badge.red{background:rgba(255,107,107,.1);color:var(--red);border-color:rgba(255,107,107,.2);}
+.badge.amber{background:rgba(251,191,36,.1);color:var(--amber);border-color:rgba(251,191,36,.2);}
+.badge.blue{background:rgba(96,165,250,.1);color:var(--blue);border-color:rgba(96,165,250,.2);}
+.badge.purple{background:rgba(192,132,252,.1);color:var(--purple);border-color:rgba(192,132,252,.2);}
+
+/* Funnel bars */
+.f-item{display:flex;align-items:center;gap:12px;margin-bottom:11px;}
+.f-item:last-child{margin-bottom:0;}
+.f-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:rgba(255,255,255,.5);width:130px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.f-track{flex:1;height:22px;border-radius:6px;background:rgba(255,255,255,.04);overflow:hidden;}
+.f-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
+.f-n{font-size:13px;font-weight:900;color:rgba(255,255,255,.6);width:24px;text-align:right;flex-shrink:0;}
+
+/* Action list */
+.action-list{display:flex;flex-direction:column;gap:8px;}
+.action-item{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:10px;gap:12px;}
+.action-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.82);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.action-meta{font-size:10px;font-weight:700;padding:2px 8px;border-radius:5px;flex-shrink:0;}
+
+/* Source chips */
+.src-wrap{display:flex;flex-wrap:wrap;gap:7px;}
+.src-chip{display:flex;align-items:center;gap:6px;padding:7px 12px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.07);border-radius:9px;}
+.src-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.src-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.65);}
+.src-count{font-size:13px;font-weight:900;color:var(--g);}
+
+/* Live dot */
+.live-dot{display:inline-flex;align-items:center;gap:4px;position:absolute;top:14px;right:14px;}
+.live-dot span:first-child{width:6px;height:6px;border-radius:50%;background:#ff4444;}
+.live-dot span:last-child{font-size:8px;font-weight:800;color:#ff4444;letter-spacing:.06em;}
+
+/* Loading / Empty */
+.loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.empty{font-size:11px;color:rgba(255,255,255,.2);font-weight:500;padding:12px 0;}
+
+.footer{text-align:center;padding:26px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+
+/* Light mode */
+body.light{background:#F4F4F4;color:#111;}
+body.light .card{background:#fff;border-color:rgba(0,0,0,.07);}
+body.light .panel-title{color:rgba(0,0,0,.4);}
+body.light .badge{background:rgba(140,200,0,.12);color:#5a8a00;border-color:rgba(140,200,0,.25);}
+body.light .badge.red{background:rgba(255,80,80,.1);color:#c0392b;border-color:rgba(255,80,80,.2);}
+body.light .badge.amber{background:rgba(220,160,0,.1);color:#a07000;border-color:rgba(220,160,0,.2);}
+body.light .badge.blue{background:rgba(30,80,180,.08);color:#1e50b4;border-color:rgba(30,80,180,.15);}
+body.light .badge.purple{background:rgba(120,60,180,.08);color:#6030b0;border-color:rgba(120,60,180,.15);}
+body.light .eyebrow{color:rgba(0,0,0,.4);}
+body.light .h-title{color:#111;}
+body.light .kpi-lbl,.body.light .hero-eyebrow{color:rgba(0,0,0,.4);}
+body.light .kpi-sub,.body.light .hero-sub{color:rgba(0,0,0,.35);}
+body.light .f-lbl{color:rgba(0,0,0,.45);}
+body.light .f-track{background:rgba(0,0,0,.06);}
+body.light .f-n{color:rgba(0,0,0,.55);}
+body.light .action-item{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
+body.light .action-name{color:rgba(0,0,0,.78);}
+body.light .src-chip{background:rgba(0,0,0,.03);border-color:rgba(0,0,0,.07);}
+body.light .src-name{color:rgba(0,0,0,.55);}
+body.light .mn-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.1);color:rgba(0,0,0,.5);}
+body.light .mn-lbl{color:rgba(0,0,0,.65);}
+body.light .icon-btn{background:rgba(0,0,0,.04);border-color:rgba(0,0,0,.09);color:rgba(0,0,0,.5);}
+body.light .ts{color:rgba(0,0,0,.25);}
+body.light .footer{color:rgba(0,0,0,.15);}
+body.light .empty{color:rgba(0,0,0,.3);}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div>
+    <p class="eyebrow">Opxio · Sales OS</p>
+    <h1 class="h-title">Sales Pipeline</h1>
+  </div>
+  <div class="h-right">
+    <div class="mn-nav">
+      <button class="mn-btn" onclick="mnPrev()">&#8249;</button>
+      <span class="mn-lbl" id="mn-lbl"></span>
+      <button class="mn-btn" id="mn-next" onclick="mnNext()" disabled>&#8250;</button>
+    </div>
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" id="mb" onclick="toggleMode()" title="Toggle light/dark">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+    </button>
+    <button class="icon-btn" id="rb" onclick="doRefresh()" title="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="main">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading pipeline</div></div>
+</div>
+
+<div class="footer">Opxio.io</div>
+
+<script>
+const _tok = new URLSearchParams(location.search).get('token') || '';
+const _now  = new Date();
+let filterMonth = null;
+
+const LEAD_COLORS = [
+  'rgba(255,255,255,.14)',
+  'rgba(200,255,0,.25)',
+  'rgba(200,255,0,.38)',
+  'rgba(200,255,0,.52)',
+  'rgba(200,255,0,.68)',
+  'rgba(200,255,0,.85)',
+];
+const DEAL_COLORS = [
+  'rgba(96,165,250,.35)',
+  'rgba(192,132,252,.45)',
+  'rgba(251,191,36,.45)',
+  'rgba(249,115,22,.45)',
+  'rgba(200,255,0,.7)',
+];
+const SRC_COLORS = {
+  'LinkedIn':'#60A5FA','Referral':'#C8FF00','Cold Outreach':'#F97316',
+  'Threads':'#F97316','Instagram':'#C084FC','WhatsApp':'#34D399',
+  'TikTok':'#E879F9','Website / Organic':'#60A5FA','Ads':'#FBBF24',
+  'Notion Marketplace':'#C8FF00',
+};
+
+function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function fmtMon(fm) {
+  const d = fm ? new Date(fm.year, fm.month, 1) : new Date();
+  return d.toLocaleString('default',{month:'short',year:'numeric'});
+}
+function updateMonthNav() {
+  document.getElementById('mn-lbl').textContent = fmtMon(filterMonth);
+  const isCur = !filterMonth || (filterMonth.year===_now.getFullYear()&&filterMonth.month===_now.getMonth());
+  document.getElementById('mn-next').disabled = isCur;
+}
+function mnPrev() {
+  if (!filterMonth) filterMonth = {year:_now.getFullYear(),month:_now.getMonth()};
+  filterMonth.month--;
+  if (filterMonth.month<0){filterMonth.month=11;filterMonth.year--;}
+  updateMonthNav(); load();
+}
+function mnNext() {
+  if (!filterMonth) return;
+  filterMonth.month++;
+  if (filterMonth.month>11){filterMonth.month=0;filterMonth.year++;}
+  if (filterMonth.year>_now.getFullYear()||(filterMonth.year===_now.getFullYear()&&filterMonth.month>=_now.getMonth())) filterMonth=null;
+  updateMonthNav(); load();
+}
+
+function fmtRM(n) {
+  if (n >= 1000000) return 'RM ' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000)    return 'RM ' + (n/1000).toFixed(0)    + 'K';
+  return 'RM ' + n.toLocaleString();
+}
+
+function renderFunnel(items, colors) {
+  if (!items || !items.length) return '<div class="empty">No data</div>';
+  const max = Math.max(...items.map(i=>i.count), 1);
+  return items.map((item, idx) => {
+    const w = item.count > 0 ? Math.max(Math.round((item.count/max)*100), 3) : 0;
+    return `<div class="f-item">
+      <span class="f-lbl">${esc(item.stage)}</span>
+      <div class="f-track"><div class="f-fill" style="width:${w}%;background:${colors[idx]||colors[colors.length-1]};"></div></div>
+      <span class="f-n">${item.count}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderHotLeads(names) {
+  if (!names || !names.length) return '<div class="empty">No hot leads right now</div>';
+  return `<div class="action-list">${names.map(n=>`
+    <div class="action-item">
+      <span class="action-name">${esc(n)}</span>
+      <span class="action-meta" style="background:rgba(255,107,107,.12);color:var(--red);">HOT</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderStalled(deals) {
+  if (!deals || !deals.length) return '<div class="empty">No stalled deals — pipeline is moving</div>';
+  return `<div class="action-list">${deals.map(d=>`
+    <div class="action-item">
+      <span class="action-name">${esc(d.name)}</span>
+      <span class="action-meta" style="background:rgba(251,191,36,.12);color:var(--amber);">${d.daysStale}d stale</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderFollowups(leads) {
+  if (!leads || !leads.length) return '<div class="empty">No overdue follow-ups</div>';
+  return `<div class="action-list">${leads.map(l=>`
+    <div class="action-item">
+      <span class="action-name">${esc(l.name)}</span>
+      <span class="action-meta" style="background:rgba(96,165,250,.12);color:var(--blue);">Follow up</span>
+    </div>`).join('')}</div>`;
+}
+
+function renderSources(obj) {
+  if (!obj || !Object.keys(obj).length) return '<div class="empty">No source data yet</div>';
+  const entries = Object.entries(obj).sort((a,b)=>b[1]-a[1]);
+  return `<div class="src-wrap">${entries.map(([name, count])=>{
+    const col = SRC_COLORS[name] || 'rgba(255,255,255,.4)';
+    return `<div class="src-chip">
+      <div class="src-dot" style="background:${col};"></div>
+      <span class="src-name">${esc(name)}</span>
+      <span class="src-count">${count}</span>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function render(d) {
+  const kpi = d.kpi || {};
+  const mon = fmtMon(filterMonth);
+  const isLive = !filterMonth;
+
+  const pipeVal = kpi.pipelineValue > 0 ? fmtRM(kpi.pipelineValue) : '—';
+  const convStr = kpi.convRate !== null ? kpi.convRate + '%' : '—';
+  const convCol = kpi.convRate >= 30 ? 'var(--g)' : kpi.convRate > 0 ? 'var(--amber)' : 'rgba(255,255,255,.25)';
+
+  // Row 1 — KPIs
+  const row1 = `<div class="g-hero row">
+    <div class="card hero" style="position:relative;">
+      ${isLive?`<div class="live-dot"><span></span><span>LIVE</span></div>`:''}
+      <span class="hero-eyebrow">Open Leads</span>
+      <div class="hero-val">${kpi.openLeads ?? '—'}</div>
+      <div class="hero-sub">${kpi.hotLeads || 0} hot · ${d.totals?.leads || 0} all time</div>
+    </div>
+    <div class="card kpi" style="position:relative;">
+      ${isLive?`<div class="live-dot"><span></span><span>LIVE</span></div>`:''}
+      <span class="kpi-lbl">Open Deals</span>
+      <div class="kpi-val" style="color:${kpi.openDeals>0?'var(--blue)':'rgba(255,255,255,.2)'};">${kpi.openDeals ?? '—'}</div>
+      <div class="kpi-sub">${pipeVal} in pipeline</div>
+    </div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Closed Won — ${mon}</span>
+      <div class="kpi-val" style="color:${kpi.closedWonMTD>0?'var(--g)':'rgba(255,255,255,.2)'};">${kpi.closedWonMTD ?? 0}</div>
+      <div class="kpi-sub">${d.totals?.deals || 0} total deals</div>
+    </div>
+    <div class="card kpi">
+      <span class="kpi-lbl">Conversion Rate</span>
+      <div class="kpi-val" style="color:${convCol};">${convStr}</div>
+      <div class="kpi-sub">leads → converted</div>
+    </div>
+  </div>`;
+
+  // Row 2 — Funnels
+  const row2 = `<div class="g2 row">
+    <div class="card panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Lead Funnel</span>
+        <span class="badge">${kpi.openLeads || 0} open</span>
+      </div>
+      ${renderFunnel(d.leadFunnel, LEAD_COLORS)}
+    </div>
+    <div class="card panel">
+      <div class="panel-hdr">
+        <span class="panel-title">Deal Pipeline</span>
+        <span class="badge blue">${kpi.openDeals || 0} active</span>
+      </div>
+      ${renderFunnel(d.dealFunnel, DEAL_COLORS)}
+    </div>
+  </div>`;
+
+  // Row 3 — Actions (live only) + Sources
+  let row3 = '';
+  if (isLive) {
+    row3 = `<div class="g3 row">
+      <div class="card panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Hot Leads</span>
+          ${kpi.hotLeads>0?`<span class="badge red">${kpi.hotLeads} hot</span>`:''}
+        </div>
+        ${renderHotLeads(d.actions?.hotLeads)}
+      </div>
+      <div class="card panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Stalled Deals</span>
+          ${d.actions?.stalledDeals?.length?`<span class="badge amber">&gt;7 days</span>`:''}
+        </div>
+        ${renderStalled(d.actions?.stalledDeals)}
+      </div>
+      <div class="card panel">
+        <div class="panel-hdr">
+          <span class="panel-title">Overdue Follow-ups</span>
+          ${d.actions?.followupLeads?.length?`<span class="badge purple">${d.actions.followupLeads.length}</span>`:''}
+        </div>
+        ${renderFollowups(d.actions?.followupLeads)}
+      </div>
+    </div>`;
+  }
+
+  // Sources panel (always shown)
+  const srcPanel = Object.keys(d.sourceBreakdown||{}).length ? `<div class="card panel row">
+    <div class="panel-hdr"><span class="panel-title">Lead Sources</span></div>
+    ${renderSources(d.sourceBreakdown)}
+  </div>` : '';
+
+  document.getElementById('main').innerHTML = row1 + row2 + row3 + srcPanel;
+  document.getElementById('ts').textContent = 'Updated ' + new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'});
+}
+
+let _light = false;
+const SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+const MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+function toggleMode() { _light=!_light; document.body.classList.toggle('light',_light); document.getElementById('mb').innerHTML=_light?MOON:SUN; }
+
+let _ctrl = null;
+async function load() {
+  if (_ctrl) _ctrl.abort();
+  _ctrl = new AbortController();
+  const sig = _ctrl.signal;
+  const rb = document.getElementById('rb');
+  if (rb) rb.classList.add('spinning');
+  try {
+    const p = new URLSearchParams();
+    if (_tok) p.set('token', _tok);
+    if (filterMonth) { p.set('month', filterMonth.month); p.set('year', filterMonth.year); }
+    const r = await fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?' + p.toString(), {signal: sig});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    render(await r.json());
+  } catch(e) {
+    if (e.name === 'AbortError') return;
+    document.getElementById('main').innerHTML = `<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Failed — ${esc(e.message)}</div></div>`;
+  } finally {
+    if (!sig.aborted) { const b=document.getElementById('rb'); if(b) b.classList.remove('spinning'); }
+  }
+}
+function doRefresh() { load(); }
+
+updateMonthNav();
+load();
+setInterval(load, 3*60*1000);
+</script>
+</body>
+</html>

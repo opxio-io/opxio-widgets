@@ -4,7 +4,7 @@
 <script>
 if (window.self === window.top) {
   window.stop(); document.open();
-  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for authorised use only.</div></body></html>');
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div></body></html>');
   document.close();
 }
 </script>
@@ -28,10 +28,25 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
 
-/* Top bar */
+/* ── Auth gate ── */
+.auth-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;animation:fadeIn .3s ease;}
+.auth-logo{width:48px;height:48px;background:var(--g);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#000;margin-bottom:4px;}
+.auth-title{font-size:18px;font-weight:900;letter-spacing:-0.4px;}
+.auth-sub{font-size:13px;color:var(--sub);max-width:280px;line-height:1.6;}
+.auth-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:14px;font-weight:700;padding:13px 22px;cursor:pointer;font-family:'Satoshi',sans-serif;transition:all .15s;margin-top:4px;}
+.auth-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);}
+.auth-btn:disabled{opacity:.4;cursor:default;}
+.auth-btn svg{width:20px;height:20px;flex-shrink:0;}
+.auth-err{font-size:12px;color:var(--red);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:10px;padding:10px 16px;max-width:320px;}
+
+/* ── User pill ── */
+.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:5px 12px 5px 5px;font-size:12px;font-weight:600;color:var(--sub);}
+.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--g);color:#000;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+
+/* ── Top bar ── */
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
-.top-bar-left{display:flex;align-items:center;gap:12px;}
-.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
+.top-bar-left{display:flex;align-items:center;gap:10px;}
+.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;}
 .wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
 .pill-row{display:flex;gap:6px;align-items:center;}
 .status-filter{display:flex;gap:4px;}
@@ -41,7 +56,7 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .refresh-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:var(--sub);cursor:pointer;padding:5px 10px;font-size:13px;transition:all .15s;}
 .refresh-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
 
-/* Summary pills */
+/* ── Summary pills ── */
 .summary-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .s-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:12px;padding:8px 14px;}
 .s-pill-val{font-size:20px;font-weight:900;letter-spacing:-1px;}
@@ -51,13 +66,7 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .s-pill.rejected .s-pill-val{color:var(--red);}
 .s-pill.revision .s-pill-val{color:var(--blue);}
 
-/* Empty state */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:8px;}
-.empty-icon{font-size:32px;opacity:.3;}
-.empty-msg{font-size:14px;font-weight:600;color:var(--muted);}
-.empty-sub{font-size:12px;color:rgba(255,255,255,.2);}
-
-/* QC item cards */
+/* ── Cards ── */
 .items-list{display:flex;flex-direction:column;gap:10px;}
 .qc-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;position:relative;animation:fadeIn .2s ease;}
 .qc-card:hover{border-color:rgba(255,255,255,.12);}
@@ -70,22 +79,18 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .qc-type-badge{font-size:10px;font-weight:700;letter-spacing:.04em;border-radius:100px;padding:2px 9px;}
 .qc-type-badge.quote{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
 .qc-type-badge.proposal{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
-
 .qc-amounts{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
 .qc-amount{font-size:22px;font-weight:900;letter-spacing:-1px;}
 .qc-currency-lbl{font-size:11px;font-weight:600;color:var(--muted);text-align:right;}
 .qc-sub-date{font-size:11px;color:var(--muted);}
-
 .qc-card-divider{height:1px;background:rgba(255,255,255,.05);margin:0 -22px 16px;}
-
-/* Review status badge */
 .review-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;border-radius:100px;padding:4px 12px;}
 .review-badge.pending{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.25);}
 .review-badge.approved{background:rgba(200,255,0,.1);color:var(--g);border:1px solid rgba(200,255,0,.2);}
 .review-badge.rejected{background:rgba(255,107,107,.1);color:var(--red);border:1px solid rgba(255,107,107,.2);}
 .review-badge.revision{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
 
-/* Action area */
+/* ── Actions ── */
 .action-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
 .action-left{flex:1;min-width:220px;}
 .notes-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-size:12px;font-family:'Satoshi',sans-serif;padding:10px 14px;resize:vertical;min-height:56px;line-height:1.5;transition:border-color .15s;}
@@ -100,135 +105,168 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .act-btn.revision:hover:not(:disabled){background:rgba(96,165,250,.25);}
 .act-btn.reject{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.2);}
 .act-btn.reject:hover:not(:disabled){background:rgba(255,107,107,.22);}
-
-/* Reviewed items: show notes inline */
 .prev-notes{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--sub);line-height:1.6;}
 .prev-notes-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
+.reviewed-by{font-size:11px;color:var(--muted);margin-top:6px;}
 
-/* Loading */
+/* ── Empty / loader ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:8px;}
+.empty-icon{font-size:32px;opacity:.3;}
+.empty-msg{font-size:14px;font-weight:600;color:var(--muted);}
+.empty-sub{font-size:12px;color:rgba(255,255,255,.2);}
 .loader{display:flex;align-items:center;justify-content:center;padding:60px;gap:10px;flex-direction:column;}
 .spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,.1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 .loader-msg{font-size:12px;color:var(--muted);}
 
-/* Toast */
+/* ── Toast ── */
 .toast{position:fixed;bottom:24px;right:24px;background:#1e1e1e;border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;font-weight:600;color:#fff;z-index:999;display:none;animation:fadeIn .2s ease;max-width:320px;}
 .toast.ok{border-color:rgba(200,255,0,.3);color:var(--g);}
 .toast.err{border-color:rgba(255,107,107,.3);color:var(--red);}
 
-/* Section header */
 .section-header-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
 .section-title{font-size:13px;font-weight:700;}
 .section-count{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;}
 </style>
 </head>
 <body>
-<div class="top-bar">
-  <div class="top-bar-left">
-    <span class="wgt-title" id="wgtTitle">QC Review</span>
-    <span class="wgt-org" id="wgtOrg">Opxio</span>
-  </div>
-  <div class="pill-row">
-    <div class="status-filter" id="statusFilter">
-      <button class="sf-btn active" data-s="Pending Review" onclick="setFilter('Pending Review')">Pending</button>
-      <button class="sf-btn" data-s="Revision Requested" onclick="setFilter('Revision Requested')">Revision</button>
-      <button class="sf-btn" data-s="all" onclick="setFilter('all')">All</button>
-    </div>
-    <button class="refresh-btn" onclick="load(true)" title="Refresh">↻</button>
+
+<!-- Auth gate (shown when no session) -->
+<div id="authGate" style="display:none">
+  <div class="auth-gate">
+    <div class="auth-logo">Q</div>
+    <div class="auth-title">QC Review</div>
+    <div class="auth-sub">Sign in with your Notion account to access the QC reviewer dashboard.</div>
+    <button class="auth-btn" id="authBtn" onclick="startAuth()">
+      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="4" fill="white"/>
+        <path d="M6.2 6.5C6.2 5.67 6.87 5 7.7 5H16.3C17.13 5 17.8 5.67 17.8 6.5V17.5C17.8 18.33 17.13 19 16.3 19H7.7C6.87 19 6.2 18.33 6.2 17.5V6.5Z" fill="black"/>
+        <path d="M9 8.5L15 12L9 15.5V8.5Z" fill="white"/>
+      </svg>
+      Continue with Notion
+    </button>
+    <div id="authErr" style="display:none" class="auth-err"></div>
   </div>
 </div>
 
-<div class="summary-row" id="summaryRow" style="display:none"></div>
+<!-- Main app (shown after auth) -->
+<div id="app" style="display:none">
+  <div class="top-bar">
+    <div class="top-bar-left">
+      <span class="wgt-title">QC Review</span>
+      <span class="wgt-org" id="wgtOrg">Opxio</span>
+    </div>
+    <div class="pill-row">
+      <div id="userPill"></div>
+      <div class="status-filter">
+        <button class="sf-btn active" data-s="Pending Review"       onclick="setFilter('Pending Review')">Pending</button>
+        <button class="sf-btn"        data-s="Revision Requested"   onclick="setFilter('Revision Requested')">Revision</button>
+        <button class="sf-btn"        data-s="all"                  onclick="setFilter('all')">All</button>
+      </div>
+      <button class="refresh-btn" onclick="loadItems()" title="Refresh">↻</button>
+    </div>
+  </div>
 
-<div id="content">
-  <div class="loader" id="loader"><div class="spinner"></div><div class="loader-msg">Loading QC items…</div></div>
+  <div class="summary-row" id="summaryRow" style="display:none"></div>
+  <div id="content"></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const params     = new URLSearchParams(location.search)
-const TOKEN      = params.get('token') || ''
-const RKEY       = params.get('reviewer_key') || ''
-const REVIEWER   = params.get('reviewer') || 'Reviewer'
-const BASE       = 'https://api.opxio.io/api/opxio'
+const params  = new URLSearchParams(location.search)
+const TOKEN   = params.get('token')   || ''
+const BASE    = 'https://api.opxio.io/api/opxio'
 
+// Session stored in sessionStorage (tab-scoped, not persistent — intentional for security)
+let SESSION   = params.get('session') || sessionStorage.getItem('qc_session') || ''
+let reviewerEmail = ''
 let currentFilter = 'Pending Review'
-let allItems      = []
-let summaryData   = {}
+let allItems = []
 
-// ── Format ─────────────────────────────────────────────────────────────────
-function fmtAmt(amount, currency = 'MYR') {
-  const sym = currency.toUpperCase()
-  const formatted = new Intl.NumberFormat('en-MY', { minimumFractionDigits: 0, maximumFractionDigits: 0 }).format(amount)
-  return `${sym} ${formatted}`
+// ── Init ───────────────────────────────────────────────────────────────────
+async function init() {
+  // If session came in via URL param, persist it for this tab
+  if (params.get('session')) {
+    SESSION = params.get('session')
+    sessionStorage.setItem('qc_session', SESSION)
+    // Clean URL
+    const clean = new URL(location.href)
+    clean.searchParams.delete('session')
+    history.replaceState({}, '', clean.toString())
+  }
+
+  if (!SESSION) {
+    showAuthGate()
+    return
+  }
+
+  // Decode email from session payload (base64url encoded JSON before the dot)
+  try {
+    const payload = JSON.parse(atob(SESSION.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')))
+    reviewerEmail = payload.email || ''
+  } catch (_) {}
+
+  showApp()
+  loadItems()
 }
 
-function fmtDate(iso) {
-  if (!iso) return '—'
-  const d = new Date(iso)
-  return d.toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' })
+// ── Auth gate ──────────────────────────────────────────────────────────────
+function showAuthGate() {
+  document.getElementById('authGate').style.display = 'block'
+  document.getElementById('app').style.display = 'none'
 }
 
-function daysAgo(iso) {
-  if (!iso) return ''
-  const diff = Math.floor((Date.now() - new Date(iso)) / 86400000)
-  if (diff === 0) return 'today'
-  if (diff === 1) return '1 day ago'
-  return `${diff}d ago`
+function showApp() {
+  document.getElementById('authGate').style.display = 'none'
+  document.getElementById('app').style.display = 'block'
+  if (reviewerEmail) {
+    const initials = reviewerEmail.slice(0,2).toUpperCase()
+    document.getElementById('userPill').innerHTML = `
+      <div class="user-pill">
+        <div class="user-avatar">${initials}</div>
+        ${reviewerEmail}
+      </div>`
+  }
 }
 
-function reviewBadgeClass(status) {
-  if (!status) return 'pending'
-  const s = status.toLowerCase()
-  if (s.includes('pending'))  return 'pending'
-  if (s.includes('approved')) return 'approved'
-  if (s.includes('rejected')) return 'rejected'
-  if (s.includes('revision')) return 'revision'
-  return 'pending'
-}
+async function startAuth() {
+  const btn = document.getElementById('authBtn')
+  const err = document.getElementById('authErr')
+  btn.disabled = true
+  btn.textContent = 'Redirecting…'
+  err.style.display = 'none'
 
-function reviewBadgeLabel(status) {
-  if (!status) return 'Pending Review'
-  return status
-}
-
-// ── Toast ──────────────────────────────────────────────────────────────────
-function showToast(msg, type = 'ok') {
-  const t = document.getElementById('toast')
-  t.textContent = msg
-  t.className   = `toast ${type}`
-  t.style.display = 'block'
-  clearTimeout(t._timer)
-  t._timer = setTimeout(() => { t.style.display = 'none' }, 4000)
-}
-
-// ── Filter ─────────────────────────────────────────────────────────────────
-function setFilter(status) {
-  currentFilter = status
-  document.querySelectorAll('.sf-btn').forEach(b => {
-    b.classList.toggle('active', b.dataset.s === status)
-  })
-  renderItems()
+  try {
+    const r = await fetch(`${BASE}/oauth/start?token=${TOKEN}`)
+    const d = await r.json()
+    if (!r.ok || !d.authUrl) throw new Error(d.error || 'Failed to get auth URL')
+    location.href = d.authUrl
+  } catch (e) {
+    err.textContent = e.message
+    err.style.display = 'block'
+    btn.disabled = false
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="white"/><path d="M6.2 6.5C6.2 5.67 6.87 5 7.7 5H16.3C17.13 5 17.8 5.67 17.8 6.5V17.5C17.8 18.33 17.13 19 16.3 19H7.7C6.87 19 6.2 18.33 6.2 17.5V6.5Z" fill="black"/><path d="M9 8.5L15 12L9 15.5V8.5Z" fill="white"/></svg>Continue with Notion`
+  }
 }
 
 // ── Load ───────────────────────────────────────────────────────────────────
-async function load(force = false) {
-  document.getElementById('loader').style.display = 'flex'
-  document.getElementById('content').innerHTML = '<div class="loader" id="loader"><div class="spinner"></div><div class="loader-msg">Loading QC items…</div></div>'
+async function loadItems() {
+  document.getElementById('content').innerHTML = '<div class="loader"><div class="spinner"></div><div class="loader-msg">Loading QC items…</div></div>'
   document.getElementById('summaryRow').style.display = 'none'
 
   try {
-    const url = `${BASE}/qc-review?token=${TOKEN}&reviewer_key=${RKEY}&status=all`
-    const r   = await fetch(url)
-    if (r.status === 403) {
-      document.getElementById('content').innerHTML = `<div class="empty"><div class="empty-icon">🔒</div><div class="empty-msg">Access denied</div><div class="empty-sub">Invalid reviewer key</div></div>`
-      return
-    }
-    if (!r.ok) throw new Error(await r.text())
+    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&session=${encodeURIComponent(SESSION)}&status=all`)
     const d = await r.json()
 
+    if (r.status === 401 && d.needsAuth) {
+      sessionStorage.removeItem('qc_session')
+      SESSION = ''
+      showAuthGate()
+      return
+    }
+    if (!r.ok) throw new Error(d.error || 'Failed to load')
+
     allItems = d.items || []
-    computeSummary()
     renderSummary()
     renderItems()
 
@@ -237,134 +275,149 @@ async function load(force = false) {
   }
 }
 
-function computeSummary() {
-  summaryData = { pending: 0, approved: 0, rejected: 0, revision: 0 }
-  for (const item of allItems) {
-    const s = (item.reviewStatus || '').toLowerCase()
-    if (s.includes('pending'))  summaryData.pending++
-    else if (s.includes('approved')) summaryData.approved++
-    else if (s.includes('rejected')) summaryData.rejected++
-    else if (s.includes('revision')) summaryData.revision++
-  }
-}
-
+// ── Render ─────────────────────────────────────────────────────────────────
 function renderSummary() {
+  const counts = { pending:0, revision:0, approved:0, rejected:0 }
+  for (const i of allItems) {
+    const s = (i.reviewStatus||'').toLowerCase()
+    if (s.includes('pending'))  counts.pending++
+    else if (s.includes('revision')) counts.revision++
+    else if (s.includes('approved')) counts.approved++
+    else if (s.includes('rejected')) counts.rejected++
+  }
   const row = document.getElementById('summaryRow')
   row.style.display = 'flex'
   row.innerHTML = `
-    <div class="s-pill pending"><span class="s-pill-val">${summaryData.pending}</span><span class="s-pill-lbl">Pending</span></div>
-    <div class="s-pill revision"><span class="s-pill-val">${summaryData.revision}</span><span class="s-pill-lbl">Revision</span></div>
-    <div class="s-pill approved"><span class="s-pill-val">${summaryData.approved}</span><span class="s-pill-lbl">Approved</span></div>
-    <div class="s-pill rejected"><span class="s-pill-val">${summaryData.rejected}</span><span class="s-pill-lbl">Rejected</span></div>
-  `
+    <div class="s-pill pending"><span class="s-pill-val">${counts.pending}</span><span class="s-pill-lbl">Pending</span></div>
+    <div class="s-pill revision"><span class="s-pill-val">${counts.revision}</span><span class="s-pill-lbl">Revision</span></div>
+    <div class="s-pill approved"><span class="s-pill-val">${counts.approved}</span><span class="s-pill-lbl">Approved</span></div>
+    <div class="s-pill rejected"><span class="s-pill-val">${counts.rejected}</span><span class="s-pill-lbl">Rejected</span></div>`
+}
+
+function setFilter(s) {
+  currentFilter = s
+  document.querySelectorAll('.sf-btn').forEach(b => b.classList.toggle('active', b.dataset.s === s))
+  renderItems()
 }
 
 function renderItems() {
-  const filtered = currentFilter === 'all'
-    ? allItems
-    : allItems.filter(i => i.reviewStatus === currentFilter)
-
+  const filtered = currentFilter === 'all' ? allItems : allItems.filter(i => i.reviewStatus === currentFilter)
   const container = document.getElementById('content')
   const isPending = currentFilter === 'Pending Review' || currentFilter === 'Revision Requested'
 
-  if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-msg">No items in this view</div><div class="empty-sub">Switch filter to see others</div></div>`
+  if (!filtered.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-msg">No items here</div><div class="empty-sub">Switch filter to see others</div></div>`
     return
   }
-
   container.innerHTML = `
     <div class="section-header-bar">
       <span class="section-title">${currentFilter === 'all' ? 'All QC Records' : currentFilter}</span>
       <span class="section-count">${filtered.length} item${filtered.length !== 1 ? 's' : ''}</span>
     </div>
-    <div class="items-list" id="itemsList"></div>
-  `
+    <div class="items-list" id="itemsList"></div>`
+
   const list = document.getElementById('itemsList')
-  for (const item of filtered) {
-    list.appendChild(buildCard(item, isPending))
-  }
+  filtered.forEach(item => list.appendChild(buildCard(item, isPending)))
 }
 
 function buildCard(item, showActions) {
-  const card = document.createElement('div')
-  card.className = 'qc-card'
-  card.id = `card-${item.id}`
+  const card       = document.createElement('div')
+  card.className   = 'qc-card'
+  card.id          = `card-${item.id}`
+  const isQuote    = (item.type||'').toLowerCase() === 'quotation'
+  const typeClass  = isQuote ? 'quote' : 'proposal'
+  const statusCls  = (s => {
+    if (!s) return 'pending'
+    s = s.toLowerCase()
+    if (s.includes('pending'))  return 'pending'
+    if (s.includes('approved')) return 'approved'
+    if (s.includes('rejected')) return 'rejected'
+    if (s.includes('revision')) return 'revision'
+    return 'pending'
+  })(item.reviewStatus)
 
-  const isQuote  = (item.type || '').toLowerCase() === 'quotation'
-  const typeClass = isQuote ? 'quote' : 'proposal'
-  const typeLabel = isQuote ? 'Quote' : 'Proposal'
-  const statusClass = reviewBadgeClass(item.reviewStatus)
+  const amt = item.amount
+    ? `${new Intl.NumberFormat('en-MY').format(item.amount)}`
+    : '—'
+  const roundHtml = item.qcRound > 1 ? `<span class="qc-round">Round ${item.qcRound}</span>` : ''
+  const daysAgo = iso => {
+    if (!iso) return ''
+    const d = Math.floor((Date.now()-new Date(iso))/86400000)
+    return d === 0 ? 'today' : d === 1 ? '1d ago' : `${d}d ago`
+  }
 
-  const roundHtml = item.qcRound > 1
-    ? `<span class="qc-round">Round ${item.qcRound}</span>` : ''
+  const prevHtml = !showActions && item.reviewerNotes ? `
+    <div class="qc-card-divider"></div>
+    <div class="prev-notes-lbl">Reviewer Notes</div>
+    <div class="prev-notes">${item.reviewerNotes}</div>
+    ${item.reviewedBy ? `<div class="reviewed-by">Reviewed by ${item.reviewedBy}</div>` : ''}` : ''
 
-  const prevNotesHtml = !showActions && item.reviewerNotes
-    ? `<div class="qc-card-divider"></div><div class="prev-notes-lbl">Reviewer Notes</div><div class="prev-notes">${item.reviewerNotes}</div>` : ''
-
-  const actionsHtml = showActions ? `
+  const actHtml = showActions ? `
     <div class="qc-card-divider"></div>
     <div class="action-row">
       <div class="action-left">
-        <textarea class="notes-input" id="notes-${item.id}" placeholder="Add reviewer notes (required for reject / revision)…" rows="2"></textarea>
+        <textarea class="notes-input" id="notes-${item.id}" placeholder="Add notes (required for reject / revision)…" rows="2"></textarea>
       </div>
       <div class="action-btns">
-        <button class="act-btn approve" onclick="doAction('${item.id}','approve')">✓ Approve</button>
-        <button class="act-btn revision" onclick="doAction('${item.id}','revision')">⟳ Revision</button>
-        <button class="act-btn reject" onclick="doAction('${item.id}','reject')">✕ Reject</button>
+        <button class="act-btn approve"   onclick="doAction('${item.id}','approve')">✓ Approve</button>
+        <button class="act-btn revision"  onclick="doAction('${item.id}','revision')">⟳ Revision</button>
+        <button class="act-btn reject"    onclick="doAction('${item.id}','reject')">✕ Reject</button>
       </div>
-    </div>
-  ` : ''
+    </div>` : ''
 
   card.innerHTML = `
     <div class="qc-card-top">
       <div class="qc-meta">
-        <div class="qc-name">${item.name || item.id}</div>
+        <div class="qc-name">${item.name}</div>
         <div class="qc-sub">
           ${item.entityName ? `<span class="qc-entity">${item.entityName}</span>` : ''}
-          <span class="qc-type-badge ${typeClass}">${typeLabel}</span>
+          <span class="qc-type-badge ${typeClass}">${isQuote ? 'Quote' : 'Proposal'}</span>
           ${roundHtml}
         </div>
         <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="review-badge ${statusClass}">${reviewBadgeLabel(item.reviewStatus)}</span>
+          <span class="review-badge ${statusCls}">${item.reviewStatus||'Pending Review'}</span>
           <span class="qc-sub-date">Submitted ${daysAgo(item.submittedAt)}</span>
-          ${item.reviewedAt ? `<span class="qc-sub-date">· Reviewed ${fmtDate(item.reviewedAt)}</span>` : ''}
         </div>
       </div>
       <div class="qc-amounts">
-        <div class="qc-amount">${item.amount ? fmtAmt(item.amount, item.currency).split(' ')[1] : '—'}</div>
-        <div class="qc-currency-lbl">${item.currency || 'MYR'} ${item.quoteType ? '· ' + item.quoteType : ''}</div>
+        <div class="qc-amount">${amt}</div>
+        <div class="qc-currency-lbl">${item.currency||'MYR'}${item.quoteType ? ' · '+item.quoteType : ''}</div>
       </div>
     </div>
-    ${prevNotesHtml}
-    ${actionsHtml}
-  `
+    ${prevHtml}${actHtml}`
   return card
 }
 
 // ── Action ─────────────────────────────────────────────────────────────────
 async function doAction(itemId, action) {
   const notesEl = document.getElementById(`notes-${itemId}`)
-  const notes   = notesEl ? notesEl.value.trim() : ''
+  const notes   = notesEl?.value.trim() || ''
 
   if ((action === 'reject' || action === 'revision') && !notes) {
     notesEl.style.borderColor = 'rgba(255,107,107,.5)'
-    notesEl.placeholder = 'Notes required for reject / revision'
+    notesEl.placeholder = 'Notes required for this action'
     notesEl.focus()
     return
   }
 
-  // Disable card buttons
   const card = document.getElementById(`card-${itemId}`)
   card.querySelectorAll('.act-btn').forEach(b => b.disabled = true)
   if (notesEl) notesEl.disabled = true
 
   try {
-    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&reviewer_key=${RKEY}`, {
-      method:  'POST',
+    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&session=${encodeURIComponent(SESSION)}`, {
+      method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ qc_id: itemId, action, notes, reviewer_name: REVIEWER }),
+      body: JSON.stringify({ qc_id: itemId, action, notes }),
     })
     const d = await r.json()
+
+    if (r.status === 401 && d.needsAuth) {
+      sessionStorage.removeItem('qc_session')
+      SESSION = ''
+      showAuthGate()
+      return
+    }
     if (!r.ok || !d.ok) {
       showToast(d.error || 'Action failed', 'err')
       card.querySelectorAll('.act-btn').forEach(b => b.disabled = false)
@@ -375,32 +428,13 @@ async function doAction(itemId, action) {
     const label = action === 'approve' ? '✅ Approved' : action === 'revision' ? '🔄 Revision requested' : '❌ Rejected'
     showToast(`${label} — ${d.qcRef}`, 'ok')
 
-    // Remove from list if pending filter, else update badge
-    if (currentFilter === 'Pending Review' || currentFilter === 'Revision Requested') {
-      card.style.opacity = '0'
-      card.style.transition = 'opacity .25s'
-      setTimeout(() => {
-        // Update allItems and re-render
-        const idx = allItems.findIndex(i => i.id === itemId)
-        if (idx !== -1) {
-          allItems[idx].reviewStatus = d.qcStatus
-          allItems[idx].reviewerNotes = notes
-        }
-        computeSummary()
-        renderSummary()
-        renderItems()
-      }, 280)
-    } else {
-      // Update in-place
-      const idx = allItems.findIndex(i => i.id === itemId)
-      if (idx !== -1) {
-        allItems[idx].reviewStatus = d.qcStatus
-        allItems[idx].reviewerNotes = notes
-      }
-      computeSummary()
-      renderSummary()
-      renderItems()
-    }
+    const idx = allItems.findIndex(i => i.id === itemId)
+    if (idx !== -1) { allItems[idx].reviewStatus = d.qcStatus; allItems[idx].reviewerNotes = notes; allItems[idx].reviewedBy = reviewerEmail }
+    renderSummary()
+
+    card.style.transition = 'opacity .25s'
+    card.style.opacity = '0'
+    setTimeout(renderItems, 280)
 
   } catch (err) {
     showToast(err.message, 'err')
@@ -409,7 +443,16 @@ async function doAction(itemId, action) {
   }
 }
 
-load()
+function showToast(msg, type = 'ok') {
+  const t = document.getElementById('toast')
+  t.textContent = msg
+  t.className = `toast ${type}`
+  t.style.display = 'block'
+  clearTimeout(t._t)
+  t._t = setTimeout(() => { t.style.display = 'none' }, 4000)
+}
+
+init()
 </script>
 </body>
 </html>

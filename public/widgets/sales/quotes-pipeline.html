@@ -103,9 +103,10 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .type-badge{font-size:10px;font-weight:900;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 8px;color:#fff;}
 
 /* Active quotes table */
+.tbl-outer{margin:0 -24px -22px;overflow:hidden;border-radius:0 0 var(--r) var(--r);}
 .tbl-scroll{overflow-y:auto;max-height:260px;}
 .tbl{width:100%;border-collapse:collapse;}
-.tbl th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 14px 10px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:#222;}
+.tbl th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:12px 14px 10px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:#1c1c1c;}
 .tbl th:first-child{padding-left:18px;}
 .tbl th:last-child{text-align:right;padding-right:18px;}
 .tbl td{padding:11px 14px;font-size:12px;font-weight:600;color:#fff;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
@@ -210,7 +211,7 @@ function convDonut(pct) {
     +'<div class="conv-info">'
     +'<div class="conv-label">Approval rate</div>'
     +'<div class="conv-sub">Quote → Approved</div>'
-    +'</div>'
+    +'</div></div>'
     +'</div>'
 }
 
@@ -328,18 +329,19 @@ function render(data, prev) {
     }).join('')
   }
 
-  const tableSection = '<div class="section-card" style="padding:0;">'
-    +'<div class="section-header" style="margin:0 0 0;padding:14px 22px;border-radius:var(--r) var(--r) 0 0;">'
+  const tableSection = '<div class="section-card">'
+    +'<div class="section-header">'
       +'<span class="section-title">Open Quotes</span>'
       +'<span class="section-label">'+openCount+' open</span>'
     +'</div>'
-    +'<div class="tbl-scroll">'
+    +'<div class="tbl-outer"><div class="tbl-scroll">'
       +'<table class="tbl">'
         +'<thead><tr>'
           +'<th>Quote No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Days</th>'
         +'</tr></thead>'
         +'<tbody>'+tableRows+'</tbody>'
       +'</table>'
+    +'</div>'
     +'</div>'
     +'</div>'
 

@@ -24,7 +24,7 @@ if (window.self === window.top) {
 html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Satoshi', sans-serif; color: #fff; }
 body { padding: 14px 16px 16px; }
 
-.top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; gap: 10px; }
+.top-bar { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
 .top-left { display: flex; align-items: center; gap: 10px; }
 .wgt-title { font-size: 14px; font-weight: 900; letter-spacing: -0.3px; }
 .org-pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px; }
@@ -74,10 +74,8 @@ body { padding: 14px 16px 16px; }
 <body>
 
 <div class="top-bar">
-  <div class="top-left">
-    <span class="wgt-title">Leads</span>
-    <span class="org-pill">OPXIO</span>
-  </div>
+  <span class="wgt-title">Leads</span>
+  <span class="org-pill">OPXIO</span>
   <div class="mn-wrap">
     <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
     <span class="mn-lbl" id="mnLbl">—</span>

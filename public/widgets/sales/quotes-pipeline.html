@@ -145,6 +145,10 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
   <div class="top-bar-left">
     <span class="wgt-title">Quotes &amp; Proposals</span>
     <span class="wgt-org">OPXIO</span>
+    <div class="funnel-tabs" id="globalTabs">
+      <button class="funnel-tab active" id="tab-quotes" onclick="switchTab('quotes')">Quotes</button>
+      <button class="funnel-tab" id="tab-proposals" onclick="switchTab('proposals')">Proposals</button>
+    </div>
     <div class="mn-pill">
       <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
       <span class="mn-lbl" id="mnLbl">—</span>
@@ -282,6 +286,8 @@ function switchTab(tab) {
   _activeTab = tab
   var tabs = document.querySelectorAll('.funnel-tab')
   for (var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', tabs[i].id==='tab-'+tab)
+  var ft = document.getElementById('funnelTitle')
+  if (ft) ft.textContent = tab==='quotes' ? 'Quote Funnel' : 'Proposal Funnel'
   if (_lastData) updateTabDisplay(_lastData)
 }
 
@@ -353,14 +359,8 @@ function render(d, prev) {
   var midGrid = '<div class="mid-grid">'
     +'<div class="section-card">'
       +'<div class="section-header">'
-        +'<span class="section-title">Funnel</span>'
-        +'<div style="display:flex;align-items:center;gap:8px;">'
-          +'<div class="funnel-tabs">'
-            +'<button class="funnel-tab active" id="tab-quotes" onclick="switchTab(\'quotes\')">Quotes</button>'
-            +'<button class="funnel-tab" id="tab-proposals" onclick="switchTab(\'proposals\')">Proposals</button>'
-          +'</div>'
-          +'<span class="section-label green" id="funnelBadge">0 open</span>'
-        +'</div>'
+        +'<span class="section-title" id="funnelTitle">Quote Funnel</span>'
+        +'<span class="section-label green" id="funnelBadge">0 open</span>'
       +'</div>'
       +'<div id="funnelBody"></div>'
     +'</div>'
@@ -377,7 +377,7 @@ function render(d, prev) {
     +'</div>'
 
   var tableSection = '<div class="section-card">'
-    +'<div class="section-header">'
+    +'<div class="section-header" style="margin-bottom:0;">'
       +'<span class="section-title" id="tblTitle">Open Quotes</span>'
       +'<span class="section-label" id="tblBadge">0 open</span>'
     +'</div>'

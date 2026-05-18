@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if (window.self === window.top) {
+  window.stop(); document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
+}
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Targets</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #191919; --card: #222222;
+  --border: rgba(255,255,255,0.07);
+  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B; --blue: #60A5FA;
+  --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
+  --r: 14px;
+}
+html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Satoshi', sans-serif; color: #fff; }
+body { padding: 14px 16px 16px; }
+
+.top-bar { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
+.wgt-title { font-size: 14px; font-weight: 900; letter-spacing: -0.3px; }
+.org-pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px; }
+.mn-wrap { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 100px; overflow: hidden; }
+.mn-btn { background: none; border: none; color: var(--sub); cursor: pointer; padding: 5px 11px; font-size: 14px; font-weight: 700; line-height: 1; font-family: inherit; transition: color .15s; }
+.mn-btn:hover:not(:disabled) { color: #fff; }
+.mn-btn:disabled { opacity: .25; cursor: default; }
+.mn-lbl { font-size: 11px; font-weight: 700; color: var(--sub); padding: 0 4px; min-width: 72px; text-align: center; }
+
+/* Grid — dynamic columns based on target count */
+.strip { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
+
+/* Target tile */
+.tile {
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 18px 14px;
+  display: flex; flex-direction: column;
+  gap: 0; position: relative; overflow: hidden;
+  transition: border-color .2s;
+}
+.tile:hover { border-color: rgba(255,255,255,.13); }
+.tile.on-track  { border-color: rgba(200,255,0,.2); }
+.tile.at-risk   { border-color: rgba(251,191,36,.2); }
+.tile.behind    { border-color: rgba(255,107,107,.2); }
+
+.tile-type { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+
+.tile-nums { display: flex; align-items: baseline; gap: 5px; margin-bottom: 4px; }
+.tile-actual { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
+.tile-sep { font-size: 14px; font-weight: 700; color: var(--muted); }
+.tile-target { font-size: 14px; font-weight: 700; color: var(--sub); }
+
+/* Progress bar */
+.prog-wrap { height: 6px; background: rgba(255,255,255,.07); border-radius: 100px; overflow: hidden; margin: 10px 0 8px; }
+.prog-fill { height: 100%; border-radius: 100px; transition: width .8s cubic-bezier(.4,0,.2,1); }
+.fill-green  { background: var(--g); }
+.fill-amber  { background: var(--amber); }
+.fill-red    { background: var(--red); }
+
+.tile-pct { font-size: 11px; font-weight: 700; margin-top: auto; }
+.pct-green { color: var(--g); }
+.pct-amber { color: var(--amber); }
+.pct-red   { color: var(--red); }
+
+/* Pct badge top-right */
+.pct-badge {
+  position: absolute; top: 12px; right: 12px;
+  font-size: 10px; font-weight: 700; padding: 3px 8px;
+  border-radius: 100px; line-height: 1.4;
+}
+.pct-badge.on-track { background: rgba(200,255,0,.12); color: var(--g); }
+.pct-badge.at-risk  { background: rgba(251,191,36,.12); color: var(--amber); }
+.pct-badge.behind   { background: rgba(255,107,107,.1); color: var(--red); }
+
+/* Empty state */
+.empty { padding: 28px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 600; background: rgba(255,255,255,.02); border: 1px dashed rgba(255,255,255,.07); border-radius: var(--r); }
+
+/* Skeleton */
+.skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+
+.err-bar { margin-top: 10px; padding: 10px 14px; background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.2); border-radius: 10px; font-size: 12px; color: #FF6B6B; display: none; }
+
+@media (max-width: 800px) { .strip { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 500px) { .strip { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="wgt-title">Targets</span>
+  <span class="org-pill">OPXIO</span>
+  <div class="mn-wrap">
+    <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
+    <span class="mn-lbl" id="mnLbl">—</span>
+    <button class="mn-btn" id="mnNext" onclick="shiftMonth(1)" disabled>&#8250;</button>
+  </div>
+</div>
+
+<div id="strip" class="strip">
+  <!-- skeleton tiles -->
+  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
+  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
+  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
+  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
+</div>
+
+<div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
+
+<script>
+const API = 'https://api.opxio.io/api/clients/opxio/targets'
+const tok = new URLSearchParams(location.search).get('token') || ''
+const now = new Date()
+let offset = 0, ctrl = null
+
+function monthState() {
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1)
+  return { year: d.getFullYear(), month: d.getMonth(), d }
+}
+function fmt(d) { return d.toLocaleString('default', { month: 'short', year: 'numeric' }) }
+function shiftMonth(delta) {
+  offset = Math.min(0, offset + delta)
+  document.getElementById('mnNext').disabled = offset >= 0
+  document.getElementById('mnPrev').disabled = offset <= -24
+  load()
+}
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+
+function fmtVal(val, type, currency) {
+  if (type === 'Revenue') {
+    const sym = currency === 'USD' ? '$' : currency === 'SGD' ? 'S$' : currency === 'CAD' ? 'CA$' : 'RM '
+    if (val >= 1000000) return sym + (val/1000000).toFixed(1).replace(/\.0$/,'') + 'M'
+    if (val >= 1000)    return sym + Math.round(val/1000) + 'K'
+    return sym + Math.round(val)
+  }
+  return String(Math.round(val))
+}
+
+function statusClass(pct) {
+  if (pct >= 80) return 'on-track'
+  if (pct >= 40) return 'at-risk'
+  return 'behind'
+}
+
+function render(data) {
+  const strip = document.getElementById('strip')
+  const { targets } = data
+
+  if (!targets || targets.length === 0) {
+    strip.innerHTML = '<div class="empty" style="grid-column:1/-1">No targets set for this period</div>'
+    return
+  }
+
+  // Dynamic columns
+  const cols = Math.min(targets.length, 4)
+  strip.style.gridTemplateColumns = `repeat(${cols}, 1fr)`
+
+  strip.innerHTML = targets.map(t => {
+    const sc    = statusClass(t.pct)
+    const fCls  = sc === 'on-track' ? 'fill-green' : sc === 'at-risk' ? 'fill-amber' : 'fill-red'
+    const pCls  = sc === 'on-track' ? 'pct-green'  : sc === 'at-risk' ? 'pct-amber'  : 'pct-red'
+    const aFmt  = fmtVal(t.actual, t.type, t.currency)
+    const tFmt  = fmtVal(t.target, t.type, t.currency)
+    const subTxt = t.pct >= 80 ? 'On track' : t.pct >= 40 ? 'Needs push' : 'Behind target'
+
+    return `<div class="tile ${sc}">
+  <div class="tile-type">${esc(t.type)}</div>
+  <div class="tile-nums">
+    <span class="tile-actual">${esc(aFmt)}</span>
+    <span class="tile-sep">/</span>
+    <span class="tile-target">${esc(tFmt)}</span>
+  </div>
+  <div class="prog-wrap"><div class="prog-fill ${fCls}" style="width:${t.pct}%"></div></div>
+  <span class="tile-pct ${pCls}">${t.pct}% — ${subTxt}</span>
+  <span class="pct-badge ${sc}">${t.pct}%</span>
+</div>`
+  }).join('')
+}
+
+async function load() {
+  if (ctrl) ctrl.abort()
+  ctrl = new AbortController()
+  const { year, month, d } = monthState()
+  document.getElementById('mnLbl').textContent = fmt(d)
+  document.getElementById('mnNext').disabled = offset >= 0
+  document.getElementById('mnPrev').disabled = offset <= -24
+  document.getElementById('errBar').style.display = 'none'
+
+  const url = `${API}?token=${encodeURIComponent(tok)}&month=${month}&year=${year}`
+  try {
+    const r = await fetch(url, { signal: ctrl.signal })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    render(await r.json())
+  } catch(e) {
+    if (e.name === 'AbortError') return
+    document.getElementById('errBar').style.display = 'block'
+    console.error(e)
+  }
+}
+
+load()
+</script>
+</body>
+</html>

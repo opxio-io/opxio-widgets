@@ -25,6 +25,7 @@ html,body{width:100%;}
 body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18px 20px 28px;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
@@ -36,12 +37,11 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .mn-btn:hover:not(:disabled){color:#fff;}
 .mn-btn:disabled{opacity:.25;cursor:default;}
 .mn-lbl{font-size:12px;font-weight:600;color:var(--sub);padding:0 4px;min-width:76px;text-align:center;}
-@keyframes spin{to{transform:rotate(360deg)}}
 
 /* KPI row */
 .kpi-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
-.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;}
-.kpi-card.hero{background:var(--g);border-color:transparent;position:relative;overflow:hidden;}
+.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;position:relative;}
+.kpi-card.hero{background:var(--g);border-color:transparent;overflow:hidden;}
 .kpi-card.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.08);}
 .kpi-card.hero::after{content:'';position:absolute;bottom:-20px;right:50px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.05);}
 .kpi-card.hero .kpi-label{color:rgba(0,0,0,.7);font-size:11px;}
@@ -52,31 +52,32 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .kpi-sub{font-size:11px;font-weight:500;color:var(--sub);}
 .kpi-delta{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;line-height:1.4;}
 .kpi-delta.up{background:rgba(200,255,0,.12);color:var(--g);}
-.kpi-card.hero .kpi-delta.up{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
-.kpi-card.hero .kpi-delta.dn{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
-.kpi-card.hero .kpi-delta.flat{background:rgba(0,0,0,.15);color:rgba(0,0,0,.7);}
 .kpi-delta.dn{background:rgba(255,107,107,.1);color:var(--red);}
 .kpi-delta.flat{background:rgba(255,255,255,.09);color:rgba(255,255,255,.5);}
+.kpi-card.hero .kpi-delta.up,.kpi-card.hero .kpi-delta.dn,.kpi-card.hero .kpi-delta.flat{background:rgba(0,0,0,.2);color:rgba(0,0,0,.8);}
 
 /* Layout */
 .mid-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:10px;}
 @media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr;}}
 @media(max-width:900px){.mid-grid{grid-template-columns:1fr;}}
 
-/* Section card — matches pipeline.html exactly */
+/* Section card */
 .section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
-.info-panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.info-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
-.info-panel-body{padding:18px 22px;}
 .section-title{font-size:13px;font-weight:700;}
 .section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;white-space:nowrap;}
 .section-label.green{background:rgba(200,255,0,.1);color:var(--g);border-color:rgba(200,255,0,.2);}
 
-/* Funnel */
-.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
-.funnel-row:last-child{margin-bottom:0;}
-.funnel-stage{font-size:12px;font-weight:600;color:var(--sub);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+/* Funnel tabs — same as pipeline.html */
+.funnel-tabs{display:flex;gap:4px;}
+.funnel-tab{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--sub);font-size:11px;font-weight:700;padding:5px 14px;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.02em;}
+.funnel-tab:hover:not(.active){background:rgba(255,255,255,.08);}
+.funnel-tab.active{background:var(--g);color:#000;border-color:transparent;}
+
+/* Funnel bars */
+.funnel-item{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
+.funnel-item:last-child{margin-bottom:0;}
+.funnel-stage{font-size:12px;font-weight:600;color:var(--sub);width:120px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .funnel-track{flex:1;height:14px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
 .funnel-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .funnel-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:120px;justify-content:flex-end;}
@@ -89,23 +90,25 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .bar-declined{background:var(--red);}
 .bar-expired{background:rgba(255,255,255,.15);}
 
+/* Right info panel */
+.info-panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.info-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.info-panel-body{padding:18px 22px;}
+
 /* Conversion donut */
 .conv-wrap{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 .conv-donut{position:relative;width:72px;height:72px;flex-shrink:0;}
 .conv-donut svg{display:block;}
 .conv-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;}
-.conv-info{}
 .conv-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .conv-sub{font-size:11px;font-weight:600;color:var(--sub);}
-
-/* Type breakdown */
 .type-sub-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 .type-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
 .type-row:last-child{margin-bottom:0;}
 .type-name{font-size:11px;font-weight:700;color:var(--sub);}
 .type-badge{font-size:10px;font-weight:900;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 8px;color:#fff;}
 
-/* Active quotes table */
+/* Table */
 .tbl-outer{margin:0 -24px -22px;overflow:hidden;border-radius:0 0 var(--r) var(--r);}
 .tbl-scroll{overflow-y:auto;max-height:260px;}
 .tbl{width:100%;border-collapse:collapse;}
@@ -118,7 +121,6 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .tbl tr:last-child td{border-bottom:none;}
 .tbl tr.flagged{background:rgba(255,107,107,.03);}
 .tbl tr:hover td{background:rgba(255,255,255,.02);}
-
 .status-pill{display:inline-block;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;}
 .s-draft{background:rgba(255,255,255,.07);color:var(--muted);}
 .s-ready{background:rgba(251,191,36,.12);color:var(--amber);}
@@ -158,14 +160,16 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 <div class="footer">Widgets by Opxio.io</div>
 
 <script>
-const API = 'https://api.opxio.io/api/clients/opxio/quotes-pipeline'
-const tok = new URLSearchParams(location.search).get('token') || ''
-const now = new Date()
-let offset = 0, ctrl = null
+var API = 'https://api.opxio.io/api/clients/opxio/quotes-pipeline'
+var tok = new URLSearchParams(location.search).get('token') || ''
+var now = new Date()
+var offset = 0, ctrl = null
+var _lastData = null
+var _activeTab = 'quotes'
 
 function monthState() {
-  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1)
-  return { year: d.getFullYear(), month: d.getMonth(), d }
+  var d = new Date(now.getFullYear(), now.getMonth() + offset, 1)
+  return { year: d.getFullYear(), month: d.getMonth(), d: d }
 }
 function prevOf(y, m) { return m > 0 ? {year:y,month:m-1} : {year:y-1,month:11} }
 function fmtMonth(d)  { return d.toLocaleString('default',{month:'short',year:'numeric'}) }
@@ -175,10 +179,10 @@ function shiftMonth(delta) {
   document.getElementById('mnPrev').disabled = offset <= -24
   load()
 }
-function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
 function fmtRM(n, currency) {
-  const sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
+  var sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
   if (!n) return sym+'0'
   if (n>=1000000) return sym+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M'
   if (n>=1000)    return sym+Math.round(n/1000)+'K'
@@ -191,17 +195,17 @@ var _FL_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\"
 
 function deltaHtml(curr, prev, lowerIsBetter) {
   if (prev==null||prev===0) return ''
-  const pct = Math.round(((curr-prev)/prev)*100)
+  var pct = Math.round(((curr-prev)/prev)*100)
   if (pct===0) return '<span class="kpi-delta flat">'+_FL_SVG+'0%</span>'
-  const up=pct>0, good=lowerIsBetter?!up:up
+  var up=pct>0, good=lowerIsBetter?!up:up
   return '<span class="kpi-delta '+(good?'up':'dn')+'">'+(up?_UP_SVG:_DN_SVG)+Math.abs(pct)+'%</span>'
 }
 
-function convDonut(pct) {
-  if (pct===null) return '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0;">No data yet</div>'
-  const r=30,cx=36,cy=36,circ=2*Math.PI*r
-  const off=circ*(1-Math.min(pct,100)/100)
-  const col=pct>=70?'#C8FF00':pct>=40?'#FBBF24':'#FF6B6B'
+function convDonutHTML(pct, subLabel) {
+  if (pct===null||pct===undefined) return '<div style="color:var(--muted);font-size:12px;font-weight:600;padding:8px 0;">No data yet</div>'
+  var r=30,cx=36,cy=36,circ=2*Math.PI*r
+  var off=circ*(1-Math.min(pct,100)/100)
+  var col=pct>=70?'#C8FF00':pct>=40?'#FBBF24':'#FF6B6B'
   return '<div class="conv-wrap">'
     +'<div class="conv-donut">'
     +'<svg viewBox="0 0 72 72" width="72" height="72">'
@@ -211,150 +215,188 @@ function convDonut(pct) {
     +'</svg>'
     +'<div class="conv-pct" style="color:'+col+'">'+pct+'%</div>'
     +'</div>'
-    +'<div class="conv-info">'
-    +'<div class="conv-label">Approval rate</div>'
-    +'<div class="conv-sub">Quote → Approved</div>'
-    +'</div></div>'
+    +'<div><div class="conv-label">Approval rate</div><div class="conv-sub">'+esc(subLabel)+'</div></div>'
     +'</div>'
 }
 
-const FUNNEL_COLORS = {
+var FUNNEL_FILLS = {
   'Draft':'bar-draft','Ready to Send':'bar-ready','Sent':'bar-sent',
-  'Approved':'bar-approved','Declined':'bar-declined','Expired':'bar-expired'
+  'Approved':'bar-approved','Accepted':'bar-approved',
+  'Declined':'bar-declined','Expired':'bar-expired'
 }
-const STATUS_PILL = {
-  'Draft':'s-draft','Ready to Send':'s-ready','Sent':'s-sent'
+var TYPE_COLORS = {
+  'New Business':'var(--g)','Expansion':'var(--blue)','Add-on':'var(--amber)','Add-On':'var(--amber)',
+  'Renewal':'var(--purple)','Service/Maintenance':'var(--muted)','Retainer':'var(--amber)'
 }
-const TYPE_COLORS = {
-  'New Business':'var(--g)','Expansion':'var(--blue)','Add-on':'var(--amber)',
-  'Renewal':'var(--purple)','Service/Maintenance':'var(--muted)'
+var STATUS_PILL = {'Draft':'s-draft','Ready to Send':'s-ready','Sent':'s-sent'}
+
+function renderFunnelRows(funnel) {
+  if (!funnel||!funnel.length) return '<div class="empty-state">No data yet</div>'
+  var max = Math.max.apply(null, funnel.map(function(f){return f.count}).concat([1]))
+  return funnel.map(function(f){
+    var pct = f.count>0 ? Math.max(Math.round((f.count/max)*100),3) : 0
+    var cls = FUNNEL_FILLS[f.status]||'bar-draft'
+    return '<div class="funnel-item">'
+      +'<span class="funnel-stage">'+esc(f.status)+'</span>'
+      +'<div class="funnel-track"><div class="funnel-fill '+cls+'" style="width:'+pct+'%"></div></div>'
+      +'<div class="funnel-meta"><span class="funnel-count">'+f.count+'</span>'
+      +(f.value>0?'<span class="funnel-val">'+esc(fmtRM(f.value,'MYR'))+'</span>':'')
+      +'</div></div>'
+  }).join('')
 }
 
-function render(data, prev) {
-  const { kpi, funnel, activeQuotes, typeBreakdown } = data
-  const pk = prev && prev.kpi || null
-  const monLabel = fmtMonth(monthState().d)
+function renderTypeBreakdown(typeBreakdown) {
+  var types = Object.entries(typeBreakdown||{}).sort(function(a,b){return b[1]-a[1]})
+  if (!types.length) return '<div style="color:var(--muted);font-size:12px;font-weight:600;">No open items</div>'
+  return types.map(function(e){
+    return '<div class="type-row">'
+      +'<span class="type-name" style="color:'+(TYPE_COLORS[e[0]]||'var(--sub)')+'">'+esc(e[0])+'</span>'
+      +'<span class="type-badge">'+e[1]+'</span>'
+      +'</div>'
+  }).join('')
+}
 
-  // KPI row
-  const valFontSize = (kpi.openValue||0) >= 1000000 ? '20px' : (kpi.openValue||0) >= 100000 ? '24px' : '30px'
-  const kpiRow = '<div class="kpi-row">'
-    +'<div class="kpi-card hero" style="position:relative;">'
+function renderTableRows(items, refLabel) {
+  if (!items||!items.length) return '<tr><td colspan="6"><div class="empty-state">No open '+esc(refLabel)+' this period</div></td></tr>'
+  return items.map(function(q){
+    var pillCls = STATUS_PILL[q.status]||'s-draft'
+    var flags = (q.needsFollowUp?'<span class="flag-pill flag-followup">Follow up</span>':'')
+              + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring</span>':'')
+    var daysCell = q.status==='Sent'&&q.daysSent!==null
+      ? '<span class="days-info">'+q.daysSent+'d sent</span>'+flags
+      : q.status==='Draft'?'<span class="days-info">Draft</span>'
+      : '<span class="days-info">Ready</span>'
+    var flaggedRow = (q.needsFollowUp||q.expiringSoon)?'flagged':''
+    return '<tr class="'+flaggedRow+'">'
+      +'<td>'+esc(q.refNo)+'</td>'
+      +'<td>'+esc(q.entity)+'</td>'
+      +'<td><span class="amt">'+esc(fmtRM(q.amount,q.currency))+'</span></td>'
+      +'<td><span class="status-pill '+pillCls+'">'+esc(q.status)+'</span></td>'
+      +'<td style="color:var(--sub)">'+esc(q.quoteType)+'</td>'
+      +'<td>'+daysCell+'</td>'
+      +'</tr>'
+  }).join('')
+}
+
+function switchTab(tab) {
+  _activeTab = tab
+  var tabs = document.querySelectorAll('.funnel-tab')
+  for (var i=0;i<tabs.length;i++) tabs[i].classList.toggle('active', tabs[i].id==='tab-'+tab)
+  if (_lastData) updateTabDisplay(_lastData)
+}
+
+function updateTabDisplay(d) {
+  var isQ = _activeTab === 'quotes'
+  var funnel       = isQ ? d.quoteFunnel        : d.proposalFunnel
+  var activeItems  = isQ ? d.quoteActiveItems   : d.proposalActiveItems
+  var typeBreakdown= isQ ? d.quoteTypeBreakdown : d.proposalTypeBreakdown
+  var convRate     = isQ ? d.quoteConvRate      : d.proposalConvRate
+  var convLabel    = isQ ? 'Quote → Approved'   : 'Proposal → Accepted'
+  var openCount    = activeItems ? activeItems.length : 0
+  var refLabel     = isQ ? 'quotes' : 'proposals'
+
+  var funnelEl  = document.getElementById('funnelBody')
+  var badgeEl   = document.getElementById('funnelBadge')
+  var convEl    = document.getElementById('convPanel')
+  var typeEl    = document.getElementById('typePanel')
+  var tblBody   = document.getElementById('tblBody')
+  var tblBadge  = document.getElementById('tblBadge')
+  var tblTitle  = document.getElementById('tblTitle')
+
+  if (funnelEl)  funnelEl.innerHTML  = renderFunnelRows(funnel)
+  if (badgeEl) {
+    badgeEl.textContent = openCount + ' open'
+    badgeEl.className = 'section-label' + (isQ ? ' green' : '')
+  }
+  if (convEl)   convEl.innerHTML   = convDonutHTML(convRate, convLabel)
+  if (typeEl)   typeEl.innerHTML   = renderTypeBreakdown(typeBreakdown)
+  if (tblBody)  tblBody.innerHTML  = renderTableRows(activeItems, refLabel)
+  if (tblBadge) tblBadge.textContent = openCount + ' open'
+  if (tblTitle) tblTitle.textContent = isQ ? 'Open Quotes' : 'Open Proposals'
+}
+
+function render(d, prev) {
+  _lastData = d
+  var pk  = prev && prev.kpi || null
+  var kpi = d.kpi || {}
+  var monLabel = fmtMonth(monthState().d)
+
+  var valFS = (kpi.openValue||0)>=1000000?'20px':(kpi.openValue||0)>=100000?'24px':'30px'
+
+  var kpiRow = '<div class="kpi-row">'
+    +'<div class="kpi-card hero">'
       +'<span class="kpi-label">Issued This Month</span>'
       +'<span class="kpi-val">'+(kpi.issuedMTD||0)+'</span>'
       +'<span class="kpi-sub">quotes issued</span>'
       +deltaHtml(kpi.issuedMTD||0, pk&&pk.issuedMTD, false)
     +'</div>'
-    +'<div class="kpi-card" style="position:relative;">'
+    +'<div class="kpi-card">'
       +'<span class="kpi-label">Open Value</span>'
-      +'<span class="kpi-val" style="font-size:'+valFontSize+';">'+esc(fmtRM(kpi.openValue,'MYR'))+'</span>'
+      +'<span class="kpi-val" style="font-size:'+valFS+';">'+esc(fmtRM(kpi.openValue,'MYR'))+'</span>'
       +'<span class="kpi-sub">across open quotes</span>'
       +deltaHtml(kpi.openValue||0, pk&&pk.openValue, false)
     +'</div>'
     +'<div class="kpi-card">'
-      +'<span class="kpi-label">Pending</span>'
-      +'<span class="kpi-val">'+(kpi.pendingCount||0)+'</span>'
-      +'<span class="kpi-sub">awaiting decision</span>'
+      +'<span class="kpi-label">Proposals Sent</span>'
+      +'<span class="kpi-val">'+(kpi.proposalsSentMTD||0)+'</span>'
+      +'<span class="kpi-sub">'+(kpi.proposalConvRate!==null&&kpi.proposalConvRate!==undefined?kpi.proposalConvRate+'% accepted':'no decisions yet')+'</span>'
+      +deltaHtml(kpi.proposalsSentMTD||0, pk&&pk.proposalsSentMTD, false)
     +'</div>'
-    +'<div class="kpi-card" style="position:relative;">'
+    +'<div class="kpi-card">'
       +'<span class="kpi-label">Approved This Month</span>'
       +'<span class="kpi-val">'+(kpi.approvedMTD||0)+'</span>'
-      +'<span class="kpi-sub">approved this month</span>'
+      +'<span class="kpi-sub">quotes approved</span>'
       +deltaHtml(kpi.approvedMTD||0, pk&&pk.approvedMTD, false)
     +'</div>'
     +'</div>'
 
-  // Funnel panel
-  const maxCount = Math.max.apply(null, funnel.map(function(f){return f.count}).concat([1]))
-  const funnelRows = funnel.map(function(f){
-    const pct = Math.round((f.count/maxCount)*100)
-    const cls = FUNNEL_COLORS[f.status]||'bar-draft'
-    return '<div class="funnel-row">'
-      +'<span class="funnel-stage">'+esc(f.status)+'</span>'
-      +'<div class="funnel-track"><div class="funnel-fill '+cls+'" style="width:'+pct+'%"></div></div>'
-      +'<div class="funnel-meta"><span class="funnel-count">'+f.count+'</span>'
-      +(f.value>0?'<span class="funnel-val">'+esc(fmtRM(f.value,'MYR'))+'</span>':'')
-      +'</div>'
-      +'</div>'
-  }).join('')
-
-  // Right panel — conversion + type
-  const types = Object.entries(typeBreakdown||{}).sort(function(a,b){return b[1]-a[1]})
-  const typeHTML = types.length===0
-    ? '<div style="color:var(--muted);font-size:12px;font-weight:600;">No open quotes</div>'
-    : types.map(function(e){
-        return '<div class="type-row">'
-          +'<span class="type-name" style="color:'+(TYPE_COLORS[e[0]]||'var(--sub)')+'">'+esc(e[0])+'</span>'
-          +'<span class="type-badge">'+e[1]+'</span>'
-          +'</div>'
-      }).join('')
-
-  const midGrid = '<div class="mid-grid">'
+  var midGrid = '<div class="mid-grid">'
     +'<div class="section-card">'
       +'<div class="section-header">'
-        +'<span class="section-title">Quote Funnel</span>'
-        +'<span class="section-label green">'+esc(monLabel)+'</span>'
+        +'<span class="section-title">Funnel</span>'
+        +'<div style="display:flex;align-items:center;gap:8px;">'
+          +'<div class="funnel-tabs">'
+            +'<button class="funnel-tab active" id="tab-quotes" onclick="switchTab(\'quotes\')">Quotes</button>'
+            +'<button class="funnel-tab" id="tab-proposals" onclick="switchTab(\'proposals\')">Proposals</button>'
+          +'</div>'
+          +'<span class="section-label green" id="funnelBadge">0 open</span>'
+        +'</div>'
       +'</div>'
-      +funnelRows
+      +'<div id="funnelBody"></div>'
     +'</div>'
     +'<div class="info-panel">'
       +'<div class="info-panel-hdr">'
         +'<span class="section-title">Conversion</span>'
       +'</div>'
       +'<div class="info-panel-body">'
-        +convDonut(kpi.convRate)
+        +'<div id="convPanel"></div>'
         +'<div class="type-sub-title">By Type</div>'
-        +typeHTML
+        +'<div id="typePanel"></div>'
       +'</div>'
     +'</div>'
     +'</div>'
 
-  // Active quotes table
-  const openCount = activeQuotes.length
-  let tableRows
-  if (openCount === 0) {
-    tableRows = '<tr><td colspan="6"><div class="empty-state">No open quotes this period</div></td></tr>'
-  } else {
-    tableRows = activeQuotes.map(function(q){
-      const pillCls = STATUS_PILL[q.status]||'s-draft'
-      const flags = (q.needsFollowUp?'<span class="flag-pill flag-followup">Follow up</span>':'')
-                  + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring soon</span>':'')
-      const daysCell = q.status==='Sent'&&q.daysSent!==null
-        ? '<span class="days-info">'+q.daysSent+'d sent</span>'+flags
-        : q.status==='Draft'?'<span class="days-info">Draft</span>'
-        : '<span class="days-info">Ready</span>'
-      const flaggedRow = (q.needsFollowUp||q.expiringSoon)?'flagged':''
-      return '<tr class="'+flaggedRow+'">'
-        +'<td>'+esc(q.quoteNo)+'</td>'
-        +'<td>'+esc(q.entity)+'</td>'
-        +'<td><span class="amt">'+esc(fmtRM(q.amount,q.currency))+'</span></td>'
-        +'<td><span class="status-pill '+pillCls+'">'+esc(q.status)+'</span></td>'
-        +'<td style="color:var(--sub)">'+esc(q.quoteType)+'</td>'
-        +'<td>'+daysCell+'</td>'
-        +'</tr>'
-    }).join('')
-  }
-
-  const tableSection = '<div class="section-card">'
+  var tableSection = '<div class="section-card">'
     +'<div class="section-header">'
-      +'<span class="section-title">Open Quotes</span>'
-      +'<span class="section-label">'+openCount+' open</span>'
+      +'<span class="section-title" id="tblTitle">Open Quotes</span>'
+      +'<span class="section-label" id="tblBadge">0 open</span>'
     +'</div>'
     +'<div class="tbl-outer"><div class="tbl-scroll">'
       +'<table class="tbl">'
         +'<thead><tr>'
-          +'<th>Quote No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Days</th>'
+          +'<th>Ref No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Days</th>'
         +'</tr></thead>'
-        +'<tbody>'+tableRows+'</tbody>'
+        +'<tbody id="tblBody"></tbody>'
       +'</table>'
-    +'</div>'
-    +'</div>'
+    +'</div></div>'
     +'</div>'
 
   document.getElementById('main').innerHTML = kpiRow + midGrid + tableSection
+  updateTabDisplay(d)
 }
 
 async function fetchData(month, year) {
-  const r = await fetch(API+'?token='+encodeURIComponent(tok)+'&month='+month+'&year='+year, {signal:ctrl.signal})
+  var r = await fetch(API+'?token='+encodeURIComponent(tok)+'&month='+month+'&year='+year, {signal:ctrl.signal})
   if (!r.ok) throw new Error('HTTP '+r.status)
   return r.json()
 }
@@ -362,17 +404,17 @@ async function fetchData(month, year) {
 async function load() {
   if (ctrl) ctrl.abort()
   ctrl = new AbortController()
-  const {year,month,d} = monthState()
-  document.getElementById('mnLbl').textContent = fmtMonth(d)
+  var ms = monthState()
+  document.getElementById('mnLbl').textContent = fmtMonth(ms.d)
   document.getElementById('mnNext').disabled = offset >= 0
   document.getElementById('mnPrev').disabled = offset <= -24
-  const {year:py,month:pm} = prevOf(year,month)
+  var pv = prevOf(ms.year, ms.month)
   try {
-    const [data,prev] = await Promise.all([
-      fetchData(month,year),
-      fetchData(pm,py).catch(function(){return null})
+    var results = await Promise.all([
+      fetchData(ms.month, ms.year),
+      fetchData(pv.month, pv.year).catch(function(){return null})
     ])
-    render(data, prev)
+    render(results[0], results[1])
   } catch(e) {
     if (e.name==='AbortError') return
     document.getElementById('main').innerHTML='<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Unable to load data. Check token or connection.</div></div>'

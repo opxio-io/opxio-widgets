@@ -186,14 +186,14 @@ function shiftMonth(delta) {
 function esc(s) { return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
 function fmtRM(n, currency) {
-  var sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
+  var sym = currency==='USD'?'USD ':currency==='SGD'?'SGD ':currency==='CAD'?'CAD ':currency==='AUD'?'AUD ':'MYR '
   if (!n) return sym+'0'
   if (n>=1000000) return sym+(n/1000000).toFixed(1).replace(/\.0$/,'')+'M'
   if (n>=1000)    return sym+Math.round(n/1000)+'K'
   return sym+Math.round(n)
 }
 function fmtRMFull(n, currency) {
-  var sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
+  var sym = currency==='USD'?'USD ':currency==='SGD'?'SGD ':currency==='CAD'?'CAD ':currency==='AUD'?'AUD ':'MYR '
   if (!n) return sym+'0'
   return sym + Math.round(n).toLocaleString()
 }

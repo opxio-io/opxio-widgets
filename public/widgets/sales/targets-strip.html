@@ -125,7 +125,7 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 
 function fmtVal(val, type, currency) {
   if (type === 'Revenue') {
-    const sym = currency === 'USD' ? '$' : currency === 'SGD' ? 'S$' : currency === 'CAD' ? 'CA$' : 'RM '
+    const sym = currency === 'USD' ? 'USD ' : currency === 'SGD' ? 'SGD ' : currency === 'CAD' ? 'CAD ' : 'MYR '
     if (val >= 1000000) return sym + (val/1000000).toFixed(1).replace(/\.0$/,'') + 'M'
     if (val >= 1000)    return sym + Math.round(val/1000) + 'K'
     return sym + Math.round(val)

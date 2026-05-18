@@ -136,10 +136,10 @@ function setVal(id, html) { document.getElementById(id).innerHTML = html }
 function setText(id, t)   { document.getElementById(id).textContent = t }
 
 function fmtRM(n) {
-  if (!n) return 'RM 0'
-  if (n >= 1000000) return 'RM ' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M'
-  if (n >= 1000)    return 'RM ' + Math.round(n/1000) + 'K'
-  return 'RM ' + Math.round(n)
+  if (!n) return 'MYR 0'
+  if (n >= 1000000) return 'MYR ' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1000)    return 'MYR ' + Math.round(n/1000) + 'K'
+  return 'MYR ' + Math.round(n)
 }
 
 var _UP_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>';

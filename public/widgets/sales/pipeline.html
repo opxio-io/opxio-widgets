@@ -194,7 +194,7 @@ function deltaHtml(curr,prev,lowerIsBetter){
   var cls=good?'up':'dn';
   return '<span class="kpi-delta '+cls+'">'+(up?_UP_SVG:_DN_SVG)+Math.abs(pct)+'%</span>';
 }
-function fmtRM(n){ if(!n) return '—'; if(n>=1000000) return 'RM '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'RM '+(n/1000).toFixed(0)+'K'; return 'RM '+n; }
+function fmtRM(n){ if(!n) return '—'; if(n>=1000000) return 'MYR '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'MYR '+(n/1000).toFixed(0)+'K'; return 'MYR '+n; }
 function fmtMonthLbl(fm){
   var d = fm ? new Date(fm.year,fm.month,1) : new Date();
   return d.toLocaleString('default',{month:'short',year:'numeric'});

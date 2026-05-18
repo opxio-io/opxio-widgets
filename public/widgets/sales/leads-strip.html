@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if (window.self === window.top) {
+  window.stop(); document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
+}
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Leads Summary</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #191919;
+  --card: #222222;
+  --border: rgba(255,255,255,0.07);
+  --g: #C8FF00;
+  --amber: #FBBF24;
+  --red: #FF6B6B;
+  --muted: rgba(255,255,255,0.38);
+  --sub: rgba(255,255,255,0.55);
+  --r: 14px;
+}
+html, body {
+  width: 100%;
+  min-height: 100%;
+  background: var(--bg);
+  font-family: 'Satoshi', sans-serif;
+  color: #fff;
+}
+body { padding: 14px 16px 16px; }
+
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+.top-left { display: flex; align-items: center; gap: 10px; }
+.wgt-title { font-size: 14px; font-weight: 900; letter-spacing: -0.3px; }
+.org-pill {
+  font-size: 10px; font-weight: 700; letter-spacing: .06em;
+  color: var(--muted); background: rgba(255,255,255,.05);
+  border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px;
+}
+.mn-wrap {
+  display: flex; align-items: center;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 100px; overflow: hidden;
+}
+.mn-btn {
+  background: none; border: none; color: var(--sub); cursor: pointer;
+  padding: 5px 11px; font-size: 14px; font-weight: 700; line-height: 1;
+  font-family: inherit; transition: color .15s;
+}
+.mn-btn:hover:not(:disabled) { color: #fff; }
+.mn-btn:disabled { opacity: .25; cursor: default; }
+.mn-lbl {
+  font-size: 11px; font-weight: 700; color: var(--sub);
+  padding: 0 4px; min-width: 72px; text-align: center;
+}
+
+.strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+.tile {
+  background: rgba(255,255,255,.025);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 16px 18px 14px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color .2s;
+}
+.tile:hover { border-color: rgba(255,255,255,.13); }
+.tile.hero { background: var(--g); border-color: transparent; }
+.tile.hero::before {
+  content: ''; position: absolute;
+  top: -20px; right: -20px;
+  width: 80px; height: 80px;
+  border-radius: 50%; background: rgba(0,0,0,.07);
+}
+.tile.accent-amber { border-color: rgba(251,191,36,.15); }
+
+.tile-label {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  display: block; margin-bottom: 8px;
+}
+.tile.hero .tile-label { color: rgba(0,0,0,.65); }
+
+.tile-val {
+  font-size: 36px; font-weight: 900; letter-spacing: -2px;
+  line-height: 1; margin-bottom: 4px; display: block;
+}
+.tile.hero .tile-val { color: #000; }
+
+.tile-sub {
+  font-size: 11px; font-weight: 600; color: var(--sub); display: block;
+}
+.tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
+
+.tile-badge {
+  display: inline-block; font-size: 10px; font-weight: 700;
+  padding: 3px 9px; border-radius: 100px; margin-top: 6px;
+}
+.badge-hot {
+  background: rgba(251,191,36,.12); color: var(--amber);
+  border: 1px solid rgba(251,191,36,.2);
+}
+.badge-zero {
+  background: rgba(255,255,255,.06); color: var(--muted);
+  border: 1px solid var(--border);
+}
+
+.skel {
+  background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px; display: block;
+}
+@keyframes shimmer { to { background-position: -200% 0; } }
+.skel-val  { height: 36px; width: 56px; margin-bottom: 6px; }
+.skel-sub  { height: 12px; width: 88px; }
+
+.err-bar {
+  margin-top: 10px; padding: 10px 14px;
+  background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.2);
+  border-radius: 10px; font-size: 12px; color: #FF6B6B; display: none;
+}
+
+@media (max-width: 700px) { .strip { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <div class="top-left">
+    <span class="wgt-title">Leads</span>
+    <span class="org-pill">OPXIO</span>
+  </div>
+  <div class="mn-wrap">
+    <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
+    <span class="mn-lbl" id="mnLbl">—</span>
+    <button class="mn-btn" id="mnNext" onclick="shiftMonth(1)" disabled>&#8250;</button>
+  </div>
+</div>
+
+<div class="strip">
+  <div class="tile hero">
+    <span class="tile-label">New Leads</span>
+    <span class="tile-val" id="valNew"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subNew"><span class="skel skel-sub"></span></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Open Leads</span>
+    <span class="tile-val" id="valOpen"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subOpen"><span class="skel skel-sub"></span></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Conv. Rate</span>
+    <span class="tile-val" id="valConv"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subConv"><span class="skel skel-sub"></span></span>
+  </div>
+  <div class="tile accent-amber">
+    <span class="tile-label">Hot Leads</span>
+    <span class="tile-val" id="valHot"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subHot"><span class="skel skel-sub"></span></span>
+  </div>
+</div>
+
+<div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
+
+<script>
+const API_BASE = 'https://api.opxio.io/api'
+
+function getToken() {
+  return new URLSearchParams(window.location.search).get('token') || ''
+}
+
+const now = new Date()
+let offset = 0
+let ctrl = null
+
+function monthState() {
+  const d = new Date(now.getFullYear(), now.getMonth() + offset, 1)
+  return { year: d.getFullYear(), month: d.getMonth(), d }
+}
+
+function fmtMonth(d) {
+  return d.toLocaleString('default', { month: 'short', year: 'numeric' })
+}
+
+function shiftMonth(delta) {
+  offset = Math.min(0, offset + delta)
+  document.getElementById('mnNext').disabled = offset >= 0
+  document.getElementById('mnPrev').disabled = offset <= -24
+  load()
+}
+
+function esc(s) {
+  return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+}
+
+function setVal(id, html)  { document.getElementById(id).innerHTML = html }
+function setText(id, text) { document.getElementById(id).textContent = text }
+
+function showSkeletons() {
+  const sv = '<span class="skel skel-val"></span>'
+  const ss = '<span class="skel skel-sub"></span>'
+  ;['valNew','valOpen','valConv','valHot'].forEach(id => setVal(id, sv))
+  ;['subNew','subOpen','subConv','subHot'].forEach(id => setVal(id, ss))
+}
+
+function render(data, lbl) {
+  const { kpi, actions } = data
+  const hotCount = (actions && actions.hotLeads ? actions.hotLeads.length : 0)
+  const isCurrentMonth = offset === 0
+
+  setVal('valNew',  esc(kpi.newLeadsMTD))
+  setText('subNew', isCurrentMonth ? 'Leads this month' : 'Leads in ' + lbl)
+
+  setVal('valOpen',  esc(kpi.openLeads))
+  setText('subOpen', 'Active in pipeline')
+
+  setVal('valConv',  esc(kpi.convRate) + '%')
+  setText('subConv', 'Leads → Converted')
+
+  setVal('valHot', esc(hotCount))
+  document.getElementById('subHot').innerHTML = hotCount > 0
+    ? '<span class="tile-badge badge-hot">&#9733; High intent</span>'
+    : '<span class="tile-badge badge-zero">None flagged</span>'
+}
+
+async function load() {
+  if (ctrl) ctrl.abort()
+  ctrl = new AbortController()
+
+  const { year, month, d } = monthState()
+  const lbl = fmtMonth(d)
+  document.getElementById('mnLbl').textContent = lbl
+  document.getElementById('mnNext').disabled = offset >= 0
+  document.getElementById('mnPrev').disabled = offset <= -24
+
+  showSkeletons()
+  document.getElementById('errBar').style.display = 'none'
+
+  const token = getToken()
+  const url = API_BASE + '/clients/opxio/sales-pipeline?token=' + encodeURIComponent(token) + '&month=' + month + '&year=' + year
+
+  try {
+    const r = await fetch(url, { signal: ctrl.signal })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    const data = await r.json()
+    render(data, lbl)
+  } catch(e) {
+    if (e.name === 'AbortError') return
+    document.getElementById('errBar').style.display = 'block'
+    console.error(e)
+  }
+}
+
+load()
+</script>
+</body>
+</html>

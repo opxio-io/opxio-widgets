@@ -13,57 +13,69 @@ if (window.self === window.top) {
 <title>Opxio — Quotes & Proposals</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --bg:#191919;--card:#222222;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:#191919; --card:#222222;
   --border:rgba(255,255,255,0.07);
-  --g:#C8FF00;--blue:#60A5FA;--amber:#FBBF24;--red:#FF6B6B;--purple:#A78BFA;
-  --muted:rgba(255,255,255,0.38);--sub:rgba(255,255,255,0.55);
-  --r:14px;
+  --g:#C8FF00; --amber:#FBBF24; --red:#FF6B6B; --blue:#60A5FA; --purple:#A78BFA;
+  --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
+  --r:18px;
 }
-html,body{width:100%;min-height:100%;background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;}
-body{padding:18px 20px 28px;}
+html,body{width:100%;}
+body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18px 20px 28px;}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 
 /* Top bar */
-.top-bar{display:flex;align-items:center;margin-bottom:14px;gap:10px;}
-.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;}
-.org-pill{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
-.mn-wrap{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:100px;overflow:hidden;}
-.mn-btn{background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:14px;font-weight:700;line-height:1;font-family:inherit;transition:color .15s;}
+.top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
+.top-bar-left{display:flex;align-items:center;gap:12px;}
+.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
+.wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
+.mn-pill{display:flex;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:100px;overflow:hidden;}
+.mn-btn{background:none;border:none;color:var(--sub);cursor:pointer;padding:6px 12px;font-size:14px;font-weight:700;transition:color .15s;line-height:1;font-family:inherit;}
 .mn-btn:hover:not(:disabled){color:#fff;}
 .mn-btn:disabled{opacity:.25;cursor:default;}
 .mn-lbl{font-size:12px;font-weight:600;color:var(--sub);padding:0 4px;min-width:76px;text-align:center;}
+@keyframes spin{to{transform:rotate(360deg)}}
 
 /* KPI row */
-.kpi-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:10px;margin-bottom:12px;}
-.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;position:relative;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between;transition:border-color .2s;}
-.kpi-card:hover{border-color:rgba(255,255,255,.13);}
-.kpi-card.hero{background:var(--g);border-color:transparent;}
+.kpi-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;}
+.kpi-card.hero{background:var(--g);border-color:transparent;position:relative;overflow:hidden;}
 .kpi-card.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.08);}
 .kpi-card.hero::after{content:'';position:absolute;bottom:-20px;right:50px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.05);}
-.kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:10px;}
 .kpi-card.hero .kpi-label{color:rgba(0,0,0,.7);font-size:11px;}
-.kpi-val{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1;display:block;margin-bottom:6px;}
 .kpi-card.hero .kpi-val{color:#000;}
-.kpi-sub{font-size:11px;font-weight:500;color:var(--sub);display:block;}
 .kpi-card.hero .kpi-sub{color:rgba(0,0,0,.65);font-weight:700;}
-.kpi-delta{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;line-height:1.4;display:flex;align-items:center;gap:3px;}
+.kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block;}
+.kpi-val{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
+.kpi-sub{font-size:11px;font-weight:500;color:var(--sub);}
+.kpi-delta{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;line-height:1.4;}
 .kpi-delta.up{background:rgba(200,255,0,.12);color:var(--g);}
+.kpi-card.hero .kpi-delta.up{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
+.kpi-card.hero .kpi-delta.dn{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
+.kpi-card.hero .kpi-delta.flat{background:rgba(0,0,0,.15);color:rgba(0,0,0,.7);}
 .kpi-delta.dn{background:rgba(255,107,107,.1);color:var(--red);}
 .kpi-delta.flat{background:rgba(255,255,255,.09);color:rgba(255,255,255,.5);}
-.kpi-card.hero .kpi-delta.up,.kpi-card.hero .kpi-delta.dn,.kpi-card.hero .kpi-delta.flat{background:rgba(0,0,0,.2);color:rgba(0,0,0,.8);}
 
-/* Mid grid */
-.mid-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:12px;}
-.panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
-.panel-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:14px;}
+/* Layout */
+.mid-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:12px;margin-bottom:10px;}
+@media(max-width:1100px){.kpi-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:900px){.mid-grid{grid-template-columns:1fr;}}
+
+/* Section card — matches pipeline.html exactly */
+.section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.section-title{font-size:13px;font-weight:700;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;white-space:nowrap;}
+.section-label.green{background:rgba(200,255,0,.1);color:var(--g);border-color:rgba(200,255,0,.2);}
 
 /* Funnel */
-.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:13px;}
 .funnel-row:last-child{margin-bottom:0;}
-.funnel-label{font-size:12px;font-weight:600;color:var(--sub);width:110px;flex-shrink:0;}
-.funnel-bar-wrap{flex:1;height:8px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
-.funnel-bar{height:100%;border-radius:100px;transition:width .7s cubic-bezier(.4,0,.2,1);}
+.funnel-stage{font-size:12px;font-weight:600;color:var(--sub);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.funnel-track{flex:1;height:14px;background:rgba(255,255,255,.07);border-radius:6px;overflow:hidden;}
+.funnel-fill{height:100%;border-radius:6px;transition:width .6s cubic-bezier(.4,0,.2,1);}
 .funnel-meta{display:flex;align-items:center;gap:8px;flex-shrink:0;min-width:120px;justify-content:flex-end;}
 .funnel-count{font-size:12px;font-weight:800;color:#fff;min-width:16px;text-align:right;}
 .funnel-val{font-size:11px;font-weight:600;color:var(--muted);}
@@ -74,7 +86,7 @@ body{padding:18px 20px 28px;}
 .bar-declined{background:var(--red);}
 .bar-expired{background:rgba(255,255,255,.15);}
 
-/* Right panel */
+/* Conversion donut */
 .conv-wrap{display:flex;align-items:center;gap:14px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--border);}
 .conv-donut{position:relative;width:72px;height:72px;flex-shrink:0;}
 .conv-donut svg{display:block;}
@@ -83,18 +95,15 @@ body{padding:18px 20px 28px;}
 .conv-label{font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
 .conv-sub{font-size:11px;font-weight:600;color:var(--sub);}
 
-.type-list{}
+/* Type breakdown */
+.type-sub-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;}
 .type-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;}
 .type-row:last-child{margin-bottom:0;}
 .type-name{font-size:11px;font-weight:700;color:var(--sub);}
 .type-badge{font-size:10px;font-weight:900;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 8px;color:#fff;}
 
 /* Active quotes table */
-.table-panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
-.table-header{display:flex;align-items:center;justify-content:space-between;padding:14px 18px 12px;}
-.table-title{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
-.open-badge{font-size:10px;font-weight:900;background:rgba(255,255,255,.07);border-radius:100px;padding:2px 9px;color:var(--sub);}
-.table-scroll{overflow-y:auto;max-height:260px;}
+.tbl-scroll{overflow-y:auto;max-height:260px;}
 .tbl{width:100%;border-collapse:collapse;}
 .tbl th{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);padding:0 14px 10px;text-align:left;border-bottom:1px solid var(--border);position:sticky;top:0;background:#222;}
 .tbl th:first-child{padding-left:18px;}
@@ -110,102 +119,39 @@ body{padding:18px 20px 28px;}
 .s-draft{background:rgba(255,255,255,.07);color:var(--muted);}
 .s-ready{background:rgba(251,191,36,.12);color:var(--amber);}
 .s-sent{background:rgba(96,165,250,.12);color:var(--blue);}
-
 .flag-pill{display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 8px;border-radius:100px;margin-left:5px;}
 .flag-followup{background:rgba(255,107,107,.12);color:var(--red);}
 .flag-expiring{background:rgba(251,191,36,.12);color:var(--amber);}
-
 .amt{font-weight:900;font-size:13px;}
 .days-info{font-size:11px;font-weight:600;color:var(--muted);}
 
-.empty-state{padding:28px;text-align:center;color:var(--muted);font-size:12px;font-weight:600;}
-
-/* Skeleton */
-.skel{background:linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:6px;display:block;}
-@keyframes shimmer{to{background-position:-200% 0;}}
-
-.err-bar{margin-top:10px;padding:10px 14px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:10px;font-size:12px;color:#FF6B6B;display:none;}
+/* Misc */
+.empty-state{text-align:center;padding:24px 0;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
+.loading{display:flex;align-items:center;justify-content:center;min-height:300px;flex-direction:column;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
 
 <div class="top-bar">
-  <span class="wgt-title">Quotes &amp; Proposals</span>
-  <span class="org-pill">OPXIO</span>
-  <div class="mn-wrap">
-    <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
-    <span class="mn-lbl" id="mnLbl">—</span>
-    <button class="mn-btn" id="mnNext" onclick="shiftMonth(1)" disabled>&#8250;</button>
+  <div class="top-bar-left">
+    <span class="wgt-title">Quotes &amp; Proposals</span>
+    <span class="wgt-org">OPXIO</span>
+    <div class="mn-pill">
+      <button class="mn-btn" id="mnPrev" onclick="shiftMonth(-1)">&#8249;</button>
+      <span class="mn-lbl" id="mnLbl">—</span>
+      <button class="mn-btn" id="mnNext" onclick="shiftMonth(1)" disabled>&#8250;</button>
+    </div>
   </div>
 </div>
 
-<!-- KPI row -->
-<div class="kpi-row">
-  <div class="kpi-card hero">
-    <span class="kpi-label">Issued This Month</span>
-    <span class="kpi-val" id="kIssuedVal"><span class="skel" style="height:36px;width:48px;"></span></span>
-    <span class="kpi-sub" id="kIssuedSub"><span class="skel" style="height:11px;width:100px;"></span></span>
-    <span class="kpi-delta" id="kIssuedDelta"></span>
-  </div>
-  <div class="kpi-card">
-    <span class="kpi-label">Open Value</span>
-    <span class="kpi-val" id="kValueVal" style="font-size:26px;"><span class="skel" style="height:36px;width:64px;"></span></span>
-    <span class="kpi-sub" id="kValueSub"><span class="skel" style="height:11px;width:80px;"></span></span>
-    <span class="kpi-delta" id="kValueDelta"></span>
-  </div>
-  <div class="kpi-card">
-    <span class="kpi-label">Pending</span>
-    <span class="kpi-val" id="kPendingVal"><span class="skel" style="height:36px;width:40px;"></span></span>
-    <span class="kpi-sub" id="kPendingSub"><span class="skel" style="height:11px;width:80px;"></span></span>
-  </div>
-  <div class="kpi-card">
-    <span class="kpi-label">Approved This Month</span>
-    <span class="kpi-val" id="kApprovedVal"><span class="skel" style="height:36px;width:40px;"></span></span>
-    <span class="kpi-sub" id="kApprovedSub"><span class="skel" style="height:11px;width:80px;"></span></span>
-    <span class="kpi-delta" id="kApprovedDelta"></span>
-  </div>
+<div id="main">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
 </div>
 
-<!-- Mid grid -->
-<div class="mid-grid">
-  <div class="panel">
-    <div class="panel-title">Quote Funnel</div>
-    <div id="funnelRows"><span class="skel" style="height:160px;width:100%;border-radius:10px;"></span></div>
-  </div>
-  <div class="panel">
-    <div class="panel-title">Conversion</div>
-    <div id="convPanel"><span class="skel" style="height:72px;width:100%;border-radius:10px;margin-bottom:12px;display:block;"></span></div>
-    <div class="panel-title" style="margin-top:14px;">By Type</div>
-    <div id="typePanel"><span class="skel" style="height:80px;width:100%;border-radius:10px;"></span></div>
-  </div>
-</div>
-
-<!-- Active quotes -->
-<div class="table-panel">
-  <div class="table-header">
-    <span class="table-title">Open Quotes</span>
-    <span class="open-badge" id="openBadge">—</span>
-  </div>
-  <div class="table-scroll">
-    <table class="tbl">
-      <thead>
-        <tr>
-          <th>Quote No.</th>
-          <th>Client</th>
-          <th>Amount</th>
-          <th>Status</th>
-          <th>Type</th>
-          <th>Days</th>
-        </tr>
-      </thead>
-      <tbody id="quotesBody">
-        <tr><td colspan="6" style="padding:20px 18px;"><span class="skel" style="height:14px;width:100%;"></span></td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
-
-<div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
+<div class="footer">Widgets by Opxio.io</div>
 
 <script>
 const API = 'https://api.opxio.io/api/clients/opxio/quotes-pipeline'
@@ -226,8 +172,6 @@ function shiftMonth(delta) {
   load()
 }
 function esc(s) { return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
-function setHTML(id,h){ document.getElementById(id).innerHTML=h }
-function setText(id,t){ document.getElementById(id).textContent=t }
 
 function fmtRM(n, currency) {
   const sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
@@ -237,16 +181,16 @@ function fmtRM(n, currency) {
   return sym+Math.round(n)
 }
 
-var _UP='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>'
-var _DN='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 17 13.5 8.5 8.5 13.5 2 7"/><polyline points="16 17 22 17 22 11"/></svg>'
-var _FL='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/></svg>'
+var _UP_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle;margin-right:3px;\"><polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\"/><polyline points=\"16 7 22 7 22 13\"/></svg>";
+var _DN_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle;margin-right:3px;\"><polyline points=\"22 17 13.5 8.5 8.5 13.5 2 7\"/><polyline points=\"16 17 22 17 22 11\"/></svg>";
+var _FL_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle;margin-right:3px;\"><line x1=\"5\" y1=\"12\" x2=\"19\" y2=\"12\"/></svg>";
 
 function deltaHtml(curr, prev, lowerIsBetter) {
   if (prev==null||prev===0) return ''
   const pct = Math.round(((curr-prev)/prev)*100)
-  if (pct===0) return '<span class="kpi-delta flat">'+_FL+' 0%</span>'
+  if (pct===0) return '<span class="kpi-delta flat">'+_FL_SVG+'0%</span>'
   const up=pct>0, good=lowerIsBetter?!up:up
-  return '<span class="kpi-delta '+(good?'up':'dn')+'">'+(up?_UP:_DN)+' '+Math.abs(pct)+'%</span>'
+  return '<span class="kpi-delta '+(good?'up':'dn')+'">'+(up?_UP_SVG:_DN_SVG)+Math.abs(pct)+'%</span>'
 }
 
 function convDonut(pct) {
@@ -284,82 +228,122 @@ const TYPE_COLORS = {
 
 function render(data, prev) {
   const { kpi, funnel, activeQuotes, typeBreakdown } = data
-  const pk = prev?.kpi || null
+  const pk = prev && prev.kpi || null
+  const monLabel = fmtMonth(monthState().d)
 
-  // KPI
-  const valFontSize = kpi.openValue >= 1000000 ? '18px' : kpi.openValue >= 100000 ? '22px' : '26px'
-  setHTML('kIssuedVal',  esc(kpi.issuedMTD))
-  setText('kIssuedSub',  'quotes issued')
-  document.getElementById('kIssuedDelta').outerHTML='<span class="kpi-delta" id="kIssuedDelta"></span>'
-  setHTML('kIssuedDelta', deltaHtml(kpi.issuedMTD, pk?.issuedMTD, false))
+  // KPI row
+  const valFontSize = (kpi.openValue||0) >= 1000000 ? '20px' : (kpi.openValue||0) >= 100000 ? '24px' : '30px'
+  const kpiRow = '<div class="kpi-row">'
+    +'<div class="kpi-card hero" style="position:relative;">'
+      +'<span class="kpi-label">Issued This Month</span>'
+      +'<span class="kpi-val">'+(kpi.issuedMTD||0)+'</span>'
+      +'<span class="kpi-sub">quotes issued</span>'
+      +deltaHtml(kpi.issuedMTD||0, pk&&pk.issuedMTD, false)
+    +'</div>'
+    +'<div class="kpi-card" style="position:relative;">'
+      +'<span class="kpi-label">Open Value</span>'
+      +'<span class="kpi-val" style="font-size:'+valFontSize+';">'+esc(fmtRM(kpi.openValue,'MYR'))+'</span>'
+      +'<span class="kpi-sub">across open quotes</span>'
+      +deltaHtml(kpi.openValue||0, pk&&pk.openValue, false)
+    +'</div>'
+    +'<div class="kpi-card">'
+      +'<span class="kpi-label">Pending</span>'
+      +'<span class="kpi-val">'+(kpi.pendingCount||0)+'</span>'
+      +'<span class="kpi-sub">awaiting decision</span>'
+    +'</div>'
+    +'<div class="kpi-card" style="position:relative;">'
+      +'<span class="kpi-label">Approved This Month</span>'
+      +'<span class="kpi-val">'+(kpi.approvedMTD||0)+'</span>'
+      +'<span class="kpi-sub">approved this month</span>'
+      +deltaHtml(kpi.approvedMTD||0, pk&&pk.approvedMTD, false)
+    +'</div>'
+    +'</div>'
 
-  document.getElementById('kValueVal').style.fontSize = valFontSize
-  setHTML('kValueVal', esc(fmtRM(kpi.openValue,'MYR')))
-  setText('kValueSub', 'across open quotes')
-  setHTML('kValueDelta', deltaHtml(kpi.openValue, pk?.openValue, false))
-
-  setHTML('kPendingVal', esc(kpi.pendingCount))
-  setText('kPendingSub', 'awaiting decision')
-
-  setHTML('kApprovedVal', esc(kpi.approvedMTD))
-  setText('kApprovedSub', 'approved this month')
-  setHTML('kApprovedDelta', deltaHtml(kpi.approvedMTD, pk?.approvedMTD, false))
-
-  // Funnel
-  const maxCount = Math.max(...funnel.map(f=>f.count), 1)
-  setHTML('funnelRows', funnel.map(f=>{
+  // Funnel panel
+  const maxCount = Math.max.apply(null, funnel.map(function(f){return f.count}).concat([1]))
+  const funnelRows = funnel.map(function(f){
     const pct = Math.round((f.count/maxCount)*100)
     const cls = FUNNEL_COLORS[f.status]||'bar-draft'
     return '<div class="funnel-row">'
-      +'<span class="funnel-label">'+esc(f.status)+'</span>'
-      +'<div class="funnel-bar-wrap"><div class="funnel-bar '+cls+'" style="width:'+pct+'%"></div></div>'
+      +'<span class="funnel-stage">'+esc(f.status)+'</span>'
+      +'<div class="funnel-track"><div class="funnel-fill '+cls+'" style="width:'+pct+'%"></div></div>'
       +'<div class="funnel-meta"><span class="funnel-count">'+f.count+'</span>'
       +(f.value>0?'<span class="funnel-val">'+esc(fmtRM(f.value,'MYR'))+'</span>':'')
       +'</div>'
       +'</div>'
-  }).join(''))
+  }).join('')
 
-  // Conversion donut
-  setHTML('convPanel', convDonut(kpi.convRate))
+  // Right panel — conversion + type
+  const types = Object.entries(typeBreakdown||{}).sort(function(a,b){return b[1]-a[1]})
+  const typeHTML = types.length===0
+    ? '<div style="color:var(--muted);font-size:12px;font-weight:600;">No open quotes</div>'
+    : types.map(function(e){
+        return '<div class="type-row">'
+          +'<span class="type-name" style="color:'+(TYPE_COLORS[e[0]]||'var(--sub)')+'">'+esc(e[0])+'</span>'
+          +'<span class="type-badge">'+e[1]+'</span>'
+          +'</div>'
+      }).join('')
 
-  // Type breakdown
-  const types = Object.entries(typeBreakdown).sort((a,b)=>b[1]-a[1])
-  if (types.length === 0) {
-    setHTML('typePanel','<div style="color:var(--muted);font-size:12px;">No open quotes</div>')
-  } else {
-    setHTML('typePanel', types.map(([t,c])=>'<div class="type-row">'
-      +'<span class="type-name" style="color:'+(TYPE_COLORS[t]||'var(--sub)')+'">'+esc(t)+'</span>'
-      +'<span class="type-badge">'+c+'</span>'
-      +'</div>').join(''))
-  }
-
-  // Open quotes badge
-  setText('openBadge', activeQuotes.length + ' open')
+  const midGrid = '<div class="mid-grid">'
+    +'<div class="section-card">'
+      +'<div class="section-header">'
+        +'<span class="section-title">Quote Funnel</span>'
+        +'<span class="section-label green">'+esc(monLabel)+'</span>'
+      +'</div>'
+      +funnelRows
+    +'</div>'
+    +'<div class="section-card">'
+      +'<div class="section-header">'
+        +'<span class="section-title">Conversion</span>'
+      +'</div>'
+      +convDonut(kpi.convRate)
+      +'<div class="type-sub-title">By Type</div>'
+      +typeHTML
+    +'</div>'
+    +'</div>'
 
   // Active quotes table
-  if (activeQuotes.length === 0) {
-    setHTML('quotesBody','<tr><td colspan="6"><div class="empty-state">No open quotes this period</div></td></tr>')
-    return
+  const openCount = activeQuotes.length
+  let tableRows
+  if (openCount === 0) {
+    tableRows = '<tr><td colspan="6"><div class="empty-state">No open quotes this period</div></td></tr>'
+  } else {
+    tableRows = activeQuotes.map(function(q){
+      const pillCls = STATUS_PILL[q.status]||'s-draft'
+      const flags = (q.needsFollowUp?'<span class="flag-pill flag-followup">Follow up</span>':'')
+                  + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring soon</span>':'')
+      const daysCell = q.status==='Sent'&&q.daysSent!==null
+        ? '<span class="days-info">'+q.daysSent+'d sent</span>'+flags
+        : q.status==='Draft'?'<span class="days-info">Draft</span>'
+        : '<span class="days-info">Ready</span>'
+      const flaggedRow = (q.needsFollowUp||q.expiringSoon)?'flagged':''
+      return '<tr class="'+flaggedRow+'">'
+        +'<td>'+esc(q.quoteNo)+'</td>'
+        +'<td>'+esc(q.entity)+'</td>'
+        +'<td><span class="amt">'+esc(fmtRM(q.amount,q.currency))+'</span></td>'
+        +'<td><span class="status-pill '+pillCls+'">'+esc(q.status)+'</span></td>'
+        +'<td style="color:var(--sub)">'+esc(q.quoteType)+'</td>'
+        +'<td>'+daysCell+'</td>'
+        +'</tr>'
+    }).join('')
   }
 
-  setHTML('quotesBody', activeQuotes.map(q=>{
-    const pillCls = STATUS_PILL[q.status]||'s-draft'
-    const flags = (q.needsFollowUp?'<span class="flag-pill flag-followup">Follow up</span>':'')
-                + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring soon</span>':'')
-    const daysCell = q.status==='Sent'&&q.daysSent!==null
-      ? '<span class="days-info">'+q.daysSent+'d sent</span>'+flags
-      : q.status==='Draft'?'<span class="days-info">Draft</span>'
-      : '<span class="days-info">Ready</span>'
-    const flaggedRow = (q.needsFollowUp||q.expiringSoon)?'flagged':''
-    return '<tr class="'+flaggedRow+'">'
-      +'<td>'+esc(q.quoteNo)+'</td>'
-      +'<td>'+esc(q.entity)+'</td>'
-      +'<td><span class="amt">'+esc(fmtRM(q.amount,q.currency))+'</span></td>'
-      +'<td><span class="status-pill '+pillCls+'">'+esc(q.status)+'</span></td>'
-      +'<td style="color:var(--sub)">'+esc(q.quoteType)+'</td>'
-      +'<td>'+daysCell+'</td>'
-      +'</tr>'
-  }).join(''))
+  const tableSection = '<div class="section-card" style="padding:0;">'
+    +'<div class="section-header" style="margin:0 0 0;padding:14px 22px;border-radius:var(--r) var(--r) 0 0;">'
+      +'<span class="section-title">Open Quotes</span>'
+      +'<span class="section-label">'+openCount+' open</span>'
+    +'</div>'
+    +'<div class="tbl-scroll">'
+      +'<table class="tbl">'
+        +'<thead><tr>'
+          +'<th>Quote No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Days</th>'
+        +'</tr></thead>'
+        +'<tbody>'+tableRows+'</tbody>'
+      +'</table>'
+    +'</div>'
+    +'</div>'
+
+  document.getElementById('main').innerHTML = kpiRow + midGrid + tableSection
 }
 
 async function fetchData(month, year) {
@@ -372,20 +356,19 @@ async function load() {
   if (ctrl) ctrl.abort()
   ctrl = new AbortController()
   const {year,month,d} = monthState()
-  setText('mnLbl', fmtMonth(d))
-  document.getElementById('mnNext').disabled = offset>=0
-  document.getElementById('mnPrev').disabled = offset<=-24
-  document.getElementById('errBar').style.display='none'
+  document.getElementById('mnLbl').textContent = fmtMonth(d)
+  document.getElementById('mnNext').disabled = offset >= 0
+  document.getElementById('mnPrev').disabled = offset <= -24
   const {year:py,month:pm} = prevOf(year,month)
   try {
     const [data,prev] = await Promise.all([
       fetchData(month,year),
-      fetchData(pm,py).catch(()=>null)
+      fetchData(pm,py).catch(function(){return null})
     ])
     render(data, prev)
   } catch(e) {
-    if(e.name==='AbortError') return
-    document.getElementById('errBar').style.display='block'
+    if (e.name==='AbortError') return
+    document.getElementById('main').innerHTML='<div class="loading"><div style="color:var(--red);font-size:12px;font-weight:700;">Unable to load data. Check token or connection.</div></div>'
     console.error(e)
   }
 }

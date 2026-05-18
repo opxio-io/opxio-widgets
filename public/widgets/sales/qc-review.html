@@ -135,15 +135,20 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
   <div class="auth-gate">
     <div class="auth-logo">Q</div>
     <div class="auth-title">QC Review</div>
-    <div class="auth-sub">Sign in with your Notion account to access the QC reviewer dashboard.</div>
-    <button class="auth-btn" id="authBtn" onclick="startAuth()">
-      <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect width="24" height="24" rx="4" fill="white"/>
-        <path d="M6.2 6.5C6.2 5.67 6.87 5 7.7 5H16.3C17.13 5 17.8 5.67 17.8 6.5V17.5C17.8 18.33 17.13 19 16.3 19H7.7C6.87 19 6.2 18.33 6.2 17.5V6.5Z" fill="black"/>
-        <path d="M9 8.5L15 12L9 15.5V8.5Z" fill="white"/>
-      </svg>
-      Continue with Notion
-    </button>
+    <div class="auth-sub">Enter your Notion account email to access the reviewer dashboard.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;">
+      <input
+        id="emailInput"
+        type="email"
+        placeholder="your@email.com"
+        class="notes-input"
+        style="min-height:unset;padding:12px 16px;font-size:13px;border-radius:10px;"
+        onkeydown="if(event.key==='Enter')verifyEmail()"
+      />
+      <button class="auth-btn" id="authBtn" onclick="verifyEmail()" style="justify-content:center;">
+        Verify &amp; Continue
+      </button>
+    </div>
     <div id="authErr" style="display:none" class="auth-err"></div>
   </div>
 </div>
@@ -185,26 +190,14 @@ let allItems = []
 
 // ── Init ───────────────────────────────────────────────────────────────────
 async function init() {
-  // If session came in via URL param, persist it for this tab
-  if (params.get('session')) {
-    SESSION = params.get('session')
-    sessionStorage.setItem('qc_session', SESSION)
-    // Clean URL
-    const clean = new URL(location.href)
-    clean.searchParams.delete('session')
-    history.replaceState({}, '', clean.toString())
-  }
+  // Restore session from sessionStorage if available
+  if (!SESSION) SESSION = sessionStorage.getItem('qc_session') || ''
+  reviewerEmail = sessionStorage.getItem('qc_email') || ''
 
   if (!SESSION) {
     showAuthGate()
     return
   }
-
-  // Decode email from session payload (base64url encoded JSON before the dot)
-  try {
-    const payload = JSON.parse(atob(SESSION.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')))
-    reviewerEmail = payload.email || ''
-  } catch (_) {}
 
   showApp()
   loadItems()
@@ -229,23 +222,37 @@ function showApp() {
   }
 }
 
-async function startAuth() {
-  const btn = document.getElementById('authBtn')
-  const err = document.getElementById('authErr')
+async function verifyEmail() {
+  const btn   = document.getElementById('authBtn')
+  const err   = document.getElementById('authErr')
+  const email = document.getElementById('emailInput')?.value?.trim()
+  if (!email) return
+
   btn.disabled = true
-  btn.textContent = 'Redirecting…'
+  btn.textContent = 'Verifying…'
   err.style.display = 'none'
 
   try {
-    const r = await fetch(`${BASE}/oauth/start?token=${TOKEN}`)
+    const r = await fetch(`${BASE}/verify-reviewer?token=${TOKEN}`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ email }),
+    })
     const d = await r.json()
-    if (!r.ok || !d.authUrl) throw new Error(d.error || 'Failed to get auth URL')
-    location.href = d.authUrl
+    if (!r.ok || !d.ok) throw new Error(d.error || 'Verification failed')
+
+    SESSION       = d.session
+    reviewerEmail = d.email
+    sessionStorage.setItem('qc_session', SESSION)
+    sessionStorage.setItem('qc_email',   reviewerEmail)
+    showApp()
+    loadItems()
+
   } catch (e) {
     err.textContent = e.message
     err.style.display = 'block'
     btn.disabled = false
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="24" height="24" rx="4" fill="white"/><path d="M6.2 6.5C6.2 5.67 6.87 5 7.7 5H16.3C17.13 5 17.8 5.67 17.8 6.5V17.5C17.8 18.33 17.13 19 16.3 19H7.7C6.87 19 6.2 18.33 6.2 17.5V6.5Z" fill="black"/><path d="M9 8.5L15 12L9 15.5V8.5Z" fill="white"/></svg>Continue with Notion`
+    btn.textContent = 'Verify & Continue'
   }
 }
 

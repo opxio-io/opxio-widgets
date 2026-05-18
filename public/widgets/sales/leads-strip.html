@@ -137,16 +137,19 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 function setVal(id, html) { document.getElementById(id).innerHTML = html }
 function setText(id, t)   { document.getElementById(id).textContent = t }
 
+var _UP_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polyline points="0,8 4,4 7,6 12,1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _DN_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polyline points="0,1 4,5 7,3 12,8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _FL_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><line x1="0" y1="4.5" x2="12" y2="4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 function applyDelta(id, curr, prev, lowerIsBetter) {
   const el = document.getElementById(id)
   if (!el) return
-  if (prev == null || prev === 0) { el.className = 'tile-delta'; el.textContent = ''; return }
+  if (prev == null || prev === 0) { el.className = 'tile-delta'; el.innerHTML = ''; return }
   const pct = Math.round(((curr - prev) / prev) * 100)
-  if (pct === 0) { el.className = 'tile-delta flat'; el.textContent = '→ 0%'; return }
+  if (pct === 0) { el.className = 'tile-delta flat'; el.innerHTML = _FL_SVG + '0%'; return }
   const up = pct > 0
   const good = lowerIsBetter ? !up : up
   el.className = 'tile-delta ' + (good ? 'up' : 'dn')
-  el.textContent = (up ? '↑' : '↓') + ' ' + Math.abs(pct) + '%'
+  el.innerHTML = (up ? _UP_SVG : _DN_SVG) + Math.abs(pct) + '%'
 }
 
 function showSkeletons() {

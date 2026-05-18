@@ -64,8 +64,11 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 @media(max-width:900px){.mid-grid{grid-template-columns:1fr;}}
 
 /* Section card — matches pipeline.html exactly */
-.section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;overflow:hidden;}
+.section-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:22px 24px;}
 .section-header{display:flex;align-items:center;justify-content:space-between;margin:-22px -24px 18px;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.info-panel{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;}
+.info-panel-hdr{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1px solid rgba(255,255,255,.06);}
+.info-panel-body{padding:18px 22px;}
 .section-title{font-size:13px;font-weight:700;}
 .section-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;white-space:nowrap;}
 .section-label.green{background:rgba(200,255,0,.1);color:var(--g);border-color:rgba(200,255,0,.2);}
@@ -293,13 +296,15 @@ function render(data, prev) {
       +'</div>'
       +funnelRows
     +'</div>'
-    +'<div class="section-card">'
-      +'<div class="section-header">'
+    +'<div class="info-panel">'
+      +'<div class="info-panel-hdr">'
         +'<span class="section-title">Conversion</span>'
       +'</div>'
-      +convDonut(kpi.convRate)
-      +'<div class="type-sub-title">By Type</div>'
-      +typeHTML
+      +'<div class="info-panel-body">'
+        +convDonut(kpi.convRate)
+        +'<div class="type-sub-title">By Type</div>'
+        +typeHTML
+      +'</div>'
     +'</div>'
     +'</div>'
 

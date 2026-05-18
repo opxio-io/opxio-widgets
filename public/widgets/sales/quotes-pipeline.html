@@ -192,6 +192,11 @@ function fmtRM(n, currency) {
   if (n>=1000)    return sym+Math.round(n/1000)+'K'
   return sym+Math.round(n)
 }
+function fmtRMFull(n, currency) {
+  var sym = currency==='USD'?'$':currency==='SGD'?'S$':currency==='CAD'?'CA$':currency==='AUD'?'A$':'RM '
+  if (!n) return sym+'0'
+  return sym + Math.round(n).toLocaleString()
+}
 
 var _UP_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle;margin-right:3px;\"><polyline points=\"22 7 13.5 15.5 8.5 10.5 2 17\"/><polyline points=\"16 7 22 7 22 13\"/></svg>";
 var _DN_SVG="<svg width=\"14\" height=\"14\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" style=\"display:inline-block;vertical-align:middle;margin-right:3px;\"><polyline points=\"22 17 13.5 8.5 8.5 13.5 2 7\"/><polyline points=\"16 17 22 17 22 11\"/></svg>";
@@ -274,7 +279,7 @@ function renderTableRows(items, refLabel) {
     return '<tr class="'+flaggedRow+'">'
       +'<td>'+esc(q.refNo)+'</td>'
       +'<td>'+esc(q.entity)+'</td>'
-      +'<td><span class="amt">'+esc(fmtRM(q.amount,q.currency))+'</span></td>'
+      +'<td><span class="amt">'+esc(fmtRMFull(q.amount,q.currency))+'</span></td>'
       +'<td><span class="status-pill '+pillCls+'">'+esc(q.status)+'</span></td>'
       +'<td style="color:var(--sub)">'+esc(q.quoteType)+'</td>'
       +'<td>'+daysCell+'</td>'

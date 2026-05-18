@@ -141,7 +141,7 @@ body{padding:14px 16px 18px;}
 <!-- KPI row -->
 <div class="kpi-row">
   <div class="kpi-card hero">
-    <span class="kpi-label">Issued MTD</span>
+    <span class="kpi-label">Issued This Month</span>
     <span class="kpi-val" id="kIssuedVal"><span class="skel" style="height:36px;width:48px;"></span></span>
     <span class="kpi-sub" id="kIssuedSub"><span class="skel" style="height:11px;width:100px;"></span></span>
     <span class="kpi-delta" id="kIssuedDelta"></span>
@@ -158,7 +158,7 @@ body{padding:14px 16px 18px;}
     <span class="kpi-sub" id="kPendingSub"><span class="skel" style="height:11px;width:80px;"></span></span>
   </div>
   <div class="kpi-card">
-    <span class="kpi-label">Approved MTD</span>
+    <span class="kpi-label">Approved This Month</span>
     <span class="kpi-val" id="kApprovedVal"><span class="skel" style="height:36px;width:40px;"></span></span>
     <span class="kpi-sub" id="kApprovedSub"><span class="skel" style="height:11px;width:80px;"></span></span>
     <span class="kpi-delta" id="kApprovedDelta"></span>
@@ -288,7 +288,7 @@ function render(data, prev) {
   // KPI
   const valFontSize = kpi.openValue >= 1000000 ? '18px' : kpi.openValue >= 100000 ? '22px' : '26px'
   setHTML('kIssuedVal',  esc(kpi.issuedMTD))
-  setText('kIssuedSub',  'quotes this month')
+  setText('kIssuedSub',  'quotes issued')
   document.getElementById('kIssuedDelta').outerHTML='<span class="kpi-delta" id="kIssuedDelta"></span>'
   setHTML('kIssuedDelta', deltaHtml(kpi.issuedMTD, pk?.issuedMTD, false))
 

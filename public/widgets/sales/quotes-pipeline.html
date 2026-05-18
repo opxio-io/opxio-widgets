@@ -271,11 +271,9 @@ function renderTableRows(items, refLabel) {
   return items.map(function(q){
     var pillCls = STATUS_PILL[q.status]||'s-draft'
     var flags = (q.needsFollowUp?'<span class="flag-pill flag-followup">Follow up</span>':'')
-              + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring</span>':'')
-    var daysCell = q.status==='Sent'&&q.daysSent!==null
-      ? '<span class="days-info">'+q.daysSent+'d sent</span>'+flags
-      : q.status==='Draft'?'<span class="days-info">Draft</span>'
-      : '<span class="days-info">Ready</span>'
+              + (q.expiringSoon?'<span class="flag-pill flag-expiring">Expiring soon</span>':'')
+    var age = q.daysOpen !== null && q.daysOpen !== undefined ? q.daysOpen+'d' : '—'
+    var daysCell = '<span class="days-info">'+age+'</span>'+flags
     var flaggedRow = (q.needsFollowUp||q.expiringSoon)?'flagged':''
     return '<tr class="'+flaggedRow+'">'
       +'<td>'+esc(q.refNo)+'</td>'
@@ -390,7 +388,7 @@ function render(d, prev) {
     +'<div class="tbl-outer"><div class="tbl-scroll">'
       +'<table class="tbl">'
         +'<thead><tr>'
-          +'<th>Ref No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Days</th>'
+          +'<th>Ref No.</th><th>Client</th><th>Amount</th><th>Status</th><th>Type</th><th>Age</th>'
         +'</tr></thead>'
         +'<tbody id="tblBody"></tbody>'
       +'</table>'

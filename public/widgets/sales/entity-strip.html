@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+if (window.self === window.top) {
+  window.stop(); document.open();
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
+  document.close();
+}
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Opxio — Entity & Contacts</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #191919; --card: #222222;
+  --border: rgba(255,255,255,0.07);
+  --g: #C8FF00; --blue: #60A5FA; --amber: #FBBF24; --red: #FF6B6B;
+  --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
+  --r: 14px;
+}
+html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Satoshi', sans-serif; color: #fff; }
+body { padding: 14px 16px 16px; }
+
+.top-bar { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
+.wgt-title { font-size: 14px; font-weight: 900; letter-spacing: -0.3px; }
+.org-pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px; }
+.refresh-btn { margin-left: auto; background: none; border: 1px solid var(--border); color: var(--muted); border-radius: 100px; padding: 4px 10px; font-size: 10px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all .15s; letter-spacing: .04em; }
+.refresh-btn:hover { color: #fff; border-color: rgba(255,255,255,.2); }
+
+.strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+.tile { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px 14px; position: relative; overflow: hidden; transition: border-color .2s; display: flex; flex-direction: column; justify-content: space-between; }
+.tile:hover { border-color: rgba(255,255,255,.13); }
+.tile.hero { background: var(--g); border-color: transparent; }
+.tile.hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,.07); }
+.tile.warn { border-color: rgba(251,191,36,.18); }
+
+.tile-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
+.tile.hero .tile-label { color: rgba(0,0,0,.65); }
+.tile-val { font-size: 36px; font-weight: 900; letter-spacing: -2px; line-height: 1; display: block; }
+.tile.hero .tile-val { color: #000; }
+.tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
+.tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
+
+.no-contact-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 2px; }
+.badge-warn { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
+.badge-ok   { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
+
+.skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
+@keyframes shimmer { to { background-position: -200% 0; } }
+.skel-val { height: 36px; width: 52px; margin-bottom: 6px; }
+.skel-sub { height: 12px; width: 84px; }
+
+.err-bar { margin-top: 10px; padding: 10px 14px; background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.2); border-radius: 10px; font-size: 12px; color: #FF6B6B; display: none; }
+
+@media (max-width: 700px) { .strip { grid-template-columns: 1fr 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <span class="wgt-title">Entity & Contacts</span>
+  <span class="org-pill">OPXIO</span>
+  <button class="refresh-btn" onclick="load(true)">↻ Refresh</button>
+</div>
+
+<div class="strip">
+  <!-- Total Entities — hero -->
+  <div class="tile hero">
+    <span class="tile-label">Total Entities</span>
+    <span class="tile-val" id="valTotal"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subTotal"><span class="skel skel-sub"></span></span>
+  </div>
+  <!-- Total Contacts -->
+  <div class="tile">
+    <span class="tile-label">Contacts</span>
+    <span class="tile-val" id="valContacts"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subContacts"><span class="skel skel-sub"></span></span>
+  </div>
+  <!-- Active Clients -->
+  <div class="tile">
+    <span class="tile-label">Active Clients</span>
+    <span class="tile-val" id="valActive" style="color:var(--g)"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subActive"><span class="skel skel-sub"></span></span>
+  </div>
+  <!-- No Contact (data hygiene) -->
+  <div class="tile warn">
+    <span class="tile-label">No Contact Linked</span>
+    <span class="tile-val" id="valNoContact"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subNoContact"><span class="skel skel-sub"></span></span>
+  </div>
+</div>
+
+<div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
+
+<script>
+const API = 'https://api.opxio.io/api/clients/opxio/entity-contacts'
+const tok = new URLSearchParams(location.search).get('token') || ''
+let ctrl = null
+
+function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
+function setVal(id, html) { document.getElementById(id).innerHTML = html }
+function setText(id, t)   { document.getElementById(id).textContent = t }
+
+function showSkeletons() {
+  const sv = '<span class="skel skel-val"></span>'
+  const ss = '<span class="skel skel-sub"></span>'
+  ;['valTotal','valContacts','valActive','valNoContact'].forEach(id => setVal(id, sv))
+  ;['subTotal','subContacts','subActive','subNoContact'].forEach(id => setVal(id, ss))
+}
+
+function render(data) {
+  const { entities, contacts } = data
+  const activeColor = entities.activeClients > 0 ? 'var(--g)' : 'rgba(255,255,255,.2)'
+  const noContactColor = entities.noContact > 0 ? 'var(--amber)' : 'rgba(255,255,255,.2)'
+
+  // Total Entities
+  setVal('valTotal', esc(entities.total))
+  setText('subTotal', entities.newThisMonth > 0
+    ? '+' + entities.newThisMonth + ' added this month'
+    : 'No new additions this month')
+
+  // Contacts
+  setVal('valContacts', esc(contacts.total))
+  const avgPer = entities.total > 0 ? (contacts.total / entities.total).toFixed(1) : '0'
+  setText('subContacts', avgPer + ' avg per entity')
+
+  // Active Clients
+  document.getElementById('valActive').style.color = activeColor
+  setVal('valActive', esc(entities.activeClients))
+  setText('subActive', entities.prospects + ' prospects in pipeline')
+
+  // No Contact Linked
+  document.getElementById('valNoContact').style.color = noContactColor
+  setVal('valNoContact', esc(entities.noContact))
+  document.getElementById('subNoContact').innerHTML = entities.noContact > 0
+    ? '<span class="no-contact-badge badge-warn">&#9888; Needs contact</span>'
+    : '<span class="no-contact-badge badge-ok">All linked</span>'
+}
+
+async function load(bust) {
+  if (ctrl) ctrl.abort()
+  ctrl = new AbortController()
+  showSkeletons()
+  document.getElementById('errBar').style.display = 'none'
+  const url = API + '?token=' + encodeURIComponent(tok) + (bust ? '&refresh=1' : '')
+  try {
+    const r = await fetch(url, { signal: ctrl.signal })
+    if (!r.ok) throw new Error('HTTP ' + r.status)
+    render(await r.json())
+  } catch(e) {
+    if (e.name === 'AbortError') return
+    document.getElementById('errBar').style.display = 'block'
+    console.error(e)
+  }
+}
+
+load()
+</script>
+</body>
+</html>

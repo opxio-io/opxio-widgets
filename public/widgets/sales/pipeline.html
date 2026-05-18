@@ -54,6 +54,10 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block;}
 .kpi-val{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
 .kpi-sub{font-size:11px;font-weight:500;color:var(--sub);}
+.kpi-delta{font-size:10px;font-weight:700;margin-top:5px;display:block;letter-spacing:.01em;}
+.kpi-delta.up{color:var(--g);}
+.kpi-delta.dn{color:var(--red);}
+.kpi-delta.flat{color:var(--muted);}
 
 /* Grids */
 .row{margin-bottom:10px;}
@@ -171,6 +175,20 @@ var _lastData = null;
 var _funnelTab = 'leads';
 
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function prevMonthParams(fm){
+  var y=fm?fm.year:_now.getFullYear(), m=fm?fm.month:_now.getMonth();
+  m--; if(m<0){m=11;y--;} return {month:m,year:y};
+}
+function deltaHtml(curr,prev,lowerIsBetter){
+  if(prev==null||prev===0) return '';
+  var pct=Math.round(((curr-prev)/prev)*100);
+  if(pct===0) return '<span class="kpi-delta flat">&#8594; no change</span>';
+  var up=pct>0;
+  var good=lowerIsBetter?!up:up;
+  var cls=good?'up':'dn';
+  var arrow=up?'&#8593;':'&#8595;';
+  return '<span class="kpi-delta '+cls+'">'+arrow+' '+Math.abs(pct)+'% vs last mo</span>';
+}
 function fmtRM(n){ if(!n) return '—'; if(n>=1000000) return 'RM '+(n/1000000).toFixed(1)+'M'; if(n>=1000) return 'RM '+(n/1000).toFixed(0)+'K'; return 'RM '+n; }
 function fmtMonthLbl(fm){
   var d = fm ? new Date(fm.year,fm.month,1) : new Date();
@@ -406,8 +424,9 @@ function drawChart(trend, totalLeads){
   wrap.onmouseleave=function(){tip.style.display='none';hL.style.opacity='0';};
 }
 
-function render(d){
+function render(d,prev){
   _lastData = d;
+  var pk=prev&&prev.kpi||null;
   var kpi=d.kpi||{};
   var monLabel=fmtMonthLbl(filterMonth);
   var cwCol=(kpi.closedWonMTD||0)>0?'var(--g)':'rgba(255,255,255,.2)';
@@ -415,10 +434,10 @@ function render(d){
   var pvSize=(kpi.pipelineValue||0)>=100000?'28px':'38px';
 
   var kpiRow='<div class="kpi-row row">'
-    +'<div class="kpi-card hero"><div class="kpi-label">New Leads — '+esc(monLabel)+'</div><div class="kpi-val">'+(kpi.newLeadsMTD||0)+'</div><div class="kpi-sub">Leads this month</div></div>'
-    +'<div class="kpi-card"><div class="kpi-label">Closed Won</div><div class="kpi-val" style="color:'+cwCol+';font-size:34px;">'+(kpi.closedWonMTD||0)+'</div><div class="kpi-sub">Deals won</div></div>'
-    +'<div class="kpi-card"><div class="kpi-label">Conversion Rate</div><div class="kpi-val" style="color:'+crCol+';font-size:34px;">'+(kpi.convRate||0)+'%</div><div class="kpi-sub">Leads → Converted</div></div>'
-    +'<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';">'+fmtRM(kpi.pipelineValue)+'</div><div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div></div>'
+    +'<div class="kpi-card hero"><div class="kpi-label">New Leads — '+esc(monLabel)+'</div><div class="kpi-val">'+(kpi.newLeadsMTD||0)+'</div><div class="kpi-sub">Leads this month</div>'+deltaHtml(kpi.newLeadsMTD||0,pk&&pk.newLeadsMTD,false)+'</div>'
+    +'<div class="kpi-card"><div class="kpi-label">Closed Won</div><div class="kpi-val" style="color:'+cwCol+';font-size:34px;">'+(kpi.closedWonMTD||0)+'</div><div class="kpi-sub">Deals won</div>'+deltaHtml(kpi.closedWonMTD||0,pk&&pk.closedWonMTD,false)+'</div>'
+    +'<div class="kpi-card"><div class="kpi-label">Conversion Rate</div><div class="kpi-val" style="color:'+crCol+';font-size:34px;">'+(kpi.convRate||0)+'%</div><div class="kpi-sub">Leads → Converted</div>'+deltaHtml(kpi.convRate||0,pk&&pk.convRate,false)+'</div>'
+    +'<div class="kpi-card"><div class="kpi-label">Pipeline Value</div><div class="kpi-val" style="color:var(--blue);font-size:'+pvSize+';">'+fmtRM(kpi.pipelineValue)+'</div><div class="kpi-sub">'+(kpi.openDeals||0)+' open deals</div>'+deltaHtml(kpi.pipelineValue||0,pk&&pk.pipelineValue,false)+'</div>'
     +'</div>';
 
   var midGrid='<div class="mid-grid row">'
@@ -477,16 +496,22 @@ function load(forceNetwork){
   var ck=monthKey(filterMonth);
   var cached=_monthCache.get(ck);
   var ttl=!filterMonth?CURRENT_TTL:PAST_TTL;
-  if(!forceNetwork&&cached&&(Date.now()-cached.ts)<ttl){render(cached.data);return;}
+  if(!forceNetwork&&cached&&(Date.now()-cached.ts)<ttl){render(cached.data,cached.prev||null);return;}
   _loadCtrl=new AbortController();
   var sig=_loadCtrl.signal;
   var timer=setTimeout(function(){_abortedByNav=false;_loadCtrl.abort();},25000);
   var params=new URLSearchParams();
   if(_tok) params.set('token',_tok);
   if(filterMonth){params.set('month',filterMonth.month);params.set('year',filterMonth.year);}
-  fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+params.toString(),{signal:sig})
-    .then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();})
-    .then(function(data){_monthCache.set(ck,{data:data,ts:Date.now()});render(data);})
+  var pm=prevMonthParams(filterMonth);
+  var prevParams=new URLSearchParams();
+  if(_tok) prevParams.set('token',_tok);
+  prevParams.set('month',pm.month); prevParams.set('year',pm.year);
+  Promise.all([
+    fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+params.toString(),{signal:sig}).then(function(r){if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}),
+    fetch('https://api.opxio.io/api/clients/opxio/sales-pipeline?'+prevParams.toString(),{signal:sig}).then(function(r){return r.ok?r.json():null;}).catch(function(){return null;})
+  ])
+    .then(function(res){var data=res[0],prev=res[1];_monthCache.set(ck,{data:data,prev:prev,ts:Date.now()});render(data,prev);})
     .catch(function(e){
       if(e.name==='AbortError'){
         if(_abortedByNav) return;

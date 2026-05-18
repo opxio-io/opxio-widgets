@@ -10,14 +10,14 @@ if (window.self === window.top) {
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Opxio — Leads Summary</title>
+<title>Opxio — Deals Summary</title>
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
   --bg: #191919; --card: #222222;
   --border: rgba(255,255,255,0.07);
-  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B;
+  --g: #C8FF00; --blue: #60A5FA; --amber: #FBBF24; --red: #FF6B6B;
   --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
   --r: 14px;
 }
@@ -55,9 +55,9 @@ body { padding: 14px 16px 16px; }
 .tile-delta.dn { color: var(--red); }
 .tile-delta.flat { color: var(--muted); }
 
-.tile-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 6px; }
-.badge-hot { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
-.badge-zero { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
+.stalled-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 6px; }
+.stalled-warn { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
+.stalled-ok   { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
 
 .skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
 @keyframes shimmer { to { background-position: -200% 0; } }
@@ -73,7 +73,7 @@ body { padding: 14px 16px 16px; }
 
 <div class="top-bar">
   <div class="top-left">
-    <span class="wgt-title">Leads</span>
+    <span class="wgt-title">Deals</span>
     <span class="org-pill">OPXIO</span>
   </div>
   <div class="mn-wrap">
@@ -84,28 +84,32 @@ body { padding: 14px 16px 16px; }
 </div>
 
 <div class="strip">
+  <!-- Open Deals — hero -->
   <div class="tile hero">
-    <span class="tile-label">New Leads</span>
-    <span class="tile-val" id="valNew"><span class="skel skel-val"></span></span>
-    <span class="tile-sub" id="subNew"><span class="skel skel-sub"></span></span>
-    <span class="tile-delta" id="dltNew"></span>
-  </div>
-  <div class="tile">
-    <span class="tile-label">Open Leads</span>
+    <span class="tile-label">Open Deals</span>
     <span class="tile-val" id="valOpen"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subOpen"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltOpen"></span>
   </div>
+  <!-- Pipeline Value -->
   <div class="tile">
-    <span class="tile-label">Conv. Rate</span>
-    <span class="tile-val" id="valConv"><span class="skel skel-val"></span></span>
-    <span class="tile-sub" id="subConv"><span class="skel skel-sub"></span></span>
-    <span class="tile-delta" id="dltConv"></span>
+    <span class="tile-label">Pipeline Value</span>
+    <span class="tile-val" id="valPipe" style="color:var(--blue);font-size:28px;"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subPipe"><span class="skel skel-sub"></span></span>
+    <span class="tile-delta" id="dltPipe"></span>
   </div>
+  <!-- Closed Won -->
   <div class="tile">
-    <span class="tile-label">Hot Leads</span>
-    <span class="tile-val" id="valHot"><span class="skel skel-val"></span></span>
-    <span class="tile-sub" id="subHot"><span class="skel skel-sub"></span></span>
+    <span class="tile-label">Closed Won</span>
+    <span class="tile-val" id="valWon"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subWon"><span class="skel skel-sub"></span></span>
+    <span class="tile-delta" id="dltWon"></span>
+  </div>
+  <!-- Stalled Deals -->
+  <div class="tile">
+    <span class="tile-label">Stalled Deals</span>
+    <span class="tile-val" id="valStall"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subStall"><span class="skel skel-sub"></span></span>
   </div>
 </div>
 
@@ -137,6 +141,13 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 function setVal(id, html) { document.getElementById(id).innerHTML = html }
 function setText(id, t)   { document.getElementById(id).textContent = t }
 
+function fmtRM(n) {
+  if (!n) return 'RM 0'
+  if (n >= 1000000) return 'RM ' + (n/1000000).toFixed(1).replace(/\.0$/,'') + 'M'
+  if (n >= 1000)    return 'RM ' + Math.round(n/1000) + 'K'
+  return 'RM ' + Math.round(n)
+}
+
 function deltaHtml(curr, prev, lowerIsBetter) {
   if (prev == null || prev === 0) return ''
   const pct = Math.round(((curr - prev) / prev) * 100)
@@ -151,33 +162,34 @@ function deltaHtml(curr, prev, lowerIsBetter) {
 function showSkeletons() {
   const sv = '<span class="skel skel-val"></span>'
   const ss = '<span class="skel skel-sub"></span>'
-  ;['valNew','valOpen','valConv','valHot'].forEach(id => setVal(id, sv))
-  ;['subNew','subOpen','subConv','subHot'].forEach(id => setVal(id, ss))
-  ;['dltNew','dltOpen','dltConv'].forEach(id => { document.getElementById(id).innerHTML = '' })
+  ;['valOpen','valPipe','valWon','valStall'].forEach(id => setVal(id, sv))
+  ;['subOpen','subPipe','subWon','subStall'].forEach(id => setVal(id, ss))
+  ;['dltOpen','dltPipe','dltWon'].forEach(id => { document.getElementById(id).innerHTML = '' })
 }
 
 function render(data, prev) {
   const { kpi, actions } = data
   const pk = prev && prev.kpi ? prev.kpi : null
-  const hotCount = (actions && actions.hotLeads ? actions.hotLeads.length : 0)
-  const isNow = offset === 0
+  const stallCount = (actions && actions.stalledDeals ? actions.stalledDeals.length : 0)
+  const wonColor = (kpi.closedWonMTD || 0) > 0 ? 'var(--g)' : 'rgba(255,255,255,.2)'
 
-  setVal('valNew', esc(kpi.newLeadsMTD))
-  setText('subNew', isNow ? 'Leads this month' : 'Leads this period')
-  setVal('dltNew', deltaHtml(kpi.newLeadsMTD, pk && pk.newLeadsMTD, false))
-
-  setVal('valOpen', esc(kpi.openLeads))
+  setVal('valOpen', esc(kpi.openDeals || 0))
   setText('subOpen', 'Active in pipeline')
-  setVal('dltOpen', deltaHtml(kpi.openLeads, pk && pk.openLeads, false))
+  setVal('dltOpen', deltaHtml(kpi.openDeals || 0, pk && pk.openDeals, false))
 
-  setVal('valConv', esc(kpi.convRate) + '%')
-  setText('subConv', 'Leads → Converted')
-  setVal('dltConv', deltaHtml(kpi.convRate, pk && pk.convRate, false))
+  document.getElementById('valPipe').style.fontSize = (kpi.pipelineValue || 0) >= 100000 ? '22px' : '28px'
+  setVal('valPipe', esc(fmtRM(kpi.pipelineValue || 0)))
+  setText('subPipe', esc(kpi.openDeals || 0) + ' open deal' + ((kpi.openDeals || 0) === 1 ? '' : 's'))
+  setVal('dltPipe', deltaHtml(kpi.pipelineValue || 0, pk && pk.pipelineValue, false))
 
-  setVal('valHot', esc(hotCount))
-  document.getElementById('subHot').innerHTML = hotCount > 0
-    ? '<span class="tile-badge badge-hot">&#9733; High intent</span>'
-    : '<span class="tile-badge badge-zero">None flagged</span>'
+  setVal('valWon', `<span style="color:${wonColor}">${esc(kpi.closedWonMTD || 0)}</span>`)
+  setText('subWon', 'Deals closed this period')
+  setVal('dltWon', deltaHtml(kpi.closedWonMTD || 0, pk && pk.closedWonMTD, false))
+
+  setVal('valStall', esc(stallCount))
+  document.getElementById('subStall').innerHTML = stallCount > 0
+    ? '<span class="stalled-badge stalled-warn">&#9888; No activity 7d+</span>'
+    : '<span class="stalled-badge stalled-ok">All moving</span>'
 }
 
 async function fetchData(month, year) {
@@ -190,8 +202,7 @@ async function load() {
   if (ctrl) ctrl.abort()
   ctrl = new AbortController()
   const { year, month, d } = monthState()
-  const lbl = fmt(d)
-  document.getElementById('mnLbl').textContent = lbl
+  document.getElementById('mnLbl').textContent = fmt(d)
   document.getElementById('mnNext').disabled = offset >= 0
   document.getElementById('mnPrev').disabled = offset <= -24
   showSkeletons()

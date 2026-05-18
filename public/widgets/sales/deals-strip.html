@@ -15,145 +15,58 @@ if (window.self === window.top) {
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 :root {
-  --bg: #191919; --card: #1e1e1e;
+  --bg: #191919; --card: #222222;
   --border: rgba(255,255,255,0.07);
-  --border-hover: rgba(255,255,255,0.13);
-  --g: #C8FF00; --gd: #AADF00; --gm: rgba(200,255,0,.08); --gb: rgba(200,255,0,.22);
-  --blue: #60A5FA; --bm: rgba(96,165,250,.09); --bb: rgba(96,165,250,.22);
-  --amber: #FBBF24; --red: #FF6B6B;
-  --muted: rgba(255,255,255,0.3); --sub: rgba(255,255,255,0.5);
-  --r: 16px;
+  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B;
+  --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
+  --r: 14px;
 }
-html, body { width: 100%; background: var(--bg); font-family: 'Satoshi', sans-serif; color: #fff; }
-body { padding: 14px 16px 18px; }
+html, body { width: 100%; min-height: 100%; background: var(--bg); font-family: 'Satoshi', sans-serif; color: #fff; }
+body { padding: 14px 16px 16px; }
 
-.top-bar { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-.wgt-title { font-size: 13px; font-weight: 900; letter-spacing: -.3px; }
-.org-pill {
-  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: rgba(255,255,255,.4); background: rgba(255,255,255,.05);
-  border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px;
-}
-.mn-wrap {
-  display: flex; align-items: center;
-  background: rgba(255,255,255,.04); border: 1px solid var(--border);
-  border-radius: 100px; overflow: hidden; margin-left: auto;
-}
-.mn-btn {
-  background: none; border: none; color: var(--sub); cursor: pointer;
-  padding: 5px 12px; font-size: 15px; font-weight: 700; line-height: 1;
-  font-family: inherit; transition: color .15s;
-}
+.top-bar { display: flex; align-items: center; margin-bottom: 12px; gap: 10px; }
+.wgt-title { font-size: 14px; font-weight: 900; letter-spacing: -0.3px; }
+.org-pill { font-size: 10px; font-weight: 700; letter-spacing: .06em; color: var(--muted); background: rgba(255,255,255,.05); border: 1px solid var(--border); border-radius: 100px; padding: 3px 9px; }
+.mn-wrap { display: flex; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 100px; overflow: hidden; }
+.mn-btn { background: none; border: none; color: var(--sub); cursor: pointer; padding: 5px 11px; font-size: 14px; font-weight: 700; line-height: 1; font-family: inherit; transition: color .15s; }
 .mn-btn:hover:not(:disabled) { color: #fff; }
-.mn-btn:disabled { opacity: .22; cursor: default; }
-.mn-lbl { font-size: 11px; font-weight: 700; color: rgba(255,255,255,.55); padding: 0 2px; min-width: 72px; text-align: center; letter-spacing: -.01em; }
+.mn-btn:disabled { opacity: .25; cursor: default; }
+.mn-lbl { font-size: 11px; font-weight: 700; color: var(--sub); padding: 0 4px; min-width: 72px; text-align: center; }
 
 .strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
-.tile {
-  background: var(--card); border: 1px solid var(--border); border-radius: var(--r);
-  padding: 16px 18px 15px; position: relative; overflow: hidden;
-  transition: border-color .2s;
-  display: flex; flex-direction: column;
-}
-.tile:hover { border-color: var(--border-hover); }
-
+.tile { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px 14px; position: relative; overflow: hidden; transition: border-color .2s; display: flex; flex-direction: column; justify-content: space-between; }
+.tile:hover { border-color: rgba(255,255,255,.13); }
 .tile.hero { background: var(--g); border-color: transparent; }
-.tile.hero::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at 110% -10%, rgba(255,255,255,.25) 0%, transparent 60%);
-  pointer-events: none;
-}
-.tile.hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image: radial-gradient(circle, rgba(0,0,0,.1) 1px, transparent 1px);
-  background-size: 14px 14px;
-  pointer-events: none;
-}
+.tile.hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,.07); }
 
-.tile-label {
-  font-size: 9.5px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
-  color: var(--muted); display: block; margin-bottom: 14px;
-}
-.tile.hero .tile-label { color: rgba(0,0,0,.55); }
-
-.tile-val {
-  font-size: 40px; font-weight: 900; letter-spacing: -2.5px; line-height: 1;
-  display: block; margin-bottom: 6px; color: #fff;
-}
-.tile.hero .tile-val { color: #000; font-size: 44px; }
-
-.tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; margin-top: auto; padding-top: 10px; }
+.tile-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
+.tile.hero .tile-label { color: rgba(0,0,0,.65); }
+.tile-val { font-size: 36px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; display: block; }
+.tile.hero .tile-val { color: #000; }
+.tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
 .tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
 
-.tile-delta {
-  position: absolute; top: 14px; right: 14px;
-  font-size: 9.5px; font-weight: 700; padding: 3px 8px;
-  border-radius: 100px; line-height: 1.5; letter-spacing: .02em;
-  display: flex; align-items: center; gap: 3px;
-}
-.tile-delta.up   { background: rgba(200,255,0,.14); color: var(--g); border: 1px solid rgba(200,255,0,.2); }
-.tile-delta.dn   { background: rgba(255,107,107,.1); color: var(--red); border: 1px solid rgba(255,107,107,.18); }
-.tile-delta.flat { background: rgba(255,255,255,.07); color: rgba(255,255,255,.4); border: 1px solid var(--border); }
-.tile.hero .tile-delta { background: rgba(0,0,0,.18); color: rgba(0,0,0,.8); border-color: transparent; }
+.tile-delta { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; line-height: 1.4; }
+.tile-delta.up   { background: rgba(200,255,0,.12); color: var(--g); }
+.tile-delta.dn   { background: rgba(255,107,107,.1); color: var(--red); }
+.tile-delta.flat { background: rgba(255,255,255,.09); color: rgba(255,255,255,.5); }
+.tile.hero .tile-delta.up   { background: rgba(0,0,0,.2); color: rgba(0,0,0,.85); }
+.tile.hero .tile-delta.dn   { background: rgba(0,0,0,.2); color: rgba(0,0,0,.85); }
+.tile.hero .tile-delta.flat { background: rgba(0,0,0,.15); color: rgba(0,0,0,.7); }
 
-.tile-accent-bar {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  height: 3px; border-radius: 0 0 var(--r) var(--r);
-  opacity: 0; transition: opacity .2s;
-}
-.tile:hover .tile-accent-bar { opacity: 1; }
-.tile.hero .tile-accent-bar { display: none; }
-.accent-blue   { background: linear-gradient(90deg, var(--blue), transparent); }
-.accent-won    { background: linear-gradient(90deg, var(--g), var(--gd)); }
-.accent-stall  { background: linear-gradient(90deg, var(--amber), transparent); }
+.stalled-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 6px; }
+.stalled-warn { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
+.stalled-ok   { background: rgba(255,255,255,.06); color: var(--muted); border: 1px solid var(--border); }
 
-.tile-icon {
-  position: absolute; top: 14px; right: 14px;
-  width: 28px; height: 28px; border-radius: 8px;
-  display: flex; align-items: center; justify-content: center;
-}
-.tile-icon svg { width: 14px; height: 14px; }
-.icon-blue  { background: var(--bm); color: var(--blue); border: 1px solid var(--bb); }
-.icon-green { background: var(--gm); color: var(--g);    border: 1px solid var(--gb); }
-.icon-amber { background: rgba(251,191,36,.1); color: var(--amber); border: 1px solid rgba(251,191,36,.22); }
-
-.tile-bar-wrap { margin-top: 10px; }
-.tile-bar-track { height: 3px; border-radius: 3px; background: rgba(255,255,255,.06); overflow: hidden; }
-.tile-bar-fill  { height: 3px; border-radius: 3px; transition: width .7s cubic-bezier(.4,0,.2,1); }
-.tile-bar-meta  { display: flex; justify-content: space-between; margin-top: 5px; }
-.tile-bar-meta span { font-size: 10px; font-weight: 600; color: rgba(255,255,255,.28); }
-
-.stalled-badge {
-  display: inline-flex; align-items: center; gap: 5px;
-  font-size: 10px; font-weight: 700; padding: 3px 9px;
-  border-radius: 100px; margin-top: 8px;
-}
-.stalled-warn { background: rgba(251,191,36,.1); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
-.stalled-ok   { background: rgba(255,255,255,.05); color: rgba(255,255,255,.4); border: 1px solid var(--border); }
-
-.skel {
-  background: linear-gradient(90deg, rgba(255,255,255,.04) 25%, rgba(255,255,255,.09) 50%, rgba(255,255,255,.04) 75%);
-  background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block;
-}
-.tile.hero .skel {
-  background: linear-gradient(90deg, rgba(0,0,0,.1) 25%, rgba(0,0,0,.18) 50%, rgba(0,0,0,.1) 75%);
-  background-size: 200% 100%;
-}
+.skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
 @keyframes shimmer { to { background-position: -200% 0; } }
-.skel-val { height: 40px; width: 60px; margin-bottom: 8px; }
-.skel-sub { height: 11px; width: 90px; }
+.skel-val { height: 36px; width: 56px; margin-bottom: 6px; }
+.skel-sub { height: 12px; width: 88px; }
 
-.err-bar {
-  margin-top: 10px; padding: 10px 14px;
-  background: rgba(255,107,107,.07); border: 1px solid rgba(255,107,107,.18);
-  border-radius: 10px; font-size: 11.5px; color: #FF6B6B; display: none;
-}
+.err-bar { margin-top: 10px; padding: 10px 14px; background: rgba(255,107,107,.08); border: 1px solid rgba(255,107,107,.2); border-radius: 10px; font-size: 12px; color: #FF6B6B; display: none; }
 
 @media (max-width: 700px) { .strip { grid-template-columns: 1fr 1fr; } }
-@media (max-width: 420px) { .strip { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -169,58 +82,29 @@ body { padding: 14px 16px 18px; }
 </div>
 
 <div class="strip">
-
   <div class="tile hero">
     <span class="tile-label">Open Deals</span>
     <span class="tile-val" id="valOpen"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subOpen"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltOpen"></span>
   </div>
-
   <div class="tile">
     <span class="tile-label">Pipeline Value</span>
-    <div class="tile-icon icon-blue">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="1,12 5,7 9,9 15,3"/>
-        <polyline points="11,3 15,3 15,7"/>
-      </svg>
-    </div>
-    <span class="tile-val" id="valPipe" style="color:var(--blue);font-size:28px;"><span class="skel skel-val"></span></span>
+    <span class="tile-val" id="valPipe"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subPipe"><span class="skel skel-sub"></span></span>
-    <div class="tile-bar-wrap" id="barPipeWrap" style="display:none;">
-      <div class="tile-bar-track"><div class="tile-bar-fill" id="barPipeFill" style="background:var(--blue);width:0%;"></div></div>
-      <div class="tile-bar-meta"><span id="barPipeLeft"></span><span id="barPipeRight"></span></div>
-    </div>
-    <div class="tile-accent-bar accent-blue"></div>
+    <span class="tile-delta" id="dltPipe"></span>
   </div>
-
   <div class="tile">
     <span class="tile-label">Closed Won</span>
-    <div class="tile-icon icon-green">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-        <polyline points="2,8 6,12 14,4"/>
-      </svg>
-    </div>
     <span class="tile-val" id="valWon"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subWon"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltWon"></span>
-    <div class="tile-accent-bar accent-won"></div>
   </div>
-
   <div class="tile">
     <span class="tile-label">Stalled Deals</span>
-    <div class="tile-icon icon-amber">
-      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
-        <circle cx="8" cy="8" r="6.5"/>
-        <line x1="8" y1="5" x2="8" y2="8.5"/>
-        <circle cx="8" cy="11" r=".7" fill="currentColor" stroke="none"/>
-      </svg>
-    </div>
     <span class="tile-val" id="valStall"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subStall"><span class="skel skel-sub"></span></span>
-    <div class="tile-accent-bar accent-stall"></div>
   </div>
-
 </div>
 
 <div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
@@ -249,7 +133,7 @@ function shiftMonth(delta) {
 }
 function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 function setVal(id, html) { document.getElementById(id).innerHTML = html }
-function setText(id, t)   { const e=document.getElementById(id); if(e) e.textContent = t }
+function setText(id, t)   { document.getElementById(id).textContent = t }
 
 function fmtRM(n) {
   if (!n) return 'RM 0'
@@ -258,20 +142,20 @@ function fmtRM(n) {
   return 'RM ' + Math.round(n)
 }
 
-var _UP='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="0,7 3.5,3.5 6,5.5 10,1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-var _DN='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><polyline points="0,1 3.5,4.5 6,2.5 10,7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-var _FL='<svg width="10" height="8" viewBox="0 0 10 8" fill="none"><line x1="0" y1="4" x2="10" y2="4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+var _UP_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polyline points="0,8 4,4 7,6 12,1" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _DN_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><polyline points="0,1 4,5 7,3 12,8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+var _FL_SVG='<svg width="12" height="9" viewBox="0 0 12 9" fill="none" style="display:inline-block;vertical-align:middle;margin-right:3px;"><line x1="0" y1="4.5" x2="12" y2="4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 
 function applyDelta(id, curr, prev, lowerIsBetter) {
   const el = document.getElementById(id)
   if (!el) return
   if (prev == null || prev === 0) { el.className = 'tile-delta'; el.innerHTML = ''; return }
   const pct = Math.round(((curr - prev) / prev) * 100)
-  if (pct === 0) { el.className = 'tile-delta flat'; el.innerHTML = _FL + ' 0%'; return }
+  if (pct === 0) { el.className = 'tile-delta flat'; el.innerHTML = _FL_SVG + '0%'; return }
   const up = pct > 0
   const good = lowerIsBetter ? !up : up
   el.className = 'tile-delta ' + (good ? 'up' : 'dn')
-  el.innerHTML = (up ? _UP : _DN) + ' ' + Math.abs(pct) + '%'
+  el.innerHTML = (up ? _UP_SVG : _DN_SVG) + Math.abs(pct) + '%'
 }
 
 function showSkeletons() {
@@ -279,46 +163,36 @@ function showSkeletons() {
   const ss = '<span class="skel skel-sub"></span>'
   ;['valOpen','valPipe','valWon','valStall'].forEach(id => setVal(id, sv))
   ;['subOpen','subPipe','subWon','subStall'].forEach(id => setVal(id, ss))
-  ;['dltOpen','dltWon'].forEach(id => { const e=document.getElementById(id); if(e){e.className='tile-delta';e.textContent='';} })
-  document.getElementById('barPipeWrap').style.display = 'none'
+  ;['dltOpen','dltPipe','dltWon'].forEach(id => { const e=document.getElementById(id); if(e){e.className='tile-delta';e.innerHTML='';} })
 }
 
 function render(data, prev) {
   const { kpi, actions } = data
   const pk = prev && prev.kpi ? prev.kpi : null
   const stallCount = actions && actions.stalledDeals ? actions.stalledDeals.length : 0
-  const wonColor = (kpi.closedWonMTD || 0) > 0 ? 'var(--g)' : 'rgba(255,255,255,.2)'
 
   setVal('valOpen', esc(kpi.openDeals || 0))
   setText('subOpen', 'Active in pipeline')
   applyDelta('dltOpen', kpi.openDeals || 0, pk && pk.openDeals, false)
 
-  const pv = kpi.pipelineValue || 0
-  const pvPrev = pk ? (pk.pipelineValue || 0) : 0
-  document.getElementById('valPipe').style.fontSize = pv >= 100000 ? '22px' : '28px'
-  setVal('valPipe', esc(fmtRM(pv)))
-  setText('subPipe', esc(kpi.openDeals || 0) + ' open deal' + ((kpi.openDeals || 0) === 1 ? '' : 's'))
-  if (pvPrev > 0) {
-    const pct = Math.min(100, Math.round((pv / Math.max(pv, pvPrev)) * 100))
-    document.getElementById('barPipeWrap').style.display = 'block'
-    document.getElementById('barPipeFill').style.width = pct + '%'
-    document.getElementById('barPipeLeft').textContent = 'vs prev month'
-    document.getElementById('barPipeRight').textContent = fmtRM(pvPrev)
-  }
+  const pipeVal = kpi.pipelineValue || 0
+  document.getElementById('valPipe').style.fontSize = pipeVal >= 100000 ? '22px' : pipeVal >= 10000 ? '28px' : '36px'
+  setVal('valPipe', esc(fmtRM(pipeVal)))
+  setText('subPipe', (kpi.openDeals || 0) + ' open deal' + ((kpi.openDeals || 0) === 1 ? '' : 's'))
+  applyDelta('dltPipe', pipeVal, pk && pk.pipelineValue, false)
 
-  setVal('valWon', '<span style="color:' + wonColor + '">' + esc(kpi.closedWonMTD || 0) + '</span>')
+  setVal('valWon', esc(kpi.closedWonMTD || 0))
   setText('subWon', 'Deals closed this period')
   applyDelta('dltWon', kpi.closedWonMTD || 0, pk && pk.closedWonMTD, false)
 
   setVal('valStall', esc(stallCount))
-  const stallBadge = stallCount > 0
+  document.getElementById('subStall').innerHTML = stallCount > 0
     ? '<span class="stalled-badge stalled-warn">&#9888; No activity 7d+</span>'
     : '<span class="stalled-badge stalled-ok">&#10003; All moving</span>'
-  document.getElementById('subStall').innerHTML = stallBadge
 }
 
 async function fetchData(month, year) {
-  const r = await fetch(API + '?token=' + encodeURIComponent(tok) + '&month=' + month + '&year=' + year, { signal: ctrl.signal })
+  const r = await fetch(API+'?token='+encodeURIComponent(tok)+'&month='+month+'&year='+year, { signal: ctrl.signal })
   if (!r.ok) throw new Error('HTTP ' + r.status)
   return r.json()
 }

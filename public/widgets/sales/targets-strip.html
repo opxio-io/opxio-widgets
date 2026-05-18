@@ -17,7 +17,7 @@ if (window.self === window.top) {
 :root {
   --bg: #191919; --card: #222222;
   --border: rgba(255,255,255,0.07);
-  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B; --blue: #60A5FA;
+  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B;
   --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
   --r: 14px;
 }
@@ -33,57 +33,47 @@ body { padding: 14px 16px 16px; }
 .mn-btn:disabled { opacity: .25; cursor: default; }
 .mn-lbl { font-size: 11px; font-weight: 700; color: var(--sub); padding: 0 4px; min-width: 72px; text-align: center; }
 
-/* Grid — dynamic columns based on target count */
 .strip { display: grid; gap: 10px; grid-template-columns: repeat(4, 1fr); }
 
-/* Target tile */
 .tile {
   background: rgba(255,255,255,.025);
   border: 1px solid var(--border);
   border-radius: var(--r);
-  padding: 16px 18px 14px;
-  display: flex; flex-direction: column;
-  gap: 0; position: relative; overflow: hidden;
+  padding: 18px 14px 16px;
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center;
   transition: border-color .2s;
 }
 .tile:hover { border-color: rgba(255,255,255,.13); }
-.tile.on-track  { border-color: rgba(200,255,0,.2); }
-.tile.at-risk   { border-color: rgba(251,191,36,.2); }
-.tile.behind    { border-color: rgba(255,107,107,.2); }
 
-.tile-type { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
-
-.tile-nums { display: flex; align-items: baseline; gap: 5px; margin-bottom: 4px; }
-.tile-actual { font-size: 28px; font-weight: 900; letter-spacing: -1.5px; line-height: 1; }
-.tile-sep { font-size: 14px; font-weight: 700; color: var(--muted); }
-.tile-target { font-size: 14px; font-weight: 700; color: var(--sub); }
-
-/* Progress bar */
-.prog-wrap { height: 6px; background: rgba(255,255,255,.07); border-radius: 100px; overflow: hidden; margin: 10px 0 8px; }
-.prog-fill { height: 100%; border-radius: 100px; transition: width .8s cubic-bezier(.4,0,.2,1); }
-.fill-green  { background: var(--g); }
-.fill-amber  { background: var(--amber); }
-.fill-red    { background: var(--red); }
-
-.tile-pct { font-size: 11px; font-weight: 700; margin-top: auto; }
-.pct-green { color: var(--g); }
-.pct-amber { color: var(--amber); }
-.pct-red   { color: var(--red); }
-
-/* Pct badge top-right */
-.pct-badge {
-  position: absolute; top: 12px; right: 12px;
-  font-size: 10px; font-weight: 700; padding: 3px 8px;
-  border-radius: 100px; line-height: 1.4;
+.tile-type {
+  font-size: 10px; font-weight: 700; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  margin-bottom: 4px; width: 100%;
 }
-.pct-badge.on-track { background: rgba(200,255,0,.12); color: var(--g); }
-.pct-badge.at-risk  { background: rgba(251,191,36,.12); color: var(--amber); }
-.pct-badge.behind   { background: rgba(255,107,107,.1); color: var(--red); }
 
-/* Empty state */
+.donut-wrap {
+  position: relative; width: 88px; height: 88px;
+  margin: 6px auto 10px;
+}
+.donut-wrap svg { display: block; }
+.donut-pct {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 900; letter-spacing: -.8px; color: #fff;
+}
+
+.tile-nums { font-size: 13px; font-weight: 700; color: #fff; line-height: 1.3; }
+.tile-nums .sep { color: var(--muted); font-weight: 500; }
+.tile-nums .tgt { color: var(--sub); }
+
+.tile-status { font-size: 11px; font-weight: 700; margin-top: 7px; }
+.tile-status.on-track { color: var(--g); }
+.tile-status.at-risk  { color: var(--amber); }
+.tile-status.behind   { color: var(--red); }
+
 .empty { padding: 28px; text-align: center; color: var(--muted); font-size: 12px; font-weight: 600; background: rgba(255,255,255,.02); border: 1px dashed rgba(255,255,255,.07); border-radius: var(--r); }
 
-/* Skeleton */
 .skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
 @keyframes shimmer { to { background-position: -200% 0; } }
 
@@ -106,11 +96,10 @@ body { padding: 14px 16px 16px; }
 </div>
 
 <div id="strip" class="strip">
-  <!-- skeleton tiles -->
-  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
-  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
-  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
-  <div class="tile"><span class="skel" style="height:12px;width:80px;margin-bottom:12px"></span><span class="skel" style="height:28px;width:70px;margin-bottom:16px"></span><span class="skel" style="height:6px;width:100%;margin-bottom:8px"></span><span class="skel" style="height:12px;width:50px"></span></div>
+  <div class="tile"><span class="skel" style="height:11px;width:70px;margin-bottom:8px"></span><span class="skel" style="width:88px;height:88px;border-radius:50%;margin-bottom:12px"></span><span class="skel" style="height:13px;width:80px;margin-bottom:6px"></span><span class="skel" style="height:11px;width:60px"></span></div>
+  <div class="tile"><span class="skel" style="height:11px;width:70px;margin-bottom:8px"></span><span class="skel" style="width:88px;height:88px;border-radius:50%;margin-bottom:12px"></span><span class="skel" style="height:13px;width:80px;margin-bottom:6px"></span><span class="skel" style="height:11px;width:60px"></span></div>
+  <div class="tile"><span class="skel" style="height:11px;width:70px;margin-bottom:8px"></span><span class="skel" style="width:88px;height:88px;border-radius:50%;margin-bottom:12px"></span><span class="skel" style="height:13px;width:80px;margin-bottom:6px"></span><span class="skel" style="height:11px;width:60px"></span></div>
+  <div class="tile"><span class="skel" style="height:11px;width:70px;margin-bottom:8px"></span><span class="skel" style="width:88px;height:88px;border-radius:50%;margin-bottom:12px"></span><span class="skel" style="height:13px;width:80px;margin-bottom:6px"></span><span class="skel" style="height:11px;width:60px"></span></div>
 </div>
 
 <div class="err-bar" id="errBar">Unable to load data. Check token or connection.</div>
@@ -150,54 +139,55 @@ function statusClass(pct) {
   return 'behind'
 }
 
+function donutSvg(pct, sc) {
+  var r = 34, cx = 44, cy = 44
+  var circ = 2 * Math.PI * r
+  var off  = circ * (1 - Math.min(pct, 100) / 100)
+  var col  = sc === 'on-track' ? '#C8FF00' : sc === 'at-risk' ? '#FBBF24' : '#FF6B6B'
+  return '<svg viewBox="0 0 88 88" width="88" height="88">'
+    + '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="7"/>'
+    + '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="'+col+'" stroke-width="7" stroke-linecap="round"'
+    + ' stroke-dasharray="'+circ.toFixed(2)+'" stroke-dashoffset="'+off.toFixed(2)+'"'
+    + ' transform="rotate(-90 '+cx+' '+cy+')"/>'
+    + '</svg>'
+}
+
 function render(data) {
-  const strip = document.getElementById('strip')
-  const { targets } = data
+  var strip = document.getElementById('strip')
+  var targets = data.targets
 
   if (!targets || targets.length === 0) {
     strip.innerHTML = '<div class="empty" style="grid-column:1/-1">No targets set for this period</div>'
     return
   }
 
-  // Dynamic columns
-  const cols = Math.min(targets.length, 4)
-  strip.style.gridTemplateColumns = `repeat(${cols}, 1fr)`
+  strip.style.gridTemplateColumns = 'repeat('+Math.min(targets.length, 4)+', 1fr)'
 
-  strip.innerHTML = targets.map(t => {
-    const sc    = statusClass(t.pct)
-    const fCls  = sc === 'on-track' ? 'fill-green' : sc === 'at-risk' ? 'fill-amber' : 'fill-red'
-    const pCls  = sc === 'on-track' ? 'pct-green'  : sc === 'at-risk' ? 'pct-amber'  : 'pct-red'
-    const aFmt  = fmtVal(t.actual, t.type, t.currency)
-    const tFmt  = fmtVal(t.target, t.type, t.currency)
-    const subTxt = t.pct >= 80 ? 'On track' : t.pct >= 40 ? 'Needs push' : 'Behind target'
-
-    return `<div class="tile ${sc}">
-  <div class="tile-type">${esc(t.type)}</div>
-  <div class="tile-nums">
-    <span class="tile-actual">${esc(aFmt)}</span>
-    <span class="tile-sep">/</span>
-    <span class="tile-target">${esc(tFmt)}</span>
-  </div>
-  <div class="prog-wrap"><div class="prog-fill ${fCls}" style="width:${t.pct}%"></div></div>
-  <span class="tile-pct ${pCls}">${t.pct}% — ${subTxt}</span>
-  <span class="pct-badge ${sc}">${t.pct}%</span>
-</div>`
+  strip.innerHTML = targets.map(function(t) {
+    var sc   = statusClass(t.pct)
+    var aFmt = fmtVal(t.actual, t.type, t.currency)
+    var tFmt = fmtVal(t.target, t.type, t.currency)
+    var lbl  = sc === 'on-track' ? 'On track' : sc === 'at-risk' ? 'Needs push' : 'Behind'
+    return '<div class="tile">'
+      + '<div class="tile-type">'+esc(t.type)+'</div>'
+      + '<div class="donut-wrap">'+donutSvg(t.pct, sc)+'<div class="donut-pct">'+t.pct+'%</div></div>'
+      + '<div class="tile-nums">'+esc(aFmt)+'<span class="sep"> / </span><span class="tgt">'+esc(tFmt)+'</span></div>'
+      + '<div class="tile-status '+sc+'">'+lbl+'</div>'
+      + '</div>'
   }).join('')
 }
 
 async function load() {
   if (ctrl) ctrl.abort()
   ctrl = new AbortController()
-  const { year, month, d } = monthState()
-  document.getElementById('mnLbl').textContent = fmt(d)
+  var ms = monthState()
+  document.getElementById('mnLbl').textContent = fmt(ms.d)
   document.getElementById('mnNext').disabled = offset >= 0
   document.getElementById('mnPrev').disabled = offset <= -24
   document.getElementById('errBar').style.display = 'none'
-
-  const url = `${API}?token=${encodeURIComponent(tok)}&month=${month}&year=${year}`
   try {
-    const r = await fetch(url, { signal: ctrl.signal })
-    if (!r.ok) throw new Error('HTTP ' + r.status)
+    var r = await fetch(API+'?token='+encodeURIComponent(tok)+'&month='+ms.month+'&year='+ms.year, { signal: ctrl.signal })
+    if (!r.ok) throw new Error('HTTP '+r.status)
     render(await r.json())
   } catch(e) {
     if (e.name === 'AbortError') return

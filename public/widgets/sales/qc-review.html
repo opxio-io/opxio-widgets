@@ -4,7 +4,7 @@
 <script>
 if (window.self === window.top) {
   window.stop(); document.open();
-  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div></body></html>');
+  document.write('<html><head><style>*{margin:0;padding:0}html,body{height:100%;background:#191919;}body{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;font-family:sans-serif;}</style></head><body><div style="color:#555;font-size:13px;letter-spacing:.5px;">RESTRICTED ACCESS</div><div style="color:#333;font-size:12px;">This widget is for Notion only.</div></body></html>');
   document.close();
 }
 </script>
@@ -17,7 +17,7 @@ if (window.self === window.top) {
 :root {
   --bg:#191919; --card:#222222;
   --border:rgba(255,255,255,0.07);
-  --g:#C8FF00; --amber:#FBBF24; --red:#FF6B6B; --blue:#60A5FA; --purple:#A78BFA;
+  --g:#C8FF00; --amber:#FBBF24; --red:#FF6B6B; --blue:#60A5FA; --purple:#A78BFA; --orange:#FB923C;
   --muted:rgba(255,255,255,0.38); --sub:rgba(255,255,255,0.55);
   --r:18px;
 }
@@ -26,440 +26,217 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* ── Auth gate ── */
-.auth-gate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:60vh;gap:16px;text-align:center;animation:fadeIn .3s ease;}
-.auth-logo{width:48px;height:48px;background:var(--g);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#000;margin-bottom:4px;}
-.auth-title{font-size:18px;font-weight:900;letter-spacing:-0.4px;}
-.auth-sub{font-size:13px;color:var(--sub);max-width:280px;line-height:1.6;}
-.auth-btn{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:12px;color:#fff;font-size:14px;font-weight:700;padding:13px 22px;cursor:pointer;font-family:'Satoshi',sans-serif;transition:all .15s;margin-top:4px;}
-.auth-btn:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2);}
-.auth-btn:disabled{opacity:.4;cursor:default;}
-.auth-btn svg{width:20px;height:20px;flex-shrink:0;}
-.auth-err{font-size:12px;color:var(--red);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);border-radius:10px;padding:10px 16px;max-width:320px;}
-
-/* ── User pill ── */
-.user-pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:5px 12px 5px 5px;font-size:12px;font-weight:600;color:var(--sub);}
-.user-avatar{width:22px;height:22px;border-radius:50%;background:var(--g);color:#000;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-
-/* ── Top bar ── */
+/* Top bar */
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
 .top-bar-left{display:flex;align-items:center;gap:10px;}
-.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;}
+.wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
 .wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
-.pill-row{display:flex;gap:6px;align-items:center;}
-.status-filter{display:flex;gap:4px;}
-.sf-btn{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--sub);font-size:11px;font-weight:700;padding:5px 12px;cursor:pointer;transition:all .15s;font-family:inherit;letter-spacing:.02em;}
-.sf-btn:hover:not(.active){background:rgba(255,255,255,.08);}
-.sf-btn.active{background:var(--g);color:#000;border-color:transparent;}
-.refresh-btn{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:8px;color:var(--sub);cursor:pointer;padding:5px 10px;font-size:13px;transition:all .15s;}
-.refresh-btn:hover{background:rgba(255,255,255,.1);color:#fff;}
 
-/* ── Summary pills ── */
-.summary-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
-.s-pill{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:12px;padding:8px 14px;}
-.s-pill-val{font-size:20px;font-weight:900;letter-spacing:-1px;}
-.s-pill-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);}
-.s-pill.pending .s-pill-val{color:var(--amber);}
-.s-pill.approved .s-pill-val{color:var(--g);}
-.s-pill.rejected .s-pill-val{color:var(--red);}
-.s-pill.revision .s-pill-val{color:var(--blue);}
+/* Summary pills row */
+.pills-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
+.pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;transition:all .15s;user-select:none;}
+.pill:hover{background:rgba(255,255,255,.07);}
+.pill.active{border-color:currentColor;}
+.pill-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.pill.p-pending{color:#FBBF24;}.pill.p-pending.active{background:rgba(251,191,36,.08);}
+.pill.p-revision{color:var(--orange);}.pill.p-revision.active{background:rgba(251,146,60,.08);}
+.pill.p-approved{color:var(--g);}.pill.p-approved.active{background:rgba(200,255,0,.08);}
+.pill.p-rejected{color:var(--red);}.pill.p-rejected.active{background:rgba(255,107,107,.08);}
+.pill.p-all{color:#fff;}.pill.p-all.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2);}
+.pill-dot.pending{background:#FBBF24;}
+.pill-dot.revision{background:var(--orange);}
+.pill-dot.approved{background:var(--g);}
+.pill-dot.rejected{background:var(--red);}
+.pill-dot.all{background:rgba(255,255,255,.3);}
+.pill-count{font-size:12px;font-weight:900;}
 
-/* ── Cards ── */
-.items-list{display:flex;flex-direction:column;gap:10px;}
-.qc-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;position:relative;animation:fadeIn .2s ease;}
-.qc-card:hover{border-color:rgba(255,255,255,.12);}
-.qc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
-.qc-meta{flex:1;min-width:0;}
-.qc-name{font-size:14px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.qc-sub{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap;}
-.qc-entity{font-size:12px;color:var(--sub);}
-.qc-round{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:2px 8px;}
-.qc-type-badge{font-size:10px;font-weight:700;letter-spacing:.04em;border-radius:100px;padding:2px 9px;}
-.qc-type-badge.quote{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
-.qc-type-badge.proposal{background:rgba(167,139,250,.1);color:var(--purple);border:1px solid rgba(167,139,250,.2);}
-.qc-amounts{display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;}
-.qc-amount{font-size:22px;font-weight:900;letter-spacing:-1px;}
-.qc-currency-lbl{font-size:11px;font-weight:600;color:var(--muted);text-align:right;}
-.qc-sub-date{font-size:11px;color:var(--muted);}
-.qc-card-divider{height:1px;background:rgba(255,255,255,.05);margin:0 -22px 16px;}
-.review-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:.04em;border-radius:100px;padding:4px 12px;}
-.review-badge.pending{background:rgba(251,191,36,.1);color:var(--amber);border:1px solid rgba(251,191,36,.25);}
-.review-badge.approved{background:rgba(200,255,0,.1);color:var(--g);border:1px solid rgba(200,255,0,.2);}
-.review-badge.rejected{background:rgba(255,107,107,.1);color:var(--red);border:1px solid rgba(255,107,107,.2);}
-.review-badge.revision{background:rgba(96,165,250,.1);color:var(--blue);border:1px solid rgba(96,165,250,.2);}
+/* Cards list */
+.cards{display:flex;flex-direction:column;gap:10px;}
 
-/* ── Actions ── */
-.action-row{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
-.action-left{flex:1;min-width:220px;}
-.notes-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;color:#fff;font-size:12px;font-family:'Satoshi',sans-serif;padding:10px 14px;resize:vertical;min-height:56px;line-height:1.5;transition:border-color .15s;}
-.notes-input:focus{outline:none;border-color:rgba(255,255,255,.2);}
-.notes-input::placeholder{color:rgba(255,255,255,.2);}
-.action-btns{display:flex;flex-direction:column;gap:6px;flex-shrink:0;}
-.act-btn{border:none;border-radius:10px;font-size:12px;font-weight:700;padding:10px 18px;cursor:pointer;font-family:'Satoshi',sans-serif;transition:all .15s;white-space:nowrap;}
-.act-btn:disabled{opacity:.4;cursor:default;}
-.act-btn.approve{background:var(--g);color:#000;}
-.act-btn.approve:hover:not(:disabled){background:#d9ff00;}
-.act-btn.revision{background:rgba(96,165,250,.15);color:var(--blue);border:1px solid rgba(96,165,250,.3);}
-.act-btn.revision:hover:not(:disabled){background:rgba(96,165,250,.25);}
-.act-btn.reject{background:rgba(255,107,107,.12);color:var(--red);border:1px solid rgba(255,107,107,.2);}
-.act-btn.reject:hover:not(:disabled){background:rgba(255,107,107,.22);}
-.prev-notes{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--sub);line-height:1.6;}
-.prev-notes-lbl{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-bottom:4px;}
-.reviewed-by{font-size:11px;color:var(--muted);margin-top:6px;}
+.qc-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:14px;padding:16px 18px;animation:fadeIn .2s ease;display:flex;flex-direction:column;gap:10px;}
+.qc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
+.qc-card-left{display:flex;flex-direction:column;gap:4px;min-width:0;}
+.qc-card-name{font-size:13px;font-weight:900;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.qc-card-entity{font-size:11px;font-weight:600;color:var(--sub);}
+.qc-card-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
 
-/* ── Empty / loader ── */
-.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:60px 20px;gap:8px;}
-.empty-icon{font-size:32px;opacity:.3;}
-.empty-msg{font-size:14px;font-weight:600;color:var(--muted);}
-.empty-sub{font-size:12px;color:rgba(255,255,255,.2);}
-.loader{display:flex;align-items:center;justify-content:center;padding:60px;gap:10px;flex-direction:column;}
-.spinner{width:24px;height:24px;border:2px solid rgba(255,255,255,.1);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
-.loader-msg{font-size:12px;color:var(--muted);}
+.badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;}
+.badge-quote{background:rgba(96,165,250,.12);color:var(--blue);}
+.badge-proposal{background:rgba(167,139,250,.12);color:var(--purple);}
+.badge-round{background:rgba(255,255,255,.07);color:var(--muted);}
+.badge-pending{background:rgba(251,191,36,.12);color:#FBBF24;}
+.badge-revision{background:rgba(251,146,60,.12);color:var(--orange);}
+.badge-approved{background:rgba(200,255,0,.12);color:var(--g);}
+.badge-rejected{background:rgba(255,107,107,.12);color:var(--red);}
 
-/* ── Toast ── */
-.toast{position:fixed;bottom:24px;right:24px;background:#1e1e1e;border:1px solid var(--border);border-radius:12px;padding:12px 18px;font-size:13px;font-weight:600;color:#fff;z-index:999;display:none;animation:fadeIn .2s ease;max-width:320px;}
-.toast.ok{border-color:rgba(200,255,0,.3);color:var(--g);}
-.toast.err{border-color:rgba(255,107,107,.3);color:var(--red);}
+.qc-card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.qc-card-meta-left{display:flex;align-items:center;gap:8px;}
+.qc-meta-item{font-size:11px;font-weight:600;color:var(--muted);}
+.qc-meta-item span{color:var(--sub);}
+.qc-amount{font-size:13px;font-weight:900;color:#fff;}
 
-.section-header-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
-.section-title{font-size:13px;font-weight:700;}
-.section-count{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.07);border-radius:100px;padding:3px 10px;}
+.qc-reviewer{font-size:11px;font-weight:700;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:3px 10px;display:flex;align-items:center;gap:5px;}
+.qc-reviewer-dot{width:5px;height:5px;border-radius:50%;background:var(--g);}
+
+.qc-notes{font-size:11px;font-weight:600;color:var(--sub);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:8px 12px;font-style:italic;line-height:1.5;}
+
+.notion-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:4px 10px;transition:all .15s;}
+.notion-link:hover{color:#fff;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04);}
+.notion-link svg{width:12px;height:12px;flex-shrink:0;}
+
+/* Misc */
+.empty-state{text-align:center;padding:40px 0;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
+.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:10px;}
+.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
+.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
 </style>
 </head>
 <body>
 
-<!-- Auth gate (shown when no session) -->
-<div id="authGate" style="display:none">
-  <div class="auth-gate">
-    <div class="auth-logo">Q</div>
-    <div class="auth-title">QC Review</div>
-    <div class="auth-sub">Enter your Notion account email to access the reviewer dashboard.</div>
-    <div style="display:flex;flex-direction:column;gap:8px;width:100%;max-width:300px;">
-      <input
-        id="emailInput"
-        type="email"
-        placeholder="your@email.com"
-        class="notes-input"
-        style="min-height:unset;padding:12px 16px;font-size:13px;border-radius:10px;"
-        onkeydown="if(event.key==='Enter')verifyEmail()"
-      />
-      <button class="auth-btn" id="authBtn" onclick="verifyEmail()" style="justify-content:center;">
-        Verify &amp; Continue
-      </button>
-    </div>
-    <div id="authErr" style="display:none" class="auth-err"></div>
+<div class="top-bar">
+  <div class="top-bar-left">
+    <span class="wgt-title">QC Review</span>
+    <span class="wgt-org">OPXIO</span>
   </div>
 </div>
 
-<!-- Main app (shown after auth) -->
-<div id="app" style="display:none">
-  <div class="top-bar">
-    <div class="top-bar-left">
-      <span class="wgt-title">QC Review</span>
-      <span class="wgt-org" id="wgtOrg">Opxio</span>
-    </div>
-    <div class="pill-row">
-      <div id="userPill"></div>
-      <div class="status-filter">
-        <button class="sf-btn active" data-s="Pending Review"       onclick="setFilter('Pending Review')">Pending</button>
-        <button class="sf-btn"        data-s="Revision Requested"   onclick="setFilter('Revision Requested')">Revision</button>
-        <button class="sf-btn"        data-s="all"                  onclick="setFilter('all')">All</button>
-      </div>
-      <button class="refresh-btn" onclick="loadItems()" title="Refresh">↻</button>
-    </div>
-  </div>
-
-  <div class="summary-row" id="summaryRow" style="display:none"></div>
-  <div id="content"></div>
+<div class="pills-row" id="pillsRow">
+  <div class="loading"><div class="spinner"></div></div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div id="cardsWrap">
+  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
+</div>
+
+<div class="footer">Widgets by Opxio.io</div>
 
 <script>
-const params  = new URLSearchParams(location.search)
-const TOKEN   = params.get('token')   || ''
-const BASE    = 'https://api.opxio.io/api/opxio'
-
-// Session stored in sessionStorage (tab-scoped, not persistent — intentional for security)
-let SESSION   = params.get('session') || sessionStorage.getItem('qc_session') || ''
-let reviewerEmail = ''
-let currentFilter = 'Pending Review'
+const BASE   = 'https://api.opxio.io/api/opxio'
+const TOKEN  = new URLSearchParams(location.search).get('token') || ''
 let allItems = []
+let activeFilter = 'Pending Review'
 
-// ── Init ───────────────────────────────────────────────────────────────────
-async function init() {
-  // Restore session from sessionStorage if available
-  if (!SESSION) SESSION = sessionStorage.getItem('qc_session') || ''
-  reviewerEmail = sessionStorage.getItem('qc_email') || ''
-
-  if (!SESSION) {
-    showAuthGate()
-    return
-  }
-
-  showApp()
-  loadItems()
+function fmtAmt(amount, currency) {
+  if (!amount) return '—'
+  const c = (currency || 'MYR').toUpperCase()
+  return c + ' ' + Number(amount).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-// ── Auth gate ──────────────────────────────────────────────────────────────
-function showAuthGate() {
-  document.getElementById('authGate').style.display = 'block'
-  document.getElementById('app').style.display = 'none'
+function fmtDate(iso) {
+  if (!iso) return '—'
+  return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
 
-function showApp() {
-  document.getElementById('authGate').style.display = 'none'
-  document.getElementById('app').style.display = 'block'
-  if (reviewerEmail) {
-    const initials = reviewerEmail.slice(0,2).toUpperCase()
-    document.getElementById('userPill').innerHTML = `
-      <div class="user-pill">
-        <div class="user-avatar">${initials}</div>
-        ${reviewerEmail}
-      </div>`
-  }
+function statusBadgeClass(s) {
+  if (!s) return 'badge-pending'
+  const m = { 'Pending Review': 'badge-pending', 'Revision Requested': 'badge-revision', 'Approved': 'badge-approved', 'Rejected': 'badge-rejected' }
+  return m[s] || 'badge-pending'
 }
 
-async function verifyEmail() {
-  const btn   = document.getElementById('authBtn')
-  const err   = document.getElementById('authErr')
-  const email = document.getElementById('emailInput')?.value?.trim()
-  if (!email) return
+function renderPills(items) {
+  const counts = { 'Pending Review': 0, 'Revision Requested': 0, 'Approved': 0, 'Rejected': 0 }
+  items.forEach(i => { if (counts[i.reviewStatus] !== undefined) counts[i.reviewStatus]++ })
+  const total = items.length
 
-  btn.disabled = true
-  btn.textContent = 'Verifying…'
-  err.style.display = 'none'
+  const defs = [
+    { key: 'Pending Review',     cls: 'p-pending',  dot: 'pending',  label: 'Pending' },
+    { key: 'Revision Requested', cls: 'p-revision', dot: 'revision', label: 'Revision' },
+    { key: 'Approved',           cls: 'p-approved', dot: 'approved', label: 'Approved' },
+    { key: 'Rejected',           cls: 'p-rejected', dot: 'rejected', label: 'Rejected' },
+    { key: 'all',                cls: 'p-all',      dot: 'all',      label: 'All' },
+  ]
 
-  try {
-    const r = await fetch(`${BASE}/verify-reviewer?token=${TOKEN}`, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify({ email }),
-    })
-    const d = await r.json()
-    if (!r.ok || !d.ok) throw new Error(d.error || 'Verification failed')
-
-    SESSION       = d.session
-    reviewerEmail = d.email
-    sessionStorage.setItem('qc_session', SESSION)
-    sessionStorage.setItem('qc_email',   reviewerEmail)
-    showApp()
-    loadItems()
-
-  } catch (e) {
-    err.textContent = e.message
-    err.style.display = 'block'
-    btn.disabled = false
-    btn.textContent = 'Verify & Continue'
-  }
+  document.getElementById('pillsRow').innerHTML = defs.map(d => {
+    const count = d.key === 'all' ? total : (counts[d.key] || 0)
+    const active = activeFilter === d.key ? ' active' : ''
+    return `<div class="pill ${d.cls}${active}" onclick="setFilter('${d.key}')">
+      <span class="pill-dot ${d.dot}"></span>
+      <span>${d.label}</span>
+      <span class="pill-count">${count}</span>
+    </div>`
+  }).join('')
 }
 
-// ── Load ───────────────────────────────────────────────────────────────────
-async function loadItems() {
-  document.getElementById('content').innerHTML = '<div class="loader"><div class="spinner"></div><div class="loader-msg">Loading QC items…</div></div>'
-  document.getElementById('summaryRow').style.display = 'none'
-
-  try {
-    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&session=${encodeURIComponent(SESSION)}&status=all`)
-    const d = await r.json()
-
-    if (r.status === 401 && d.needsAuth) {
-      sessionStorage.removeItem('qc_session')
-      SESSION = ''
-      showAuthGate()
-      return
-    }
-    if (!r.ok) throw new Error(d.error || 'Failed to load')
-
-    allItems = d.items || []
-    renderSummary()
-    renderItems()
-
-  } catch (err) {
-    document.getElementById('content').innerHTML = `<div class="empty"><div class="empty-icon">⚠️</div><div class="empty-msg">Failed to load</div><div class="empty-sub">${err.message}</div></div>`
-  }
-}
-
-// ── Render ─────────────────────────────────────────────────────────────────
-function renderSummary() {
-  const counts = { pending:0, revision:0, approved:0, rejected:0 }
-  for (const i of allItems) {
-    const s = (i.reviewStatus||'').toLowerCase()
-    if (s.includes('pending'))  counts.pending++
-    else if (s.includes('revision')) counts.revision++
-    else if (s.includes('approved')) counts.approved++
-    else if (s.includes('rejected')) counts.rejected++
-  }
-  const row = document.getElementById('summaryRow')
-  row.style.display = 'flex'
-  row.innerHTML = `
-    <div class="s-pill pending"><span class="s-pill-val">${counts.pending}</span><span class="s-pill-lbl">Pending</span></div>
-    <div class="s-pill revision"><span class="s-pill-val">${counts.revision}</span><span class="s-pill-lbl">Revision</span></div>
-    <div class="s-pill approved"><span class="s-pill-val">${counts.approved}</span><span class="s-pill-lbl">Approved</span></div>
-    <div class="s-pill rejected"><span class="s-pill-val">${counts.rejected}</span><span class="s-pill-lbl">Rejected</span></div>`
-}
-
-function setFilter(s) {
-  currentFilter = s
-  document.querySelectorAll('.sf-btn').forEach(b => b.classList.toggle('active', b.dataset.s === s))
-  renderItems()
-}
-
-function renderItems() {
-  const filtered = currentFilter === 'all' ? allItems : allItems.filter(i => i.reviewStatus === currentFilter)
-  const container = document.getElementById('content')
-  const isPending = currentFilter === 'Pending Review' || currentFilter === 'Revision Requested'
+function renderCards(items) {
+  const filtered = activeFilter === 'all'
+    ? items
+    : items.filter(i => i.reviewStatus === activeFilter)
 
   if (!filtered.length) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">✅</div><div class="empty-msg">No items here</div><div class="empty-sub">Switch filter to see others</div></div>`
-    return
-  }
-  container.innerHTML = `
-    <div class="section-header-bar">
-      <span class="section-title">${currentFilter === 'all' ? 'All QC Records' : currentFilter}</span>
-      <span class="section-count">${filtered.length} item${filtered.length !== 1 ? 's' : ''}</span>
-    </div>
-    <div class="items-list" id="itemsList"></div>`
-
-  const list = document.getElementById('itemsList')
-  filtered.forEach(item => list.appendChild(buildCard(item, isPending)))
-}
-
-function buildCard(item, showActions) {
-  const card       = document.createElement('div')
-  card.className   = 'qc-card'
-  card.id          = `card-${item.id}`
-  const isQuote    = (item.type||'').toLowerCase() === 'quotation'
-  const typeClass  = isQuote ? 'quote' : 'proposal'
-  const statusCls  = (s => {
-    if (!s) return 'pending'
-    s = s.toLowerCase()
-    if (s.includes('pending'))  return 'pending'
-    if (s.includes('approved')) return 'approved'
-    if (s.includes('rejected')) return 'rejected'
-    if (s.includes('revision')) return 'revision'
-    return 'pending'
-  })(item.reviewStatus)
-
-  const amt = item.amount
-    ? `${new Intl.NumberFormat('en-MY').format(item.amount)}`
-    : '—'
-  const roundHtml = item.qcRound > 1 ? `<span class="qc-round">Round ${item.qcRound}</span>` : ''
-  const daysAgo = iso => {
-    if (!iso) return ''
-    const d = Math.floor((Date.now()-new Date(iso))/86400000)
-    return d === 0 ? 'today' : d === 1 ? '1d ago' : `${d}d ago`
-  }
-
-  const prevHtml = !showActions && item.reviewerNotes ? `
-    <div class="qc-card-divider"></div>
-    <div class="prev-notes-lbl">Reviewer Notes</div>
-    <div class="prev-notes">${item.reviewerNotes}</div>
-    ${item.reviewedBy ? `<div class="reviewed-by">Reviewed by ${item.reviewedBy}</div>` : ''}` : ''
-
-  const actHtml = showActions ? `
-    <div class="qc-card-divider"></div>
-    <div class="action-row">
-      <div class="action-left">
-        <textarea class="notes-input" id="notes-${item.id}" placeholder="Add notes (required for reject / revision)…" rows="2"></textarea>
-      </div>
-      <div class="action-btns">
-        <button class="act-btn approve"   onclick="doAction('${item.id}','approve')">✓ Approve</button>
-        <button class="act-btn revision"  onclick="doAction('${item.id}','revision')">⟳ Revision</button>
-        <button class="act-btn reject"    onclick="doAction('${item.id}','reject')">✕ Reject</button>
-      </div>
-    </div>` : ''
-
-  card.innerHTML = `
-    <div class="qc-card-top">
-      <div class="qc-meta">
-        <div class="qc-name">${item.name}</div>
-        <div class="qc-sub">
-          ${item.entityName ? `<span class="qc-entity">${item.entityName}</span>` : ''}
-          <span class="qc-type-badge ${typeClass}">${isQuote ? 'Quote' : 'Proposal'}</span>
-          ${roundHtml}
-        </div>
-        <div style="margin-top:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-          <span class="review-badge ${statusCls}">${item.reviewStatus||'Pending Review'}</span>
-          <span class="qc-sub-date">Submitted ${daysAgo(item.submittedAt)}</span>
-        </div>
-      </div>
-      <div class="qc-amounts">
-        <div class="qc-amount">${amt}</div>
-        <div class="qc-currency-lbl">${item.currency||'MYR'}${item.quoteType ? ' · '+item.quoteType : ''}</div>
-      </div>
-    </div>
-    ${prevHtml}${actHtml}`
-  return card
-}
-
-// ── Action ─────────────────────────────────────────────────────────────────
-async function doAction(itemId, action) {
-  const notesEl = document.getElementById(`notes-${itemId}`)
-  const notes   = notesEl?.value.trim() || ''
-
-  if ((action === 'reject' || action === 'revision') && !notes) {
-    notesEl.style.borderColor = 'rgba(255,107,107,.5)'
-    notesEl.placeholder = 'Notes required for this action'
-    notesEl.focus()
+    document.getElementById('cardsWrap').innerHTML = '<div class="empty-state">No items in this view</div>'
     return
   }
 
-  const card = document.getElementById(`card-${itemId}`)
-  card.querySelectorAll('.act-btn').forEach(b => b.disabled = true)
-  if (notesEl) notesEl.disabled = true
+  document.getElementById('cardsWrap').innerHTML = '<div class="cards">' +
+    filtered.map(item => {
+      const typeBadge  = item.type === 'Quotation' ? 'badge-quote' : 'badge-proposal'
+      const typeLabel  = item.type === 'Quotation' ? 'Quote' : 'Proposal'
+      const statusCls  = statusBadgeClass(item.reviewStatus)
+      const notionUrl  = item.url || '#'
 
+      let reviewerHtml = ''
+      if (item.reviewedBy) {
+        reviewerHtml = `<div class="qc-reviewer"><span class="qc-reviewer-dot"></span>${item.reviewedBy} · ${fmtDate(item.reviewedAt)}</div>`
+      }
+
+      let notesHtml = ''
+      if (item.reviewerNotes) {
+        notesHtml = `<div class="qc-notes">"${item.reviewerNotes}"</div>`
+      }
+
+      return `<div class="qc-card">
+        <div class="qc-card-top">
+          <div class="qc-card-left">
+            <div class="qc-card-name">${item.name}</div>
+            <div class="qc-card-entity">${item.entityName || '—'}</div>
+          </div>
+          <div class="qc-card-right">
+            <span class="badge ${typeBadge}">${typeLabel}</span>
+            <span class="badge badge-round">R${item.qcRound || 1}</span>
+            <span class="badge ${statusCls}">${item.reviewStatus || 'Pending Review'}</span>
+          </div>
+        </div>
+        <div class="qc-card-meta">
+          <div class="qc-card-meta-left">
+            <span class="qc-amount">${fmtAmt(item.amount, item.currency)}</span>
+            ${item.quoteType ? `<span class="qc-meta-item">${item.quoteType}</span>` : ''}
+            <span class="qc-meta-item">Submitted <span>${fmtDate(item.submittedAt)}</span></span>
+          </div>
+          <a class="notion-link" href="${notionUrl}" target="_blank">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+            Open in Notion
+          </a>
+        </div>
+        ${reviewerHtml}
+        ${notesHtml}
+      </div>`
+    }).join('') + '</div>'
+}
+
+function setFilter(key) {
+  activeFilter = key
+  renderPills(allItems)
+  renderCards(allItems)
+}
+
+async function load() {
   try {
-    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&session=${encodeURIComponent(SESSION)}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ qc_id: itemId, action, notes }),
-    })
+    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&status=all`)
     const d = await r.json()
-
-    if (r.status === 401 && d.needsAuth) {
-      sessionStorage.removeItem('qc_session')
-      SESSION = ''
-      showAuthGate()
-      return
-    }
-    if (!r.ok || !d.ok) {
-      showToast(d.error || 'Action failed', 'err')
-      card.querySelectorAll('.act-btn').forEach(b => b.disabled = false)
-      if (notesEl) notesEl.disabled = false
-      return
-    }
-
-    const label = action === 'approve' ? '✅ Approved' : action === 'revision' ? '🔄 Revision requested' : '❌ Rejected'
-    showToast(`${label} — ${d.qcRef}`, 'ok')
-
-    const idx = allItems.findIndex(i => i.id === itemId)
-    if (idx !== -1) { allItems[idx].reviewStatus = d.qcStatus; allItems[idx].reviewerNotes = notes; allItems[idx].reviewedBy = reviewerEmail }
-    renderSummary()
-
-    card.style.transition = 'opacity .25s'
-    card.style.opacity = '0'
-    setTimeout(renderItems, 280)
-
-  } catch (err) {
-    showToast(err.message, 'err')
-    card.querySelectorAll('.act-btn').forEach(b => b.disabled = false)
-    if (notesEl) notesEl.disabled = false
+    if (!r.ok) throw new Error(d.error || 'Failed to load')
+    allItems = d.items || []
+    renderPills(allItems)
+    renderCards(allItems)
+  } catch (e) {
+    document.getElementById('pillsRow').innerHTML = ''
+    document.getElementById('cardsWrap').innerHTML = `<div class="empty-state">${e.message}</div>`
   }
 }
 
-function showToast(msg, type = 'ok') {
-  const t = document.getElementById('toast')
-  t.textContent = msg
-  t.className = `toast ${type}`
-  t.style.display = 'block'
-  clearTimeout(t._t)
-  t._t = setTimeout(() => { t.style.display = 'none' }, 4000)
-}
-
-init()
+load()
 </script>
 </body>
 </html>

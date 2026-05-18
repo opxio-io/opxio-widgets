@@ -49,11 +49,11 @@ body { padding: 14px 16px 16px; }
 .tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
 .tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
 
-.tile-delta { font-size: 10px; font-weight: 700; display: block; margin-top: 5px; letter-spacing: .01em; }
-.tile-delta.up { color: var(--g); }
-.tile.hero .tile-delta.up { color: rgba(0,0,0,.7); }
-.tile-delta.dn { color: var(--red); }
-.tile-delta.flat { color: var(--muted); }
+.tile-delta { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; line-height: 1.4; }
+.tile-delta.up { background: rgba(200,255,0,.12); color: var(--g); }
+.tile.hero .tile-delta.up { background: rgba(0,0,0,.15); color: rgba(0,0,0,.8); }
+.tile-delta.dn { background: rgba(255,107,107,.1); color: var(--red); }
+.tile-delta.flat { background: rgba(255,255,255,.05); color: var(--muted); }
 
 .stalled-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 6px; }
 .stalled-warn { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
@@ -148,15 +148,16 @@ function fmtRM(n) {
   return 'RM ' + Math.round(n)
 }
 
-function deltaHtml(curr, prev, lowerIsBetter) {
-  if (prev == null || prev === 0) return ''
+function applyDelta(id, curr, prev, lowerIsBetter) {
+  const el = document.getElementById(id)
+  if (!el) return
+  if (prev == null || prev === 0) { el.className = 'tile-delta'; el.textContent = ''; return }
   const pct = Math.round(((curr - prev) / prev) * 100)
-  if (pct === 0) return '<span class="tile-delta flat">&#8594; no change</span>'
+  if (pct === 0) { el.className = 'tile-delta flat'; el.textContent = '→ 0%'; return }
   const up = pct > 0
   const good = lowerIsBetter ? !up : up
-  const cls = good ? 'up' : 'dn'
-  const arrow = up ? '&#8593;' : '&#8595;'
-  return `<span class="tile-delta ${cls}">${arrow} ${Math.abs(pct)}% vs last mo</span>`
+  el.className = 'tile-delta ' + (good ? 'up' : 'dn')
+  el.textContent = (up ? '↑' : '↓') + ' ' + Math.abs(pct) + '%'
 }
 
 function showSkeletons() {
@@ -164,7 +165,7 @@ function showSkeletons() {
   const ss = '<span class="skel skel-sub"></span>'
   ;['valOpen','valPipe','valWon','valStall'].forEach(id => setVal(id, sv))
   ;['subOpen','subPipe','subWon','subStall'].forEach(id => setVal(id, ss))
-  ;['dltOpen','dltPipe','dltWon'].forEach(id => { document.getElementById(id).innerHTML = '' })
+  ;['dltOpen','dltPipe','dltWon'].forEach(id => { const e=document.getElementById(id); if(e){e.className='tile-delta';e.textContent='';} })
 }
 
 function render(data, prev) {
@@ -175,16 +176,16 @@ function render(data, prev) {
 
   setVal('valOpen', esc(kpi.openDeals || 0))
   setText('subOpen', 'Active in pipeline')
-  setVal('dltOpen', deltaHtml(kpi.openDeals || 0, pk && pk.openDeals, false))
+  applyDelta('dltOpen', kpi.openDeals || 0, pk && pk.openDeals, false)
 
   document.getElementById('valPipe').style.fontSize = (kpi.pipelineValue || 0) >= 100000 ? '22px' : '28px'
   setVal('valPipe', esc(fmtRM(kpi.pipelineValue || 0)))
   setText('subPipe', esc(kpi.openDeals || 0) + ' open deal' + ((kpi.openDeals || 0) === 1 ? '' : 's'))
-  setVal('dltPipe', deltaHtml(kpi.pipelineValue || 0, pk && pk.pipelineValue, false))
+  applyDelta('dltPipe', kpi.pipelineValue || 0, pk && pk.pipelineValue, false)
 
   setVal('valWon', `<span style="color:${wonColor}">${esc(kpi.closedWonMTD || 0)}</span>`)
   setText('subWon', 'Deals closed this period')
-  setVal('dltWon', deltaHtml(kpi.closedWonMTD || 0, pk && pk.closedWonMTD, false))
+  applyDelta('dltWon', kpi.closedWonMTD || 0, pk && pk.closedWonMTD, false)
 
   setVal('valStall', esc(stallCount))
   document.getElementById('subStall').innerHTML = stallCount > 0

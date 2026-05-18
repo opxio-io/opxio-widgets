@@ -49,11 +49,11 @@ body { padding: 14px 16px 16px; }
 .tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
 .tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
 
-.tile-delta { font-size: 10px; font-weight: 700; display: block; margin-top: 5px; letter-spacing: .01em; }
-.tile-delta.up { color: var(--g); }
-.tile.hero .tile-delta.up { color: rgba(0,0,0,.7); }
-.tile-delta.dn { color: var(--red); }
-.tile-delta.flat { color: var(--muted); }
+.tile-delta { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; line-height: 1.4; }
+.tile-delta.up { background: rgba(200,255,0,.12); color: var(--g); }
+.tile.hero .tile-delta.up { background: rgba(0,0,0,.15); color: rgba(0,0,0,.8); }
+.tile-delta.dn { background: rgba(255,107,107,.1); color: var(--red); }
+.tile-delta.flat { background: rgba(255,255,255,.05); color: var(--muted); }
 
 .tile-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 9px; border-radius: 100px; margin-top: 6px; }
 .badge-hot { background: rgba(251,191,36,.12); color: var(--amber); border: 1px solid rgba(251,191,36,.2); }
@@ -137,15 +137,16 @@ function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt
 function setVal(id, html) { document.getElementById(id).innerHTML = html }
 function setText(id, t)   { document.getElementById(id).textContent = t }
 
-function deltaHtml(curr, prev, lowerIsBetter) {
-  if (prev == null || prev === 0) return ''
+function applyDelta(id, curr, prev, lowerIsBetter) {
+  const el = document.getElementById(id)
+  if (!el) return
+  if (prev == null || prev === 0) { el.className = 'tile-delta'; el.textContent = ''; return }
   const pct = Math.round(((curr - prev) / prev) * 100)
-  if (pct === 0) return '<span class="tile-delta flat">&#8594; no change</span>'
+  if (pct === 0) { el.className = 'tile-delta flat'; el.textContent = '→ 0%'; return }
   const up = pct > 0
   const good = lowerIsBetter ? !up : up
-  const cls = good ? 'up' : 'dn'
-  const arrow = up ? '&#8593;' : '&#8595;'
-  return `<span class="tile-delta ${cls}">${arrow} ${Math.abs(pct)}% vs last mo</span>`
+  el.className = 'tile-delta ' + (good ? 'up' : 'dn')
+  el.textContent = (up ? '↑' : '↓') + ' ' + Math.abs(pct) + '%'
 }
 
 function showSkeletons() {
@@ -153,7 +154,7 @@ function showSkeletons() {
   const ss = '<span class="skel skel-sub"></span>'
   ;['valNew','valOpen','valConv','valHot'].forEach(id => setVal(id, sv))
   ;['subNew','subOpen','subConv','subHot'].forEach(id => setVal(id, ss))
-  ;['dltNew','dltOpen','dltConv'].forEach(id => { document.getElementById(id).innerHTML = '' })
+  ;['dltNew','dltOpen','dltConv'].forEach(id => { const e=document.getElementById(id); if(e){e.className='tile-delta';e.textContent='';} })
 }
 
 function render(data, prev) {
@@ -164,15 +165,15 @@ function render(data, prev) {
 
   setVal('valNew', esc(kpi.newLeadsMTD))
   setText('subNew', isNow ? 'Leads this month' : 'Leads this period')
-  setVal('dltNew', deltaHtml(kpi.newLeadsMTD, pk && pk.newLeadsMTD, false))
+  applyDelta('dltNew', kpi.newLeadsMTD, pk && pk.newLeadsMTD, false)
 
   setVal('valOpen', esc(kpi.openLeads))
   setText('subOpen', 'Active in pipeline')
-  setVal('dltOpen', deltaHtml(kpi.openLeads, pk && pk.openLeads, false))
+  applyDelta('dltOpen', kpi.openLeads, pk && pk.openLeads, false)
 
   setVal('valConv', esc(kpi.convRate) + '%')
   setText('subConv', 'Leads → Converted')
-  setVal('dltConv', deltaHtml(kpi.convRate, pk && pk.convRate, false))
+  applyDelta('dltConv', kpi.convRate, pk && pk.convRate, false)
 
   setVal('valHot', esc(hotCount))
   document.getElementById('subHot').innerHTML = hotCount > 0

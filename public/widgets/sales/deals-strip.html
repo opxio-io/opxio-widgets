@@ -37,7 +37,7 @@ body { padding: 14px 16px 16px; }
 
 .strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
 
-.tile { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px 14px; position: relative; overflow: hidden; transition: border-color .2s; display: flex; flex-direction: column; }
+.tile { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px 14px; position: relative; overflow: hidden; transition: border-color .2s; display: flex; flex-direction: column; justify-content: space-between; }
 .tile:hover { border-color: rgba(255,255,255,.13); }
 .tile.hero { background: var(--g); border-color: transparent; }
 .tile.hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,.07); }
@@ -46,12 +46,14 @@ body { padding: 14px 16px 16px; }
 .tile.hero .tile-label { color: rgba(0,0,0,.65); }
 .tile-val { font-size: 36px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; display: block; }
 .tile.hero .tile-val { color: #000; }
-.tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; margin-top: auto; padding-top: 8px; }
+.tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
 .tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
 
 .tile-delta { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; line-height: 1.4; }
 .tile-delta.up { background: rgba(200,255,0,.12); color: var(--g); }
-.tile.hero .tile-delta.up { background: rgba(0,0,0,.15); color: rgba(0,0,0,.8); }
+.tile.hero .tile-delta.up { background: rgba(0,0,0,.2); color: rgba(0,0,0,.85); }
+.tile.hero .tile-delta.dn { background: rgba(0,0,0,.2); color: rgba(0,0,0,.85); }
+.tile.hero .tile-delta.flat { background: rgba(0,0,0,.15); color: rgba(0,0,0,.7); }
 .tile-delta.dn { background: rgba(255,107,107,.1); color: var(--red); }
 .tile-delta.flat { background: rgba(255,255,255,.09); color: rgba(255,255,255,.5); }
 

@@ -44,7 +44,7 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 
 /* KPI row */
 .kpi-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
-.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;display:flex;flex-direction:column;}
+.kpi-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px 18px;display:flex;flex-direction:column;justify-content:space-between;}
 .kpi-card.hero{background:var(--g);border-color:transparent;position:relative;overflow:hidden;}
 .kpi-card.hero::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(0,0,0,.08);}
 .kpi-card.hero::after{content:'';position:absolute;bottom:-20px;right:50px;width:70px;height:70px;border-radius:50%;background:rgba(0,0,0,.05);}
@@ -53,10 +53,12 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .kpi-card.hero .kpi-sub{color:rgba(0,0,0,.65);font-weight:700;}
 .kpi-label{font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:block;}
 .kpi-val{font-size:40px;font-weight:900;letter-spacing:-2px;line-height:1;margin-bottom:6px;}
-.kpi-sub{font-size:11px;font-weight:500;color:var(--sub);margin-top:auto;padding-top:8px;}
+.kpi-sub{font-size:11px;font-weight:500;color:var(--sub);}
 .kpi-delta{position:absolute;top:14px;right:14px;font-size:10px;font-weight:700;padding:3px 8px;border-radius:100px;line-height:1.4;}
 .kpi-delta.up{background:rgba(200,255,0,.12);color:var(--g);}
-.kpi-card.hero .kpi-delta.up{background:rgba(0,0,0,.15);color:rgba(0,0,0,.8);}
+.kpi-card.hero .kpi-delta.up{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
+.kpi-card.hero .kpi-delta.dn{background:rgba(0,0,0,.2);color:rgba(0,0,0,.85);}
+.kpi-card.hero .kpi-delta.flat{background:rgba(0,0,0,.15);color:rgba(0,0,0,.7);}
 .kpi-delta.dn{background:rgba(255,107,107,.1);color:var(--red);}
 .kpi-delta.flat{background:rgba(255,255,255,.09);color:rgba(255,255,255,.5);}
 

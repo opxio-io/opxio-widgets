@@ -59,7 +59,6 @@ body { padding: 14px 16px 16px; }
 .dot-approved { background: var(--g); }
 .dot-declined { background: var(--red); }
 .dot-expired  { background: #444; }
-.dot-review   { background: #A78BFA; }
 .section-hd { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .items-list { display: flex; flex-direction: column; gap: 6px; }
 .item-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; transition: border-color .2s; }
@@ -96,18 +95,19 @@ body { padding: 14px 16px 16px; }
 </div>
 <div class="strip">
   <div class="tile hero">
-    <span class="tile-label">Open Quotes</span>
-    <span class="tile-val" id="valOpen"><span class="skel skel-val"></span></span>
-    <span class="tile-sub" id="subOpen"><span class="skel skel-sub"></span></span>
-  </div>
-  <div class="tile">
     <span class="tile-label">Open Value</span>
     <span class="tile-val" id="valValue"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subValue"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltValue"></span>
   </div>
   <div class="tile">
-    <span class="tile-label">Approved MTD</span>
+    <span class="tile-label">Issued This Month</span>
+    <span class="tile-val" id="valIssued"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subIssued"><span class="skel skel-sub"></span></span>
+    <span class="tile-delta" id="dltIssued"></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Approved This Month</span>
     <span class="tile-val" id="valApproved"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subApproved"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltApproved"></span>
@@ -189,9 +189,9 @@ function itemBadge(item) {
 }
 function showSkeletons() {
   const sv='<span class="skel skel-val"></span>', ss='<span class="skel skel-sub"></span>'
-  ;['valOpen','valValue','valApproved','valWinRate'].forEach(id=>setVal(id,sv))
-  ;['subOpen','subValue','subApproved','subWinRate'].forEach(id=>setVal(id,ss))
-  ;['dltValue','dltApproved'].forEach(id=>{const e=document.getElementById(id);if(e){e.className='tile-delta';e.innerHTML=''}})
+  ;['valValue','valIssued','valApproved','valWinRate'].forEach(id=>setVal(id,sv))
+  ;['subValue','subIssued','subApproved','subWinRate'].forEach(id=>setVal(id,ss))
+  ;['dltValue','dltIssued','dltApproved'].forEach(id=>{const e=document.getElementById(id);if(e){e.className='tile-delta';e.innerHTML=''}})
   document.getElementById('funnelRow').innerHTML=[70,90,60,80].map(w=>'<span class="skel" style="height:28px;width:'+w+'px;border-radius:100px;"></span>').join('')
   document.getElementById('itemsHd').style.display='none'
   document.getElementById('itemsList').innerHTML=''
@@ -199,24 +199,32 @@ function showSkeletons() {
 function render(data, prev) {
   const kpi=data.kpi||{}, funnel=data.quoteFunnel||[], items=data.quoteActiveItems||[]
   const pk=prev&&prev.kpi?prev.kpi:null
-  setVal('valOpen', esc(kpi.pendingCount||0))
-  setText('subOpen', (kpi.issuedMTD||0)+' issued this period')
+  // Hero: open value
   const ov=kpi.openValue||0, pov=pk?(pk.openValue||0):null
-  document.getElementById('valValue').style.fontSize=ov>=100000?'22px':ov>=10000?'28px':'36px'
+  document.getElementById('valValue').style.fontSize=ov>=100000?'18px':ov>=10000?'26px':'36px'
   setVal('valValue', esc(fmtMoney(ov)))
-  setText('subValue', (kpi.pendingCount||0)+' open quote'+((kpi.pendingCount||0)===1?'':'s'))
+  setText('subValue', (kpi.pendingCount||0)+' quote'+((kpi.pendingCount||0)===1?'':' s')+' in pipeline')
   applyDelta('dltValue', ov, pov)
+  // Issued this month
+  const im=kpi.issuedMTD||0, pim=pk?(pk.issuedMTD||0):null
+  setVal('valIssued', esc(im))
+  setText('subIssued', 'Quotations sent out')
+  applyDelta('dltIssued', im, pim)
+  // Approved this month
   const am=kpi.approvedMTD||0, pam=pk?(pk.approvedMTD||0):null
   setVal('valApproved', esc(am))
-  setText('subApproved', 'Quotes approved this period')
+  setText('subApproved', 'Quotes approved')
   applyDelta('dltApproved', am, pam)
+  // Win rate
   const wr=kpi.convRate
   document.getElementById('valWinRate').style.fontSize='36px'
   setVal('valWinRate', wr!=null?esc(wr+'%'):'<span style="font-size:22px;letter-spacing:-1px;color:rgba(255,255,255,.3)">—</span>')
   setText('subWinRate', wr!=null?'Decided quotes only':'No decided quotes yet')
+  // Funnel pills
   const fr=document.getElementById('funnelRow')
   const pills=funnel.filter(f=>f.count>0).map(f=>funnelPill(f.status,f.count)).join('')
   fr.innerHTML=pills||'<span style="color:var(--muted);font-size:11px;font-weight:600;">No quotes yet</span>'
+  // Active items list
   const hd=document.getElementById('itemsHd'), il=document.getElementById('itemsList')
   if(!items.length){hd.style.display='none';il.innerHTML='';return}
   hd.style.display='block'

@@ -17,7 +17,7 @@ if (window.self === window.top) {
 :root {
   --bg: #191919; --card: #222222;
   --border: rgba(255,255,255,0.07);
-  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B; --purple: #A78BFA;
+  --g: #C8FF00; --amber: #FBBF24; --red: #FF6B6B;
   --muted: rgba(255,255,255,0.38); --sub: rgba(255,255,255,0.55);
   --r: 14px;
 }
@@ -34,21 +34,21 @@ body { padding: 14px 16px 16px; }
 .strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 12px; }
 .tile { background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: var(--r); padding: 16px 18px 14px; position: relative; overflow: hidden; transition: border-color .2s; display: flex; flex-direction: column; justify-content: space-between; }
 .tile:hover { border-color: rgba(255,255,255,.13); }
-.tile.hero { background: var(--purple); border-color: transparent; }
-.tile.hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,.1); }
+.tile.hero { background: var(--g); border-color: transparent; }
+.tile.hero::before { content: ''; position: absolute; top: -20px; right: -20px; width: 80px; height: 80px; border-radius: 50%; background: rgba(0,0,0,.07); }
 .tile-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); display: block; margin-bottom: 8px; }
-.tile.hero .tile-label { color: rgba(255,255,255,.7); }
+.tile.hero .tile-label { color: rgba(0,0,0,.65); }
 .tile-val { font-size: 36px; font-weight: 900; letter-spacing: -2px; line-height: 1; margin-bottom: 4px; display: block; }
-.tile.hero .tile-val { color: #fff; }
+.tile.hero .tile-val { color: #000; }
 .tile-sub { font-size: 11px; font-weight: 600; color: var(--sub); display: block; }
-.tile.hero .tile-sub { color: rgba(255,255,255,.65); font-weight: 700; }
+.tile.hero .tile-sub { color: rgba(0,0,0,.6); font-weight: 700; }
 .tile-delta { position: absolute; top: 12px; right: 12px; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 100px; line-height: 1.4; }
 .tile-delta.up   { background: rgba(200,255,0,.12); color: var(--g); }
 .tile-delta.dn   { background: rgba(255,107,107,.1); color: var(--red); }
 .tile-delta.flat { background: rgba(255,255,255,.09); color: rgba(255,255,255,.5); }
 .tile.hero .tile-delta.up,
 .tile.hero .tile-delta.dn,
-.tile.hero .tile-delta.flat { background: rgba(255,255,255,.2); color: #fff; }
+.tile.hero .tile-delta.flat { background: rgba(0,0,0,.2); color: rgba(0,0,0,.85); }
 .funnel-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
 .f-pill { display: flex; align-items: center; gap: 5px; background: rgba(255,255,255,.04); border: 1px solid var(--border); border-radius: 100px; padding: 5px 11px; font-size: 11px; font-weight: 700; color: var(--sub); white-space: nowrap; }
 .f-pill .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
@@ -59,21 +59,18 @@ body { padding: 14px 16px 16px; }
 .dot-accepted { background: var(--g); }
 .dot-declined { background: var(--red); }
 .dot-expired  { background: #444; }
-.dot-review   { background: var(--purple); }
 .section-hd { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
 .items-list { display: flex; flex-direction: column; gap: 6px; }
 .item-row { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.025); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; transition: border-color .2s; }
 .item-row:hover { border-color: rgba(255,255,255,.12); }
-.item-row.warn { border-color: rgba(167,139,250,.25); background: rgba(167,139,250,.04); }
+.item-row.warn { border-color: rgba(251,191,36,.25); background: rgba(251,191,36,.04); }
 .item-ref    { font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; min-width: 96px; }
 .item-entity { font-size: 11px; color: var(--sub); flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .item-badges { display: flex; gap: 5px; align-items: center; flex-shrink: 0; }
 .badge { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 100px; white-space: nowrap; }
 .badge-draft    { background: rgba(255,255,255,.08); color: rgba(255,255,255,.55); }
-.badge-ready    { background: rgba(251,191,36,.12); color: var(--amber); }
 .badge-sent     { background: rgba(96,165,250,.12); color: #60A5FA; }
-.badge-review   { background: rgba(167,139,250,.15); color: var(--purple); border: 1px solid rgba(167,139,250,.3); }
-.badge-followup { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.25); }
+.badge-followup { background: rgba(251,191,36,.15); color: var(--amber); border: 1px solid rgba(251,191,36,.3); }
 .item-val { font-size: 12px; font-weight: 700; color: var(--sub); flex-shrink: 0; text-align: right; min-width: 70px; }
 .skel { background: linear-gradient(90deg,rgba(255,255,255,.04) 25%,rgba(255,255,255,.08) 50%,rgba(255,255,255,.04) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite; border-radius: 6px; display: block; }
 @keyframes shimmer { to { background-position: -200% 0; } }
@@ -95,18 +92,19 @@ body { padding: 14px 16px 16px; }
 </div>
 <div class="strip">
   <div class="tile hero">
-    <span class="tile-label">Open Proposals</span>
-    <span class="tile-val" id="valOpen"><span class="skel skel-val"></span></span>
-    <span class="tile-sub" id="subOpen"><span class="skel skel-sub"></span></span>
-  </div>
-  <div class="tile">
     <span class="tile-label">Open Value</span>
     <span class="tile-val" id="valValue"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subValue"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltValue"></span>
   </div>
   <div class="tile">
-    <span class="tile-label">Accepted MTD</span>
+    <span class="tile-label">Sent This Month</span>
+    <span class="tile-val" id="valSent"><span class="skel skel-val"></span></span>
+    <span class="tile-sub" id="subSent"><span class="skel skel-sub"></span></span>
+    <span class="tile-delta" id="dltSent"></span>
+  </div>
+  <div class="tile">
+    <span class="tile-label">Accepted This Month</span>
     <span class="tile-val" id="valAccepted"><span class="skel skel-val"></span></span>
     <span class="tile-sub" id="subAccepted"><span class="skel skel-sub"></span></span>
     <span class="tile-delta" id="dltAccepted"></span>
@@ -168,13 +166,11 @@ function applyDelta(id, curr, prev) {
   el.innerHTML=(up?_UP:_DN)+Math.abs(pct)+'%'
 }
 const S={
-  'Draft':         {dot:'dot-draft',    badge:'badge-draft'},
-  'Ready to Send': {dot:'dot-ready',    badge:'badge-ready'},
-  'Sent':          {dot:'dot-sent',     badge:'badge-sent'},
-  'Accepted':      {dot:'dot-accepted', badge:''},
-  'Declined':      {dot:'dot-declined', badge:''},
-  'Expired':       {dot:'dot-expired',  badge:''},
-  'Pending Review':{dot:'dot-review',   badge:'badge-review'},
+  'Draft':    {dot:'dot-draft',    badge:'badge-draft'},
+  'Sent':     {dot:'dot-sent',     badge:'badge-sent'},
+  'Accepted': {dot:'dot-accepted', badge:''},
+  'Declined': {dot:'dot-declined', badge:''},
+  'Expired':  {dot:'dot-expired',  badge:''},
 }
 function funnelPill(status, count) {
   const m=S[status]||{dot:'dot-draft'}
@@ -188,9 +184,9 @@ function itemBadge(item) {
 }
 function showSkeletons() {
   const sv='<span class="skel skel-val"></span>', ss='<span class="skel skel-sub"></span>'
-  ;['valOpen','valValue','valAccepted','valConv'].forEach(id=>setVal(id,sv))
-  ;['subOpen','subValue','subAccepted','subConv'].forEach(id=>setVal(id,ss))
-  ;['dltValue','dltAccepted'].forEach(id=>{const e=document.getElementById(id);if(e){e.className='tile-delta';e.innerHTML=''}})
+  ;['valValue','valSent','valAccepted','valConv'].forEach(id=>setVal(id,sv))
+  ;['subValue','subSent','subAccepted','subConv'].forEach(id=>setVal(id,ss))
+  ;['dltValue','dltSent','dltAccepted'].forEach(id=>{const e=document.getElementById(id);if(e){e.className='tile-delta';e.innerHTML=''}})
   document.getElementById('funnelRow').innerHTML=[70,90,60,80].map(w=>'<span class="skel" style="height:28px;width:'+w+'px;border-radius:100px;"></span>').join('')
   document.getElementById('itemsHd').style.display='none'
   document.getElementById('itemsList').innerHTML=''
@@ -198,25 +194,33 @@ function showSkeletons() {
 function render(data, prev) {
   const kpi=data.kpi||{}, funnel=data.proposalFunnel||[], items=data.proposalActiveItems||[]
   const pk=prev&&prev.kpi?prev.kpi:null
-  const openCount=kpi.pendingCount!=null?kpi.pendingCount:0
-  setVal('valOpen', esc(openCount))
-  setText('subOpen', (kpi.proposalsSentMTD||0)+' sent this period')
+  // Hero: open value
   const ov=kpi.proposalOpenValue||0, pov=pk?(pk.proposalOpenValue||0):null
-  document.getElementById('valValue').style.fontSize=ov>=100000?'22px':ov>=10000?'28px':'36px'
+  document.getElementById('valValue').style.fontSize=ov>=100000?'18px':ov>=10000?'26px':'36px'
   setVal('valValue', esc(fmtMoney(ov)))
-  setText('subValue', openCount+' open proposal'+(openCount===1?'':'s'))
+  const openCount=items.length
+  setText('subValue', openCount+' proposal'+(openCount===1?'':'s')+' in pipeline')
   applyDelta('dltValue', ov, pov)
+  // Sent this month
+  const sm=kpi.proposalsSentMTD||0, psm=pk?(pk.proposalsSentMTD||0):null
+  setVal('valSent', esc(sm))
+  setText('subSent', 'Proposals sent out')
+  applyDelta('dltSent', sm, psm)
+  // Accepted this month
   const ac=kpi.proposalsAccepted||0, pac=pk?(pk.proposalsAccepted||0):null
   setVal('valAccepted', esc(ac))
-  setText('subAccepted', 'Proposals accepted this period')
+  setText('subAccepted', 'Proposals accepted')
   applyDelta('dltAccepted', ac, pac)
+  // Conv rate
   const cr=kpi.proposalConvRate
   document.getElementById('valConv').style.fontSize='36px'
   setVal('valConv', cr!=null?esc(cr+'%'):'<span style="font-size:22px;letter-spacing:-1px;color:rgba(255,255,255,.3)">—</span>')
   setText('subConv', cr!=null?'Decided proposals only':'No decided proposals yet')
+  // Funnel pills
   const fr=document.getElementById('funnelRow')
   const pills=funnel.filter(f=>f.count>0).map(f=>funnelPill(f.status,f.count)).join('')
   fr.innerHTML=pills||'<span style="color:var(--muted);font-size:11px;font-weight:600;">No proposals yet</span>'
+  // Active items
   const hd=document.getElementById('itemsHd'), il=document.getElementById('itemsList')
   if(!items.length){hd.style.display='none';il.innerHTML='';return}
   hd.style.display='block'

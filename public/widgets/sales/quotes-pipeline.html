@@ -248,8 +248,9 @@ function renderFunnelRows(funnel) {
     return '<div class="funnel-item">'
       +'<span class="funnel-stage">'+esc(f.status)+'</span>'
       +'<div class="funnel-track"><div class="funnel-fill '+cls+'" style="width:'+pct+'%"></div></div>'
-      +'<div class="funnel-meta"><span class="funnel-count">'+f.count+'</span>'
+      +'<div class="funnel-meta">'
       +(f.value>0?'<span class="funnel-val">'+esc(fmtRM(f.value,'MYR'))+'</span>':'')
+      +'<span class="funnel-count">'+f.count+'</span>'
       +'</div></div>'
   }).join('')
 }

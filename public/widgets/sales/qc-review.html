@@ -28,13 +28,26 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
 
-/* Top bar */
+/* ─── Login screen ─────────────────────────────────────────────── */
+.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:320px;gap:20px;animation:fadeIn .25s ease;}
+.login-logo{font-size:22px;font-weight:900;letter-spacing:-0.5px;color:#fff;}
+.login-logo span{color:var(--g);}
+.login-sub{font-size:13px;color:var(--muted);text-align:center;max-width:280px;line-height:1.5;}
+.login-btn{display:inline-flex;align-items:center;gap:10px;background:var(--g);color:#111;font-family:'Satoshi',sans-serif;font-size:13px;font-weight:800;padding:11px 22px;border-radius:100px;border:none;cursor:pointer;text-decoration:none;transition:opacity .15s;letter-spacing:-.1px;}
+.login-btn:hover{opacity:.88;}
+.login-btn svg{width:16px;height:16px;flex-shrink:0;}
+.login-err{font-size:12px;color:var(--red);background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.15);border-radius:10px;padding:10px 14px;text-align:center;max-width:320px;}
+
+/* ─── Top bar ──────────────────────────────────────────────────── */
 .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:10px;flex-wrap:wrap;}
 .top-bar-left{display:flex;align-items:center;gap:10px;}
 .wgt-title{font-size:17px;font-weight:900;letter-spacing:-0.4px;color:#fff;}
-.wgt-org{font-size:10px;font-weight:700;letter-spacing:.06em;color:var(--muted);background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:100px;padding:3px 10px;}
+.reviewer-chip{font-size:10px;font-weight:700;letter-spacing:.04em;color:var(--g);background:rgba(200,255,0,.08);border:1px solid rgba(200,255,0,.18);border-radius:100px;padding:3px 10px;display:flex;align-items:center;gap:5px;}
+.reviewer-chip svg{width:9px;height:9px;}
+.logout-btn{font-size:11px;font-weight:700;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:4px 12px;cursor:pointer;transition:color .15s;}
+.logout-btn:hover{color:#fff;}
 
-/* Summary pills row */
+/* ─── Pills ────────────────────────────────────────────────────── */
 .pills-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;}
 .pill{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:6px 14px;font-size:11px;font-weight:700;color:var(--sub);cursor:pointer;transition:all .15s;user-select:none;}
 .pill:hover{background:rgba(255,255,255,.07);}
@@ -52,16 +65,14 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .pill-dot.all{background:rgba(255,255,255,.3);}
 .pill-count{font-size:12px;font-weight:900;}
 
-/* Cards list */
+/* ─── Cards ────────────────────────────────────────────────────── */
 .cards{display:flex;flex-direction:column;gap:10px;}
-
 .qc-card{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:14px;padding:16px 18px;animation:fadeIn .2s ease;display:flex;flex-direction:column;gap:10px;}
 .qc-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;}
 .qc-card-left{display:flex;flex-direction:column;gap:4px;min-width:0;}
 .qc-card-name{font-size:13px;font-weight:900;letter-spacing:-0.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .qc-card-entity{font-size:11px;font-weight:600;color:var(--sub);}
 .qc-card-right{display:flex;align-items:center;gap:6px;flex-shrink:0;}
-
 .badge{display:inline-flex;align-items:center;font-size:10px;font-weight:700;padding:3px 9px;border-radius:100px;white-space:nowrap;}
 .badge-quote{background:rgba(96,165,250,.12);color:var(--blue);}
 .badge-proposal{background:rgba(167,139,250,.12);color:var(--purple);}
@@ -70,87 +81,117 @@ body{background:var(--bg);font-family:'Satoshi',sans-serif;color:#fff;padding:18
 .badge-revision{background:rgba(251,146,60,.12);color:var(--orange);}
 .badge-approved{background:rgba(200,255,0,.12);color:var(--g);}
 .badge-rejected{background:rgba(255,107,107,.12);color:var(--red);}
-
 .qc-card-meta{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
 .qc-card-meta-left{display:flex;align-items:center;gap:8px;}
 .qc-meta-item{font-size:11px;font-weight:600;color:var(--muted);}
 .qc-meta-item span{color:var(--sub);}
 .qc-amount{font-size:13px;font-weight:900;color:#fff;}
-
-.qc-reviewer{font-size:11px;font-weight:700;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:3px 10px;display:flex;align-items:center;gap:5px;}
-.qc-reviewer-dot{width:5px;height:5px;border-radius:50%;background:var(--g);}
-
-.qc-notes{font-size:11px;font-weight:600;color:var(--sub);background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);border-radius:8px;padding:8px 12px;font-style:italic;line-height:1.5;}
-
-.notion-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;border:1px solid rgba(255,255,255,.07);border-radius:8px;padding:4px 10px;transition:all .15s;}
-.notion-link:hover{color:#fff;border-color:rgba(255,255,255,.2);background:rgba(255,255,255,.04);}
-.notion-link svg{width:12px;height:12px;flex-shrink:0;}
-
-/* Misc */
-.empty-state{text-align:center;padding:40px 0;font-size:12px;color:rgba(255,255,255,.2);font-weight:600;}
-.loading{display:flex;align-items:center;justify-content:center;min-height:200px;flex-direction:column;gap:10px;}
-.spinner{width:18px;height:18px;border:2px solid rgba(255,255,255,.06);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
-.loading-text{font-size:11px;color:rgba(255,255,255,.25);font-weight:600;}
-.footer{text-align:center;padding:22px 0 4px;font-size:9px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:rgba(255,255,255,.1);}
+.notion-link{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;color:var(--muted);text-decoration:none;transition:color .15s;}
+.notion-link:hover{color:#fff;}
+.notion-link svg{width:12px;height:12px;}
+.qc-reviewer{font-size:11px;font-weight:700;color:var(--sub);background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:100px;padding:4px 12px;}
+.qc-reviewer-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--g);margin-right:6px;}
+.qc-notes{font-size:12px;color:var(--sub);font-style:italic;border-left:2px solid rgba(255,255,255,.08);padding-left:10px;}
+.empty-state{text-align:center;color:var(--muted);font-size:13px;padding:40px 0;}
+.loader{display:flex;align-items:center;justify-content:center;padding:40px 0;}
+.loader-spin{width:22px;height:22px;border:2px solid rgba(255,255,255,.08);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
 </style>
 </head>
 <body>
 
-<div class="top-bar">
-  <div class="top-bar-left">
-    <span class="wgt-title">QC Review</span>
-    <span class="wgt-org">OPXIO</span>
-  </div>
-</div>
-
-<div class="pills-row" id="pillsRow">
-  <div class="loading"><div class="spinner"></div></div>
-</div>
-
-<div id="cardsWrap">
-  <div class="loading"><div class="spinner"></div><div class="loading-text">Loading</div></div>
-</div>
-
-<div class="footer">Widgets by Opxio.io</div>
+<div id="root"></div>
 
 <script>
-const BASE   = 'https://api.opxio.io/api/clients/opxio'
-const TOKEN  = new URLSearchParams(location.search).get('token') || ''
-let allItems = []
-let activeFilter = 'Pending Review'
+const BASE  = 'https://api.opxio.io/api/clients/opxio'
+const TOKEN = new URLSearchParams(location.search).get('token') || ''
 
-function fmtAmt(amount, currency) {
-  if (!amount) return '—'
-  const c = (currency || 'MYR').toUpperCase()
-  return c + ' ' + Number(amount).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+// ── Session management (in-memory only) ────────────────────────────────────
+let SESSION  = new URLSearchParams(location.search).get('session') || ''
+let REVIEWER = new URLSearchParams(location.search).get('reviewer') || ''
+let AUTH_ERR = new URLSearchParams(location.search).get('auth_error') || ''
+
+// Strip auth params from URL without reload (clean up address bar in Notion)
+if (SESSION || AUTH_ERR) {
+  try {
+    const u = new URL(location.href)
+    u.searchParams.delete('session')
+    u.searchParams.delete('reviewer')
+    u.searchParams.delete('auth_error')
+    history.replaceState({}, '', u.toString())
+  } catch (_) {}
 }
 
+let allItems    = []
+let activeFilter = 'Pending Review'
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+function fmtAmt(amount, currency) {
+  if (!amount) return '—'
+  return (currency || 'MYR').toUpperCase() + ' ' +
+    Number(amount).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
 function fmtDate(iso) {
   if (!iso) return '—'
   return new Date(iso).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 }
-
-function statusBadgeClass(s) {
-  if (!s) return 'badge-pending'
-  const m = { 'Pending Review': 'badge-pending', 'Revision Requested': 'badge-revision', 'Approved': 'badge-approved', 'Rejected': 'badge-rejected' }
+function statusBadgeCls(s) {
+  const m = { 'Pending Review':'badge-pending','Revision Requested':'badge-revision','Approved':'badge-approved','Rejected':'badge-rejected' }
   return m[s] || 'badge-pending'
+}
+
+// ── Login screen ────────────────────────────────────────────────────────────
+function showLogin() {
+  const errHtml = AUTH_ERR
+    ? `<div class="login-err">${esc(AUTH_ERR)}</div>`
+    : ''
+  document.getElementById('root').innerHTML = `
+    <div class="login-wrap">
+      <div class="login-logo">Opxio <span>QC</span></div>
+      <div class="login-sub">Sign in with your Notion account to review quotations and proposals.</div>
+      ${errHtml}
+      <a class="login-btn" href="${BASE}/auth/start?token=${encodeURIComponent(TOKEN)}">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+        Login with Notion
+      </a>
+    </div>`
+}
+
+// ── Main widget ─────────────────────────────────────────────────────────────
+function renderTopBar() {
+  const reviewerHtml = REVIEWER
+    ? `<div class="reviewer-chip">
+        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+        ${esc(REVIEWER)}
+       </div>`
+    : ''
+  return `
+    <div class="top-bar">
+      <div class="top-bar-left">
+        <div class="wgt-title">QC Review</div>
+        ${reviewerHtml}
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span class="logout-btn" onclick="logout()">Sign out</span>
+      </div>
+    </div>`
 }
 
 function renderPills(items) {
   const counts = { 'Pending Review': 0, 'Revision Requested': 0, 'Approved': 0, 'Rejected': 0 }
   items.forEach(i => { if (counts[i.reviewStatus] !== undefined) counts[i.reviewStatus]++ })
   const total = items.length
-
   const defs = [
     { key: 'Pending Review',     cls: 'p-pending',  dot: 'pending',  label: 'Pending' },
     { key: 'Revision Requested', cls: 'p-revision', dot: 'revision', label: 'Revision' },
     { key: 'Approved',           cls: 'p-approved', dot: 'approved', label: 'Approved' },
     { key: 'Rejected',           cls: 'p-rejected', dot: 'rejected', label: 'Rejected' },
-    { key: 'all',                cls: 'p-all',      dot: 'all',      label: 'All' },
+    { key: 'all',                cls: 'p-all',       dot: 'all',      label: 'All' },
   ]
-
-  document.getElementById('pillsRow').innerHTML = defs.map(d => {
-    const count = d.key === 'all' ? total : (counts[d.key] || 0)
+  return defs.map(d => {
+    const count  = d.key === 'all' ? total : (counts[d.key] || 0)
     const active = activeFilter === d.key ? ' active' : ''
     return `<div class="pill ${d.cls}${active}" onclick="setFilter('${d.key}')">
       <span class="pill-dot ${d.dot}"></span>
@@ -165,78 +206,107 @@ function renderCards(items) {
     ? items
     : items.filter(i => i.reviewStatus === activeFilter)
 
-  if (!filtered.length) {
-    document.getElementById('cardsWrap').innerHTML = '<div class="empty-state">No items in this view</div>'
-    return
-  }
+  if (!filtered.length) return '<div class="empty-state">No items in this view</div>'
 
-  document.getElementById('cardsWrap').innerHTML = '<div class="cards">' +
-    filtered.map(item => {
-      const typeBadge  = item.type === 'Quotation' ? 'badge-quote' : 'badge-proposal'
-      const typeLabel  = item.type === 'Quotation' ? 'Quote' : 'Proposal'
-      const statusCls  = statusBadgeClass(item.reviewStatus)
-      const notionUrl  = item.url || '#'
+  return '<div class="cards">' + filtered.map(item => {
+    const typeBadge  = item.type === 'Quotation' ? 'badge-quote' : 'badge-proposal'
+    const typeLabel  = item.type === 'Quotation' ? 'Quote' : 'Proposal'
+    const statusCls  = statusBadgeCls(item.reviewStatus)
 
-      let reviewerHtml = ''
-      if (item.reviewedBy) {
-        reviewerHtml = `<div class="qc-reviewer"><span class="qc-reviewer-dot"></span>${item.reviewedBy} · ${fmtDate(item.reviewedAt)}</div>`
-      }
+    const reviewerHtml = item.reviewedBy
+      ? `<div class="qc-reviewer"><span class="qc-reviewer-dot"></span>${esc(item.reviewedBy)} · ${fmtDate(item.reviewedAt)}</div>`
+      : ''
+    const notesHtml = item.reviewerNotes
+      ? `<div class="qc-notes">"${esc(item.reviewerNotes)}"</div>`
+      : ''
 
-      let notesHtml = ''
-      if (item.reviewerNotes) {
-        notesHtml = `<div class="qc-notes">"${item.reviewerNotes}"</div>`
-      }
-
-      return `<div class="qc-card">
-        <div class="qc-card-top">
-          <div class="qc-card-left">
-            <div class="qc-card-name">${item.name}</div>
-            <div class="qc-card-entity">${item.entityName || '—'}</div>
-          </div>
-          <div class="qc-card-right">
-            <span class="badge ${typeBadge}">${typeLabel}</span>
-            <span class="badge badge-round">R${item.qcRound || 1}</span>
-            <span class="badge ${statusCls}">${item.reviewStatus || 'Pending Review'}</span>
-          </div>
+    return `<div class="qc-card">
+      <div class="qc-card-top">
+        <div class="qc-card-left">
+          <div class="qc-card-name">${esc(item.name)}</div>
+          <div class="qc-card-entity">${esc(item.entityName || '—')}</div>
         </div>
-        <div class="qc-card-meta">
-          <div class="qc-card-meta-left">
-            <span class="qc-amount">${fmtAmt(item.amount, item.currency)}</span>
-            ${item.quoteType ? `<span class="qc-meta-item">${item.quoteType}</span>` : ''}
-            <span class="qc-meta-item">Submitted <span>${fmtDate(item.submittedAt)}</span></span>
-          </div>
-          <a class="notion-link" href="${notionUrl}" target="_blank">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
-            Open in Notion
-          </a>
+        <div class="qc-card-right">
+          <span class="badge ${typeBadge}">${typeLabel}</span>
+          <span class="badge badge-round">R${item.qcRound || 1}</span>
+          <span class="badge ${statusCls}">${esc(item.reviewStatus || 'Pending Review')}</span>
         </div>
-        ${reviewerHtml}
-        ${notesHtml}
-      </div>`
-    }).join('') + '</div>'
+      </div>
+      <div class="qc-card-meta">
+        <div class="qc-card-meta-left">
+          <span class="qc-amount">${fmtAmt(item.amount, item.currency)}</span>
+          ${item.quoteType ? `<span class="qc-meta-item">${esc(item.quoteType)}</span>` : ''}
+          <span class="qc-meta-item">Submitted <span>${fmtDate(item.submittedAt)}</span></span>
+        </div>
+        <a class="notion-link" href="${esc(item.url || '#')}" target="_blank">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 4h16v16H4V4zm2 2v12h12V6H6zm2 2h8v2H8V8zm0 4h8v2H8v-2zm0 4h5v2H8v-2z"/></svg>
+          Open in Notion
+        </a>
+      </div>
+      ${reviewerHtml}
+      ${notesHtml}
+    </div>`
+  }).join('') + '</div>'
+}
+
+function renderWidget() {
+  document.getElementById('root').innerHTML = `
+    ${renderTopBar()}
+    <div id="pillsRow" class="pills-row"></div>
+    <div id="cardsWrap"></div>`
 }
 
 function setFilter(key) {
   activeFilter = key
-  renderPills(allItems)
-  renderCards(allItems)
+  document.getElementById('pillsRow').innerHTML = renderPills(allItems)
+  document.getElementById('cardsWrap').innerHTML = renderCards(allItems)
+}
+
+function logout() {
+  SESSION  = ''
+  REVIEWER = ''
+  allItems = []
+  showLogin()
 }
 
 async function load() {
+  renderWidget()
+  document.getElementById('cardsWrap').innerHTML = '<div class="loader"><div class="loader-spin"></div></div>'
+
   try {
-    const r = await fetch(`${BASE}/qc-review?token=${TOKEN}&status=all`)
+    const params = new URLSearchParams({ status: 'all' })
+    if (SESSION) params.set('session', SESSION)
+    else if (TOKEN) params.set('token', TOKEN)
+
+    const r = await fetch(`${BASE}/qc-review?${params}`)
     const d = await r.json()
+
+    if (r.status === 401 || r.status === 403) {
+      SESSION = ''
+      showLogin()
+      return
+    }
     if (!r.ok) throw new Error(d.error || 'Failed to load')
+
     allItems = d.items || []
-    renderPills(allItems)
-    renderCards(allItems)
+    if (d.reviewer && !REVIEWER) REVIEWER = d.reviewer
+
+    // Re-render top bar with reviewer name if just discovered
+    document.getElementById('root').querySelector('.top-bar').outerHTML = renderTopBar()
+
+    document.getElementById('pillsRow').innerHTML = renderPills(allItems)
+    document.getElementById('cardsWrap').innerHTML = renderCards(allItems)
   } catch (e) {
-    document.getElementById('pillsRow').innerHTML = ''
-    document.getElementById('cardsWrap').innerHTML = `<div class="empty-state">${e.message}</div>`
+    document.getElementById('cardsWrap').innerHTML = `<div class="empty-state">${esc(e.message)}</div>`
   }
 }
 
-load()
+// ── Entry point ─────────────────────────────────────────────────────────────
+if (SESSION) {
+  load()
+} else {
+  showLogin()
+}
 </script>
 </body>
 </html>

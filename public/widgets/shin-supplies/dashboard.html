@@ -584,12 +584,10 @@ function render(d){
   const _tiers=(d.leadTiers&&d.leadTiers.tiers)||[];
   const ltRows=_tiers.length?_tiers.map(t=>{
     const fill='var('+(_tierVar[t.key]||'--tier-weak')+')';
-    const wIn=(t.pct||0)>=20;
     const w=Math.max(t.pct||0,(t.count||0)>0?4:0);
     return `<div class="lt-row">`
       +`<span class="lt-lbl">${esc(t.label)}</span>`
-      +`<div class="lt-track"><div class="lt-fill" style="width:${w}%;background:${fill};${wIn?'min-width:34px;':''}">${wIn?(t.pct||0)+'%':''}</div></div>`
-      +`<span class="lt-pct">${wIn?'':(t.pct||0)+'%'}</span>`
+      +`<div class="lt-track"><div class="lt-fill" style="width:${w}%;min-width:36px;background:${fill};">${(t.pct||0)+'%'}</div></div>`
       +`<span class="lt-count">${t.count||0}</span>`
     +`</div>`;
   }).join(''):`<div class="empty">No tier data</div>`;

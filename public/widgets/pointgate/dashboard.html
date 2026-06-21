@@ -355,8 +355,8 @@ function exportCSV() {
 function updateMonthLabel() {
   document.getElementById('mn-lbl').textContent = `${MONTHS[filterMonth-1]} ${filterYear}`
   const cur=new Date(filterYear,filterMonth-1,1)
-  document.getElementById('mn-prev').disabled = cur<=new Date(2026,0,1)
-  document.getElementById('mn-next').disabled = cur>=new Date(2026,11,1)
+  document.getElementById('mn-prev').disabled = cur<=new Date(2024,0,1)
+  document.getElementById('mn-next').disabled = cur>=new Date(now.getFullYear(),now.getMonth(),1)
 }
 
 function shiftMonth(dir) {

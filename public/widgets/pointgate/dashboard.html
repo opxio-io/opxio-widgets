@@ -126,6 +126,30 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 /* Error */
 .err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:10px;display:none;}
 
+/* Search + toolbar */
+.toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:160px;max-width:260px;}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(255,255,255,.25);}
+.search-input{width:100%;background:#1e1e1e;border:1px solid rgba(255,255,255,.09);border-radius:8px;color:#fff;font-family:inherit;font-size:12px;padding:6px 9px 6px 30px;outline:none;transition:border-color .13s;}
+.search-input:focus{border-color:rgba(170,255,0,.35);}
+.search-input::placeholder{color:rgba(255,255,255,.2);}
+.btn-export{font-size:10.5px;font-weight:600;padding:5px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.45);cursor:pointer;transition:all .13s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
+.btn-export:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.75);}
+.btn-clear{font-size:10px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,87,87,.2);background:rgba(255,87,87,.06);color:#FF5757;cursor:pointer;transition:all .13s;display:none;}
+.btn-clear:hover{background:rgba(255,87,87,.12);}
+
+/* Sticky header */
+.tbl-wrap{overflow-x:auto;max-height:520px;overflow-y:auto;}
+.tbl thead th{position:sticky;top:0;z-index:2;background:#222;}
+
+/* Totals row */
+.tbl tfoot td{padding:9px 10px;font-size:11.5px;font-weight:700;border-top:1px solid rgba(255,255,255,.1);background:#1e1e1e;}
+.tbl tfoot .tot-label{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.08em;text-transform:uppercase;}
+
+/* Overdue accent */
+.tbl tr.data-row.is-overdue td:first-child{border-left:2px solid rgba(255,87,87,.5);}
+.tbl tr.data-row.is-partial  td:first-child{border-left:2px solid rgba(251,191,36,.4);}
+
 /* Receipt */
 .rcpt-icon{display:flex;align-items:center;justify-content:center;}
 .rcpt-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;text-decoration:none;}
@@ -209,6 +233,17 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
     <span class="tbl-title" id="tbl-label">Rent Payments</span>
     <span class="row-count" id="row-count"></span>
   </div>
+  <div class="toolbar">
+    <div class="search-wrap">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l3 3" stroke-linecap="round"/></svg>
+      <input class="search-input" id="search-input" placeholder="Search lot or tenant…" oninput="onSearch()" autocomplete="off"/>
+    </div>
+    <button class="btn-clear" id="btn-clear" onclick="clearFilters()">✕ Clear filters</button>
+    <button class="btn-export" onclick="exportCSV()">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h10M8 2v8M5 7l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Export CSV
+    </button>
+  </div>
   <div class="tbl-wrap">
     <table class="tbl">
       <colgroup>
@@ -238,6 +273,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
         <th></th>
       </tr></thead>
       <tbody id="tbl-body"><tr><td colspan="11" class="empty">Loading…</td></tr></tbody>
+      <tfoot id="tbl-foot"></tfoot>
     </table>
   </div>
   <div class="pagination" id="pagination"></div>
@@ -262,12 +298,57 @@ let currentPage  = 1
 let _ctrl        = null
 let _rows        = []
 let _editRowId   = null
+let _search      = ''
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 const fmRM = (n,zero='RM 0.00') => n == null ? '—' : n===0 ? zero : 'RM '+Number(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2})
 const fmDate = s => { if(!s)return '—'; const d=new Date(s+'T00:00:00'); return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short'}) }
 function monthStr() { return `${filterYear}-${String(filterMonth).padStart(2,'0')}` }
+
+function onSearch() {
+  _search = document.getElementById('search-input').value.trim().toLowerCase()
+  updateClearBtn(); currentPage=1; renderTable(_rows)
+}
+
+function updateClearBtn() {
+  const active = _search || filterBlock || filterStatus
+  document.getElementById('btn-clear').style.display = active ? 'inline-flex' : 'none'
+}
+
+function clearFilters() {
+  _search=''; filterBlock=''; filterStatus=''
+  document.getElementById('search-input').value=''
+  document.querySelectorAll('[data-status]').forEach(e=>e.classList.remove('active'))
+  document.querySelector('[data-status=""]').classList.add('active')
+  document.querySelectorAll('.block-pill').forEach(e=>e.classList.remove('active'))
+  document.querySelector('.block-pill[data-block=""]')?.classList.add('active')
+  updateClearBtn(); currentPage=1; renderTable(_rows)
+}
+
+function getVisible(rows) {
+  if(!_search) return rows
+  const q = _search
+  return rows.filter(r =>
+    r.lot.toLowerCase().includes(q) ||
+    r.tenant.toLowerCase().includes(q)
+  )
+}
+
+function exportCSV() {
+  const visible = getSorted(getVisible(_rows))
+  const headers = ['Lot','Tenant','B/F (RM)','Rent Due (RM)','Paid (RM)','Balance (RM)','Status','Method','Pay Date','Receipt URL']
+  const rows = visible.map(r => [
+    r.lot, r.tenant, r.bf||0, r.amtDue, r.amtPaid, r.balance,
+    r.status, r.method, r.payDate||'', r.receiptUrl||''
+  ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
+  const csv = [headers.join(','), ...rows].join('\n')
+  const blob = new Blob([csv], {type:'text/csv'})
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = `pointgate_${monthStr()}${filterBlock?'_'+filterBlock:''}.csv`
+  a.click()
+}
 
 function updateMonthLabel() {
   document.getElementById('mn-lbl').textContent = `${MONTHS[filterMonth-1]} ${filterYear}`
@@ -391,8 +472,9 @@ function badge(s){ const c={Paid:'paid',Partial:'partial',Overdue:'overdue',Pend
 
 // ── Render ──────────────────────────────────────────────────────────────────
 function renderTable(rows) {
-  const sorted = getSorted(rows)
-  const total  = sorted.length
+  const visible = getVisible(rows)
+  const sorted = getSorted(visible)
+  const total  = visible.length
   const pages  = Math.max(1,Math.ceil(total/PAGE_SIZE))
   if(currentPage>pages)currentPage=pages
 
@@ -418,7 +500,8 @@ function renderTable(rows) {
     const isPaid = r.status==='Paid'
     const isEdit = _editRowId===r.id
 
-    const dataRow = `<tr class="data-row" id="row-${esc(r.id)}">
+    const rowClass = r.status==='Overdue'?' is-overdue':r.status==='Partial'?' is-partial':''
+    const dataRow = `<tr class="data-row${rowClass}" id="row-${esc(r.id)}">`
       <td><span class="lot" style="${isOrphan?'color:rgba(255,255,255,.2);font-weight:500':''}">${esc(r.lot)}</span>${isDup?`<span class="dup-dot" title="Multiple records for this lot in ${r.month}"></span>`:''}
       </td>
       <td><span class="tname" title="${esc(r.tenant)}">${esc(r.tenant||'—')}</span></td>
@@ -457,7 +540,7 @@ function renderTable(rows) {
         <div class="edit-form">
           <div class="ef-group">
             <span class="ef-label">Amount Paid (RM)</span>
-            <input id="ef-paid-${esc(r.id)}" class="ef-input" type="number" min="0" step="0.01" value="${esc(r.amtPaid??'')}"/>
+            <input id="ef-paid-${esc(r.id)}" class="ef-input" type="number" min="0" step="0.01" value="${esc(r.amtPaid??'')}" oninput="autoStatus('${esc(r.id)}',this.value,${r.amtDue})"/>
           </div>
           <div class="ef-group">
             <span class="ef-label">Status</span>
@@ -514,6 +597,22 @@ function renderTable(rows) {
     return dataRow + editRow
   }).join('')
 
+  // Totals row
+  const foot = document.getElementById('tbl-foot')
+  if(sorted.length) {
+    const tDue  = visible.reduce((s,r)=>s+r.amtDue,0)
+    const tPaid = visible.reduce((s,r)=>s+r.amtPaid,0)
+    const tBal  = visible.reduce((s,r)=>s+r.balance,0)
+    const balCls = tBal<=0.005?'bal-zero':'bal-neg'
+    foot.innerHTML = `<tr>
+      <td colspan="3" class="tot-label">Totals (${visible.length} records)</td>
+      <td class="r">${fmRM(tDue)}</td>
+      <td class="r">${fmRM(tPaid)}</td>
+      <td class="r"><span class="${balCls}">${fmRM(tBal)}</span></td>
+      <td colspan="5"></td>
+    </tr>`
+  } else { foot.innerHTML='' }
+
   renderPagination(total, pages)
 }
 
@@ -542,6 +641,26 @@ function renderKPI(kpi) {
   const rateEl=document.getElementById('v-rate')
   rateEl.style.color = rate>=90?'#4ADE80':rate>=70?'#AAFF00':'#FF5757'
 }
+
+// ── Auto-status logic ────────────────────────────────────────────────────────
+function autoStatus(id, paidVal, amtDue) {
+  const sel = document.getElementById('ef-status-' + id)
+  if(!sel) return
+  const paid = parseFloat(paidVal)
+  if(isNaN(paid)) return
+  if(paid >= amtDue && amtDue > 0)      sel.value = 'Paid'
+  else if(paid > 0 && paid < amtDue)    sel.value = 'Partial'
+  else if(paid === 0)                   { if(sel.value==='Paid'||sel.value==='Partial') sel.value='Pending' }
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape' && _editRowId) { closeEdit(); renderTable(_rows) }
+  if(e.key==='Enter' && _editRowId && !e.shiftKey) {
+    const saveBtn = document.getElementById('ef-save-' + _editRowId)
+    if(saveBtn && document.activeElement?.closest('.edit-row')) saveBtn.click()
+  }
+})
 
 // ── Receipt upload ──────────────────────────────────────────────────────────
 function triggerReceiptUpload(id) {

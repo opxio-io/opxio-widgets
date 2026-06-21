@@ -68,6 +68,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .tbl th:hover{color:rgba(255,255,255,.6);}
 .tbl th.sorted{color:var(--g);}
 .tbl th.r{text-align:right;}
+.tbl td.r{text-align:right;}
 .tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle;}
 .tbl tr.data-row:hover td{background:rgba(255,255,255,.02);}
 .tbl tr.edit-row td{background:#1a1a1a;border-bottom:2px solid var(--g);}
@@ -265,7 +266,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
         <th class="r" onclick="sortBy('bf')">B/F</th>
         <th class="r" onclick="sortBy('amtDue')">Rent Due</th>
         <th class="r" onclick="sortBy('amtPaid')">Paid</th>
-        <th class="r" onclick="sortBy('balance')">Balance</th>
+        <th class="r" onclick="sortBy('balance')" title="Monthly balance + B/F balance owed">Balance <span style="font-size:8px;opacity:.5;font-weight:500;letter-spacing:0">+B/F</span></th>
         <th onclick="sortBy('status')">Status</th>
         <th onclick="sortBy('method')">Method</th>
         <th onclick="sortBy('payDate')">Pay Date</th>
@@ -391,7 +392,8 @@ function sortBy(col) {
 
 function getSorted(rows) {
   return [...rows].sort((a,b)=>{
-    const va=a[sortCol],vb=b[sortCol]
+    const getVal = r => sortCol==='balance' ? (r.bf+r.amtDue-r.amtPaid) : r[sortCol]
+    const va=getVal(a),vb=getVal(b)
     if(va==null&&vb==null)return 0
     if(va==null)return sortDir; if(vb==null)return -sortDir
     if(typeof va==='number')return(va-vb)*sortDir
@@ -496,7 +498,8 @@ function renderTable(rows) {
     const dupKey = r.lot+'|'+r.month
     const isDup  = r.lot !== '—' && dupSet.has(dupKey)
     const isOrphan = r.lot === '—'
-    const balCls = r.balance<=0.005 ? 'bal-zero' : r.balance>0 ? 'bal-neg' : 'bal-pos'
+    const totalOwed = r.bf + r.amtDue - r.amtPaid
+    const balCls = totalOwed<=0.005 ? 'bal-zero' : totalOwed>0 ? 'bal-neg' : 'bal-pos'
     const isPaid = r.status==='Paid'
     const isEdit = _editRowId===r.id
 
@@ -508,7 +511,7 @@ function renderTable(rows) {
       <td class="r"><span class="bf-val">${r.bf?fmRM(r.bf):'—'}</span></td>
       <td class="r"><span class="rm">${fmRM(r.amtDue)}</span></td>
       <td class="r"><span class="rm">${fmRM(r.amtPaid)}</span></td>
-      <td class="r"><span class="rm ${balCls}">${fmRM(r.balance,'—')}</span></td>
+      <td class="r"><span class="rm ${balCls}">${fmRM(totalOwed)}</span></td>
       <td>${badge(r.status)}</td>
       <td><span class="method-val">${esc(r.method||'—')}</span></td>
       <td><span class="pay-date-val">${fmDate(r.payDate)}</span></td>
@@ -602,7 +605,7 @@ function renderTable(rows) {
   if(sorted.length) {
     const tDue  = visible.reduce((s,r)=>s+r.amtDue,0)
     const tPaid = visible.reduce((s,r)=>s+r.amtPaid,0)
-    const tBal  = visible.reduce((s,r)=>s+r.balance,0)
+    const tBal  = visible.reduce((s,r)=>s+(r.bf+r.amtDue-r.amtPaid),0)
     const balCls = tBal<=0.005?'bal-zero':'bal-neg'
     foot.innerHTML = `<tr>
       <td colspan="3" class="tot-label">Totals (${visible.length} records)</td>

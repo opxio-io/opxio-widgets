@@ -547,7 +547,7 @@ function renderTable(rows) {
         <div class="edit-form">
           <div class="ef-group">
             <span class="ef-label">Amount Paid (RM)</span>
-            <input id="ef-paid-${esc(r.id)}" class="ef-input" type="number" min="0" step="0.01" value="${esc(r.amtPaid??'')}" oninput="autoStatus('${esc(r.id)}',this.value,${r.amtDue})"/>
+            <input id="ef-paid-${esc(r.id)}" class="ef-input" type="number" min="0" step="0.01" value="${esc(r.amtPaid??'')}" oninput="autoStatus('${esc(r.id)}',this.value,${r.amtDue},${r.bf||0})"/>
           </div>
           <div class="ef-group">
             <span class="ef-label">Status</span>
@@ -650,13 +650,15 @@ function renderKPI(kpi) {
 }
 
 // ── Auto-status logic ────────────────────────────────────────────────────────
-function autoStatus(id, paidVal, amtDue) {
+function autoStatus(id, paidVal, amtDue, bf) {
   const sel = document.getElementById('ef-status-' + id)
   if(!sel) return
   const paid = parseFloat(paidVal)
   if(isNaN(paid)) return
-  if(paid >= amtDue && amtDue > 0)      sel.value = 'Paid'
-  else if(paid > 0 && paid < amtDue)    sel.value = 'Partial'
+  const totalOwed = (bf || 0) + amtDue
+  const balance = totalOwed - paid
+  if(balance <= 0 && totalOwed > 0)     sel.value = 'Paid'
+  else if(paid > 0 && balance > 0)      sel.value = 'Partial'
   else if(paid === 0)                   { if(sel.value==='Paid'||sel.value==='Partial') sel.value='Pending' }
 }
 

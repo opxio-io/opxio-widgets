@@ -63,7 +63,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .tbl-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.05em;text-transform:uppercase;}
 .row-count{font-size:10px;color:rgba(255,255,255,.25);}
 .tbl-wrap{overflow-x:auto;}
-.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
 .tbl th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:9px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;cursor:pointer;user-select:none;}
 .tbl th:hover{color:rgba(255,255,255,.6);}
 .tbl th.sorted{color:var(--g);}
@@ -71,9 +71,9 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle;}
 .tbl tr.data-row:hover td{background:rgba(255,255,255,.02);}
 .tbl tr.edit-row td{background:#1a1a1a;border-bottom:2px solid var(--g);}
-.lot{font-weight:700;font-size:12.5px;letter-spacing:-.01em;}
+.lot{font-weight:700;font-size:12.5px;letter-spacing:-.01em;display:block;overflow:hidden;text-overflow:ellipsis;}
 .dup-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-left:5px;vertical-align:middle;cursor:help;}
-.tname{color:rgba(255,255,255,.55);max-width:140px;overflow:hidden;text-overflow:ellipsis;}
+.tname{color:rgba(255,255,255,.55);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .rm{font-variant-numeric:tabular-nums;}
 .bal-neg{color:var(--red);}
 .bal-zero{color:var(--green);}
@@ -125,6 +125,14 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 /* Error */
 .err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:10px;display:none;}
+
+/* Receipt */
+.rcpt-icon{display:flex;align-items:center;justify-content:center;}
+.rcpt-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;text-decoration:none;}
+.rcpt-btn:hover{border-color:rgba(74,222,128,.4);color:#4ADE80;}
+.rcpt-btn.has-rcpt{border-color:rgba(74,222,128,.3);color:#4ADE80;background:rgba(74,222,128,.07);}
+.rcpt-btn.uploading{opacity:.4;pointer-events:none;}
+.upload-hint{font-size:9px;color:rgba(255,255,255,.25);margin-top:3px;text-align:center;}
 
 /* Empty */
 .empty{padding:40px 20px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;}
@@ -203,6 +211,19 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
   </div>
   <div class="tbl-wrap">
     <table class="tbl">
+      <colgroup>
+        <col style="width:100px"/>
+        <col style="width:150px"/>
+        <col style="width:100px"/>
+        <col style="width:110px"/>
+        <col style="width:110px"/>
+        <col style="width:100px"/>
+        <col style="width:80px"/>
+        <col style="width:100px"/>
+        <col style="width:80px"/>
+        <col style="width:60px"/>
+        <col style="width:100px"/>
+      </colgroup>
       <thead><tr>
         <th onclick="sortBy('lot')">Lot</th>
         <th onclick="sortBy('tenant')">Tenant</th>
@@ -213,9 +234,10 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
         <th onclick="sortBy('status')">Status</th>
         <th onclick="sortBy('method')">Method</th>
         <th onclick="sortBy('payDate')">Pay Date</th>
+        <th style="text-align:center">Receipt</th>
         <th></th>
       </tr></thead>
-      <tbody id="tbl-body"><tr><td colspan="10" class="empty">Loading…</td></tr></tbody>
+      <tbody id="tbl-body"><tr><td colspan="11" class="empty">Loading…</td></tr></tbody>
     </table>
   </div>
   <div class="pagination" id="pagination"></div>
@@ -223,7 +245,8 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 <script>
 const API     = 'https://api.opxio.io/api/clients/pointgate/dashboard'
-const PAY_API = 'https://api.opxio.io/api/clients/pointgate/payment'
+const PAY_API     = 'https://api.opxio.io/api/clients/pointgate/payment'
+const RECEIPT_API = 'https://api.opxio.io/api/clients/pointgate/receipt'
 const MONTHS  = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 const PAGE_SIZE = 15
 
@@ -280,7 +303,7 @@ function initBlockPills(blocks) {
 // ── Sort ────────────────────────────────────────────────────────────────────
 function sortBy(col) {
   if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1}
-  const thCols=['lot','tenant','bf','amtDue','amtPaid','balance','status','method','payDate']
+  const thCols=['lot','tenant','bf','amtDue','amtPaid','balance','status','method','payDate','receiptUrl','_actions']
   document.querySelectorAll('.tbl th').forEach((th,i)=>th.classList.toggle('sorted',thCols[i]===col))
   currentPage=1; renderTable(_rows)
 }
@@ -378,24 +401,25 @@ function renderTable(rows) {
   document.getElementById('row-count').textContent = `${total} records`
 
   if(!pageRows.length){
-    body.innerHTML='<tr><td colspan="10" class="empty">No records for this filter.</td></tr>'
+    body.innerHTML='<tr><td colspan="11" class="empty">No records for this filter.</td></tr>'
     renderPagination(0,0); return
   }
 
   // Detect duplicate lot+month combos
   const dupSet = new Set()
   const seen   = {}
-  for(const r of rows){ const k=r.lot+'|'+r.month; seen[k]=(seen[k]||0)+1; if(seen[k]>1)dupSet.add(r.lot+'|'+r.month) }
+  for(const r of rows){ if(r.lot==='—')continue; const k=r.lot+'|'+r.month; seen[k]=(seen[k]||0)+1; if(seen[k]>1)dupSet.add(r.lot+'|'+r.month) }
 
   body.innerHTML = pageRows.map(r => {
     const dupKey = r.lot+'|'+r.month
-    const isDup  = dupSet.has(dupKey)
+    const isDup  = r.lot !== '—' && dupSet.has(dupKey)
+    const isOrphan = r.lot === '—'
     const balCls = r.balance<=0.005 ? 'bal-zero' : r.balance>0 ? 'bal-neg' : 'bal-pos'
     const isPaid = r.status==='Paid'
     const isEdit = _editRowId===r.id
 
     const dataRow = `<tr class="data-row" id="row-${esc(r.id)}">
-      <td><span class="lot">${esc(r.lot)}</span>${isDup?`<span class="dup-dot" title="Multiple records for this lot in ${r.month}"></span>`:''}
+      <td><span class="lot" style="${isOrphan?'color:rgba(255,255,255,.2);font-weight:500':''}">${esc(r.lot)}</span>${isDup?`<span class="dup-dot" title="Multiple records for this lot in ${r.month}"></span>`:''}
       </td>
       <td><span class="tname" title="${esc(r.tenant)}">${esc(r.tenant||'—')}</span></td>
       <td class="r"><span class="bf-val">${r.bf?fmRM(r.bf):'—'}</span></td>
@@ -405,6 +429,19 @@ function renderTable(rows) {
       <td>${badge(r.status)}</td>
       <td><span class="method-val">${esc(r.method||'—')}</span></td>
       <td><span class="pay-date-val">${fmDate(r.payDate)}</span></td>
+      <td>
+        <div class="rcpt-icon">
+          ${r.receiptUrl
+            ? `<a class="rcpt-btn has-rcpt" href="${esc(r.receiptUrl)}" target="_blank" rel="noopener" title="View receipt">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
+               </a>`
+            : `<button class="rcpt-btn" id="rcpt-btn-${esc(r.id)}" onclick="triggerReceiptUpload('${esc(r.id)}')" title="Upload receipt">
+                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
+               </button>
+               <input id="rcpt-input-${esc(r.id)}" type="file" accept="image/*,.pdf" style="display:none" onchange="uploadReceipt('${esc(r.id)}',this.files[0])"/>`
+          }
+        </div>
+      </td>
       <td>
         <div class="act-btns">
           ${!isPaid?`<button class="btn-paid" id="mp-${esc(r.id)}" onclick="markPaid('${esc(r.id)}')">Mark Paid</button>`:''}
@@ -416,7 +453,7 @@ function renderTable(rows) {
     </tr>`
 
     const editRow = !isEdit ? '' : `<tr class="edit-row">
-      <td colspan="10">
+      <td colspan="11">
         <div class="edit-form">
           <div class="ef-group">
             <span class="ef-label">Amount Paid (RM)</span>
@@ -444,6 +481,23 @@ function renderTable(rows) {
           <div class="ef-group">
             <span class="ef-label">Payment Date</span>
             <input id="ef-date-${esc(r.id)}" class="ef-input" type="date" value="${esc(r.payDate||'')}"/>
+          </div>
+          <div class="ef-group">
+            <span class="ef-label">Receipt</span>
+            <div style="display:flex;flex-direction:column;gap:4px">
+              ${r.receiptUrl
+                ? `<a href="${esc(r.receiptUrl)}" target="_blank" rel="noopener" style="font-size:10.5px;color:#4ADE80;text-decoration:none;display:flex;align-items:center;gap:4px">
+                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
+                    View receipt
+                   </a>`
+                : ''
+              }
+              <label style="font-size:10px;color:rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;gap:4px">
+                <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
+                ${r.receiptUrl ? 'Replace' : 'Upload'}
+                <input type="file" accept="image/*,.pdf" style="display:none" onchange="uploadReceipt('${esc(r.id)}',this.files[0]);toggleEdit('${esc(r.id)}')"/>
+              </label>
+            </div>
           </div>
           <div class="ef-group">
             <span class="ef-label">&nbsp;</span>
@@ -487,6 +541,38 @@ function renderKPI(kpi) {
   document.getElementById('v-partial-count').textContent = partialCount+' partial'
   const rateEl=document.getElementById('v-rate')
   rateEl.style.color = rate>=90?'#4ADE80':rate>=70?'#AAFF00':'#FF5757'
+}
+
+// ── Receipt upload ──────────────────────────────────────────────────────────
+function triggerReceiptUpload(id) {
+  const inp = document.getElementById('rcpt-input-' + id)
+  if(inp) inp.click()
+}
+
+async function uploadReceipt(id, file) {
+  if(!file) return
+  const btn = document.getElementById('rcpt-btn-' + id)
+  if(btn) btn.classList.add('uploading')
+
+  const reader = new FileReader()
+  reader.onload = async (e) => {
+    try {
+      const r = await fetch(RECEIPT_API, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ pageId: id, file: e.target.result, fileName: file.name })
+      })
+      const data = await r.json()
+      if(!r.ok) throw new Error(data.error || 'Upload failed')
+      const row = _rows.find(x => x.id === id)
+      if(row) row.receiptUrl = data.url
+      renderTable(_rows)
+    } catch(err) {
+      alert('Receipt upload failed: ' + err.message)
+      if(btn) btn.classList.remove('uploading')
+    }
+  }
+  reader.readAsDataURL(file)
 }
 
 // ── Load ────────────────────────────────────────────────────────────────────

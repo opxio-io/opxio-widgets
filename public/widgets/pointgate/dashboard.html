@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Pointgate HQ — Rent Dashboard</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;}
+:root{
+  --g:#AAFF00;--gd:#88DD00;--gm:rgba(170,255,0,.09);--gb:rgba(170,255,0,.2);
+  --red:#FF5757;--amber:#FBBF24;--green:#4ADE80;--grey:rgba(255,255,255,.35);
+}
+::-webkit-scrollbar{width:4px;height:4px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
+
+.card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:14px;}
+
+/* Header */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.eyebrow{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:4px;}
+.h-title{font-size:21px;font-weight:900;letter-spacing:-.04em;}
+.h-right{display:flex;align-items:center;gap:8px;}
+.ts{font-size:10px;color:rgba(255,255,255,.18);}
+
+/* Buttons */
+.icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* Filter row */
+.filters{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.filter-group{display:flex;align-items:center;gap:5px;}
+.filter-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);}
+.pill-row{display:flex;gap:4px;flex-wrap:wrap;}
+.pill{font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);cursor:pointer;transition:all .13s;white-space:nowrap;}
+.pill:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.75);}
+.pill.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.pill.s-paid.active{background:rgba(74,222,128,.1);border-color:rgba(74,222,128,.35);color:#4ADE80;}
+.pill.s-partial.active{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.35);color:#FBBF24;}
+.pill.s-overdue.active{background:rgba(255,87,87,.1);border-color:rgba(255,87,87,.35);color:#FF5757;}
+.pill.s-pending.active{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6);}
+
+/* Month nav */
+.mn-nav{display:flex;align-items:center;gap:6px;}
+.mn-btn{width:26px;height:26px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .13s;}
+.mn-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
+.mn-btn:disabled{opacity:.2;cursor:default;}
+.mn-lbl{font-size:11.5px;font-weight:700;color:rgba(255,255,255,.7);min-width:70px;text-align:center;}
+.sep{width:1px;height:18px;background:rgba(255,255,255,.08);}
+
+/* KPI row */
+.kpi-row{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:10px;margin-bottom:10px;}
+@media(max-width:900px){.kpi-row{grid-template-columns:1fr 1fr;}}
+@media(max-width:500px){.kpi-row{grid-template-columns:1fr 1fr;}}
+
+.hero{padding:16px 18px 14px;}
+.hero-eyebrow{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:8px;display:block;}
+.hero-val{font-size:36px;font-weight:900;letter-spacing:-.04em;color:var(--g);line-height:1;}
+.hero-sub{font-size:11px;color:rgba(255,255,255,.4);margin-top:6px;}
+.kpi{padding:14px 16px 12px;}
+.kpi-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:7px;display:block;}
+.kpi-val{font-size:24px;font-weight:900;letter-spacing:-.03em;line-height:1;}
+.kpi-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:5px;}
+
+/* Table */
+.tbl-wrap{overflow-x:auto;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:9px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;cursor:pointer;user-select:none;}
+.tbl th:hover{color:rgba(255,255,255,.6);}
+.tbl th.sorted{color:var(--g);}
+.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle;}
+.tbl tr:last-child td{border-bottom:none;}
+.tbl tr:hover td{background:rgba(255,255,255,.025);}
+.lot{font-weight:700;font-size:12.5px;color:#fff;letter-spacing:-.01em;}
+.tenant-name{color:rgba(255,255,255,.6);max-width:160px;overflow:hidden;text-overflow:ellipsis;}
+.rm{font-variant-numeric:tabular-nums;}
+.bal-neg{color:var(--red);}
+.bal-zero{color:var(--green);}
+.bal-pos{color:rgba(255,255,255,.3);}
+.method{font-size:10.5px;color:rgba(255,255,255,.4);}
+.pay-date{font-size:10.5px;color:rgba(255,255,255,.35);}
+
+/* Status badge */
+.badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge-paid{background:rgba(74,222,128,.12);color:#4ADE80;}
+.badge-partial{background:rgba(251,191,36,.12);color:#FBBF24;}
+.badge-overdue{background:rgba(255,87,87,.12);color:#FF5757;}
+.badge-pending{background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);}
+
+/* Table card */
+.tbl-card{padding:0;overflow:hidden;}
+.tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.06);}
+.tbl-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.05em;text-transform:uppercase;}
+.row-count{font-size:10px;color:rgba(255,255,255,.25);}
+
+/* Empty state */
+.empty{padding:40px 20px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;}
+
+/* Skeleton */
+@keyframes shimmer{0%{opacity:.4}50%{opacity:.8}100%{opacity:.4}}
+.skel{background:rgba(255,255,255,.06);border-radius:6px;animation:shimmer 1.4s ease-in-out infinite;}
+
+/* Error */
+.err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:10px;display:none;}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="hdr">
+  <div>
+    <div class="eyebrow">Pointgate Properties</div>
+    <div class="h-title">Rent Dashboard</div>
+  </div>
+  <div class="h-right">
+    <span class="ts" id="ts"></span>
+    <button class="icon-btn" id="btn-refresh" onclick="load(true)" title="Refresh">
+      <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8">
+        <path d="M13.5 8A5.5 5.5 0 1 1 8 2.5M13.5 2.5v3h-3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- Error banner -->
+<div class="err-banner" id="err-banner"></div>
+
+<!-- Filters -->
+<div class="filters">
+  <!-- Month nav -->
+  <div class="mn-nav">
+    <button class="mn-btn" id="mn-prev" onclick="shiftMonth(-1)">&#8249;</button>
+    <span class="mn-lbl" id="mn-lbl"></span>
+    <button class="mn-btn" id="mn-next" onclick="shiftMonth(1)">&#8250;</button>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Block filter -->
+  <div class="filter-group">
+    <span class="filter-label">Block</span>
+    <div class="pill-row" id="block-pills"></div>
+  </div>
+
+  <div class="sep"></div>
+
+  <!-- Status filter -->
+  <div class="filter-group">
+    <span class="filter-label">Status</span>
+    <div class="pill-row">
+      <div class="pill active" data-status="" onclick="setStatus(this)">All</div>
+      <div class="pill s-paid" data-status="Paid" onclick="setStatus(this)">Paid</div>
+      <div class="pill s-partial" data-status="Partial" onclick="setStatus(this)">Partial</div>
+      <div class="pill s-overdue" data-status="Overdue" onclick="setStatus(this)">Overdue</div>
+      <div class="pill s-pending" data-status="Pending" onclick="setStatus(this)">Pending</div>
+    </div>
+  </div>
+</div>
+
+<!-- KPI tiles -->
+<div class="kpi-row" id="kpi-row">
+  <div class="card hero" id="kpi-rate">
+    <span class="hero-eyebrow">Collection Rate</span>
+    <div class="hero-val" id="v-rate"><div class="skel" style="width:80px;height:36px;"></div></div>
+    <div class="hero-sub" id="v-rate-sub"></div>
+  </div>
+  <div class="card kpi">
+    <span class="kpi-lbl">Total Units</span>
+    <div class="kpi-val" id="v-total"><div class="skel" style="width:50px;height:24px;"></div></div>
+    <div class="kpi-sub" id="v-paid-count"></div>
+  </div>
+  <div class="card kpi">
+    <span class="kpi-lbl">Outstanding</span>
+    <div class="kpi-val" id="v-outstanding" style="color:var(--red)"><div class="skel" style="width:80px;height:24px;"></div></div>
+    <div class="kpi-sub" id="v-overdue-count"></div>
+  </div>
+  <div class="card kpi">
+    <span class="kpi-lbl">Collected</span>
+    <div class="kpi-val" id="v-collected" style="color:var(--green)"><div class="skel" style="width:80px;height:24px;"></div></div>
+    <div class="kpi-sub" id="v-partial-count"></div>
+  </div>
+</div>
+
+<!-- Table -->
+<div class="card tbl-card">
+  <div class="tbl-hdr">
+    <span class="tbl-title" id="tbl-label">Rent Payments</span>
+    <span class="row-count" id="row-count"></span>
+  </div>
+  <div class="tbl-wrap">
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th onclick="sortBy('lot')">Lot</th>
+          <th onclick="sortBy('tenant')">Tenant</th>
+          <th onclick="sortBy('amtDue')" style="text-align:right">Rent Due</th>
+          <th onclick="sortBy('amtPaid')" style="text-align:right">Paid</th>
+          <th onclick="sortBy('balance')" style="text-align:right">Balance</th>
+          <th onclick="sortBy('status')">Status</th>
+          <th onclick="sortBy('method')">Method</th>
+          <th onclick="sortBy('payDate')">Pay Date</th>
+        </tr>
+      </thead>
+      <tbody id="tbl-body">
+        <tr><td colspan="8" class="empty">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const API = 'https://api.opxio.io/api/clients/pointgate/dashboard'
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
+const KNOWN_BLOCKS = ['3416','3417','3418','3419','3420']
+
+// ── State ─────────────────────────────────────────────────────────────────
+const now = new Date()
+let filterYear   = now.getFullYear()
+let filterMonth  = now.getMonth() + 1   // 1-12
+let filterBlock  = ''
+let filterStatus = ''
+let sortCol      = 'lot'
+let sortDir      = 1
+let _ctrl        = null
+let _rows        = []
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+const fmRM = n => n == null ? '—' : 'RM ' + Number(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2})
+const fmDate = s => {
+  if (!s) return '—'
+  const d = new Date(s + 'T00:00:00')
+  return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short'})
+}
+
+function monthStr() {
+  const m = String(filterMonth).padStart(2,'0')
+  return `${filterYear}-${m}`
+}
+
+function updateMonthLabel() {
+  document.getElementById('mn-lbl').textContent = `${MONTHS[filterMonth-1]} ${filterYear}`
+  const minDate = new Date(2026, 0, 1)
+  const maxDate = new Date(2026, 11, 1)
+  const cur = new Date(filterYear, filterMonth-1, 1)
+  document.getElementById('mn-prev').disabled = cur <= minDate
+  document.getElementById('mn-next').disabled = cur >= maxDate
+}
+
+function shiftMonth(dir) {
+  filterMonth += dir
+  if (filterMonth > 12) { filterMonth = 1; filterYear++ }
+  if (filterMonth < 1)  { filterMonth = 12; filterYear-- }
+  updateMonthLabel()
+  load()
+}
+
+function setStatus(el) {
+  document.querySelectorAll('[data-status]').forEach(e => e.classList.remove('active'))
+  el.classList.add('active')
+  filterStatus = el.dataset.status
+  load()
+}
+
+function setBlock(el) {
+  document.querySelectorAll('.block-pill').forEach(e => e.classList.remove('active'))
+  el.classList.add('active')
+  filterBlock = el.dataset.block
+  load()
+}
+
+// ── Block pills init ────────────────────────────────────────────────────────
+function initBlockPills(blocks) {
+  const list = blocks.length ? blocks : KNOWN_BLOCKS
+  const container = document.getElementById('block-pills')
+  container.innerHTML = `<div class="pill block-pill active" data-block="" onclick="setBlock(this)">All</div>`
+    + list.map(b => `<div class="pill block-pill" data-block="${esc(b)}" onclick="setBlock(this)">${esc(b)}</div>`).join('')
+}
+
+// ── Sort ───────────────────────────────────────────────────────────────────
+function sortBy(col) {
+  if (sortCol === col) sortDir *= -1
+  else { sortCol = col; sortDir = 1 }
+  document.querySelectorAll('.tbl th').forEach(th => th.classList.remove('sorted'))
+  const thMap = { lot:0,tenant:1,amtDue:2,amtPaid:3,balance:4,status:5,method:6,payDate:7 }
+  const ths = document.querySelectorAll('.tbl th')
+  if (thMap[col] !== undefined) ths[thMap[col]].classList.add('sorted')
+  renderTable(_rows)
+}
+
+// ── Render ─────────────────────────────────────────────────────────────────
+function badgeHtml(status) {
+  const cls = { Paid:'paid', Partial:'partial', Overdue:'overdue', Pending:'pending' }[status] || 'pending'
+  return `<span class="badge badge-${cls}">${esc(status)}</span>`
+}
+
+function renderTable(rows) {
+  const sorted = [...rows].sort((a, b) => {
+    const va = a[sortCol], vb = b[sortCol]
+    if (va == null && vb == null) return 0
+    if (va == null) return sortDir
+    if (vb == null) return -sortDir
+    if (typeof va === 'number') return (va - vb) * sortDir
+    return String(va).localeCompare(String(vb), 'en', {numeric:true}) * sortDir
+  })
+
+  const body = document.getElementById('tbl-body')
+  if (!sorted.length) {
+    body.innerHTML = '<tr><td colspan="8" class="empty">No records for this filter.</td></tr>'
+    return
+  }
+
+  body.innerHTML = sorted.map(r => {
+    const balCls = r.balance <= 0.005 ? 'bal-zero' : r.balance > 0 ? 'bal-neg' : 'bal-pos'
+    return `<tr>
+      <td><span class="lot">${esc(r.lot)}</span></td>
+      <td><span class="tenant-name" title="${esc(r.tenant)}">${esc(r.tenant || '—')}</span></td>
+      <td style="text-align:right"><span class="rm">${fmRM(r.amtDue)}</span></td>
+      <td style="text-align:right"><span class="rm">${fmRM(r.amtPaid)}</span></td>
+      <td style="text-align:right"><span class="rm ${balCls}">${fmRM(r.balance)}</span></td>
+      <td>${badgeHtml(r.status)}</td>
+      <td><span class="method">${esc(r.method || '—')}</span></td>
+      <td><span class="pay-date">${fmDate(r.payDate)}</span></td>
+    </tr>`
+  }).join('')
+}
+
+function renderKPI(kpi) {
+  const { total, paidCount, partialCount, overdueCount, totalDue, totalPaid, outstanding, rate } = kpi
+  document.getElementById('v-rate').textContent      = rate.toFixed(1) + '%'
+  document.getElementById('v-rate-sub').textContent  = `RM ${Number(totalPaid).toLocaleString('en-MY',{minimumFractionDigits:0})} of RM ${Number(totalDue).toLocaleString('en-MY',{minimumFractionDigits:0})}`
+  document.getElementById('v-total').textContent     = total
+  document.getElementById('v-paid-count').textContent = `${paidCount} paid, ${total - paidCount} pending`
+  document.getElementById('v-outstanding').textContent = fmRM(outstanding)
+  document.getElementById('v-overdue-count').textContent = overdueCount + ' overdue'
+  document.getElementById('v-collected').textContent   = fmRM(totalPaid)
+  document.getElementById('v-partial-count').textContent = partialCount + ' partial'
+  document.getElementById('row-count').textContent    = total + ' records'
+
+  // Colour the rate tile based on performance
+  const rateEl = document.getElementById('kpi-rate')
+  const valEl  = document.getElementById('v-rate')
+  if (rate >= 90) valEl.style.color = '#4ADE80'
+  else if (rate >= 70) valEl.style.color = '#AAFF00'
+  else valEl.style.color = '#FF5757'
+}
+
+// ── Load ────────────────────────────────────────────────────────────────────
+async function load(force = false) {
+  if (_ctrl) _ctrl.abort()
+  _ctrl = new AbortController()
+
+  const btn = document.getElementById('btn-refresh')
+  btn.classList.add('spinning')
+  document.getElementById('err-banner').style.display = 'none'
+
+  const params = new URLSearchParams({ month: monthStr() })
+  if (filterBlock)  params.set('block',  filterBlock)
+  if (filterStatus) params.set('status', filterStatus)
+  if (force)        params.set('_t', Date.now())
+
+  const label = `${MONTHS[filterMonth-1]} ${filterYear}${filterBlock ? ' · Block ' + filterBlock : ''}${filterStatus ? ' · ' + filterStatus : ''}`
+  document.getElementById('tbl-label').textContent = label
+
+  try {
+    const r = await fetch(`${API}?${params}`, { signal: _ctrl.signal })
+    if (!r.ok) throw new Error(`API error ${r.status}`)
+    const data = await r.json()
+
+    // Init block pills on first load
+    if (data.blocks?.length && document.querySelectorAll('.block-pill').length <= 1) {
+      initBlockPills(data.blocks)
+    }
+
+    _rows = data.rows || []
+    renderKPI(data.kpi)
+    renderTable(_rows)
+
+    const ts = new Date(data.ts)
+    document.getElementById('ts').textContent = 'Updated ' + ts.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'})
+  } catch(e) {
+    if (e.name === 'AbortError') return
+    const b = document.getElementById('err-banner')
+    b.textContent = 'Failed to load: ' + e.message
+    b.style.display = 'block'
+  } finally {
+    btn.classList.remove('spinning')
+  }
+}
+
+// ── Init ────────────────────────────────────────────────────────────────────
+initBlockPills([])
+updateMonthLabel()
+load()
+</script>
+</body>
+</html>

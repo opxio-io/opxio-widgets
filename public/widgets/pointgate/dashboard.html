@@ -501,7 +501,7 @@ function renderTable(rows) {
     const isEdit = _editRowId===r.id
 
     const rowClass = r.status==='Overdue'?' is-overdue':r.status==='Partial'?' is-partial':''
-    const dataRow = `<tr class="data-row${rowClass}" id="row-${esc(r.id)}">`
+    const dataRow = `<tr class="data-row${rowClass}" id="row-${esc(r.id)}">
       <td><span class="lot" style="${isOrphan?'color:rgba(255,255,255,.2);font-weight:500':''}">${esc(r.lot)}</span>${isDup?`<span class="dup-dot" title="Multiple records for this lot in ${r.month}"></span>`:''}
       </td>
       <td><span class="tname" title="${esc(r.tenant)}">${esc(r.tenant||'—')}</span></td>

@@ -10,7 +10,7 @@
 body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 40px;background:#191919;color:#fff;overflow-y:auto;}
 :root{
   --g:#AAFF00;--gm:rgba(170,255,0,.09);--gb:rgba(170,255,0,.2);
-  --red:#FF5757;--amber:#FBBF24;--orange:#FB923C;--blue:#60A5FA;--muted:rgba(255,255,255,.3);
+  --red:#FF5757;--orange:#FB923C;--amber:#FBBF24;--yellow:#FDE68A;--blue:#60A5FA;--green:#4ADE80;
 }
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-thumb{background:rgba(255,255,255,.08);border-radius:999px;}
 .card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:14px;}
@@ -28,89 +28,127 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 40px;backg
 
 /* Summary bar */
 .summary-bar{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:16px;}
-@media(max-width:800px){.summary-bar{grid-template-columns:repeat(3,1fr);}}
-.sum-card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;}
+@media(max-width:750px){.summary-bar{grid-template-columns:repeat(3,1fr);}}
+.sum-card{background:#222;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:12px 14px;cursor:pointer;transition:all .13s;}
+.sum-card:hover{border-color:rgba(255,255,255,.14);}
+.sum-card.active{border-color:rgba(255,255,255,.25);}
 .sum-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;}
 .sum-val{font-size:22px;font-weight:900;letter-spacing:-.03em;line-height:1;}
 .sum-sub{font-size:10px;margin-top:3px;opacity:.5;}
+.t-critical .sum-label,.t-critical .sum-val{color:#FF5757;}
+.t-severe   .sum-label,.t-severe   .sum-val{color:#FB923C;}
+.t-urgent   .sum-label,.t-urgent   .sum-val{color:#FBBF24;}
+.t-warning  .sum-label,.t-warning  .sum-val{color:#FDE68A;}
+.t-notice   .sum-label,.t-notice   .sum-val{color:#60A5FA;}
+.t-recent   .sum-label,.t-recent   .sum-val{color:rgba(255,255,255,.4);}
+.t-critical.active{background:rgba(255,87,87,.07);}
+.t-severe.active  {background:rgba(251,146,60,.07);}
+.t-urgent.active  {background:rgba(251,191,36,.07);}
+.t-warning.active {background:rgba(253,230,138,.05);}
+.t-notice.active  {background:rgba(96,165,250,.07);}
+.t-recent.active  {background:rgba(255,255,255,.04);}
 
-.t-critical .sum-label{color:#FF5757;} .t-critical .sum-val{color:#FF5757;}
-.t-severe   .sum-label{color:#FB923C;} .t-severe   .sum-val{color:#FB923C;}
-.t-urgent   .sum-label{color:#FBBF24;} .t-urgent   .sum-val{color:#FBBF24;}
-.t-warning  .sum-label{color:#FDE68A;} .t-warning  .sum-val{color:#FDE68A;}
-.t-notice   .sum-label{color:#60A5FA;} .t-notice   .sum-val{color:#60A5FA;}
-.t-recent   .sum-label{color:rgba(255,255,255,.4);} .t-recent .sum-val{color:rgba(255,255,255,.4);}
+/* Search */
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.search-wrap{position:relative;flex:1;min-width:160px;max-width:280px;}
+.search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(255,255,255,.25);}
+.search-input{width:100%;background:#222;border:1px solid rgba(255,255,255,.09);border-radius:8px;color:#fff;font-family:inherit;font-size:12px;padding:7px 9px 7px 30px;outline:none;transition:border-color .13s;}
+.search-input:focus{border-color:rgba(170,255,0,.35);}
+.search-input::placeholder{color:rgba(255,255,255,.2);}
+.tot-badge{font-size:11px;font-weight:600;color:rgba(255,255,255,.35);padding:5px 12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:7px;white-space:nowrap;}
 
-/* Filters */
-.filters{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center;}
-.filter-label{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.3);}
-.pill{font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);cursor:pointer;transition:all .13s;user-select:none;}
-.pill:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.75);}
-.pill.active{background:var(--gm);border-color:var(--gb);color:var(--g);}
-
-/* Secret input */
-.secret-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;}
-.secret-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);flex-shrink:0;}
-.secret-input{background:#1e1e1e;border:1px solid rgba(255,255,255,.09);border-radius:8px;color:rgba(255,255,255,.6);font-family:inherit;font-size:12px;padding:5px 10px;outline:none;width:180px;transition:border-color .13s;}
-.secret-input:focus{border-color:rgba(170,255,0,.35);}
-.secret-hint{font-size:10px;color:rgba(255,255,255,.2);}
-
-/* Table sections */
-.section{margin-bottom:14px;}
-.section-hdr{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
-.section-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.section-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;}
-.section-count{font-size:10px;font-weight:600;padding:2px 7px;border-radius:5px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);}
-.section-total{font-size:11px;font-weight:700;margin-left:auto;}
-
+/* Table */
+.tbl-card{overflow:hidden;}
+.tbl-wrap{overflow-x:auto;}
 .tbl{width:100%;border-collapse:collapse;font-size:12px;}
-.tbl th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:8px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05);white-space:nowrap;}
+.tbl th{font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.28);padding:9px 14px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;position:sticky;top:0;background:#222;z-index:2;}
 .tbl th.r{text-align:right;}
-.tbl td{padding:9px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.tbl td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
 .tbl td.r{text-align:right;}
+.tbl tr.group-row{cursor:pointer;transition:background .1s;}
+.tbl tr.group-row:hover td{background:rgba(255,255,255,.025);}
 .tbl tr:last-child td{border-bottom:none;}
-.tbl tr:hover td{background:rgba(255,255,255,.02);}
 
-.lot{font-weight:700;font-size:12.5px;}
-.tname{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;}
-.monthbadge{font-size:10.5px;color:rgba(255,255,255,.5);}
+.lot-name{font-weight:700;font-size:13px;}
+.ten-name{font-size:11px;color:rgba(255,255,255,.45);margin-top:2px;}
 .rm{font-variant-numeric:tabular-nums;}
 .bal-neg{color:#FF5757;}
 
-/* Days overdue pill */
-.days-chip{display:inline-flex;align-items:center;font-size:11px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;}
-.days-critical{background:rgba(255,87,87,.15);color:#FF5757;border:1px solid rgba(255,87,87,.25);}
-.days-severe  {background:rgba(251,146,60,.12);color:#FB923C;border:1px solid rgba(251,146,60,.2);}
-.days-urgent  {background:rgba(251,191,36,.12);color:#FBBF24;border:1px solid rgba(251,191,36,.2);}
-.days-warning {background:rgba(253,230,138,.1);color:#FDE68A;border:1px solid rgba(253,230,138,.18);}
-.days-notice  {background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.18);}
-.days-recent  {background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);}
+.months-badge{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;color:rgba(255,255,255,.5);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:3px 8px;}
+.months-badge svg{opacity:.5;}
 
-/* Notice sent */
-.notice-col{display:flex;flex-direction:column;gap:3px;}
-.notice-tag{font-size:9.5px;font-weight:600;padding:2px 7px;border-radius:4px;}
-.n14-sent{background:rgba(74,222,128,.1);color:#4ADE80;}
-.n21-sent{background:rgba(251,191,36,.1);color:#FBBF24;}
-.n-none{color:rgba(255,255,255,.2);font-size:10px;}
+/* Tier chips */
+.tier-chip{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;padding:3px 9px;border-radius:6px;white-space:nowrap;}
+.chip-critical{background:rgba(255,87,87,.14);color:#FF5757;border:1px solid rgba(255,87,87,.25);}
+.chip-severe  {background:rgba(251,146,60,.12);color:#FB923C;border:1px solid rgba(251,146,60,.2);}
+.chip-urgent  {background:rgba(251,191,36,.12);color:#FBBF24;border:1px solid rgba(251,191,36,.2);}
+.chip-warning {background:rgba(253,230,138,.1);color:#FDE68A;border:1px solid rgba(253,230,138,.18);}
+.chip-notice  {background:rgba(96,165,250,.1);color:#60A5FA;border:1px solid rgba(96,165,250,.18);}
+.chip-recent  {background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.1);}
 
-/* Send buttons */
-.send-col{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
-.btn-send{font-size:10.5px;font-weight:700;padding:5px 10px;border-radius:7px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.07);color:#4ADE80;cursor:pointer;transition:all .13s;white-space:nowrap;display:flex;align-items:center;gap:5px;}
-.btn-send:hover{background:rgba(74,222,128,.14);border-color:rgba(74,222,128,.4);}
-.btn-send:disabled{opacity:.3;pointer-events:none;cursor:default;}
-.btn-send.sending{opacity:.5;pointer-events:none;}
-.btn-send.urgent-send{border-color:rgba(251,191,36,.3);background:rgba(251,191,36,.07);color:#FBBF24;}
-.btn-send.urgent-send:hover{background:rgba(251,191,36,.14);}
-.btn-send.critical-send{border-color:rgba(255,87,87,.3);background:rgba(255,87,87,.07);color:#FF5757;}
-.btn-send.critical-send:hover{background:rgba(255,87,87,.14);}
-.no-phone{font-size:10px;color:rgba(255,255,255,.2);font-style:italic;}
-.send-ok{font-size:10px;color:#4ADE80;display:flex;align-items:center;gap:4px;}
+/* Send button */
+.btn-send{font-size:10.5px;font-weight:700;padding:6px 12px;border-radius:7px;cursor:pointer;transition:all .13s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px;}
+.btn-send-14{border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.07);color:#4ADE80;}
+.btn-send-14:hover{background:rgba(74,222,128,.15);}
+.btn-send-21{border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.07);color:#FBBF24;}
+.btn-send-21:hover{background:rgba(251,191,36,.15);}
+.btn-send-crit{border:1px solid rgba(255,87,87,.3);background:rgba(255,87,87,.07);color:#FF5757;}
+.btn-send-crit:hover{background:rgba(255,87,87,.14);}
+.btn-send:disabled{opacity:.3;pointer-events:none;}
+.send-wrap{display:flex;flex-direction:column;gap:4px;align-items:flex-start;}
+.sent-tag{font-size:10px;color:rgba(74,222,128,.7);display:flex;align-items:center;gap:3px;}
+.no-phone-tag{font-size:10px;color:rgba(255,255,255,.2);}
+
+/* Footer totals row */
+.tbl tfoot td{padding:9px 14px;font-size:11px;font-weight:700;border-top:1px solid rgba(255,255,255,.1);background:#1e1e1e;}
 
 /* Empty / error */
-.empty{padding:32px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;}
+.empty{padding:40px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;}
 .err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:12px;display:none;}
 @keyframes shimmer{0%{opacity:.4}50%{opacity:.8}100%{opacity:.4}}
 .skel{background:rgba(255,255,255,.06);border-radius:6px;animation:shimmer 1.4s ease-in-out infinite;display:inline-block;}
+
+/* ── MODAL ─────────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:#1e1e1e;border:1px solid rgba(255,255,255,.1);border-radius:18px;width:100%;max-width:640px;max-height:88vh;overflow-y:auto;transform:translateY(10px);transition:transform .18s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);}
+.modal-lot{font-size:22px;font-weight:900;letter-spacing:-.04em;}
+.modal-tenant{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px;}
+.modal-phone{font-size:11px;color:rgba(255,255,255,.3);margin-top:3px;}
+.modal-close{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .13s;}
+.modal-close:hover{background:rgba(255,87,87,.1);border-color:rgba(255,87,87,.3);color:#FF5757;}
+
+/* Modal summary strip */
+.modal-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.06);}
+.strip-cell{background:#1e1e1e;padding:12px 16px;}
+.strip-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:5px;}
+.strip-val{font-size:17px;font-weight:900;letter-spacing:-.03em;}
+
+/* Modal month table */
+.modal-body{padding:16px 20px 20px;}
+.modal-sec-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-bottom:10px;}
+.mtbl{width:100%;border-collapse:collapse;font-size:12px;}
+.mtbl th{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:rgba(255,255,255,.28);padding:7px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);}
+.mtbl th.r{text-align:right;}
+.mtbl td{padding:9px 10px;border-bottom:1px solid rgba(255,255,255,.04);font-size:12px;}
+.mtbl td.r{text-align:right;}
+.mtbl tr:last-child td{border-bottom:none;}
+
+/* Modal action bar */
+.modal-actions{display:flex;gap:8px;flex-wrap:wrap;padding:14px 20px 20px;border-top:1px solid rgba(255,255,255,.06);}
+.btn-modal-send{font-size:12px;font-weight:700;padding:9px 18px;border-radius:9px;cursor:pointer;transition:all .13s;display:flex;align-items:center;gap:6px;}
+.btn-modal-14{border:1px solid rgba(74,222,128,.3);background:rgba(74,222,128,.08);color:#4ADE80;}
+.btn-modal-14:hover{background:rgba(74,222,128,.15);}
+.btn-modal-21{border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);color:#FBBF24;}
+.btn-modal-21:hover{background:rgba(251,191,36,.15);}
+.btn-modal-crit{border:1px solid rgba(255,87,87,.3);background:rgba(255,87,87,.08);color:#FF5757;}
+.btn-modal-crit:hover{background:rgba(255,87,87,.14);}
+.btn-modal-send:disabled{opacity:.3;pointer-events:none;}
+.modal-send-err{font-size:11px;color:#FF5757;padding:0 20px 14px;display:none;}
+.modal-send-ok{font-size:11px;color:#4ADE80;padding:0 20px 14px;display:none;align-items:center;gap:5px;}
 </style>
 </head>
 <body>
@@ -130,241 +168,364 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 40px;backg
 
 <div class="err-banner" id="err-banner"></div>
 
-<!-- Summary -->
+<!-- Summary cards (clickable as filters) -->
 <div class="summary-bar">
-  <div class="sum-card t-critical"><div class="sum-label">Critical</div><div class="sum-val" id="s-critical">—</div><div class="sum-sub">60+ days</div></div>
-  <div class="sum-card t-severe">  <div class="sum-label">Severe</div>  <div class="sum-val" id="s-severe">—</div>  <div class="sum-sub">30–59 days</div></div>
-  <div class="sum-card t-urgent">  <div class="sum-label">Urgent</div>  <div class="sum-val" id="s-urgent">—</div>  <div class="sum-sub">21–29 days</div></div>
-  <div class="sum-card t-warning"> <div class="sum-label">Warning</div> <div class="sum-val" id="s-warning">—</div> <div class="sum-sub">14–20 days</div></div>
-  <div class="sum-card t-notice">  <div class="sum-label">Notice</div>  <div class="sum-val" id="s-notice">—</div>  <div class="sum-sub">7–13 days</div></div>
-  <div class="sum-card t-recent">  <div class="sum-label">Recent</div>  <div class="sum-val" id="s-recent">—</div>  <div class="sum-sub">1–6 days</div></div>
+  <div class="sum-card t-critical" data-tier="critical" onclick="toggleTier('critical')"><div class="sum-label">Critical</div><div class="sum-val" id="s-critical">—</div><div class="sum-sub">60+ days</div></div>
+  <div class="sum-card t-severe"   data-tier="severe"   onclick="toggleTier('severe')"  ><div class="sum-label">Severe</div>  <div class="sum-val" id="s-severe">—</div>  <div class="sum-sub">30–59 days</div></div>
+  <div class="sum-card t-urgent"   data-tier="urgent"   onclick="toggleTier('urgent')"  ><div class="sum-label">Urgent</div>  <div class="sum-val" id="s-urgent">—</div>  <div class="sum-sub">21–29 days</div></div>
+  <div class="sum-card t-warning"  data-tier="warning"  onclick="toggleTier('warning')" ><div class="sum-label">Warning</div> <div class="sum-val" id="s-warning">—</div> <div class="sum-sub">14–20 days</div></div>
+  <div class="sum-card t-notice"   data-tier="notice"   onclick="toggleTier('notice')"  ><div class="sum-label">Notice</div>  <div class="sum-val" id="s-notice">—</div>  <div class="sum-sub">7–13 days</div></div>
+  <div class="sum-card t-recent"   data-tier="recent"   onclick="toggleTier('recent')"  ><div class="sum-label">Recent</div>  <div class="sum-val" id="s-recent">—</div>  <div class="sum-sub">1–6 days</div></div>
 </div>
 
-<!-- Filter + WhatsApp secret -->
-<div class="filters">
-  <span class="filter-label">Show</span>
-  <div class="pill active" data-tier="" onclick="setTier(this)">All</div>
-  <div class="pill" data-tier="critical" onclick="setTier(this)">Critical</div>
-  <div class="pill" data-tier="severe"   onclick="setTier(this)">Severe</div>
-  <div class="pill" data-tier="urgent"   onclick="setTier(this)">Urgent</div>
-  <div class="pill" data-tier="warning"  onclick="setTier(this)">Warning</div>
-  <div class="pill" data-tier="notice"   onclick="setTier(this)">Notice</div>
-  <div class="pill" data-tier="recent"   onclick="setTier(this)">Recent</div>
-</div>
-<div class="secret-row">
-  <span class="secret-label">WA Secret</span>
-  <input class="secret-input" id="wa-secret" type="password" placeholder="Enter notify secret" autocomplete="off"/>
-  <span class="secret-hint">Required to send WhatsApp notices</span>
+<!-- Toolbar -->
+<div class="toolbar">
+  <div class="search-wrap">
+    <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l3 3" stroke-linecap="round"/></svg>
+    <input class="search-input" id="search-input" placeholder="Search lot or tenant…" oninput="onSearch()" autocomplete="off"/>
+  </div>
+  <span class="tot-badge" id="tot-badge"></span>
 </div>
 
-<!-- Sections container -->
-<div id="sections-wrap"></div>
+<!-- Main table -->
+<div class="card tbl-card">
+  <div class="tbl-wrap" style="max-height:560px;overflow-y:auto;">
+    <table class="tbl">
+      <thead><tr>
+        <th>Lot / Tenant</th>
+        <th style="text-align:center">Months</th>
+        <th class="r">Total Owed</th>
+        <th>Worst</th>
+        <th>Send Notice</th>
+      </tr></thead>
+      <tbody id="tbl-body"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody>
+      <tfoot id="tbl-foot"></tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- ── DETAIL MODAL ─────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-lot" id="m-lot">—</div>
+        <div class="modal-tenant" id="m-tenant"></div>
+        <div class="modal-phone" id="m-phone"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l12 12M13 1L1 13" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <div class="modal-strip">
+      <div class="strip-cell"><div class="strip-label">Months Overdue</div><div class="strip-val" id="m-months-count">—</div></div>
+      <div class="strip-cell"><div class="strip-label">Total Owed</div><div class="strip-val" style="color:#FF5757" id="m-total-bal">—</div></div>
+      <div class="strip-cell"><div class="strip-label">Worst</div><div class="strip-val" id="m-worst">—</div></div>
+    </div>
+
+    <div class="modal-body">
+      <div class="modal-sec-title">Unpaid Months</div>
+      <table class="mtbl">
+        <thead><tr>
+          <th>Month</th>
+          <th class="r">Due</th>
+          <th class="r">Paid</th>
+          <th class="r">Balance</th>
+          <th>Status</th>
+          <th>Overdue</th>
+        </tr></thead>
+        <tbody id="m-months-body"></tbody>
+      </table>
+    </div>
+
+    <div class="modal-send-err" id="m-send-err"></div>
+    <div class="modal-send-ok"  id="m-send-ok">
+      <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 8l5 5 7-7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span id="m-send-ok-text"></span>
+    </div>
+
+    <div class="modal-actions" id="m-actions"></div>
+  </div>
+</div>
 
 <script>
 const API      = 'https://api.opxio.io/api/clients/pointgate/overdue'
 const SEND_API = 'https://api.opxio.io/api/clients/pointgate/overdue/send'
+const WA_SECRET = 'pointgate-notify'
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']
 
-const TIERS = [
-  { key: 'critical', label: 'Critical',  sub:'60+ days',   dotColor:'#FF5757', chipClass:'days-critical' },
-  { key: 'severe',   label: 'Severe',    sub:'30–59 days', dotColor:'#FB923C', chipClass:'days-severe'   },
-  { key: 'urgent',   label: 'Urgent',    sub:'21–29 days', dotColor:'#FBBF24', chipClass:'days-urgent'   },
-  { key: 'warning',  label: 'Warning',   sub:'14–20 days', dotColor:'#FDE68A', chipClass:'days-warning'  },
-  { key: 'notice',   label: 'Notice',    sub:'7–13 days',  dotColor:'#60A5FA', chipClass:'days-notice'   },
-  { key: 'recent',   label: 'Recent',    sub:'1–6 days',   dotColor:'rgba(255,255,255,.3)', chipClass:'days-recent' },
-]
+const TIER_CFG = {
+  critical: { color:'#FF5757', label:'Critical', chipCls:'chip-critical' },
+  severe:   { color:'#FB923C', label:'Severe',   chipCls:'chip-severe'   },
+  urgent:   { color:'#FBBF24', label:'Urgent',   chipCls:'chip-urgent'   },
+  warning:  { color:'#FDE68A', label:'Warning',  chipCls:'chip-warning'  },
+  notice:   { color:'#60A5FA', label:'Notice',   chipCls:'chip-notice'   },
+  recent:   { color:'rgba(255,255,255,.4)', label:'Recent', chipCls:'chip-recent' },
+}
 
-let _rows = []
-let _filterTier = ''
-let _sendState = {}   // pageId → 'sending' | 'sent14' | 'sent21' | 'error'
+let _groups  = []
+let _filter  = ''   // tier filter
+let _search  = ''
+let _sending = {}   // groupKey → state
+let _modalGroup = null
+const today  = new Date().toISOString().slice(0,10)
 
-const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+const esc  = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 const fmRM = n => n==null?'—':'RM '+Number(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2})
 const fmDate = s => { if(!s)return '—'; const d=new Date(s+'T00:00:00'); return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short'}) }
-const today = new Date().toISOString().slice(0,10)
 
-function setTier(el) {
-  document.querySelectorAll('[data-tier]').forEach(e=>e.classList.remove('active'))
-  el.classList.add('active')
-  _filterTier = el.dataset.tier
-  render(_rows)
+function toggleTier(tier) {
+  _filter = _filter === tier ? '' : tier
+  document.querySelectorAll('.sum-card').forEach(c => c.classList.toggle('active', c.dataset.tier === _filter))
+  render()
 }
 
-function chipClass(tier) {
-  return TIERS.find(t=>t.key===tier)?.chipClass || 'days-recent'
+function onSearch() {
+  _search = document.getElementById('search-input').value.trim().toLowerCase()
+  render()
 }
 
-function sendBtnLabel(row) {
-  const state = _sendState[row.id]
-  if (state === 'sending') return null // handled inline
-  if (state === 'sent14' || state === 'sent21') return 'sent'
-  if (!row.phone) return 'nophone'
-
-  // Determine what to show
-  const sentToday14 = row.sent14 === today
-  const sentToday21 = row.sent21 === today
-
-  if (row.daysOver >= 21) {
-    // Two options: 14d (if not sent today) and 21d (if not sent today)
-    return { show21: !sentToday21, show14: !sentToday14 && !row.sent14 }
-  } else if (row.daysOver >= 14) {
-    return { show14: !sentToday14 }
-  } else {
-    // < 14 days — allow manual send as "reminder"
-    return { show14: !sentToday14 }
-  }
+function getVisible() {
+  let g = _filter ? _groups.filter(x=>x.tier===_filter) : _groups
+  if (_search) g = g.filter(x => x.lot.toLowerCase().includes(_search) || x.tenant.toLowerCase().includes(_search))
+  return g
 }
 
-function renderSendBtns(row) {
-  const state = _sendState[row.id]
+function tierChip(t, days) {
+  const c = TIER_CFG[t] || TIER_CFG.recent
+  return `<span class="tier-chip ${c.chipCls}">${days}d</span>`
+}
+
+function badge(s) {
+  const map = {Paid:'rgba(74,222,128,.12);color:#4ADE80',Partial:'rgba(251,191,36,.12);color:#FBBF24',Overdue:'rgba(255,87,87,.12);color:#FF5757',Pending:'rgba(255,255,255,.06);color:rgba(255,255,255,.45)'}
+  const style = map[s] || map.Pending
+  return `<span style="display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700;background:${style.split(';')[0].split(':')[1]};color:${style.split('color:')[1]}">${esc(s)}</span>`
+}
+
+function renderSendBtns(g, inline=true) {
+  if (!g.phone) return `<span class="no-phone-tag">No phone</span>`
+  const state = _sending[g.lot]
   if (state === 'sending') return `<span style="font-size:10px;color:rgba(255,255,255,.3)">Sending…</span>`
 
-  if (!row.phone) return `<span class="no-phone">No phone</span>`
+  // Use worstPageId for sending
+  const bestRow = g.months.reduce((a,b)=>b.daysOver>a.daysOver?b:a)
+  const sentToday14 = bestRow.sent14 === today
+  const sentToday21 = bestRow.sent21 === today
+  const pageId = g.worstPageId
 
-  const sentToday14 = row.sent14 === today || state === 'sent14'
-  const sentToday21 = row.sent21 === today || state === 'sent21'
+  let html = `<div class="send-wrap">`
 
-  let btns = ''
-  if (row.daysOver >= 21 && !sentToday21) {
-    const cls = row.daysOver >= 60 ? 'critical-send' : row.daysOver >= 30 ? 'urgent-send' : 'urgent-send'
-    btns += `<button class="btn-send ${cls}" onclick="sendNotice('${esc(row.id)}','21d')">
-      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 11.5A10 10 0 0 1 8 2a10 10 0 0 1 6 9.5" stroke-linecap="round"/><path d="M5.5 14.5h5M8 11v3" stroke-linecap="round"/></svg>
+  if (g.worstDaysOver >= 21 && !sentToday21) {
+    const cls = g.worstDaysOver >= 30 ? 'btn-send-crit' : 'btn-send-21'
+    html += `<button class="btn-send ${cls}" onclick="event.stopPropagation();sendNotice('${esc(g.lot)}','${esc(pageId)}','21d')">
+      <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 2l1.5 4.5H14l-3.7 2.7 1.4 4.3L8 11l-3.7 2.5 1.4-4.3L2 6.5h4.5z" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Final Notice
     </button>`
   } else if (sentToday21) {
-    btns += `<span class="send-ok">✓ Final sent today</span>`
+    html += `<span class="sent-tag">✓ Final sent today</span>`
   }
 
-  if (!sentToday14 && !row.sent14) {
-    btns += `<button class="btn-send" onclick="sendNotice('${esc(row.id)}','14d')">
+  if (!sentToday14 && !bestRow.sent14) {
+    html += `<button class="btn-send btn-send-14" onclick="event.stopPropagation();sendNotice('${esc(g.lot)}','${esc(pageId)}','14d')">
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 11.5A10 10 0 0 1 8 2a10 10 0 0 1 6 9.5" stroke-linecap="round"/><path d="M5.5 14.5h5M8 11v3" stroke-linecap="round"/></svg>
       1st Reminder
     </button>`
   } else if (sentToday14) {
-    btns += `<span class="send-ok">✓ Reminder sent today</span>`
-  } else if (row.sent14 && !sentToday14) {
-    btns += `<span style="font-size:10px;color:rgba(255,255,255,.25)">Reminded ${fmDate(row.sent14)}</span>`
+    html += `<span class="sent-tag">✓ Reminded today</span>`
+  } else if (bestRow.sent14) {
+    html += `<span style="font-size:10px;color:rgba(255,255,255,.25)">Reminded ${fmDate(bestRow.sent14)}</span>`
   }
 
-  return `<div class="send-col">${btns || '<span class="no-phone">—</span>'}</div>`
+  html += `</div>`
+  return html
 }
 
-function renderNotices(row) {
-  const parts = []
-  if (row.sent21) parts.push(`<span class="notice-tag n21-sent">Final ${fmDate(row.sent21)}</span>`)
-  if (row.sent14) parts.push(`<span class="notice-tag n14-sent">1st ${fmDate(row.sent14)}</span>`)
-  if (!parts.length) parts.push(`<span class="n-none">None sent</span>`)
-  return `<div class="notice-col">${parts.join('')}</div>`
-}
+function render() {
+  const visible = getVisible()
+  const body = document.getElementById('tbl-body')
+  const foot = document.getElementById('tbl-foot')
+  document.getElementById('tot-badge').textContent = `${visible.length} tenant${visible.length!==1?'s':''}${_filter?' · '+TIER_CFG[_filter]?.label:''}${_search?' · "'+_search+'"':''}`
 
-function render(rows) {
-  const wrap = document.getElementById('sections-wrap')
-  const filtered = _filterTier ? rows.filter(r=>r.tier===_filterTier) : rows
-
-  if (!filtered.length) {
-    wrap.innerHTML = `<div class="empty">No overdue payments${_filterTier?' in this tier':''}. 🎉</div>`
-    return
+  if (!visible.length) {
+    body.innerHTML = `<tr><td colspan="5" class="empty">No overdue tenants${_filter||_search?' matching filter':''}. 🎉</td></tr>`
+    foot.innerHTML = ''; return
   }
 
-  const tiersToShow = _filterTier
-    ? TIERS.filter(t=>t.key===_filterTier)
-    : TIERS
+  body.innerHTML = visible.map(g => `
+    <tr class="group-row" onclick="openModal('${esc(g.lot)}')">
+      <td>
+        <div class="lot-name">${esc(g.lot)}</div>
+        <div class="ten-name">${esc(g.tenant || '—')}</div>
+      </td>
+      <td style="text-align:center">
+        <span class="months-badge">
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="12" height="11" rx="2"/><path d="M5 1v2M11 1v2M2 7h12" stroke-linecap="round"/></svg>
+          ${g.months.length}
+        </span>
+      </td>
+      <td class="r"><span class="rm bal-neg">${fmRM(g.totalBalance)}</span></td>
+      <td>${tierChip(g.tier, g.worstDaysOver)}</td>
+      <td onclick="event.stopPropagation()" id="sbtn-${esc(g.lot)}">${renderSendBtns(g)}</td>
+    </tr>
+  `).join('')
 
-  let html = ''
-  for (const t of tiersToShow) {
-    const tierRows = filtered.filter(r=>r.tier===t.key)
-    if (!tierRows.length) continue
-
-    const totalBal = tierRows.reduce((s,r)=>s+r.balance,0)
-    html += `
-    <div class="card section" id="section-${t.key}">
-      <div class="section-hdr">
-        <div class="section-dot" style="background:${t.dotColor}"></div>
-        <span class="section-title" style="color:${t.dotColor}">${t.label}</span>
-        <span class="section-count">${tierRows.length} unit${tierRows.length>1?'s':''}</span>
-        <span style="font-size:10px;color:rgba(255,255,255,.3)">${t.sub}</span>
-        <span class="section-total" style="color:${t.dotColor}">${fmRM(totalBal)}</span>
-      </div>
-      <div style="overflow-x:auto">
-      <table class="tbl">
-        <thead><tr>
-          <th>Lot / Tenant</th>
-          <th>Month</th>
-          <th class="r">Balance</th>
-          <th>Days Overdue</th>
-          <th>Notices Sent</th>
-          <th>Send Notice</th>
-        </tr></thead>
-        <tbody>
-          ${tierRows.map(r=>`
-          <tr id="tr-${esc(r.id)}">
-            <td>
-              <div class="lot">${esc(r.lot)}</div>
-              <div class="tname">${esc(r.tenant||'—')}</div>
-            </td>
-            <td><span class="monthbadge">${esc(r.monthLabel)}</span></td>
-            <td class="r"><span class="rm bal-neg">${fmRM(r.balance)}</span></td>
-            <td><span class="days-chip ${chipClass(r.tier)}">${r.daysOver}d</span></td>
-            <td id="notices-${esc(r.id)}">${renderNotices(r)}</td>
-            <td id="sendbtn-${esc(r.id)}">${renderSendBtns(r)}</td>
-          </tr>`).join('')}
-        </tbody>
-      </table>
-      </div>
-    </div>`
-  }
-
-  wrap.innerHTML = html
+  const tBal = visible.reduce((s,g)=>s+g.totalBalance, 0)
+  foot.innerHTML = `<tr>
+    <td colspan="2" style="font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:rgba(255,255,255,.35)">Total (${visible.length} tenants)</td>
+    <td class="r" style="color:#FF5757">${fmRM(tBal)}</td>
+    <td colspan="2"></td>
+  </tr>`
 }
 
-async function sendNotice(pageId, template) {
-  const secret = document.getElementById('wa-secret').value.trim()
-  if (!secret) { alert('Enter the WhatsApp notify secret first'); return }
+// ── Modal ──────────────────────────────────────────────────────────────────
+function openModal(lotKey) {
+  const g = _groups.find(x=>x.lot===lotKey)
+  if (!g) return
+  _modalGroup = g
 
-  _sendState[pageId] = 'sending'
-  const sendCell = document.getElementById(`sendbtn-${pageId}`)
-  if (sendCell) sendCell.innerHTML = `<span style="font-size:10px;color:rgba(255,255,255,.3)">Sending…</span>`
+  document.getElementById('m-lot').textContent    = g.lot
+  document.getElementById('m-tenant').textContent = g.tenant || 'No tenant linked'
+  document.getElementById('m-phone').textContent  = g.phone  || 'No phone number'
+  document.getElementById('m-months-count').textContent = g.months.length
+  document.getElementById('m-total-bal').textContent    = fmRM(g.totalBalance)
+  document.getElementById('m-worst').innerHTML          = tierChip(g.tier, g.worstDaysOver)
+
+  // Month rows — sorted by month (oldest first)
+  const sorted = [...g.months].sort((a,b)=>a.monthStr.localeCompare(b.monthStr))
+  document.getElementById('m-months-body').innerHTML = sorted.map(r => {
+    const rowColor = r.tier==='critical'?'rgba(255,87,87,.04)':r.tier==='severe'?'rgba(251,146,60,.04)':''
+    return `<tr style="${rowColor?'background:'+rowColor:''}">
+      <td style="font-weight:600">${esc(r.monthLabel)}</td>
+      <td class="r">${fmRM(r.amtDue)}</td>
+      <td class="r">${fmRM(r.amtPaid)}</td>
+      <td class="r"><span style="color:#FF5757;font-weight:700">${fmRM(r.balance)}</span></td>
+      <td>${badge(r.status)}</td>
+      <td>${tierChip(r.tier, r.daysOver)}</td>
+    </tr>`
+  }).join('')
+
+  // Action buttons
+  const bestRow = g.months.reduce((a,b)=>b.daysOver>a.daysOver?b:a)
+  const sentToday14 = bestRow.sent14 === today
+  const sentToday21 = bestRow.sent21 === today
+  const hasPhone = !!g.phone
+  const actionsEl = document.getElementById('m-actions')
+
+  let btns = ''
+  if (g.worstDaysOver >= 21) {
+    const cls = g.worstDaysOver >= 30 ? 'btn-modal-crit' : 'btn-modal-21'
+    const dis = !hasPhone || sentToday21 ? 'disabled' : ''
+    const lbl = sentToday21 ? '✓ Final Sent Today' : 'Send Final Notice (21d)'
+    btns += `<button class="btn-modal-send ${cls}" ${dis} onclick="modalSend('21d')">${lbl}</button>`
+  }
+  const dis14 = !hasPhone || sentToday14 ? 'disabled' : ''
+  const lbl14 = sentToday14 ? '✓ Reminded Today' : 'Send 1st Reminder (14d)'
+  btns += `<button class="btn-modal-send btn-modal-14" ${dis14} onclick="modalSend('14d')">${lbl14}</button>`
+  if (!hasPhone) btns += `<span style="font-size:11px;color:rgba(255,255,255,.25);align-self:center">No phone — add in Notion</span>`
+
+  actionsEl.innerHTML = btns
+
+  document.getElementById('m-send-err').style.display = 'none'
+  document.getElementById('m-send-ok').style.display  = 'none'
+  document.getElementById('modal-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open')
+  document.body.style.overflow = ''
+  _modalGroup = null
+}
+
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('modal-overlay')) closeModal()
+}
+
+async function modalSend(template) {
+  if (!_modalGroup) return
+  const g = _modalGroup
+  const errEl = document.getElementById('m-send-err')
+  const okEl  = document.getElementById('m-send-ok')
+  const okTxt = document.getElementById('m-send-ok-text')
+  errEl.style.display = 'none'; okEl.style.display = 'none'
+
+  // Disable buttons
+  document.querySelectorAll('.btn-modal-send').forEach(b=>b.disabled=true)
 
   try {
     const r = await fetch(SEND_API, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'x-notify-secret': secret },
+      headers: { 'Content-Type': 'application/json', 'x-notify-secret': WA_SECRET },
+      body: JSON.stringify({ pageId: g.worstPageId, forceTemplate: template }),
+    })
+    const data = await r.json()
+    if (!r.ok) throw new Error(data.error || `Error ${r.status}`)
+
+    // Update local data
+    const bestRow = g.months.reduce((a,b)=>b.daysOver>a.daysOver?b:a)
+    if (template === '21d') bestRow.sent21 = today
+    else                    bestRow.sent14 = today
+
+    okTxt.textContent = `Notice sent to ${data.sent?.to || g.phone}`
+    okEl.style.display = 'flex'
+
+    // Refresh send button in main table
+    const sbtn = document.getElementById(`sbtn-${g.lot}`)
+    if (sbtn) sbtn.innerHTML = renderSendBtns(g)
+
+    // Refresh modal actions
+    openModal(g.lot)
+  } catch (e) {
+    errEl.textContent = e.message; errEl.style.display = 'block'
+    document.querySelectorAll('.btn-modal-send').forEach(b=>b.disabled=false)
+  }
+}
+
+// ── Inline table send ──────────────────────────────────────────────────────
+async function sendNotice(lotKey, pageId, template) {
+  _sending[lotKey] = 'sending'
+  const sbtn = document.getElementById(`sbtn-${lotKey}`)
+  if (sbtn) sbtn.innerHTML = `<span style="font-size:10px;color:rgba(255,255,255,.3)">Sending…</span>`
+
+  try {
+    const r = await fetch(SEND_API, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-notify-secret': WA_SECRET },
       body: JSON.stringify({ pageId, forceTemplate: template }),
     })
     const data = await r.json()
     if (!r.ok) throw new Error(data.error || `Error ${r.status}`)
 
-    // Update local row
-    const row = _rows.find(x=>x.id===pageId)
-    if (row) {
-      if (template === '21d') { row.sent21 = today; _sendState[pageId] = 'sent21' }
-      else                    { row.sent14 = today; _sendState[pageId] = 'sent14' }
+    const g = _groups.find(x=>x.lot===lotKey)
+    if (g) {
+      const bestRow = g.months.reduce((a,b)=>b.daysOver>a.daysOver?b:a)
+      if (template === '21d') bestRow.sent21 = today
+      else                    bestRow.sent14 = today
+      _sending[lotKey] = template==='21d'?'sent21':'sent14'
+      if (sbtn) sbtn.innerHTML = renderSendBtns(g)
     }
-
-    // Refresh both cells
-    if (sendCell) sendCell.innerHTML = renderSendBtns(row||{id:pageId,daysOver:0,phone:'',sent14:null,sent21:null})
-    const noticeCell = document.getElementById(`notices-${pageId}`)
-    if (noticeCell && row) noticeCell.innerHTML = renderNotices(row)
-
   } catch (e) {
-    _sendState[pageId] = 'error'
-    if (sendCell) sendCell.innerHTML = `<span style="font-size:10px;color:#FF5757">${esc(e.message)}</span>`
+    _sending[lotKey] = null
+    if (sbtn) sbtn.innerHTML = `<span style="font-size:10px;color:#FF5757">${esc(e.message)}</span>`
   }
 }
 
+// ── Keyboard ───────────────────────────────────────────────────────────────
+document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal() })
+
+// ── Load ───────────────────────────────────────────────────────────────────
 async function load(force=false) {
   const btn = document.getElementById('btn-refresh'); btn.classList.add('spinning')
-  document.getElementById('err-banner').style.display='none'
-  document.getElementById('sections-wrap').innerHTML = `<div class="empty"><span class="skel" style="width:200px;height:16px"></span></div>`
+  document.getElementById('err-banner').style.display = 'none'
 
   const url = force ? `${API}?_t=${Date.now()}` : API
   try {
     const r = await fetch(url)
     if (!r.ok) throw new Error(`API error ${r.status}`)
     const data = await r.json()
-    _rows = data.rows || []
+    _groups = data.groups || []
 
-    // Summary
     const s = data.summary || {}
     document.getElementById('s-critical').textContent = s.critical ?? 0
     document.getElementById('s-severe').textContent   = s.severe   ?? 0
@@ -373,13 +534,11 @@ async function load(force=false) {
     document.getElementById('s-notice').textContent   = s.notice   ?? 0
     document.getElementById('s-recent').textContent   = s.recent   ?? 0
 
-    render(_rows)
-
+    render()
     const ts = new Date(data.ts)
     document.getElementById('ts').textContent = 'Updated '+ts.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'})
   } catch(e) {
-    const b = document.getElementById('err-banner'); b.textContent = 'Failed to load: '+e.message; b.style.display='block'
-    document.getElementById('sections-wrap').innerHTML=''
+    const b = document.getElementById('err-banner'); b.textContent='Failed to load: '+e.message; b.style.display='block'
   } finally {
     btn.classList.remove('spinning')
   }

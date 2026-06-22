@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Pointgate — Properties</title>
+<link rel="preconnect" href="https://api.fontshare.com"/>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#191919; --card:#222222; --card2:#2a2a2a;
+  --g:#C8FF00; --gd:#a8d900;
+  --border:#333; --text:#f0f0f0; --muted:#888; --faint:#555;
+  --r:10px; --gap:14px;
+  --occ:#4ADE80; --vac:#C8FF00; --maint:#FB923C;
+  --list:#FBBF24; --unlist:#666; --staff:#C084FC;
+  font-family:'Satoshi',sans-serif; color:var(--text);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);padding:20px;min-height:100vh;}
+a{color:var(--g);text-decoration:none;}
+
+/* ── toolbar ── */
+.toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap;}
+.toolbar h1{font-size:18px;font-weight:700;flex:0 0 auto;}
+.toolbar .ts{color:var(--muted);font-size:12px;margin-left:4px;}
+.btn-refresh{background:var(--card);border:1px solid var(--border);color:var(--text);padding:6px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-family:inherit;}
+.btn-refresh:hover{background:var(--card2);}
+.spacer{flex:1;}
+
+/* ── KPI row ── */
+.kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:var(--gap);margin-bottom:18px;}
+@media(max-width:700px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;}
+.kpi .label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;}
+.kpi .val{font-size:28px;font-weight:700;}
+.kpi .sub{font-size:12px;color:var(--muted);margin-top:4px;}
+.kpi.hero{border-color:var(--g);}
+
+/* ── filters ── */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;}
+.filters label{font-size:12px;color:var(--muted);margin-right:2px;}
+.pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:12px;cursor:pointer;transition:all .15s;}
+.pill.active{background:var(--g);border-color:var(--g);color:#000;font-weight:600;}
+.pill:hover:not(.active){background:var(--card2);}
+.search-wrap{margin-left:auto;}
+.search-wrap input{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:6px 12px;color:var(--text);font-family:inherit;font-size:13px;width:200px;}
+.search-wrap input::placeholder{color:var(--muted);}
+.search-wrap input:focus{outline:none;border-color:var(--g);}
+
+/* ── table ── */
+.tbl-wrap{overflow-x:auto;background:var(--card);border:1px solid var(--border);border-radius:var(--r);}
+table{width:100%;border-collapse:collapse;font-size:13px;}
+thead th{padding:10px 14px;text-align:left;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-bottom:1px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none;}
+thead th:hover{color:var(--text);}
+thead th .sort-icon{margin-left:4px;opacity:.4;}
+thead th.sorted .sort-icon{opacity:1;color:var(--g);}
+tbody tr{border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s;}
+tbody tr:last-child{border-bottom:none;}
+tbody tr:hover{background:var(--card2);}
+td{padding:10px 14px;vertical-align:middle;}
+.lot{font-weight:700;}
+.tenant-cell{color:var(--muted);font-size:12px;}
+.tenant-cell.has-tenant{color:var(--text);}
+
+/* ── status badge ── */
+.badge{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:600;}
+.badge.Occupied{background:#4ADE8022;color:#4ADE80;border:1px solid #4ADE8044;}
+.badge.Vacant{background:#C8FF0022;color:#C8FF00;border:1px solid #C8FF0044;}
+.badge.Under-Maintenance,.badge.maintenance{background:#FB923C22;color:#FB923C;border:1px solid #FB923C44;}
+.badge.Listed{background:#FBBF2422;color:#FBBF24;border:1px solid #FBBF2444;}
+.badge.Unlisted{background:#66666622;color:#888;border:1px solid #66666644;}
+.badge.Staff-Housing,.badge.staff{background:#C084FC22;color:#C084FC;border:1px solid #C084FC44;}
+
+/* ── lease expiry chips ── */
+.exp-chip{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;}
+.exp-chip.urgent{background:#EF444422;color:#EF4444;}
+.exp-chip.soon{background:#FB923C22;color:#FB923C;}
+.exp-chip.ok{background:#4ADE8022;color:#4ADE80;}
+.exp-chip.na{color:var(--faint);font-size:11px;}
+
+/* ── count badge ── */
+.count-badge{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:11px;color:var(--muted);}
+
+/* ── empty state ── */
+.empty{text-align:center;padding:40px;color:var(--muted);}
+
+/* ── modal backdrop ── */
+.overlay{display:none;position:fixed;inset:0;background:#000a;z-index:100;align-items:center;justify-content:center;padding:20px;}
+.overlay.open{display:flex;}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:14px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;}
+
+/* modal head */
+.modal-head{padding:20px 24px 16px;border-bottom:1px solid var(--border);}
+.modal-head .lot-label{font-size:22px;font-weight:700;}
+.modal-head .status-row{display:flex;align-items:center;gap:8px;margin-top:6px;}
+.modal-head .address{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* modal strip */
+.modal-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-bottom:1px solid var(--border);}
+.strip-cell{background:var(--card);padding:14px 16px;}
+.strip-cell .s-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.strip-cell .s-val{font-size:16px;font-weight:700;}
+.strip-cell .s-val.rent{color:var(--g);}
+
+/* modal body */
+.modal-body{padding:20px 24px;display:flex;flex-direction:column;gap:16px;}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 20px;}
+.info-row{display:flex;flex-direction:column;gap:2px;}
+.info-row .i-label{font-size:11px;color:var(--muted);}
+.info-row .i-val{font-size:14px;font-weight:500;}
+.facilities-wrap{display:flex;flex-wrap:wrap;gap:6px;}
+.fac-tag{background:var(--card2);border:1px solid var(--border);border-radius:4px;padding:3px 9px;font-size:11px;color:var(--text);}
+
+/* modal footer */
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px;}
+.btn-close{background:var(--card2);border:1px solid var(--border);color:var(--text);padding:8px 20px;border-radius:7px;cursor:pointer;font-family:inherit;font-size:14px;}
+.btn-close:hover{background:var(--faint);}
+
+/* skeleton */
+.skeleton{animation:pulse 1.5s ease-in-out infinite;}
+@keyframes pulse{0%,100%{opacity:.4;}50%{opacity:1;}}
+.sk-row{height:40px;background:var(--card2);border-radius:6px;margin-bottom:8px;}
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+  <h1>🏠 Properties</h1>
+  <span class="ts" id="ts"></span>
+  <button class="btn-refresh" onclick="load(true)">↻ Refresh</button>
+  <span class="spacer"></span>
+</div>
+
+<!-- KPI -->
+<div class="kpi-row" id="kpi-row">
+  <div class="kpi hero"><div class="label">Total Units</div><div class="val" id="k-total">—</div><div class="sub" id="k-occ-pct"></div></div>
+  <div class="kpi"><div class="label">Occupied</div><div class="val" style="color:#4ADE80" id="k-occ">—</div></div>
+  <div class="kpi"><div class="label">Vacant</div><div class="val" style="color:#C8FF00" id="k-vac">—</div></div>
+  <div class="kpi"><div class="label">Maintenance</div><div class="val" style="color:#FB923C" id="k-maint">—</div></div>
+  <div class="kpi"><div class="label">Monthly Revenue</div><div class="val" style="color:#C8FF00;font-size:20px" id="k-rev">—</div><div class="sub" id="k-expiry"></div></div>
+</div>
+
+<!-- Filters -->
+<div class="filters" id="filters">
+  <label>Block:</label>
+  <div class="pill active" data-block="" onclick="setBlock('')">All</div>
+  <div id="block-pills"></div>
+
+  <div style="width:1px;height:20px;background:var(--border);margin:0 4px;"></div>
+  <label>Status:</label>
+  <div class="pill active" data-status="" onclick="setStatus('')">All</div>
+  <div class="pill" data-status="Occupied"          onclick="setStatus('Occupied')">Occupied</div>
+  <div class="pill" data-status="Vacant"            onclick="setStatus('Vacant')">Vacant</div>
+  <div class="pill" data-status="Under Maintenance" onclick="setStatus('Under Maintenance')">Maintenance</div>
+  <div class="pill" data-status="Listed"            onclick="setStatus('Listed')">Listed</div>
+
+  <div class="search-wrap">
+    <input type="search" id="search" placeholder="Search lot / tenant…" oninput="render()"/>
+  </div>
+</div>
+
+<!-- Count -->
+<div style="margin-bottom:8px;font-size:12px;color:var(--muted);" id="row-count"></div>
+
+<!-- Table -->
+<div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th onclick="sort('lot')">Lot <span class="sort-icon">↕</span></th>
+        <th onclick="sort('status')">Status <span class="sort-icon">↕</span></th>
+        <th onclick="sort('tenant')">Tenant <span class="sort-icon">↕</span></th>
+        <th onclick="sort('rent')">Rent (RM) <span class="sort-icon">↕</span></th>
+        <th onclick="sort('leaseEnd')">Lease End <span class="sort-icon">↕</span></th>
+        <th onclick="sort('type')">Type <span class="sort-icon">↕</span></th>
+        <th>Furnishing</th>
+        <th>Bed/Bath</th>
+      </tr>
+    </thead>
+    <tbody id="tbody">
+      <tr><td colspan="8"><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div><div class="skeleton sk-row"></div></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- Modal -->
+<div class="overlay" id="overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div class="lot-label" id="m-lot"></div>
+      <div class="status-row">
+        <span id="m-badge"></span>
+        <span id="m-type-chip" style="font-size:13px;color:var(--muted)"></span>
+      </div>
+      <div class="address" id="m-address"></div>
+    </div>
+    <div class="modal-strip">
+      <div class="strip-cell"><div class="s-label">Monthly Rent</div><div class="s-val rent" id="m-rent"></div></div>
+      <div class="strip-cell"><div class="s-label">Deposit</div><div class="s-val" id="m-deposit"></div></div>
+      <div class="strip-cell"><div class="s-label">Floor Area</div><div class="s-val" id="m-area"></div></div>
+      <div class="strip-cell"><div class="s-label">Lease End</div><div class="s-val" id="m-lease"></div></div>
+    </div>
+    <div class="modal-body">
+      <div class="info-grid">
+        <div class="info-row"><div class="i-label">Tenant</div><div class="i-val" id="m-tenant"></div></div>
+        <div class="info-row"><div class="i-label">Furnishing</div><div class="i-val" id="m-furn"></div></div>
+        <div class="info-row"><div class="i-label">Bedrooms</div><div class="i-val" id="m-bed"></div></div>
+        <div class="info-row"><div class="i-label">Bathrooms</div><div class="i-val" id="m-bath"></div></div>
+        <div class="info-row"><div class="i-label">Block</div><div class="i-val" id="m-block"></div></div>
+        <div class="info-row"><div class="i-label">Unit #</div><div class="i-val" id="m-unit"></div></div>
+      </div>
+      <div id="m-facilities-section" style="display:none">
+        <div class="i-label" style="margin-bottom:8px;">Facilities</div>
+        <div class="facilities-wrap" id="m-facilities"></div>
+      </div>
+      <div id="m-remarks-section" style="display:none">
+        <div class="i-label" style="margin-bottom:4px;">Remarks</div>
+        <div id="m-remarks" style="font-size:13px;color:var(--muted);line-height:1.5;"></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-close" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = 'https://api.opxio.io/api/clients/pointgate/properties'
+const esc = s => String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+const fmt  = n  => n!=null ? 'RM '+n.toLocaleString('en-MY') : '—'
+const fmtDate = d => d ? new Date(d+'T00:00:00').toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'}) : '—'
+
+let allRows = []
+let filtered= []
+let activeBlock  = ''
+let activeStatus = ''
+let sortKey  = 'lot'
+let sortDir  = 1
+
+// ── load ──────────────────────────────────────────────────────────────────
+async function load(bust) {
+  const url = bust ? API+'?_t='+Date.now() : API
+  try {
+    const r = await fetch(url)
+    if (!r.ok) throw new Error('API error '+r.status)
+    const d = await r.json()
+    allRows = d.rows || []
+
+    // KPI
+    const k = d.kpi || {}
+    document.getElementById('k-total').textContent = k.total ?? '—'
+    document.getElementById('k-occ').textContent   = k.occupied ?? '—'
+    document.getElementById('k-vac').textContent   = k.vacant ?? '—'
+    document.getElementById('k-maint').textContent = k.maintenance ?? '—'
+    document.getElementById('k-rev').textContent   = k.revenue ? 'RM '+k.revenue.toLocaleString('en-MY') : '—'
+    const pct = k.total ? Math.round(k.occupied/k.total*100) : 0
+    document.getElementById('k-occ-pct').textContent = pct+'% occupancy'
+    let expText = ''
+    if (k.expiringIn30)  expText += k.expiringIn30+' expiring <30d'
+    if (k.expiringIn60)  expText += (expText?', ':'')+k.expiringIn60+' in 60d'
+    document.getElementById('k-expiry').textContent = expText
+
+    // Timestamp
+    const tsEl = document.getElementById('ts')
+    if (d.ts) {
+      const t = new Date(d.ts)
+      tsEl.textContent = 'Updated '+t.toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'})
+    }
+
+    // Block pills
+    buildBlockPills(d.blocks || [])
+
+    render()
+  } catch(err) {
+    document.getElementById('tbody').innerHTML = `<tr><td colspan="8" style="color:#f87171;padding:20px;">Error: ${esc(err.message)}</td></tr>`
+  }
+}
+
+function buildBlockPills(blocks) {
+  const wrap = document.getElementById('block-pills')
+  wrap.innerHTML = blocks.map(b =>
+    `<div class="pill${activeBlock===b?' active':''}" data-block="${esc(b)}" onclick="setBlock('${esc(b)}')">${esc(b)}</div>`
+  ).join('')
+}
+
+// ── filters ───────────────────────────────────────────────────────────────
+function setBlock(b) {
+  activeBlock = b
+  document.querySelectorAll('[data-block]').forEach(el => {
+    el.classList.toggle('active', el.dataset.block === b)
+  })
+  render()
+}
+function setStatus(s) {
+  activeStatus = s
+  document.querySelectorAll('[data-status]').forEach(el => {
+    el.classList.toggle('active', el.dataset.status === s)
+  })
+  render()
+}
+
+// ── sort ──────────────────────────────────────────────────────────────────
+function sort(key) {
+  if (sortKey === key) sortDir = -sortDir
+  else { sortKey = key; sortDir = 1 }
+  document.querySelectorAll('thead th').forEach(th => th.classList.remove('sorted'))
+  const idx = ['lot','status','tenant','rent','leaseEnd','type'].indexOf(key)
+  if (idx >= 0) {
+    const ths = document.querySelectorAll('thead th')
+    if (ths[idx]) ths[idx].classList.add('sorted')
+  }
+  render()
+}
+
+// ── render ────────────────────────────────────────────────────────────────
+function render() {
+  const q = (document.getElementById('search').value || '').toLowerCase()
+  filtered = allRows.filter(r => {
+    if (activeBlock  && r.block  !== activeBlock)  return false
+    if (activeStatus && r.status !== activeStatus) return false
+    if (q) {
+      const hay = (r.lot+' '+r.tenant+' '+r.block).toLowerCase()
+      if (!hay.includes(q)) return false
+    }
+    return true
+  })
+
+  // sort
+  filtered.sort((a, b) => {
+    let av = a[sortKey] ?? '', bv = b[sortKey] ?? ''
+    if (typeof av === 'string') av = av.toLowerCase()
+    if (typeof bv === 'string') bv = bv.toLowerCase()
+    if (av < bv) return -sortDir
+    if (av > bv) return  sortDir
+    return 0
+  })
+
+  document.getElementById('row-count').textContent = `Showing ${filtered.length} of ${allRows.length} properties`
+
+  const tbody = document.getElementById('tbody')
+  if (!filtered.length) {
+    tbody.innerHTML = '<tr><td colspan="8"><div class="empty">No properties match your filters.</div></td></tr>'
+    return
+  }
+
+  tbody.innerHTML = filtered.map((r, i) => {
+    const statusKey = r.status ? r.status.replace(/\s+/g,'-') : 'Unlisted'
+    const badgeHtml = `<span class="badge ${esc(statusKey)}">${esc(r.status||'—')}</span>`
+
+    // Lease expiry chip
+    let expHtml = '—'
+    if (r.leaseEnd) {
+      const d = r.daysToExpiry
+      if (d === null || d === undefined) {
+        expHtml = fmtDate(r.leaseEnd)
+      } else if (d < 0) {
+        expHtml = `<span class="exp-chip urgent">Expired ${Math.abs(d)}d ago</span>`
+      } else if (d <= 30) {
+        expHtml = `<span class="exp-chip urgent">${fmtDate(r.leaseEnd)} (${d}d)</span>`
+      } else if (d <= 60) {
+        expHtml = `<span class="exp-chip soon">${fmtDate(r.leaseEnd)} (${d}d)</span>`
+      } else {
+        expHtml = `<span class="exp-chip ok">${fmtDate(r.leaseEnd)}</span>`
+      }
+    }
+
+    const bedBath = (r.bedrooms||r.bathrooms)
+      ? `${r.bedrooms??'?'}bed / ${r.bathrooms??'?'}bath`
+      : '<span style="color:var(--faint)">—</span>'
+
+    const tenantCell = r.tenant
+      ? `<span class="tenant-cell has-tenant">${esc(r.tenant)}</span>`
+      : `<span class="tenant-cell">—</span>`
+
+    return `<tr onclick="openModal(${i})">
+      <td class="lot">${esc(r.lot)}</td>
+      <td>${badgeHtml}</td>
+      <td>${tenantCell}</td>
+      <td>${r.rent ? 'RM '+r.rent.toLocaleString('en-MY') : '<span style="color:var(--faint)">—</span>'}</td>
+      <td>${expHtml}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(r.type||'—')}</td>
+      <td style="color:var(--muted);font-size:12px">${esc(r.furnishing||'—')}</td>
+      <td style="color:var(--muted);font-size:12px">${bedBath}</td>
+    </tr>`
+  }).join('')
+}
+
+// ── modal ─────────────────────────────────────────────────────────────────
+function openModal(idx) {
+  const r = filtered[idx]
+  if (!r) return
+
+  const statusKey = r.status ? r.status.replace(/\s+/g,'-') : 'Unlisted'
+  document.getElementById('m-lot').textContent     = r.lot
+  document.getElementById('m-badge').innerHTML     = `<span class="badge ${esc(statusKey)}">${esc(r.status||'—')}</span>`
+  document.getElementById('m-type-chip').textContent = r.type || ''
+  document.getElementById('m-address').textContent = r.address || ''
+
+  document.getElementById('m-rent').textContent    = r.rent    ? 'RM '+r.rent.toLocaleString('en-MY') : '—'
+  document.getElementById('m-deposit').textContent = r.deposit ? 'RM '+r.deposit.toLocaleString('en-MY') : '—'
+  document.getElementById('m-area').textContent    = r.area    ? r.area.toLocaleString()+'  sqft' : '—'
+  document.getElementById('m-lease').textContent   = fmtDate(r.leaseEnd)
+
+  document.getElementById('m-tenant').textContent  = r.tenant  || '—'
+  document.getElementById('m-furn').textContent    = r.furnishing || '—'
+  document.getElementById('m-bed').textContent     = r.bedrooms != null ? r.bedrooms : '—'
+  document.getElementById('m-bath').textContent    = r.bathrooms != null ? r.bathrooms : '—'
+  document.getElementById('m-block').textContent   = r.block   || '—'
+  document.getElementById('m-unit').textContent    = r.unitNo  || '—'
+
+  // Facilities
+  const facSect = document.getElementById('m-facilities-section')
+  if (r.facilities && r.facilities.length) {
+    document.getElementById('m-facilities').innerHTML = r.facilities.map(f => `<span class="fac-tag">${esc(f)}</span>`).join('')
+    facSect.style.display = 'block'
+  } else {
+    facSect.style.display = 'none'
+  }
+
+  // Remarks
+  const remSect = document.getElementById('m-remarks-section')
+  if (r.remarks) {
+    document.getElementById('m-remarks').textContent = r.remarks
+    remSect.style.display = 'block'
+  } else {
+    remSect.style.display = 'none'
+  }
+
+  document.getElementById('overlay').classList.add('open')
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open')
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal() })
+
+// ── init ──────────────────────────────────────────────────────────────────
+load()
+</script>
+</body>
+</html>

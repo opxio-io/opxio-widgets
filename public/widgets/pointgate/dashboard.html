@@ -287,7 +287,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
         <th class="r" onclick="sortBy('amtPaid')">Paid</th>
         <th class="r" onclick="sortBy('balance')">Balance</th>
         <th onclick="sortBy('payDate')">Pay Date</th>
-        <th style="width:40px;text-align:center">Rcpt</th>
+        <th style="width:40px;text-align:center">Receipt</th>
       </tr></thead>
       <tbody id="tbl-body"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
       <tfoot id="tbl-foot"></tfoot>
@@ -366,7 +366,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
           </div>
           <div class="ef-group">
             <span class="ef-label">Payment Date</span>
-            <input id="m-ef-date" class="ef-input" type="date"/>
+            <input id="m-ef-date" class="ef-input" type="date" min="2020-01-01" max="2030-12-31"/>
           </div>
         </div>
       </div>
@@ -627,7 +627,7 @@ function openModal(id) {
   document.getElementById('m-meta').innerHTML = [
     r.status ? `<div class="meta-item"><span class="meta-label">Status</span><span class="meta-val">${badge(r.status)}</span></div>` : '',
     r.method ? `<div class="meta-item"><span class="meta-label">Method</span><span class="meta-val">${esc(r.method)}</span></div>` : '',
-    r.payDate ? `<div class="meta-item"><span class="meta-label">Payment Date</span><span class="meta-val">${fmDate(r.payDate)}</span></div>` : '',
+    `<div class="meta-item"><span class="meta-label">Paid On</span><span class="meta-val" style="${r.payDate?'':'color:rgba(255,255,255,.3)'}">${r.payDate ? fmDate(r.payDate) : '—'}</span></div>`,
     r.dueDate ? `<div class="meta-item"><span class="meta-label">Due Date</span><span class="meta-val">${fmDate(r.dueDate)}</span></div>` : '',
   ].join('')
 
@@ -708,6 +708,11 @@ async function modalSave() {
   if(paidEl.value!=='') body.paid   = Number(paidEl.value)
   if(methEl.value)      body.method = methEl.value
   if(statEl.value)      body.status = statEl.value
+  // Validate date
+  if(dateEl.value) {
+    const yr = parseInt(dateEl.value.substring(0,4))
+    if(yr < 2020 || yr > 2030) { errEl.textContent='Invalid year — use between 2020 and 2030'; return }
+  }
   body.payDate = dateEl.value || null
 
   saveBtn.disabled=true; saveBtn.textContent='Saving…'; errEl.textContent=''

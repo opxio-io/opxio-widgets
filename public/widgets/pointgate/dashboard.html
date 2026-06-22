@@ -23,7 +23,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .h-right{display:flex;align-items:center;gap:8px;}
 .ts{font-size:10px;color:rgba(255,255,255,.18);}
 
-/* Icon buttons */
 .icon-btn{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
 .icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
 .icon-btn.spinning svg{animation:spin .6s linear infinite;}
@@ -62,72 +61,8 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .tbl-hdr{display:flex;align-items:center;justify-content:space-between;padding:12px 16px 10px;border-bottom:1px solid rgba(255,255,255,.06);}
 .tbl-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.5);letter-spacing:.05em;text-transform:uppercase;}
 .row-count{font-size:10px;color:rgba(255,255,255,.25);}
-.tbl-wrap{overflow-x:auto;}
-.tbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
-.tbl th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:9px 10px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;cursor:pointer;user-select:none;}
-.tbl th:hover{color:rgba(255,255,255,.6);}
-.tbl th.sorted{color:var(--g);}
-.tbl th.r{text-align:right;}
-.tbl td.r{text-align:right;}
-.tbl td{padding:8px 10px;border-bottom:1px solid rgba(255,255,255,.04);white-space:nowrap;vertical-align:middle;}
-.tbl tr.data-row:hover td{background:rgba(255,255,255,.02);}
-.tbl tr.edit-row td{background:#1a1a1a;border-bottom:2px solid var(--g);}
-.lot{font-weight:700;font-size:12.5px;letter-spacing:-.01em;display:block;overflow:hidden;text-overflow:ellipsis;}
-.dup-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-left:5px;vertical-align:middle;cursor:help;}
-.tname{color:rgba(255,255,255,.55);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.rm{font-variant-numeric:tabular-nums;}
-.bal-neg{color:var(--red);}
-.bal-zero{color:var(--green);}
-.bf-val{color:rgba(255,255,255,.35);font-size:11px;}
-.method-val{font-size:10.5px;color:rgba(255,255,255,.4);}
-.pay-date-val{font-size:10.5px;color:rgba(255,255,255,.35);}
-.badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;}
-.badge-paid{background:rgba(74,222,128,.12);color:#4ADE80;}
-.badge-partial{background:rgba(251,191,36,.12);color:#FBBF24;}
-.badge-overdue{background:rgba(255,87,87,.12);color:#FF5757;}
-.badge-pending{background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);}
 
-/* Action buttons */
-.act-btns{display:flex;gap:4px;align-items:center;}
-.btn-icon{width:26px;height:26px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;flex-shrink:0;}
-.btn-icon:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.7);}
-.btn-icon.edit-active{background:var(--gm);border-color:var(--gb);color:var(--g);}
-.btn-icon.saving{opacity:.5;pointer-events:none;}
-.btn-paid{font-size:9.5px;font-weight:700;padding:3px 9px;border-radius:6px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.07);color:#4ADE80;cursor:pointer;transition:all .13s;white-space:nowrap;}
-.btn-paid:hover{background:rgba(74,222,128,.15);border-color:rgba(74,222,128,.4);}
-.btn-paid:disabled{opacity:.35;pointer-events:none;}
-
-/* Inline edit form */
-.edit-row td{padding:12px 10px;}
-.edit-form{display:flex;align-items:flex-end;gap:8px;flex-wrap:wrap;}
-.ef-group{display:flex;flex-direction:column;gap:4px;}
-.ef-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);}
-.ef-input{background:#2a2a2a;border:1px solid rgba(255,255,255,.12);border-radius:7px;color:#fff;font-family:inherit;font-size:12px;padding:6px 9px;width:110px;outline:none;transition:border-color .13s;}
-.ef-input:focus{border-color:var(--g);}
-.ef-select{appearance:none;background:#2a2a2a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center;padding-right:24px;}
-.ef-actions{display:flex;gap:6px;align-items:center;}
-.btn-save{font-size:11px;font-weight:700;padding:6px 14px;border-radius:7px;border:none;background:var(--g);color:#111;cursor:pointer;transition:opacity .13s;}
-.btn-save:hover{opacity:.85;}
-.btn-save:disabled{opacity:.4;pointer-events:none;}
-.btn-cancel{font-size:11px;font-weight:600;padding:6px 12px;border-radius:7px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.45);cursor:pointer;}
-.btn-cancel:hover{color:rgba(255,255,255,.75);}
-.save-err{font-size:10px;color:var(--red);margin-top:2px;}
-
-/* Pagination */
-.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.05);}
-.pg-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .13s;}
-.pg-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
-.pg-btn:disabled{opacity:.2;cursor:default;}
-.pg-info{font-size:11px;color:rgba(255,255,255,.3);min-width:90px;text-align:center;}
-
-/* Dup warning */
-.dup-banner{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:8px 14px;font-size:11px;color:#FBBF24;margin-bottom:10px;display:none;}
-.dup-banner b{font-weight:700;}
-
-/* Error */
-.err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:10px;display:none;}
-
-/* Search + toolbar */
+/* Toolbar */
 .toolbar{display:flex;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.05);flex-wrap:wrap;}
 .search-wrap{position:relative;flex:1;min-width:160px;max-width:260px;}
 .search-wrap svg{position:absolute;left:9px;top:50%;transform:translateY(-50%);pointer-events:none;color:rgba(255,255,255,.25);}
@@ -139,30 +74,128 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 .btn-clear{font-size:10px;font-weight:600;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,87,87,.2);background:rgba(255,87,87,.06);color:#FF5757;cursor:pointer;transition:all .13s;display:none;}
 .btn-clear:hover{background:rgba(255,87,87,.12);}
 
-/* Sticky header */
+/* Table */
 .tbl-wrap{overflow-x:auto;max-height:520px;overflow-y:auto;}
-.tbl thead th{position:sticky;top:0;z-index:2;background:#222;}
+.tbl{width:100%;border-collapse:collapse;font-size:12px;}
+.tbl th{font-size:9.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3);padding:9px 12px;text-align:left;border-bottom:1px solid rgba(255,255,255,.06);white-space:nowrap;cursor:pointer;user-select:none;position:sticky;top:0;z-index:2;background:#222;}
+.tbl th:hover{color:rgba(255,255,255,.6);}
+.tbl th.sorted{color:var(--g);}
+.tbl th.r{text-align:right;}
+.tbl td{padding:10px 12px;border-bottom:1px solid rgba(255,255,255,.04);vertical-align:middle;}
+.tbl td.r{text-align:right;}
 
-/* Totals row */
-.tbl tfoot td{padding:9px 10px;font-size:11.5px;font-weight:700;border-top:1px solid rgba(255,255,255,.1);background:#1e1e1e;}
-.tbl tfoot .tot-label{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.08em;text-transform:uppercase;}
-
-/* Overdue accent */
+.tbl tr.data-row{cursor:pointer;transition:background .1s;}
+.tbl tr.data-row:hover td{background:rgba(255,255,255,.03);}
 .tbl tr.data-row.is-overdue td:first-child{border-left:2px solid rgba(255,87,87,.5);}
 .tbl tr.data-row.is-partial  td:first-child{border-left:2px solid rgba(251,191,36,.4);}
 
-/* Receipt */
-.rcpt-icon{display:flex;align-items:center;justify-content:center;}
-.rcpt-btn{width:28px;height:28px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;text-decoration:none;}
-.rcpt-btn:hover{border-color:rgba(74,222,128,.4);color:#4ADE80;}
-.rcpt-btn.has-rcpt{border-color:rgba(74,222,128,.3);color:#4ADE80;background:rgba(74,222,128,.07);}
-.rcpt-btn.uploading{opacity:.4;pointer-events:none;}
-.upload-hint{font-size:9px;color:rgba(255,255,255,.25);margin-top:3px;text-align:center;}
+.lot{font-weight:700;font-size:13px;letter-spacing:-.01em;}
+.tname{font-size:11px;color:rgba(255,255,255,.4);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px;}
+.dup-dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);margin-left:5px;vertical-align:middle;}
+.rm{font-variant-numeric:tabular-nums;}
+.bal-neg{color:var(--red);}
+.bal-zero{color:var(--green);}
 
-/* Empty */
+.badge{display:inline-block;padding:3px 8px;border-radius:5px;font-size:10px;font-weight:700;letter-spacing:.04em;}
+.badge-paid{background:rgba(74,222,128,.12);color:#4ADE80;}
+.badge-partial{background:rgba(251,191,36,.12);color:#FBBF24;}
+.badge-overdue{background:rgba(255,87,87,.12);color:#FF5757;}
+.badge-pending{background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);}
+
+.rcpt-btn{width:26px;height:26px;border-radius:7px;background:transparent;border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .13s;text-decoration:none;}
+.rcpt-btn:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.6);}
+.rcpt-btn.has-rcpt{border-color:rgba(74,222,128,.3);color:#4ADE80;background:rgba(74,222,128,.07);}
+
+.pay-date-val{font-size:11px;color:rgba(255,255,255,.4);}
+
+/* Totals row */
+.tbl tfoot td{padding:9px 12px;font-size:11.5px;font-weight:700;border-top:1px solid rgba(255,255,255,.1);background:#1e1e1e;}
+.tbl tfoot .tot-label{color:rgba(255,255,255,.4);font-size:10px;letter-spacing:.08em;text-transform:uppercase;}
+
+/* Pagination */
+.pagination{display:flex;align-items:center;justify-content:center;gap:6px;padding:12px 16px;border-top:1px solid rgba(255,255,255,.05);}
+.pg-btn{width:28px;height:28px;border-radius:7px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.45);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .13s;}
+.pg-btn:hover:not(:disabled){background:var(--gm);border-color:var(--gb);color:var(--g);}
+.pg-btn:disabled{opacity:.2;cursor:default;}
+.pg-info{font-size:11px;color:rgba(255,255,255,.3);min-width:90px;text-align:center;}
+
+/* Banners */
+.dup-banner{background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.2);border-radius:10px;padding:8px 14px;font-size:11px;color:#FBBF24;margin-bottom:10px;display:none;}
+.dup-banner b{font-weight:700;}
+.err-banner{padding:10px 14px;background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:10px;color:#FF5757;font-size:12px;margin-bottom:10px;display:none;}
+
+/* Empty / skeleton */
 .empty{padding:40px 20px;text-align:center;color:rgba(255,255,255,.25);font-size:13px;}
 @keyframes shimmer{0%{opacity:.4}50%{opacity:.8}100%{opacity:.4}}
 .skel{background:rgba(255,255,255,.06);border-radius:6px;animation:shimmer 1.4s ease-in-out infinite;}
+
+/* ── MODAL ─────────────────────────────────────────────────────────────── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);backdrop-filter:blur(4px);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .18s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal{background:#1e1e1e;border:1px solid rgba(255,255,255,.1);border-radius:18px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;position:relative;transform:translateY(12px);transition:transform .18s;}
+.modal-overlay.open .modal{transform:translateY(0);}
+
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;padding:20px 20px 14px;border-bottom:1px solid rgba(255,255,255,.06);}
+.modal-lot{font-size:22px;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.modal-tenant{font-size:12px;color:rgba(255,255,255,.45);margin-top:4px;}
+.modal-month{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);margin-top:6px;}
+.modal-close{width:32px;height:32px;border-radius:9px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .13s;}
+.modal-close:hover{background:rgba(255,87,87,.1);border-color:rgba(255,87,87,.3);color:#FF5757;}
+
+/* Modal financials grid */
+.modal-fin{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:1px;background:rgba(255,255,255,.05);border-bottom:1px solid rgba(255,255,255,.06);}
+.fin-cell{background:#1e1e1e;padding:14px 16px;}
+.fin-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:6px;}
+.fin-val{font-size:18px;font-weight:900;letter-spacing:-.03em;}
+.fin-val.neg{color:var(--red);}
+.fin-val.pos{color:var(--green);}
+
+/* Modal body */
+.modal-body{padding:16px 20px 20px;}
+.modal-section{margin-bottom:16px;}
+.modal-section:last-child{margin-bottom:0;}
+.modal-section-title{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin-bottom:10px;}
+
+/* Meta row */
+.meta-row{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:12px;}
+.meta-item{display:flex;flex-direction:column;gap:3px;}
+.meta-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.28);}
+.meta-val{font-size:12.5px;font-weight:600;color:rgba(255,255,255,.7);}
+
+/* Edit form in modal */
+.ef-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.ef-group{display:flex;flex-direction:column;gap:5px;}
+.ef-label{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);}
+.ef-input{background:#2a2a2a;border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#fff;font-family:inherit;font-size:13px;padding:8px 10px;outline:none;transition:border-color .13s;width:100%;}
+.ef-input:focus{border-color:var(--g);}
+.ef-select{appearance:none;background:#2a2a2a url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='rgba(255,255,255,.3)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;padding-right:28px;}
+
+/* Modal action bar */
+.modal-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding-top:14px;border-top:1px solid rgba(255,255,255,.06);margin-top:16px;}
+.btn-primary{font-size:12px;font-weight:700;padding:9px 18px;border-radius:9px;border:none;background:var(--g);color:#111;cursor:pointer;transition:opacity .13s;}
+.btn-primary:hover{opacity:.85;}
+.btn-primary:disabled{opacity:.35;pointer-events:none;}
+.btn-secondary{font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:transparent;color:rgba(255,255,255,.5);cursor:pointer;transition:all .13s;}
+.btn-secondary:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.8);}
+.btn-danger{font-size:12px;font-weight:600;padding:8px 16px;border-radius:9px;border:1px solid rgba(74,222,128,.25);background:rgba(74,222,128,.07);color:#4ADE80;cursor:pointer;transition:all .13s;margin-left:auto;}
+.btn-danger:hover{background:rgba(74,222,128,.14);}
+.btn-danger:disabled{opacity:.35;pointer-events:none;}
+.modal-save-err{font-size:10.5px;color:var(--red);width:100%;}
+
+/* Receipt section in modal */
+.rcpt-section{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.rcpt-preview{display:flex;align-items:center;gap:8px;font-size:12px;color:#4ADE80;text-decoration:none;}
+.rcpt-preview svg{flex-shrink:0;}
+.rcpt-upload-label{font-size:11px;color:rgba(255,255,255,.4);cursor:pointer;display:flex;align-items:center;gap:5px;padding:6px 12px;border-radius:7px;border:1px dashed rgba(255,255,255,.12);transition:all .13s;}
+.rcpt-upload-label:hover{border-color:rgba(255,255,255,.25);color:rgba(255,255,255,.7);}
+
+/* Invoice btn */
+.btn-invoice{font-size:11px;font-weight:600;padding:7px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .13s;}
+.btn-invoice:hover{border-color:rgba(255,255,255,.2);color:rgba(255,255,255,.8);}
+.btn-invoice:disabled{opacity:.4;pointer-events:none;}
+
+/* Overdue warning in modal */
+.overdue-chip{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--red);background:rgba(255,87,87,.1);border:1px solid rgba(255,87,87,.2);border-radius:6px;padding:4px 9px;margin-left:8px;}
 </style>
 </head>
 <body>
@@ -239,7 +272,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
       <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="6.5" cy="6.5" r="4.5"/><path d="M11 11l3 3" stroke-linecap="round"/></svg>
       <input class="search-input" id="search-input" placeholder="Search lot or tenant…" oninput="onSearch()" autocomplete="off"/>
     </div>
-    <button class="btn-clear" id="btn-clear" onclick="clearFilters()">✕ Clear filters</button>
+    <button class="btn-clear" id="btn-clear" onclick="clearFilters()">✕ Clear</button>
     <button class="btn-export" onclick="exportCSV()">
       <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M3 12h10M8 2v8M5 7l3 3 3-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
       Export CSV
@@ -247,41 +280,122 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
   </div>
   <div class="tbl-wrap">
     <table class="tbl">
-      <colgroup>
-        <col style="width:100px"/>
-        <col style="width:150px"/>
-        <col style="width:100px"/>
-        <col style="width:110px"/>
-        <col style="width:110px"/>
-        <col style="width:100px"/>
-        <col style="width:80px"/>
-        <col style="width:100px"/>
-        <col style="width:80px"/>
-        <col style="width:60px"/>
-        <col style="width:100px"/>
-      </colgroup>
       <thead><tr>
-        <th onclick="sortBy('lot')">Lot</th>
-        <th onclick="sortBy('tenant')">Tenant</th>
-        <th class="r" onclick="sortBy('bf')">B/F</th>
+        <th onclick="sortBy('lot')">Lot / Tenant</th>
+        <th onclick="sortBy('status')">Status</th>
         <th class="r" onclick="sortBy('amtDue')">Rent Due</th>
         <th class="r" onclick="sortBy('amtPaid')">Paid</th>
-        <th class="r" onclick="sortBy('balance')" title="Monthly balance + B/F balance owed">Balance <span style="font-size:8px;opacity:.5;font-weight:500;letter-spacing:0">+B/F</span></th>
-        <th onclick="sortBy('status')">Status</th>
-        <th onclick="sortBy('method')">Method</th>
+        <th class="r" onclick="sortBy('balance')">Balance</th>
         <th onclick="sortBy('payDate')">Pay Date</th>
-        <th style="text-align:center">Receipt</th>
-        <th></th>
+        <th style="width:40px;text-align:center">Rcpt</th>
       </tr></thead>
-      <tbody id="tbl-body"><tr><td colspan="11" class="empty">Loading…</td></tr></tbody>
+      <tbody id="tbl-body"><tr><td colspan="7" class="empty">Loading…</td></tr></tbody>
       <tfoot id="tbl-foot"></tfoot>
     </table>
   </div>
   <div class="pagination" id="pagination"></div>
 </div>
 
+<!-- ── DETAIL MODAL ──────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal" id="modal">
+    <!-- Head -->
+    <div class="modal-head">
+      <div>
+        <div class="modal-lot" id="m-lot">—</div>
+        <div class="modal-tenant" id="m-tenant"></div>
+        <div class="modal-month" id="m-month"></div>
+      </div>
+      <button class="modal-close" onclick="closeModal()">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 1l12 12M13 1L1 13" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <!-- Financials -->
+    <div class="modal-fin">
+      <div class="fin-cell">
+        <div class="fin-label">Carried Fwd</div>
+        <div class="fin-val" id="m-bf" style="font-size:15px;color:rgba(255,255,255,.5)">—</div>
+      </div>
+      <div class="fin-cell">
+        <div class="fin-label">Rent Due</div>
+        <div class="fin-val" id="m-due">—</div>
+      </div>
+      <div class="fin-cell">
+        <div class="fin-label">Paid</div>
+        <div class="fin-val pos" id="m-paid">—</div>
+      </div>
+      <div class="fin-cell">
+        <div class="fin-label">Balance</div>
+        <div class="fin-val" id="m-balance">—</div>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+
+      <!-- Meta -->
+      <div class="meta-row" id="m-meta"></div>
+
+      <!-- Edit section -->
+      <div class="modal-section">
+        <div class="modal-section-title">Update Payment</div>
+        <div class="ef-grid">
+          <div class="ef-group">
+            <span class="ef-label">Amount Paid (RM)</span>
+            <input id="m-ef-paid" class="ef-input" type="number" min="0" step="0.01" oninput="mAutoStatus()"/>
+          </div>
+          <div class="ef-group">
+            <span class="ef-label">Status</span>
+            <select id="m-ef-status" class="ef-input ef-select">
+              <option value="Paid">Paid</option>
+              <option value="Partial">Partial</option>
+              <option value="Overdue">Overdue</option>
+              <option value="Pending">Pending</option>
+            </select>
+          </div>
+          <div class="ef-group">
+            <span class="ef-label">Payment Method</span>
+            <select id="m-ef-method" class="ef-input ef-select">
+              <option value="">—</option>
+              <option value="Cash">Cash</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Online Banking">Online Banking</option>
+              <option value="Cheque">Cheque</option>
+            </select>
+          </div>
+          <div class="ef-group">
+            <span class="ef-label">Payment Date</span>
+            <input id="m-ef-date" class="ef-input" type="date"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Receipt section -->
+      <div class="modal-section">
+        <div class="modal-section-title">Receipt</div>
+        <div class="rcpt-section" id="m-rcpt-section"></div>
+        <input id="m-rcpt-input" type="file" accept="image/*,.pdf" style="display:none" onchange="modalUploadReceipt(this.files[0])"/>
+      </div>
+
+      <!-- Actions -->
+      <div class="modal-actions">
+        <button class="btn-primary" id="m-save-btn" onclick="modalSave()">Save Changes</button>
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-invoice" id="m-inv-btn" onclick="modalDownloadInvoice()">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="1" width="10" height="14" rx="2"/><path d="M5 5h6M5 8h4" stroke-linecap="round"/><path d="M8 11v3M6.5 12.5L8 14l1.5-1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Invoice PDF
+        </button>
+        <button class="btn-danger" id="m-markpaid-btn" onclick="modalMarkPaid()">Mark as Paid</button>
+        <span class="modal-save-err" id="m-err"></span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
 <script>
-const API     = 'https://api.opxio.io/api/clients/pointgate/dashboard'
+const API         = 'https://api.opxio.io/api/clients/pointgate/dashboard'
 const PAY_API     = 'https://api.opxio.io/api/clients/pointgate/payment'
 const RECEIPT_API = 'https://api.opxio.io/api/clients/pointgate/receipt'
 const INVOICE_API = 'https://api.opxio.io/api/clients/pointgate/invoice'
@@ -299,25 +413,23 @@ let sortDir      = 1
 let currentPage  = 1
 let _ctrl        = null
 let _rows        = []
-let _editRowId   = null
 let _search      = ''
+let _modalRowId  = null
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
 const fmRM = (n,zero='RM 0.00') => n == null ? '—' : n===0 ? zero : 'RM '+Number(n).toLocaleString('en-MY',{minimumFractionDigits:2,maximumFractionDigits:2})
-const fmDate = s => { if(!s)return '—'; const d=new Date(s+'T00:00:00'); return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short'}) }
+const fmDate = s => { if(!s)return '—'; const d=new Date(s+'T00:00:00'); return d.toLocaleDateString('en-MY',{day:'2-digit',month:'short',year:'numeric'}) }
 function monthStr() { return `${filterYear}-${String(filterMonth).padStart(2,'0')}` }
 
 function onSearch() {
   _search = document.getElementById('search-input').value.trim().toLowerCase()
   updateClearBtn(); currentPage=1; renderTable(_rows)
 }
-
 function updateClearBtn() {
   const active = _search || filterBlock || filterStatus
   document.getElementById('btn-clear').style.display = active ? 'inline-flex' : 'none'
 }
-
 function clearFilters() {
   _search=''; filterBlock=''; filterStatus=''
   document.getElementById('search-input').value=''
@@ -327,29 +439,23 @@ function clearFilters() {
   document.querySelector('.block-pill[data-block=""]')?.classList.add('active')
   updateClearBtn(); currentPage=1; renderTable(_rows)
 }
-
 function getVisible(rows) {
   if(!_search) return rows
   const q = _search
-  return rows.filter(r =>
-    r.lot.toLowerCase().includes(q) ||
-    r.tenant.toLowerCase().includes(q)
-  )
+  return rows.filter(r => r.lot.toLowerCase().includes(q) || r.tenant.toLowerCase().includes(q))
 }
 
 function exportCSV() {
   const visible = getSorted(getVisible(_rows))
   const headers = ['Lot','Tenant','B/F (RM)','Rent Due (RM)','Paid (RM)','Balance (RM)','Status','Method','Pay Date','Receipt URL']
   const rows = visible.map(r => [
-    r.lot, r.tenant, r.bf||0, r.amtDue, r.amtPaid, r.balance,
+    r.lot, r.tenant, r.bf||0, r.amtDue, r.amtPaid, r.bf+r.amtDue-r.amtPaid,
     r.status, r.method, r.payDate||'', r.receiptUrl||''
   ].map(v => `"${String(v).replace(/"/g,'""')}"`).join(','))
   const csv = [headers.join(','), ...rows].join('\n')
   const blob = new Blob([csv], {type:'text/csv'})
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = `pointgate_${monthStr()}${filterBlock?'_'+filterBlock:''}.csv`
-  a.click()
+  const a = document.createElement('a'); a.href=URL.createObjectURL(blob)
+  a.download=`pointgate_${monthStr()}${filterBlock?'_'+filterBlock:''}.csv`; a.click()
 }
 
 function updateMonthLabel() {
@@ -358,24 +464,20 @@ function updateMonthLabel() {
   document.getElementById('mn-prev').disabled = cur<=new Date(2024,0,1)
   document.getElementById('mn-next').disabled = cur>=new Date(now.getFullYear(),now.getMonth(),1)
 }
-
 function shiftMonth(dir) {
   filterMonth+=dir
   if(filterMonth>12){filterMonth=1;filterYear++}
   if(filterMonth<1){filterMonth=12;filterYear--}
-  updateMonthLabel(); closeEdit(); currentPage=1; load()
+  updateMonthLabel(); currentPage=1; load()
 }
-
 function setStatus(el) {
   document.querySelectorAll('[data-status]').forEach(e=>e.classList.remove('active'))
-  el.classList.add('active'); filterStatus=el.dataset.status; closeEdit(); currentPage=1; load()
+  el.classList.add('active'); filterStatus=el.dataset.status; currentPage=1; load()
 }
-
 function setBlock(el) {
   document.querySelectorAll('.block-pill').forEach(e=>e.classList.remove('active'))
-  el.classList.add('active'); filterBlock=el.dataset.block; closeEdit(); currentPage=1; load()
+  el.classList.add('active'); filterBlock=el.dataset.block; currentPage=1; load()
 }
-
 function initBlockPills(blocks) {
   const list = blocks.length ? blocks : ['3416','3417','3418','3419','3420']
   document.getElementById('block-pills').innerHTML =
@@ -386,88 +488,19 @@ function initBlockPills(blocks) {
 // ── Sort ────────────────────────────────────────────────────────────────────
 function sortBy(col) {
   if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1}
-  const thCols=['lot','tenant','bf','amtDue','amtPaid','balance','status','method','payDate','receiptUrl','_actions']
+  const thCols=['lot','status','amtDue','amtPaid','balance','payDate','_rcpt']
   document.querySelectorAll('.tbl th').forEach((th,i)=>th.classList.toggle('sorted',thCols[i]===col))
   currentPage=1; renderTable(_rows)
 }
-
 function getSorted(rows) {
   return [...rows].sort((a,b)=>{
     const getVal = r => sortCol==='balance' ? (r.bf+r.amtDue-r.amtPaid) : r[sortCol]
-    const va=getVal(a),vb=getVal(b)
+    const va=getVal(a), vb=getVal(b)
     if(va==null&&vb==null)return 0
     if(va==null)return sortDir; if(vb==null)return -sortDir
     if(typeof va==='number')return(va-vb)*sortDir
     return String(va).localeCompare(String(vb),'en',{numeric:true})*sortDir
   })
-}
-
-// ── Edit ────────────────────────────────────────────────────────────────────
-function closeEdit() { _editRowId=null }
-
-function toggleEdit(id) {
-  _editRowId = _editRowId===id ? null : id
-  renderTable(_rows)
-}
-
-async function saveEdit(id) {
-  const paidEl   = document.getElementById(`ef-paid-${id}`)
-  const methEl   = document.getElementById(`ef-method-${id}`)
-  const statEl   = document.getElementById(`ef-status-${id}`)
-  const dateEl   = document.getElementById(`ef-date-${id}`)
-  const errEl    = document.getElementById(`ef-err-${id}`)
-  const saveBtn  = document.getElementById(`ef-save-${id}`)
-
-  const body = { pageId: id }
-  if(paidEl)   body.paid    = paidEl.value==='' ? null : Number(paidEl.value)
-  if(methEl)   body.method  = methEl.value
-  if(statEl)   body.status  = statEl.value
-  if(dateEl)   body.payDate = dateEl.value || null
-
-  saveBtn.disabled=true; saveBtn.textContent='Saving…'; errEl.textContent=''
-  try {
-    const r = await fetch(PAY_API, {
-      method:'PATCH',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    })
-    const data = await r.json()
-    if(!r.ok) throw new Error(data.error||`Error ${r.status}`)
-    // Update local row optimistically
-    const row = _rows.find(x=>x.id===id)
-    if(row){
-      if(body.paid!=null)    row.amtPaid=body.paid
-      if(body.method!=null)  row.method=body.method
-      if(body.status)        row.status=body.status
-      if(body.payDate!==undefined) row.payDate=body.payDate||null
-      row.balance = row.amtDue - row.amtPaid
-    }
-    _editRowId=null
-    renderTable(_rows)
-  } catch(e) {
-    errEl.textContent=e.message; saveBtn.disabled=false; saveBtn.textContent='Save'
-  }
-}
-
-async function markPaid(id) {
-  const row = _rows.find(x=>x.id===id)
-  if(!row)return
-  const btn = document.getElementById(`mp-${id}`)
-  if(btn){btn.disabled=true;btn.textContent='…'}
-  const today = new Date().toISOString().slice(0,10)
-  try {
-    const r = await fetch(PAY_API,{
-      method:'PATCH',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({pageId:id,paid:row.amtDue,status:'Paid',payDate:today})
-    })
-    if(!r.ok){const d=await r.json();throw new Error(d.error||`Error ${r.status}`)}
-    row.amtPaid=row.amtDue; row.balance=0; row.status='Paid'; row.payDate=today
-    renderTable(_rows)
-  } catch(e) {
-    if(btn){btn.disabled=false;btn.textContent='Mark Paid'}
-    alert('Error: '+e.message)
-  }
 }
 
 // ── Badges ──────────────────────────────────────────────────────────────────
@@ -476,135 +509,52 @@ function badge(s){ const c={Paid:'paid',Partial:'partial',Overdue:'overdue',Pend
 // ── Render ──────────────────────────────────────────────────────────────────
 function renderTable(rows) {
   const visible = getVisible(rows)
-  const sorted = getSorted(visible)
-  const total  = visible.length
-  const pages  = Math.max(1,Math.ceil(total/PAGE_SIZE))
-  if(currentPage>pages)currentPage=pages
-
+  const sorted  = getSorted(visible)
+  const total   = visible.length
+  const pages   = Math.max(1,Math.ceil(total/PAGE_SIZE))
+  if(currentPage>pages) currentPage=pages
   const pageRows = sorted.slice((currentPage-1)*PAGE_SIZE, currentPage*PAGE_SIZE)
   const body = document.getElementById('tbl-body')
   document.getElementById('row-count').textContent = `${total} records`
 
-  if(!pageRows.length){
-    body.innerHTML='<tr><td colspan="11" class="empty">No records for this filter.</td></tr>'
+  if(!pageRows.length) {
+    body.innerHTML='<tr><td colspan="7" class="empty">No records for this filter.</td></tr>'
     renderPagination(0,0); return
   }
 
-  // Detect duplicate lot+month combos
-  const dupSet = new Set()
-  const seen   = {}
+  const dupSet=new Set(), seen={}
   for(const r of rows){ if(r.lot==='—')continue; const k=r.lot+'|'+r.month; seen[k]=(seen[k]||0)+1; if(seen[k]>1)dupSet.add(r.lot+'|'+r.month) }
 
   body.innerHTML = pageRows.map(r => {
-    const dupKey = r.lot+'|'+r.month
-    const isDup  = r.lot !== '—' && dupSet.has(dupKey)
-    const isOrphan = r.lot === '—'
+    const isDup = r.lot!=='—' && dupSet.has(r.lot+'|'+r.month)
     const totalOwed = r.bf + r.amtDue - r.amtPaid
-    const balCls = totalOwed<=0.005 ? 'bal-zero' : totalOwed>0 ? 'bal-neg' : 'bal-pos'
-    const isPaid = r.status==='Paid'
-    const isEdit = _editRowId===r.id
-
+    const balCls = totalOwed<=0.005 ? 'bal-zero' : 'bal-neg'
     const rowClass = r.status==='Overdue'?' is-overdue':r.status==='Partial'?' is-partial':''
-    const dataRow = `<tr class="data-row${rowClass}" id="row-${esc(r.id)}">
-      <td><span class="lot" style="${isOrphan?'color:rgba(255,255,255,.2);font-weight:500':''}">${esc(r.lot)}</span>${isDup?`<span class="dup-dot" title="Multiple records for this lot in ${r.month}"></span>`:''}
+    const hasRcpt = !!r.receiptUrl
+
+    return `<tr class="data-row${rowClass}" onclick="openModal('${esc(r.id)}')" id="row-${esc(r.id)}">
+      <td>
+        <div class="lot">${esc(r.lot)}${isDup?`<span class="dup-dot" title="Duplicate entry"></span>`:''}</div>
+        <div class="tname">${esc(r.tenant||'—')}</div>
       </td>
-      <td><span class="tname" title="${esc(r.tenant)}">${esc(r.tenant||'—')}</span></td>
-      <td class="r"><span class="bf-val">${r.bf?fmRM(r.bf):'—'}</span></td>
+      <td>${badge(r.status)}</td>
       <td class="r"><span class="rm">${fmRM(r.amtDue)}</span></td>
       <td class="r"><span class="rm">${fmRM(r.amtPaid)}</span></td>
       <td class="r"><span class="rm ${balCls}">${fmRM(totalOwed)}</span></td>
-      <td>${badge(r.status)}</td>
-      <td><span class="method-val">${esc(r.method||'—')}</span></td>
-      <td><span class="pay-date-val">${fmDate(r.payDate)}</span></td>
-      <td>
-        <div class="rcpt-icon">
-          ${r.receiptUrl
-            ? `<a class="rcpt-btn has-rcpt" href="${esc(r.receiptUrl)}" target="_blank" rel="noopener" title="View receipt">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
-               </a>`
-            : `<button class="rcpt-btn" id="rcpt-btn-${esc(r.id)}" onclick="triggerReceiptUpload('${esc(r.id)}')" title="Upload receipt">
-                <svg width="13" height="13" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
-               </button>
-               <input id="rcpt-input-${esc(r.id)}" type="file" accept="image/*,.pdf" style="display:none" onchange="uploadReceipt('${esc(r.id)}',this.files[0])"/>`
-          }
-        </div>
-      </td>
-      <td>
-        <div class="act-btns">
-          ${!isPaid?`<button class="btn-paid" id="mp-${esc(r.id)}" onclick="markPaid('${esc(r.id)}')">Mark Paid</button>`:''}
-          <button class="btn-icon${isEdit?' edit-active':''}" title="Edit" onclick="toggleEdit('${esc(r.id)}')">
-            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M9.5 2L12 4.5 5 11.5H2.5V9L9.5 2Z" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-          <button class="btn-icon" id="inv-btn-${esc(r.id)}" title="Download invoice PDF" onclick="downloadInvoice('${esc(r.id)}')">
-            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="1" width="10" height="14" rx="2"/><path d="M5 5h6M5 8h4" stroke-linecap="round"/><path d="M8 11v3M6.5 12.5L8 14l1.5-1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-          </button>
-        </div>
+      <td><span class="pay-date-val">${r.payDate ? fmDate(r.payDate) : '—'}</span></td>
+      <td style="text-align:center" onclick="event.stopPropagation()">
+        ${hasRcpt
+          ? `<a class="rcpt-btn has-rcpt" href="${esc(r.receiptUrl)}" target="_blank" rel="noopener" title="View receipt">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
+             </a>`
+          : `<span class="rcpt-btn" style="opacity:.3" title="No receipt">
+              <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
+             </span>`
+        }
       </td>
     </tr>`
-
-    const editRow = !isEdit ? '' : `<tr class="edit-row">
-      <td colspan="11">
-        <div class="edit-form">
-          <div class="ef-group">
-            <span class="ef-label">Amount Paid (RM)</span>
-            <input id="ef-paid-${esc(r.id)}" class="ef-input" type="number" min="0" step="0.01" value="${esc(r.amtPaid??'')}" oninput="autoStatus('${esc(r.id)}',this.value,${r.amtDue},${r.bf||0})"/>
-          </div>
-          <div class="ef-group">
-            <span class="ef-label">Status</span>
-            <select id="ef-status-${esc(r.id)}" class="ef-input ef-select">
-              <option value="Paid"${r.status==='Paid'?' selected':''}>Paid</option>
-              <option value="Partial"${r.status==='Partial'?' selected':''}>Partial</option>
-              <option value="Overdue"${r.status==='Overdue'?' selected':''}>Overdue</option>
-              <option value="Pending"${r.status==='Pending'?' selected':''}>Pending</option>
-            </select>
-          </div>
-          <div class="ef-group">
-            <span class="ef-label">Method</span>
-            <select id="ef-method-${esc(r.id)}" class="ef-input ef-select">
-              <option value="">—</option>
-              <option value="Cash"${r.method==='Cash'?' selected':''}>Cash</option>
-              <option value="Bank Transfer"${r.method==='Bank Transfer'?' selected':''}>Bank Transfer</option>
-              <option value="Online Banking"${r.method==='Online Banking'?' selected':''}>Online Banking</option>
-              <option value="Cheque"${r.method==='Cheque'?' selected':''}>Cheque</option>
-            </select>
-          </div>
-          <div class="ef-group">
-            <span class="ef-label">Payment Date</span>
-            <input id="ef-date-${esc(r.id)}" class="ef-input" type="date" value="${esc(r.payDate||'')}"/>
-          </div>
-          <div class="ef-group">
-            <span class="ef-label">Receipt</span>
-            <div style="display:flex;flex-direction:column;gap:4px">
-              ${r.receiptUrl
-                ? `<a href="${esc(r.receiptUrl)}" target="_blank" rel="noopener" style="font-size:10.5px;color:#4ADE80;text-decoration:none;display:flex;align-items:center;gap:4px">
-                    <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
-                    View receipt
-                   </a>`
-                : ''
-              }
-              <label style="font-size:10px;color:rgba(255,255,255,.3);cursor:pointer;display:flex;align-items:center;gap:4px">
-                <svg width="11" height="11" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
-                ${r.receiptUrl ? 'Replace' : 'Upload'}
-                <input type="file" accept="image/*,.pdf" style="display:none" onchange="uploadReceipt('${esc(r.id)}',this.files[0]);toggleEdit('${esc(r.id)}')"/>
-              </label>
-            </div>
-          </div>
-          <div class="ef-group">
-            <span class="ef-label">&nbsp;</span>
-            <div class="ef-actions">
-              <button id="ef-save-${esc(r.id)}" class="btn-save" onclick="saveEdit('${esc(r.id)}')">Save</button>
-              <button class="btn-cancel" onclick="toggleEdit('${esc(r.id)}')">Cancel</button>
-            </div>
-            <span class="save-err" id="ef-err-${esc(r.id)}"></span>
-          </div>
-        </div>
-      </td>
-    </tr>`
-
-    return dataRow + editRow
   }).join('')
 
-  // Totals row
   const foot = document.getElementById('tbl-foot')
   if(sorted.length) {
     const tDue  = visible.reduce((s,r)=>s+r.amtDue,0)
@@ -612,11 +562,11 @@ function renderTable(rows) {
     const tBal  = visible.reduce((s,r)=>s+(r.bf+r.amtDue-r.amtPaid),0)
     const balCls = tBal<=0.005?'bal-zero':'bal-neg'
     foot.innerHTML = `<tr>
-      <td colspan="3" class="tot-label">Totals (${visible.length} records)</td>
+      <td colspan="2" class="tot-label">Totals (${visible.length} records)</td>
       <td class="r">${fmRM(tDue)}</td>
       <td class="r">${fmRM(tPaid)}</td>
       <td class="r"><span class="${balCls}">${fmRM(tBal)}</span></td>
-      <td colspan="5"></td>
+      <td colspan="2"></td>
     </tr>`
   } else { foot.innerHTML='' }
 
@@ -631,7 +581,6 @@ function renderPagination(total, pages) {
     <span class="pg-info">Page ${currentPage} of ${pages}</span>
     <button class="pg-btn" onclick="goPage(${currentPage+1})" ${currentPage>=pages?'disabled':''}>&#8250;</button>`
 }
-
 function goPage(n) { currentPage=n; renderTable(_rows) }
 
 // ── KPI ────────────────────────────────────────────────────────────────────
@@ -649,93 +598,208 @@ function renderKPI(kpi) {
   rateEl.style.color = rate>=90?'#4ADE80':rate>=70?'#AAFF00':'#FF5757'
 }
 
-// ── Auto-status logic ────────────────────────────────────────────────────────
-function autoStatus(id, paidVal, amtDue, bf) {
-  const sel = document.getElementById('ef-status-' + id)
-  if(!sel) return
-  const paid = parseFloat(paidVal)
-  if(isNaN(paid)) return
-  const totalOwed = (bf || 0) + amtDue
-  const balance = totalOwed - paid
-  if(balance <= 0 && totalOwed > 0)     sel.value = 'Paid'
-  else if(paid > 0 && balance > 0)      sel.value = 'Partial'
-  else if(paid === 0)                   { if(sel.value==='Paid'||sel.value==='Partial') sel.value='Pending' }
-}
+// ── MODAL ──────────────────────────────────────────────────────────────────
+function openModal(id) {
+  const r = _rows.find(x=>x.id===id)
+  if(!r) return
+  _modalRowId = id
 
-// ── Keyboard shortcuts ────────────────────────────────────────────────────────
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape' && _editRowId) { closeEdit(); renderTable(_rows) }
-  if(e.key==='Enter' && _editRowId && !e.shiftKey) {
-    const saveBtn = document.getElementById('ef-save-' + _editRowId)
-    if(saveBtn && document.activeElement?.closest('.edit-row')) saveBtn.click()
+  // Head
+  const MONTH_NAMES=['January','February','March','April','May','June','July','August','September','October','November','December']
+  const [yr,mo] = r.month.split('-').map(Number)
+  const daysOver = r.dueDate ? Math.floor((new Date()-new Date(r.dueDate+'T00:00:00'))/(1000*60*60*24)) : null
+
+  document.getElementById('m-lot').innerHTML = esc(r.lot) +
+    (r.status!=='Paid' && daysOver>0 ? `<span class="overdue-chip"><svg width="9" height="9" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="8" cy="8" r="7"/><path d="M8 5v4M8 11v1" stroke-linecap="round"/></svg>${daysOver}d overdue</span>` : '')
+  document.getElementById('m-tenant').textContent = r.tenant || 'No tenant linked'
+  document.getElementById('m-month').textContent  = `${MONTH_NAMES[mo-1]} ${yr}`
+
+  // Financials
+  const totalOwed = r.bf + r.amtDue - r.amtPaid
+  document.getElementById('m-bf').textContent = r.bf ? fmRM(r.bf) : '—'
+  document.getElementById('m-due').textContent = fmRM(r.amtDue)
+  document.getElementById('m-paid').textContent = fmRM(r.amtPaid)
+  const balEl = document.getElementById('m-balance')
+  balEl.textContent = fmRM(totalOwed)
+  balEl.className = 'fin-val ' + (totalOwed<=0.005?'pos':'neg')
+
+  // Meta
+  document.getElementById('m-meta').innerHTML = [
+    r.status ? `<div class="meta-item"><span class="meta-label">Status</span><span class="meta-val">${badge(r.status)}</span></div>` : '',
+    r.method ? `<div class="meta-item"><span class="meta-label">Method</span><span class="meta-val">${esc(r.method)}</span></div>` : '',
+    r.payDate ? `<div class="meta-item"><span class="meta-label">Payment Date</span><span class="meta-val">${fmDate(r.payDate)}</span></div>` : '',
+    r.dueDate ? `<div class="meta-item"><span class="meta-label">Due Date</span><span class="meta-val">${fmDate(r.dueDate)}</span></div>` : '',
+  ].join('')
+
+  // Edit form
+  document.getElementById('m-ef-paid').value   = r.amtPaid ?? ''
+  document.getElementById('m-ef-status').value = r.status || 'Pending'
+  document.getElementById('m-ef-method').value = r.method || ''
+  document.getElementById('m-ef-date').value   = r.payDate || ''
+
+  // Mark paid button
+  const mpBtn = document.getElementById('m-markpaid-btn')
+  mpBtn.style.display = r.status==='Paid' ? 'none' : 'flex'
+
+  // Receipt section
+  const rcptSection = document.getElementById('m-rcpt-section')
+  if(r.receiptUrl) {
+    rcptSection.innerHTML = `
+      <a class="rcpt-preview" href="${esc(r.receiptUrl)}" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="2" y="1" width="12" height="14" rx="2"/><path d="M5 5h6M5 8h6M5 11h3" stroke-linecap="round"/></svg>
+        View receipt
+      </a>
+      <label class="rcpt-upload-label" for="m-rcpt-input">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
+        Replace
+      </label>`
+  } else {
+    rcptSection.innerHTML = `
+      <label class="rcpt-upload-label" for="m-rcpt-input">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 11V4M5 7l3-3 3 3" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 13h10" stroke-linecap="round"/></svg>
+        Upload receipt
+      </label>`
   }
-})
+  document.getElementById('m-rcpt-input').value = ''
 
-// ── Receipt upload ──────────────────────────────────────────────────────────
-function triggerReceiptUpload(id) {
-  const inp = document.getElementById('rcpt-input-' + id)
-  if(inp) inp.click()
+  // Error
+  document.getElementById('m-err').textContent = ''
+  document.getElementById('m-save-btn').disabled = false
+  document.getElementById('m-save-btn').textContent = 'Save Changes'
+
+  // Open
+  document.getElementById('modal-overlay').classList.add('open')
+  document.body.style.overflow = 'hidden'
 }
 
-async function uploadReceipt(id, file) {
-  if(!file) return
-  const btn = document.getElementById('rcpt-btn-' + id)
-  if(btn) btn.classList.add('uploading')
+function closeModal() {
+  document.getElementById('modal-overlay').classList.remove('open')
+  document.body.style.overflow = ''
+  _modalRowId = null
+}
 
+function handleOverlayClick(e) {
+  if(e.target === document.getElementById('modal-overlay')) closeModal()
+}
+
+function mAutoStatus() {
+  const r = _rows.find(x=>x.id===_modalRowId)
+  if(!r) return
+  const paid = parseFloat(document.getElementById('m-ef-paid').value)
+  const sel  = document.getElementById('m-ef-status')
+  if(isNaN(paid)) return
+  const totalOwed = (r.bf||0) + r.amtDue
+  const balance = totalOwed - paid
+  if(balance<=0.005 && totalOwed>0)         sel.value='Paid'
+  else if(paid>0 && balance>0.005)          sel.value='Partial'
+  else if(paid===0 && sel.value==='Paid')   sel.value='Pending'
+}
+
+async function modalSave() {
+  if(!_modalRowId) return
+  const saveBtn = document.getElementById('m-save-btn')
+  const errEl   = document.getElementById('m-err')
+  const paidEl  = document.getElementById('m-ef-paid')
+  const methEl  = document.getElementById('m-ef-method')
+  const statEl  = document.getElementById('m-ef-status')
+  const dateEl  = document.getElementById('m-ef-date')
+
+  const body = { pageId: _modalRowId }
+  if(paidEl.value!=='') body.paid   = Number(paidEl.value)
+  if(methEl.value)      body.method = methEl.value
+  if(statEl.value)      body.status = statEl.value
+  body.payDate = dateEl.value || null
+
+  saveBtn.disabled=true; saveBtn.textContent='Saving…'; errEl.textContent=''
+  try {
+    const r = await fetch(PAY_API,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+    const data = await r.json()
+    if(!r.ok) throw new Error(data.error||`Error ${r.status}`)
+    // Update local row
+    const row = _rows.find(x=>x.id===_modalRowId)
+    if(row){
+      if(body.paid!=null)           row.amtPaid=body.paid
+      if(body.method)               row.method=body.method
+      if(body.status)               row.status=body.status
+      if(body.payDate!==undefined)  row.payDate=body.payDate||null
+    }
+    renderTable(_rows)
+    closeModal()
+  } catch(e) {
+    errEl.textContent=e.message; saveBtn.disabled=false; saveBtn.textContent='Save Changes'
+  }
+}
+
+async function modalMarkPaid() {
+  if(!_modalRowId) return
+  const row = _rows.find(x=>x.id===_modalRowId)
+  if(!row) return
+  const btn = document.getElementById('m-markpaid-btn')
+  btn.disabled=true; btn.textContent='Marking…'
+  const today = new Date().toISOString().slice(0,10)
+  try {
+    const r = await fetch(PAY_API,{method:'PATCH',headers:{'Content-Type':'application/json'},body:JSON.stringify({pageId:row.id,paid:row.amtDue,status:'Paid',payDate:today})})
+    if(!r.ok){const d=await r.json();throw new Error(d.error||`Error ${r.status}`)}
+    row.amtPaid=row.amtDue; row.balance=0; row.status='Paid'; row.payDate=today
+    renderTable(_rows)
+    closeModal()
+  } catch(e) {
+    document.getElementById('m-err').textContent=e.message
+    btn.disabled=false; btn.textContent='Mark as Paid'
+  }
+}
+
+async function modalUploadReceipt(file) {
+  if(!file||!_modalRowId) return
+  const errEl = document.getElementById('m-err')
+  errEl.textContent='Uploading…'
   const reader = new FileReader()
   reader.onload = async (e) => {
     try {
-      const r = await fetch(RECEIPT_API, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({ pageId: id, file: e.target.result, fileName: file.name })
-      })
+      const r = await fetch(RECEIPT_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pageId:_modalRowId,file:e.target.result,fileName:file.name})})
       const data = await r.json()
-      if(!r.ok) throw new Error(data.error || 'Upload failed')
-      const row = _rows.find(x => x.id === id)
-      if(row) row.receiptUrl = data.url
+      if(!r.ok) throw new Error(data.error||'Upload failed')
+      const row = _rows.find(x=>x.id===_modalRowId)
+      if(row) row.receiptUrl=data.url
       renderTable(_rows)
+      // Refresh receipt section in modal
+      const savedId = _modalRowId
+      closeModal()
+      setTimeout(()=>openModal(savedId),50)
     } catch(err) {
-      alert('Receipt upload failed: ' + err.message)
-      if(btn) btn.classList.remove('uploading')
+      errEl.textContent='Upload failed: '+err.message
     }
   }
   reader.readAsDataURL(file)
 }
 
-// ── Invoice download ────────────────────────────────────────────────────────
-async function downloadInvoice(id) {
-  const row = _rows.find(r => r.id === id)
-  if (!row) return
-  const btn = document.getElementById('inv-btn-' + id)
-  if (btn) { btn.disabled = true; btn.title = 'Generating…'; btn.style.opacity = '0.4' }
+async function modalDownloadInvoice() {
+  if(!_modalRowId) return
+  const row = _rows.find(r=>r.id===_modalRowId)
+  if(!row) return
+  const btn = document.getElementById('m-inv-btn')
+  btn.disabled=true; btn.textContent='Generating…'
   try {
-    const resp = await fetch(INVOICE_API, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        pageId:  row.id,
-        lot:     row.lot,
-        tenant:  row.tenant,
-        month:   row.month,
-        bf:      row.bf,
-        amtDue:  row.amtDue,
-        amtPaid: row.amtPaid,
-        status:  row.status,
-        method:  row.method,
-        payDate: row.payDate,
-        dueDate: row.dueDate,
-      })
-    })
+    const resp = await fetch(INVOICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({pageId:row.id,lot:row.lot,tenant:row.tenant,month:row.month,bf:row.bf,amtDue:row.amtDue,amtPaid:row.amtPaid,status:row.status,method:row.method,payDate:row.payDate,dueDate:row.dueDate})})
     const data = await resp.json()
-    if (!resp.ok) throw new Error(data.error || 'Invoice generation failed')
-    window.open(data.url, '_blank')
-  } catch (err) {
-    alert('Invoice failed: ' + err.message)
+    if(!resp.ok) throw new Error(data.error||'Invoice generation failed')
+    window.open(data.url,'_blank')
+  } catch(err) {
+    document.getElementById('m-err').textContent='Invoice failed: '+err.message
   } finally {
-    if (btn) { btn.disabled = false; btn.title = 'Download invoice PDF'; btn.style.opacity = '1' }
+    btn.disabled=false
+    btn.innerHTML=`<svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="1" width="10" height="14" rx="2"/><path d="M5 5h6M5 8h4" stroke-linecap="round"/><path d="M8 11v3M6.5 12.5L8 14l1.5-1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Invoice PDF`
   }
 }
+
+// ── Keyboard shortcuts ───────────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') closeModal()
+  if(e.key==='Enter' && _modalRowId && !e.shiftKey) {
+    const saveBtn = document.getElementById('m-save-btn')
+    if(saveBtn && !saveBtn.disabled && document.activeElement?.closest('.modal')) saveBtn.click()
+  }
+})
 
 // ── Load ────────────────────────────────────────────────────────────────────
 async function load(force=false) {
@@ -748,26 +812,23 @@ async function load(force=false) {
   if(filterStatus) params.set('status',filterStatus)
   if(force)        params.set('_t',Date.now())
 
-  const label=`${MONTHS[filterMonth-1]} ${filterYear}${filterBlock?' · Block '+filterBlock:''}${filterStatus?' · '+filterStatus:''}`
-  document.getElementById('tbl-label').textContent=label
+  document.getElementById('tbl-label').textContent=`${MONTHS[filterMonth-1]} ${filterYear}${filterBlock?' · Block '+filterBlock:''}${filterStatus?' · '+filterStatus:''}`
 
   try {
     const r = await fetch(`${API}?${params}`,{signal:_ctrl.signal})
-    if(!r.ok)throw new Error(`API error ${r.status}`)
+    if(!r.ok) throw new Error(`API error ${r.status}`)
     const data = await r.json()
 
     if(data.blocks?.length && document.querySelectorAll('.block-pill').length<=1) initBlockPills(data.blocks)
-
     _rows = data.rows||[]
     renderKPI(data.kpi)
     renderTable(_rows)
 
-    // Dup warning
-    const dupBanner = document.getElementById('dup-banner')
+    const dupBanner=document.getElementById('dup-banner')
     const seen={},dups=[]
     for(const r of _rows){const k=r.lot+'|'+r.month;seen[k]=(seen[k]||0)+1;if(seen[k]===2)dups.push(r.lot)}
     if(dups.length){
-      dupBanner.innerHTML=`<b>Duplicate records detected</b> — ${[...new Set(dups)].join(', ')} each have multiple payment entries for this month in Notion. Review and remove duplicates in the Rent Payments database.`
+      dupBanner.innerHTML=`<b>Duplicate records detected</b> — ${[...new Set(dups)].join(', ')} each have multiple entries this month.`
       dupBanner.style.display='block'
     } else { dupBanner.style.display='none' }
 

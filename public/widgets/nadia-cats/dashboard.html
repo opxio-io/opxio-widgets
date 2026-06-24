@@ -135,6 +135,7 @@ body{font-family:'Satoshi',-apple-system,sans-serif;background:#191919;color:#ff
 </div>
 
 <div class="cat-nav" id="catNav"></div>
+<div class="restock-strip" id="restockStrip" style="display:none"></div>
 <div id="content"><div class="loading"><div class="spin-ring"></div>Loading…</div></div>
 
 <script>
@@ -155,6 +156,29 @@ function fmtShort(d) {
 function daysSince(d) {
   if (!d) return null
   return Math.floor((Date.now() - new Date(d + 'T00:00:00').getTime()) / 86400000)
+}
+
+
+function renderRestockAlerts(alerts) {
+  const strip = document.getElementById('restockStrip')
+  if (!alerts || alerts.length === 0) { strip.style.display = 'none'; return }
+  strip.style.display = 'flex'
+  strip.innerHTML = alerts.map(a => {
+    // Extract key note (first sentence / refill instruction)
+    const noteShort = (a.notes || '').split(/REFILL REMINDER:|\n/)[0].replace(/^\s+/,'').trim()
+    const refillNote = (a.notes || '').includes('REFILL REMINDER:')
+      ? a.notes.split('REFILL REMINDER:')[1]?.split('.')[0]?.trim() || ''
+      : ''
+    return `<div class="restock-card">
+      <div class="restock-dot"></div>
+      <div>
+        <div class="restock-cat">${esc(a.catName)} — Restock needed</div>
+        <div class="restock-med">${esc(a.medName)}</div>
+        ${refillNote ? `<div class="restock-note">${esc(refillNote)}</div>` : ''}
+        ${a.supplier ? `<div class="restock-note" style="color:rgba(251,191,36,.5)">From: ${esc(a.supplier)}</div>` : ''}
+      </div>
+    </div>`
+  }).join('')
 }
 
 function renderCat(cat) {
@@ -311,6 +335,7 @@ async function load(force = false) {
     _data = await r.json()
     document.getElementById('ts').textContent =
       'Updated ' + new Date(_data.updatedAt).toLocaleTimeString('en-MY',{hour:'2-digit',minute:'2-digit'})
+    renderRestockAlerts(_data.restockAlerts || [])
     buildNav()
     renderCat(_data.cats[Math.min(_catIdx, _data.cats.length - 1)])
   } catch(e) {

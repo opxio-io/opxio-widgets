@@ -15,17 +15,12 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Satoshi',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding-bottom:40px}
-a{color:inherit;text-decoration:none}
-
-/* header */
 .hdr{padding:20px 16px 0;display:flex;align-items:center;justify-content:space-between}
 .hdr h1{font-size:18px;font-weight:700}
 .hdr-right{display:flex;align-items:center;gap:8px}
 .date-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:12px;color:var(--muted)}
 .refresh-btn{background:var(--card);border:1px solid var(--border);border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:all .15s}
 .refresh-btn:hover{color:var(--g);border-color:var(--g)}
-
-/* summary strip */
 .summary{display:flex;gap:8px;padding:14px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .summary::-webkit-scrollbar{display:none}
 .sum-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 16px;white-space:nowrap;display:flex;align-items:center;gap:7px;flex-shrink:0}
@@ -33,8 +28,6 @@ a{color:inherit;text-decoration:none}
 .sum-pill .lbl{font-size:12px;color:var(--muted)}
 .sum-pill.all-done{border-color:var(--g);background:#1e2a0d}
 .sum-pill.all-done .num{color:var(--g)}
-
-/* cat tabs */
 .cat-tabs{display:flex;gap:8px;padding:0 16px 16px;overflow-x:auto;-webkit-overflow-scrolling:touch}
 .cat-tabs::-webkit-scrollbar{display:none}
 .tab{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:7px 14px;font-family:inherit;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s}
@@ -43,8 +36,6 @@ a{color:inherit;text-decoration:none}
 .tab .badge{display:inline-block;background:#00000033;border-radius:10px;padding:0 6px;font-size:10px;margin-left:4px}
 .tab.active .badge{background:#00000030}
 .tab .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:4px;vertical-align:middle}
-
-/* cat section */
 .cat-section{margin:0 16px 20px;display:none}
 .cat-section.visible{display:block}
 .cat-heading{display:flex;align-items:center;gap:10px;margin-bottom:12px}
@@ -52,8 +43,6 @@ a{color:inherit;text-decoration:none}
 .cat-heading-name{font-size:16px;font-weight:700}
 .cat-heading-sub{font-size:12px;color:var(--muted);margin-top:1px}
 .cat-done-all{font-size:11px;color:var(--g);font-weight:600;margin-left:auto;display:none}
-
-/* med row */
 .med-row{background:var(--card);border-radius:var(--radius);margin-bottom:10px;overflow:hidden;border:1px solid var(--border);transition:border-color .2s}
 .med-row.given{border-color:var(--g)}
 .med-row.milestone{border-color:var(--yellow)}
@@ -69,34 +58,25 @@ a{color:inherit;text-decoration:none}
 .tag-prevent{background:#2e2000;color:var(--yellow)}
 .tag-ms{background:#2e2000;color:var(--yellow)}
 .tag-ms84{background:#1a2e00;color:var(--g)}
-
-/* gs progress inline */
 .gs-bar{height:3px;background:var(--card2);border-radius:2px;margin-top:8px;overflow:hidden}
 .gs-fill{height:100%;background:var(--g);border-radius:2px;transition:width .4s}
 .gs-day{font-size:11px;color:var(--muted);margin-top:4px}
-
-/* check button */
 .med-check{flex-shrink:0;width:72px;display:flex;align-items:center;justify-content:center;cursor:pointer;border:none;background:transparent;border-left:1px solid var(--border);transition:background .15s;padding:0}
 .med-check:hover{background:var(--card2)}
 .check-circle{width:44px;height:44px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .2s;background:var(--card2)}
 .med-row.given .check-circle{background:var(--g);border-color:var(--g);color:#000}
 .med-check.loading .check-circle{opacity:.4}
-
-/* empty / spinner */
 .spinner{display:flex;justify-content:center;padding:60px 0}
 .spinner::after{content:'';width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .empty{text-align:center;padding:48px 16px;color:var(--muted)}
-.empty span{font-size:36px;display:block;margin-bottom:10px}
 .err{background:#2a1111;border:1px solid #5c2020;border-radius:10px;padding:14px 16px;color:#ff8080;font-size:13px;margin:0 16px 16px}
 </style>
 </head>
 <body>
 
 <div class="hdr">
-  <div>
-    <h1>💊 Medication Log</h1>
-  </div>
+  <div><h1>Medication Log</h1></div>
   <div class="hdr-right">
     <div class="date-pill" id="datePill">—</div>
     <button class="refresh-btn" onclick="load()" title="Refresh">↻</button>
@@ -122,9 +102,8 @@ a{color:inherit;text-decoration:none}
 <div id="content"><div class="spinner"></div></div>
 
 <script>
-const API    = 'https://api.opxio.io/api/clients/nadia-cats/medlog'
-const esc    = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-const CAT_EMOJI = {Oyen:'🐱',Yumie:'🐈',Bobby:'🐾',Teetos:'😸',Pony:'🐈‍⬛',Mika:'🐾',Chunky:'😺',Miko:'🐱',Mochi:'🌸'}
+const API = 'https://api.opxio.io/api/clients/nadia-cats/medlog'
+const esc = s => String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
 const CAT_COLOR = {
   'GS Treatment':'tag-gs','Supportive Care':'tag-support',
   'Other Condition':'tag-other','Preventive':'tag-prevent'
@@ -142,7 +121,6 @@ async function load() {
   document.getElementById('content').innerHTML = '<div class="spinner"></div>'
   document.getElementById('summary').style.display = 'none'
   document.getElementById('catTabs').innerHTML = ''
-
   try {
     const r = await fetch(API)
     if (!r.ok) throw new Error(`API ${r.status}`)
@@ -151,21 +129,20 @@ async function load() {
     renderContent()
     renderSummary()
   } catch(e) {
-    document.getElementById('content').innerHTML =
-      `<div class="err">⚠️ ${esc(e.message)}</div>`
+    document.getElementById('content').innerHTML = `<div class="err">Failed to load: ${esc(e.message)}</div>`
   }
 }
 
 function renderSummary() {
-  const given   = data.givenCount
+  const given = data.givenCount
   const pending = data.totalMeds - given
-  document.getElementById('numGiven').textContent   = given
+  document.getElementById('numGiven').textContent = given
   document.getElementById('numPending').textContent = pending
-  document.getElementById('numTotal').textContent   = data.totalMeds
+  document.getElementById('numTotal').textContent = data.totalMeds
   const sg = document.getElementById('sumGiven')
   if (pending === 0 && data.totalMeds > 0) {
     sg.classList.add('all-done')
-    sg.querySelector('.lbl').textContent = 'all done! 🎉'
+    sg.querySelector('.lbl').textContent = 'all done!'
   } else {
     sg.classList.remove('all-done')
     sg.querySelector('.lbl').textContent = 'given'
@@ -182,17 +159,15 @@ function catGivenStatus(catName) {
 function renderTabs() {
   const tabs = document.getElementById('catTabs')
   const cats = Object.keys(data.byCat)
-
   let html = `<button class="tab ${activeTab==='all'?'active':''}" onclick="switchTab('all')">All cats</button>`
   for (const cat of cats) {
     const { done, total, allDone } = catGivenStatus(cat)
-    const emoji = CAT_EMOJI[cat] || '🐾'
     const dot = allDone
       ? `<span class="dot" style="background:var(--g)"></span>`
       : done > 0
         ? `<span class="dot" style="background:var(--yellow)"></span>`
         : `<span class="dot" style="background:var(--border)"></span>`
-    html += `<button class="tab ${activeTab===cat?'active':''}" onclick="switchTab('${esc(cat)}')">${dot}${esc(emoji)} ${esc(cat)}<span class="badge">${done}/${total}</span></button>`
+    html += `<button class="tab ${activeTab===cat?'active':''}" onclick="switchTab('${esc(cat)}')">${dot}🐱 ${esc(cat)}<span class="badge">${done}/${total}</span></button>`
   }
   tabs.innerHTML = html
 }
@@ -205,59 +180,40 @@ function switchTab(tab) {
 
 function renderContent() {
   const cats = Object.keys(data.byCat)
-  let html = ''
-
   const toShow = activeTab === 'all' ? cats : cats.filter(c => c === activeTab)
-
   if (!toShow.length) {
-    html = `<div class="empty"><span>💊</span>No active medications found.</div>`
-    document.getElementById('content').innerHTML = html
+    document.getElementById('content').innerHTML = `<div class="empty">No active medications found.</div>`
     return
   }
-
+  let html = ''
   for (const catName of toShow) {
     const meds = data.byCat[catName]
-    const emoji = CAT_EMOJI[catName] || '🐾'
     const { done, total, allDone } = catGivenStatus(catName)
-
     html += `<div class="cat-section visible" id="sec-${esc(catName)}">`
     html += `<div class="cat-heading">
-      <span class="cat-emoji">${emoji}</span>
+      <span class="cat-emoji">🐱</span>
       <div>
         <div class="cat-heading-name">${esc(catName)}</div>
         <div class="cat-heading-sub">${done} of ${total} given today</div>
       </div>
       ${allDone ? `<div class="cat-done-all" style="display:block">All done ✓</div>` : ''}
     </div>`
-
-    for (const med of meds) {
-      html += renderMedRow(med)
-    }
-
+    for (const med of meds) html += renderMedRow(med)
     html += `</div>`
   }
-
   document.getElementById('content').innerHTML = html
 }
 
 function renderMedRow(med) {
   const tagClass = CAT_COLOR[med.category] || 'tag-other'
   const catLabel = med.category || 'Other'
-  const isGS     = med.category === 'GS Treatment'
-  const gs        = med.gsInfo
-
-  let msBadge = ''
-  let msClass  = ''
-  if (gs?.day42) { msBadge = `<span class="tag tag-ms">⚠️ Day 42 — Vet check</span>`; msClass = 'milestone' }
-  if (gs?.day84) { msBadge = `<span class="tag tag-ms84">🎉 Day 84 — Final!</span>`; msClass = 'milestone' }
-
+  const gs = med.gsInfo
+  let msBadge = '', msClass = ''
+  if (gs?.day42) { msBadge = `<span class="tag tag-ms">Day 42 — Vet check</span>`; msClass = 'milestone' }
+  if (gs?.day84) { msBadge = `<span class="tag tag-ms84">Day 84 — Final!</span>`; msClass = 'milestone' }
   const gsBar = gs ? `
     <div class="gs-bar"><div class="gs-fill" style="width:${gs.pct}%"></div></div>
-    <div class="gs-day">Day ${gs.day} of 84 · ${gs.pct}%</div>
-  ` : ''
-
-  const checkIcon = med.givenToday ? '✓' : ''
-
+    <div class="gs-day">Day ${gs.day} of 84 · ${gs.pct}%</div>` : ''
   return `
   <div class="med-row ${med.givenToday?'given':''} ${msClass}" id="row-${esc(med.id)}">
     <div class="med-inner">
@@ -274,7 +230,7 @@ function renderMedRow(med) {
       <button class="med-check" id="chk-${esc(med.id)}"
         onclick="toggle('${esc(med.id)}', ${!med.givenToday})"
         title="${med.givenToday?'Mark as not given':'Mark as given'}">
-        <div class="check-circle">${checkIcon}</div>
+        <div class="check-circle">${med.givenToday ? '✓' : ''}</div>
       </button>
     </div>
   </div>`
@@ -285,7 +241,6 @@ async function toggle(medId, newGiven) {
   if (!btn) return
   btn.classList.add('loading')
   btn.disabled = true
-
   try {
     const r = await fetch(`${API}/${medId}`, {
       method: 'PATCH',
@@ -293,20 +248,12 @@ async function toggle(medId, newGiven) {
       body: JSON.stringify({ given: newGiven })
     })
     if (!r.ok) throw new Error(`API ${r.status}`)
-
-    // update local state
     for (const meds of Object.values(data.byCat)) {
       const m = meds.find(x => x.id === medId)
-      if (m) {
-        m.givenToday = newGiven
-        m.lastGiven  = newGiven ? new Date().toISOString().slice(0,10) : null
-      }
+      if (m) { m.givenToday = newGiven; m.lastGiven = newGiven ? new Date().toISOString().slice(0,10) : null }
     }
     data.givenCount += newGiven ? 1 : -1
-
-    renderTabs()
-    renderContent()
-    renderSummary()
+    renderTabs(); renderContent(); renderSummary()
   } catch(e) {
     btn.classList.remove('loading')
     btn.disabled = false

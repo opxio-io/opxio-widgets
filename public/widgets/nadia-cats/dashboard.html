@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>🐾 Cat Health HQ</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;background:#191919;color:#fff;overflow-y:auto;overflow-x:hidden;min-height:100vh;}
+:root{
+  --g:#C8FF00;--gd:#AAFF00;--gm:rgba(200,255,0,.09);--gb:rgba(200,255,0,.2);
+  --red:#FF6B6B;--amber:#FBBF24;--blue:#60A5FA;--purple:#C084FC;--teal:#34D399;--pink:#F472B6;
+  --card:#222222;--border:rgba(255,255,255,.07);
+}
+::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.07);border-radius:999px;}
+
+/* ── Layout ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;}
+.row{margin-bottom:10px;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+@media(max-width:900px){.g4{grid-template-columns:1fr 1fr;}.g3{grid-template-columns:1fr 1fr;}}
+@media(max-width:600px){.g2,.g3,.g4{grid-template-columns:1fr;}}
+
+/* ── Header ── */
+.hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px;}
+.h-left{display:flex;align-items:center;gap:10px;}
+.h-title{font-size:20px;font-weight:900;letter-spacing:-.04em;}
+.ts{font-size:10px;font-weight:500;color:rgba(255,255,255,.2);}
+.icon-btn{width:30px;height:30px;border-radius:8px;background:rgba(255,255,255,.04);border:1px solid var(--border);color:rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;flex-shrink:0;}
+.icon-btn:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.icon-btn svg{width:13px;height:13px;}
+.icon-btn.spinning svg{animation:spin .6s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* ── Cat nav ── */
+.cat-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;}
+.cat-pill{padding:6px 14px;border-radius:999px;font-size:12px;font-weight:700;letter-spacing:-.01em;border:1px solid var(--border);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);cursor:pointer;transition:all .15s;}
+.cat-pill:hover{background:var(--gm);border-color:var(--gb);color:var(--g);}
+.cat-pill.active{background:var(--g);border-color:var(--g);color:#191919;}
+.cat-pill.critical{border-color:rgba(255,107,107,.35);color:var(--red);}
+.cat-pill.critical.active{background:var(--red);border-color:var(--red);color:#fff;}
+
+/* ── Status badge ── */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;}
+.badge-green{background:rgba(52,211,153,.12);color:var(--teal);}
+.badge-yellow{background:rgba(251,191,36,.1);color:var(--amber);}
+.badge-red{background:rgba(255,107,107,.12);color:var(--red);}
+.badge-blue{background:rgba(96,165,250,.1);color:var(--blue);}
+.badge-purple{background:rgba(192,132,252,.1);color:var(--purple);}
+.badge-gray{background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);}
+
+/* ── Cat header ── */
+.cat-hdr{padding:16px 18px;margin-bottom:10px;display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.cat-name{font-size:26px;font-weight:900;letter-spacing:-.05em;margin-bottom:6px;}
+.cat-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.conditions{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.cond-tag{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:600;background:rgba(255,107,107,.1);color:var(--red);border:1px solid rgba(255,107,107,.2);}
+.emergency{margin-top:10px;padding:8px 12px;border-radius:8px;background:rgba(255,107,107,.08);border:1px solid rgba(255,107,107,.2);font-size:11px;font-weight:600;color:var(--red);}
+.emergency strong{display:block;font-size:9.5px;text-transform:uppercase;letter-spacing:.1em;margin-bottom:2px;opacity:.7;}
+
+/* ── KPI tiles ── */
+.kpi{padding:14px 16px;}
+.kpi-lbl{font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:8px;}
+.kpi-val{font-size:28px;font-weight:900;letter-spacing:-.04em;line-height:1;}
+.kpi-sub{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;}
+.kpi-val.lime{color:var(--g);}
+.kpi-val.amber{color:var(--amber);}
+.kpi-val.red{color:var(--red);}
+.kpi-val.teal{color:var(--teal);}
+
+/* ── GS Progress ── */
+.gs-card{padding:16px 18px;}
+.gs-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.gs-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);}
+.gs-day{font-size:28px;font-weight:900;letter-spacing:-.04em;color:var(--g);}
+.gs-day span{font-size:13px;font-weight:600;color:rgba(255,255,255,.3);}
+.gs-bar-wrap{position:relative;height:8px;background:rgba(255,255,255,.07);border-radius:999px;overflow:visible;margin:10px 0 6px;}
+.gs-bar{height:100%;border-radius:999px;background:var(--g);transition:width .4s ease;}
+.gs-milestone{position:absolute;top:-3px;height:14px;width:2px;background:var(--amber);border-radius:2px;}
+.gs-milestone::after{content:attr(data-label);position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:8px;font-weight:700;color:var(--amber);white-space:nowrap;letter-spacing:.05em;}
+.gs-dates{display:flex;justify-content:space-between;font-size:9.5px;color:rgba(255,255,255,.3);}
+.gs-form-row{display:flex;align-items:center;gap:8px;margin-top:10px;flex-wrap:wrap;}
+.gs-form-tag{padding:3px 9px;border-radius:6px;font-size:10px;font-weight:700;background:rgba(192,132,252,.12);color:var(--purple);border:1px solid rgba(192,132,252,.2);}
+.gs-conc{font-size:10px;color:rgba(255,255,255,.4);}
+
+/* ── Panel ── */
+.panel{padding:14px 16px;}
+.panel-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.35);margin-bottom:10px;}
+
+/* ── Med rows ── */
+.med-item{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.med-item:last-child{border-bottom:none;padding-bottom:0;}
+.med-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.med-dot.gs{background:var(--purple);}
+.med-dot.support{background:var(--blue);}
+.med-dot.other{background:var(--amber);}
+.med-dot.prev{background:var(--teal);}
+.med-body{flex:1;min-width:0;}
+.med-name{font-size:13px;font-weight:700;line-height:1.2;}
+.med-detail{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;}
+.med-times{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap;}
+.med-time{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(255,255,255,.06);color:rgba(255,255,255,.5);}
+.med-time.active{background:var(--gm);color:var(--g);}
+.no-data{font-size:12px;color:rgba(255,255,255,.2);padding:8px 0;font-style:italic;}
+
+/* ── Vet visits ── */
+.visit-item{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.visit-item:last-child{border-bottom:none;padding-bottom:0;}
+.visit-top{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;}
+.visit-title{font-size:12px;font-weight:700;}
+.visit-date{font-size:10px;color:rgba(255,255,255,.3);}
+.visit-sub{font-size:10px;color:rgba(255,255,255,.35);margin-top:2px;}
+.visit-cost{font-size:10px;font-weight:700;color:var(--amber);}
+
+/* ── Weight ── */
+.weight-item{display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.weight-item:last-child{border-bottom:none;padding-bottom:0;}
+.weight-val{font-size:14px;font-weight:900;letter-spacing:-.02em;}
+.weight-date{font-size:10px;color:rgba(255,255,255,.3);}
+.trend-up{color:var(--teal);}
+.trend-down{color:var(--red);}
+.trend-stable{color:rgba(255,255,255,.3);}
+
+/* ── Symptoms ── */
+.sym-item{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.04);}
+.sym-item:last-child{border-bottom:none;padding-bottom:0;}
+.sym-top{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.sym-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px;}
+.sym-tag{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600;background:rgba(255,107,107,.1);color:var(--red);}
+.sym-tag.mild{background:rgba(52,211,153,.1);color:var(--teal);}
+.sym-tag.moderate{background:rgba(251,191,36,.1);color:var(--amber);}
+.resolved{text-decoration:line-through;opacity:.4;}
+
+/* ── Next appt banner ── */
+.appt-banner{padding:10px 14px;border-radius:10px;background:rgba(96,165,250,.07);border:1px solid rgba(96,165,250,.2);display:flex;align-items:center;gap:8px;margin-bottom:10px;}
+.appt-banner svg{width:13px;height:13px;flex-shrink:0;color:var(--blue);}
+.appt-text{font-size:11px;font-weight:600;color:var(--blue);}
+
+/* ── Loading / error ── */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:300px;gap:12px;color:rgba(255,255,255,.2);font-size:13px;}
+.spin-ring{width:28px;height:28px;border:2px solid rgba(255,255,255,.08);border-top-color:var(--g);border-radius:50%;animation:spin .7s linear infinite;}
+.error-box{padding:16px;border-radius:12px;background:rgba(255,107,107,.07);border:1px solid rgba(255,107,107,.2);color:var(--red);font-size:12px;text-align:center;}
+
+/* ── Section sep ── */
+.sep{border:none;border-top:1px solid rgba(255,255,255,.05);margin:10px 0;}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="h-left">
+    <span style="font-size:20px">🐾</span>
+    <div>
+      <div class="h-title">Cat Health HQ</div>
+      <div class="ts" id="ts">Loading…</div>
+    </div>
+  </div>
+  <button class="icon-btn" id="refreshBtn" onclick="refresh()" title="Refresh">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+      <path d="M13.5 2.5A6.5 6.5 0 1 1 2.5 8"/>
+      <polyline points="0,5 2.5,8 5,5"/>
+    </svg>
+  </button>
+</div>
+
+<div class="cat-nav" id="catNav"></div>
+<div id="content"><div class="loading"><div class="spin-ring"></div>Loading cats…</div></div>
+
+<script>
+const API   = 'https://api.opxio.io/api/clients/nadia-cats/dashboard'
+const TOKEN = 'cats-hq-2024'
+
+let _data    = null
+let _catIdx  = 0
+let _ctrl    = null
+
+function esc(s) {
+  if (!s) return ''
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')
+}
+
+function fmtDate(d) {
+  if (!d) return '—'
+  const dt = new Date(d + 'T00:00:00')
+  return dt.toLocaleDateString('en-MY', { day:'numeric', month:'short', year:'numeric' })
+}
+
+function daysSince(d) {
+  if (!d) return null
+  const ms = Date.now() - new Date(d + 'T00:00:00').getTime()
+  return Math.floor(ms / 86400000)
+}
+
+function statusBadge(s) {
+  const map = {
+    'Active Treatment': 'badge-green',
+    'Monitoring': 'badge-yellow',
+    'Stable': 'badge-blue',
+    'Critical': 'badge-red',
+  }
+  return `<span class="badge ${map[s] || 'badge-gray'}">${esc(s)}</span>`
+}
+
+function fipBadge(t) {
+  const cls = t === 'Wet FIP' ? 'badge-blue' : t === 'Dry FIP' ? 'badge-purple' : 'badge-gray'
+  return `<span class="badge ${cls}">${esc(t)}</span>`
+}
+
+function medDot(cat) {
+  const m = { 'GS Treatment':'gs','Supportive Care':'support','Other Condition':'other','Preventive':'prev' }
+  return m[cat] || 'support'
+}
+
+function timePills(med) {
+  const pills = []
+  if (med.morningDose)   pills.push(`<span class="med-time active">🌅 AM${med.morningTime ? ' ' + esc(med.morningTime) : ''}</span>`)
+  if (med.afternoonDose) pills.push(`<span class="med-time active">☀️ PM${med.afternoonTime ? ' ' + esc(med.afternoonTime) : ''}</span>`)
+  if (med.eveningDose)   pills.push(`<span class="med-time active">🌙 Eve${med.eveningTime ? ' ' + esc(med.eveningTime) : ''}</span>`)
+  return pills.join('')
+}
+
+function renderGsProgress(cat) {
+  const gs = cat.gsActive
+  if (!gs || !gs.gsProgress) return ''
+  const p   = gs.gsProgress
+  const pct42 = (42 / 84) * 100
+
+  return `
+  <div class="card gs-card row">
+    <div class="gs-top">
+      <span class="gs-title">💊 GS-441524 Treatment</span>
+      <div style="display:flex;align-items:baseline;gap:4px;">
+        <span class="gs-day">Day ${p.day}<span> / 84</span></span>
+        <span class="badge ${p.completed ? 'badge-green' : p.pastDay42 ? 'badge-purple' : 'badge-blue'}" style="margin-left:6px">${p.completed ? 'Completed' : p.pastDay42 ? 'Phase 2' : 'Phase 1'}</span>
+      </div>
+    </div>
+    <div class="gs-bar-wrap">
+      <div class="gs-bar" style="width:${p.pct}%"></div>
+      <div class="gs-milestone" style="left:calc(${pct42}% - 1px)" data-label="Day 42"></div>
+    </div>
+    <div class="gs-dates">
+      <span>Started ${fmtDate(gs.startDate)}</span>
+      <span>${p.completed ? 'Completed' : 'Ends'} ${fmtDate(gs.day84Completion || p.day84)}</span>
+    </div>
+    ${gs.gsForm || gs.gsConcentration ? `
+    <div class="gs-form-row">
+      ${gs.gsForm ? `<span class="gs-form-tag">${esc(gs.gsForm)}</span>` : ''}
+      ${gs.gsConcentration ? `<span class="gs-conc">${esc(gs.gsConcentration)}</span>` : ''}
+      ${gs.dosage ? `<span class="gs-conc">${esc(gs.dosage)}${gs.unit ? ' ' + esc(gs.unit) : ''}</span>` : ''}
+    </div>` : ''}
+    ${!p.pastDay42 ? `<div style="font-size:10px;color:var(--amber);margin-top:8px;">⚠️ Day 42 vet check on ${fmtDate(gs.day42Milestone || p.day42)}</div>` : ''}
+  </div>`
+}
+
+function renderMeds(cat) {
+  const active = cat.activeMeds || []
+  const gs      = active.filter(m => m.category === 'GS Treatment')
+  const support = active.filter(m => m.category === 'Supportive Care')
+  const other   = active.filter(m => !['GS Treatment','Supportive Care'].includes(m.category))
+
+  const medRow = m => `
+    <div class="med-item">
+      <div class="med-dot ${medDot(m.category)}"></div>
+      <div class="med-body">
+        <div class="med-name">${esc(m.name)}</div>
+        <div class="med-detail">${[m.dosage, m.unit, m.purpose].filter(Boolean).map(esc).join(' · ')}</div>
+        <div class="med-times">${timePills(m)}</div>
+      </div>
+    </div>`
+
+  const section = (label, meds) => meds.length ? `
+    <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.25);margin:8px 0 4px">${label}</div>
+    ${meds.map(medRow).join('')}` : ''
+
+  return `
+  <div class="card panel row">
+    <div class="panel-title">💊 Active Medications (${active.length})</div>
+    ${active.length === 0 ? '<div class="no-data">No active medications recorded</div>' : ''}
+    ${section('GS Treatment', gs)}
+    ${section('Supportive Care', support)}
+    ${section('Other', other)}
+  </div>`
+}
+
+function renderVetVisits(cat) {
+  const visits = (cat.vetVisits || []).slice(0, 5)
+  return `
+  <div class="card panel">
+    <div class="panel-title">🏥 Vet Visits</div>
+    ${visits.length === 0 ? '<div class="no-data">No visits recorded</div>' : visits.map(v => `
+    <div class="visit-item">
+      <div class="visit-top">
+        <span class="visit-title">${esc(v.title || v.visitType || 'Visit')}</span>
+        <span class="visit-date">${fmtDate(v.date)}</span>
+      </div>
+      ${v.visitType ? `<div class="visit-sub">${esc(v.visitType)}${v.clinic ? ' · ' + esc(v.clinic) : ''}</div>` : ''}
+      ${v.diagnosis ? `<div class="visit-sub" style="color:rgba(255,255,255,.5)">${esc(v.diagnosis)}</div>` : ''}
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:3px;">
+        ${v.weightAtVisit ? `<span class="visit-sub">⚖️ ${v.weightAtVisit}kg</span>` : '<span></span>'}
+        ${v.cost != null ? `<span class="visit-cost">RM ${v.cost}</span>` : ''}
+      </div>
+    </div>`).join('')}
+  </div>`
+}
+
+function renderWeight(cat) {
+  const log = (cat.weightLog || []).slice(0, 6)
+  const trendIcon = t => t === 'Gaining' ? '↑' : t === 'Losing' || t === 'Critical Loss' ? '↓' : '→'
+  const trendCls  = t => t === 'Gaining' ? 'trend-up' : t === 'Losing' || t === 'Critical Loss' ? 'trend-down' : 'trend-stable'
+  return `
+  <div class="card panel">
+    <div class="panel-title">⚖️ Weight Log</div>
+    ${log.length === 0 ? '<div class="no-data">No weight entries</div>' : log.map(w => `
+    <div class="weight-item">
+      <span class="weight-val">${w.weight != null ? w.weight + ' kg' : '—'}</span>
+      <div style="text-align:right">
+        <div class="weight-date">${fmtDate(w.date)}</div>
+        ${w.trend ? `<span class="${trendCls(w.trend)}" style="font-size:11px;font-weight:700">${trendIcon(w.trend)} ${esc(w.trend)}</span>` : ''}
+      </div>
+    </div>`).join('')}
+  </div>`
+}
+
+function renderSymptoms(cat) {
+  const syms = (cat.symptoms || []).slice(0, 5)
+  const sevCls = s => s === 'Mild' ? 'mild' : s === 'Moderate' ? 'moderate' : ''
+  return `
+  <div class="card panel">
+    <div class="panel-title">🩹 Symptoms</div>
+    ${syms.length === 0 ? '<div class="no-data">No symptoms recorded</div>' : syms.map(s => `
+    <div class="sym-item">
+      <div class="sym-top">
+        <span class="visit-date">${fmtDate(s.date)}</span>
+        ${s.severity ? `<span class="badge ${s.severity === 'Severe' || s.severity === 'Critical' ? 'badge-red' : s.severity === 'Moderate' ? 'badge-yellow' : 'badge-green'}">${esc(s.severity)}</span>` : ''}
+        ${s.resolved ? `<span style="font-size:9px;color:var(--teal)">✓ Resolved</span>` : ''}
+      </div>
+      <div class="sym-tags">${(s.symptoms || []).map(t => `<span class="sym-tag ${sevCls(s.severity)}">${esc(t)}</span>`).join('')}</div>
+      ${s.description ? `<div class="visit-sub" style="margin-top:3px">${esc(s.description)}</div>` : ''}
+    </div>`).join('')}
+  </div>`
+}
+
+function renderCat(cat) {
+  const daysLastVisit = daysSince(cat.lastVisitDate)
+  const content = document.getElementById('content')
+
+  const nextApptHtml = cat.nextAppt ? `
+  <div class="appt-banner">
+    <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="1" y="3" width="14" height="12" rx="2"/><path d="M5 1v4M11 1v4M1 7h14"/></svg>
+    <span class="appt-text">Next appointment: ${fmtDate(cat.nextAppt)}</span>
+  </div>` : ''
+
+  content.innerHTML = `
+  ${nextApptHtml}
+
+  <div class="card cat-hdr row">
+    <div>
+      <div class="cat-name">${esc(cat.name)}</div>
+      <div class="cat-meta">
+        ${cat.fipType ? fipBadge(cat.fipType) : ''}
+        ${cat.status  ? statusBadge(cat.status) : ''}
+        ${cat.sex     ? `<span class="badge badge-gray">${esc(cat.sex)}</span>` : ''}
+      </div>
+      ${cat.conditions && cat.conditions.length ? `<div class="conditions">${cat.conditions.map(c => `<span class="cond-tag">${esc(c)}</span>`).join('')}</div>` : ''}
+      ${cat.emergencyNotes ? `<div class="emergency"><strong>⚠️ Emergency</strong>${esc(cat.emergencyNotes)}</div>` : ''}
+    </div>
+    <div style="text-align:right;flex-shrink:0">
+      ${cat.latestWeight != null ? `<div style="font-size:22px;font-weight:900;letter-spacing:-.04em;color:var(--g)">${cat.latestWeight}<span style="font-size:13px;color:rgba(255,255,255,.4)"> kg</span></div><div style="font-size:10px;color:rgba(255,255,255,.3)">${fmtDate(cat.latestWeightDate)}</div>` : ''}
+    </div>
+  </div>
+
+  <div class="row g4">
+    <div class="card kpi">
+      <div class="kpi-lbl">Active Meds</div>
+      <div class="kpi-val lime">${(cat.activeMeds || []).length}</div>
+      <div class="kpi-sub">${(cat.activeMeds || []).filter(m => m.category === 'GS Treatment').length} GS · ${(cat.activeMeds || []).filter(m => m.category === 'Supportive Care').length} support</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-lbl">GS Day</div>
+      <div class="kpi-val ${cat.gsActive ? 'purple' : ''}" style="${cat.gsActive ? 'color:var(--purple)' : 'color:rgba(255,255,255,.2)'}">${cat.gsActive?.gsProgress ? cat.gsActive.gsProgress.day : '—'}</div>
+      <div class="kpi-sub">${cat.gsActive ? 'of 84 days' : 'No active GS'}</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-lbl">Last Visit</div>
+      <div class="kpi-val ${daysLastVisit != null && daysLastVisit > 30 ? 'amber' : 'teal'}" style="${daysLastVisit != null && daysLastVisit > 30 ? 'color:var(--amber)' : 'color:var(--teal)'}">${daysLastVisit != null ? daysLastVisit + 'd' : '—'}</div>
+      <div class="kpi-sub">${cat.lastVisitDate ? fmtDate(cat.lastVisitDate) : 'No visits'}</div>
+    </div>
+    <div class="card kpi">
+      <div class="kpi-lbl">Vet Visits</div>
+      <div class="kpi-val">${(cat.vetVisits || []).length}</div>
+      <div class="kpi-sub">total recorded</div>
+    </div>
+  </div>
+
+  ${renderGsProgress(cat)}
+  ${renderMeds(cat)}
+
+  <div class="g2 row">
+    ${renderVetVisits(cat)}
+    ${renderSymptoms(cat)}
+  </div>
+
+  <div class="g2 row">
+    ${renderWeight(cat)}
+    <div class="card panel">
+      <div class="panel-title">📋 Cat Info</div>
+      ${cat.primaryVet ? `<div class="weight-item"><span style="font-size:11px;color:rgba(255,255,255,.35)">Primary Vet</span><span style="font-size:12px;font-weight:600">${esc(cat.primaryVet)}</span></div>` : ''}
+      ${cat.age        ? `<div class="weight-item"><span style="font-size:11px;color:rgba(255,255,255,.35)">Age</span><span style="font-size:12px;font-weight:600">${esc(cat.age)}</span></div>` : ''}
+      ${cat.dob        ? `<div class="weight-item"><span style="font-size:11px;color:rgba(255,255,255,.35)">Date of Birth</span><span style="font-size:12px;font-weight:600">${fmtDate(cat.dob)}</span></div>` : ''}
+      ${cat.sex        ? `<div class="weight-item"><span style="font-size:11px;color:rgba(255,255,255,.35)">Sex</span><span style="font-size:12px;font-weight:600">${esc(cat.sex)}</span></div>` : ''}
+    </div>
+  </div>`
+}
+
+function buildNav() {
+  const nav = document.getElementById('catNav')
+  nav.innerHTML = (_data.cats || []).map((cat, i) => {
+    const isCritical = cat.status === 'Critical'
+    return `<button class="cat-pill ${i === _catIdx ? 'active' : ''} ${isCritical ? 'critical' : ''}" onclick="selectCat(${i})">${esc(cat.name)}</button>`
+  }).join('')
+}
+
+function selectCat(idx) {
+  _catIdx = idx
+  buildNav()
+  renderCat(_data.cats[idx])
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+async function load(force = false) {
+  if (_ctrl) _ctrl.abort()
+  _ctrl = new AbortController()
+
+  const btn = document.getElementById('refreshBtn')
+  btn.classList.add('spinning')
+
+  try {
+    const url = `${API}?token=${TOKEN}${force ? '&force=1' : ''}`
+    const r   = await fetch(url, { signal: _ctrl.signal })
+    if (!r.ok) throw new Error(`HTTP ${r.status}`)
+    const d = await r.json()
+    _data = d
+
+    const ts = document.getElementById('ts')
+    ts.textContent = `Updated ${new Date(d.updatedAt).toLocaleTimeString('en-MY', { hour:'2-digit', minute:'2-digit' })}`
+
+    buildNav()
+    renderCat(_data.cats[Math.min(_catIdx, _data.cats.length - 1)])
+  } catch (e) {
+    if (e.name === 'AbortError') return
+    document.getElementById('content').innerHTML = `<div class="error-box">Failed to load: ${esc(e.message)}<br><br><button onclick="load(true)" style="margin-top:8px;padding:6px 14px;border-radius:8px;background:var(--gm);border:1px solid var(--gb);color:var(--g);font-size:12px;cursor:pointer;font-family:inherit">Retry</button></div>`
+  } finally {
+    btn.classList.remove('spinning')
+  }
+}
+
+function refresh() { load(true) }
+
+load()
+</script>
+</body>
+</html>

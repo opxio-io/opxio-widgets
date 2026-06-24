@@ -172,7 +172,6 @@ body{font-family:'Satoshi',-apple-system,sans-serif;padding:20px 20px 36px;backg
 
 <script>
 const API   = 'https://api.opxio.io/api/clients/nadia-cats/dashboard'
-const TOKEN = 'cats-hq-2024'
 
 let _data    = null
 let _catIdx  = 0
@@ -439,7 +438,7 @@ async function load(force = false) {
   btn.classList.add('spinning')
 
   try {
-    const url = `${API}?token=${TOKEN}${force ? '&force=1' : ''}`
+    const url = `${API}${force ? '?force=1' : ''}`
     const r   = await fetch(url, { signal: _ctrl.signal })
     if (!r.ok) throw new Error(`HTTP ${r.status}`)
     const d = await r.json()

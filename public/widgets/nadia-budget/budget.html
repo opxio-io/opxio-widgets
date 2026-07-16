@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Montréal Budget</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Inter:wght@400;500&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0A0A0C;--ink:#EDEEF2;--dim:#9A9CA3;--faint:#26272C;--panel:#131318;--ice:#8AC8FF;--amber:#F5B65C;--green:#7FD8A4}
+body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--ink);padding:26px 26px 22px;min-height:100vh}
+.head{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px}
+.title{font-family:'Space Grotesk',sans-serif;font-size:14px;font-weight:600;letter-spacing:.12em;text-transform:uppercase}
+.controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.monthnav{display:flex;align-items:center;background:var(--panel);border:1px solid var(--faint);border-radius:20px;overflow:hidden}
+.monthnav button{background:none;border:none;color:var(--dim);font-size:15px;padding:5px 12px;cursor:pointer;transition:color .2s}
+.monthnav button:hover{color:var(--ink)}
+.monthnav .m{font-family:'Space Grotesk',sans-serif;font-size:12px;letter-spacing:.06em;min-width:86px;text-align:center;color:var(--ink)}
+.tg{display:flex;background:var(--panel);border:1px solid var(--faint);border-radius:20px;padding:2px;cursor:pointer;-webkit-user-select:none;user-select:none}
+.tg span{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.06em;padding:5px 13px;border-radius:16px;color:var(--dim);transition:all .2s}
+.tg span.on{background:var(--ice);color:#0A0A0C;font-weight:500}
+
+.status{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.08em;color:var(--dim);margin-bottom:14px;min-height:14px}
+.status.saving{color:var(--amber)}
+.status.saved{color:var(--green)}
+.status.err{color:#F08A7E}
+
+.summary{background:var(--panel);border:1px solid var(--faint);border-radius:12px;padding:18px 20px;margin-bottom:14px}
+.summary .lbl{font-family:'Space Grotesk',sans-serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.summary .v{font-family:'Space Grotesk',sans-serif;font-size:42px;font-weight:600;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.summary .v small{font-size:14px;font-weight:400;color:var(--dim);letter-spacing:0}
+.split{margin-top:16px}
+.splitbar{height:8px;border-radius:4px;background:var(--faint);overflow:hidden;display:flex}
+.splitbar .sal{background:var(--ice);height:100%}
+.splitbar .kai{background:#B39CFF;height:100%}
+.splitbar .sav{background:var(--amber);height:100%}
+.legend{display:flex;justify-content:space-between;gap:12px;margin-top:10px;font-size:11.5px;line-height:1.4;flex-wrap:wrap}
+.legend .col b{font-weight:500}
+.legend .col span{display:block;font-size:10px;color:var(--dim)}
+.inc{background:none;border:none;border-bottom:1px dashed #3A3B42;color:inherit;font:inherit;font-family:'Space Grotesk',sans-serif;width:72px;padding:1px 2px;outline:none;text-align:left}
+.inc:focus{border-bottom-color:var(--ice)}
+
+.card{background:var(--panel);border:1px solid var(--faint);border-radius:12px;padding:15px 20px;margin-bottom:10px}
+.chead{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+.cleft{display:flex;align-items:center;gap:10px}
+.cicon{font-size:15px}
+.cname{font-family:'Space Grotesk',sans-serif;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.csum{font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.cbar{height:4px;background:var(--faint);border-radius:2px;overflow:hidden;margin:10px 0 12px}
+.cbar i{display:block;height:100%;background:var(--ice);border-radius:2px;transition:width .3s ease}
+.card.loan .cbar i{background:var(--amber)}
+.item{display:flex;justify-content:space-between;align-items:baseline;padding:7px 0;gap:10px}
+.item + .item{border-top:1px solid #1B1C21}
+.item .k{font-size:12.5px;flex:1}
+.item .k small{color:var(--dim);font-size:10.5px;margin-left:6px}
+.ev{font-family:'Space Grotesk',sans-serif;font-size:12.5px;font-variant-numeric:tabular-nums;color:var(--ink);background:none;border:none;border-bottom:1px dashed #3A3B42;width:74px;text-align:right;padding:1px 2px;outline:none;transition:border-color .2s}
+.ev:focus{border-bottom:1px solid var(--ice);color:var(--ice)}
+.foot{margin-top:14px;display:flex;justify-content:space-between;font-size:10px;color:var(--dim);letter-spacing:.04em;flex-wrap:wrap;gap:4px}
+.loaderr{padding:40px 0;text-align:center;color:var(--dim);font-size:12px}
+@media(max-width:430px){.summary .v{font-size:32px}}
+</style>
+</head>
+<body>
+<div class="head">
+  <div class="title">Budget · Montréal</div>
+  <div class="controls">
+    <div class="monthnav">
+      <button id="prev">‹</button>
+      <div class="m" id="monthLbl">—</div>
+      <button id="next">›</button>
+    </div>
+    <div class="tg" id="tgLoan"><span data-v="no" class="on">No loan</span><span data-v="yes">With loan</span></div>
+  </div>
+</div>
+<div class="status" id="status">loading…</div>
+
+<div id="app" style="display:none">
+  <div class="summary">
+    <div class="lbl">Total per month</div>
+    <div class="v" id="total"></div>
+    <div class="split">
+      <div class="splitbar"><div class="sal" id="salbar"></div><div class="kai" id="kaibar"></div><div class="sav" id="savbar"></div></div>
+      <div class="legend">
+        <div class="col"><b style="color:var(--ice)">$<input class="inc" id="incNadia" inputmode="decimal"></b><span>Nadia's salary</span></div>
+        <div class="col"><b style="color:#B39CFF">$<input class="inc" id="incKai" inputmode="decimal"></b><span>Kai's salary</span></div>
+        <div class="col" style="text-align:right;margin-left:auto"><b id="savamt"></b><span id="savlbl">from savings</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="cards"></div>
+</div>
+<div class="loaderr" id="loaderr" style="display:none"></div>
+
+<div class="foot"><span>tap any dashed number to edit · auto-saves</span><span>rate 2.95 MYR/CAD</span></div>
+
+<script>
+const API = 'https://api.opxio.io/api/private/budget';
+const TOKEN = 'kai-journey-2026';
+
+const DEFAULT_STATE = {
+  loanOn: false,
+  incomes: { nadia: 1713.85, kai: 0 },
+  cats: [
+    {icon:'🏠', name:'Housing', items:[
+      {k:'Rent', sub:'605 rue Fullum', v:1700},
+      {k:'Liability insurance', sub:'tenant policy', v:31}
+    ]},
+    {icon:'🛒', name:'Food', items:[
+      {k:'Groceries', sub:'2 people', v:300},
+      {k:'Eating out & coffee', sub:'incl. tips', v:100}
+    ]},
+    {icon:'🚇', name:'Transport', items:[
+      {k:'OPUS — Kai', sub:'regular Zone A', v:114},
+      {k:'OPUS — Nadia', sub:'student pass', v:66}
+    ]},
+    {icon:'🩺', name:'Health', items:[
+      {k:'Kai health insurance', sub:'Allianz', v:220}
+    ]},
+    {icon:'📶', name:'Connectivity', items:[
+      {k:'Mobile data', sub:'Fizz · 2 lines', v:80},
+      {k:'Wifi', sub:'', v:56}
+    ]},
+    {icon:'✨', name:'Lifestyle', items:[
+      {k:'Misc buffer', sub:'', v:100},
+      {k:'Entertainment', sub:'subscriptions', v:50},
+      {k:'Toiletries & household', sub:'', v:50}
+    ]},
+    {icon:'🏦', name:'Loan', loan:true, items:[
+      {k:'Affin Bank instalment', sub:'RM636 / month', v:215.59}
+    ]}
+  ]
+};
+
+let state = null;
+let month = defaultMonth();
+let saveTimer = null;
+let loadCtrl = null;
+
+function defaultMonth(){
+  const n = new Date();
+  return n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0');
+}
+function shiftMonth(m, delta){
+  let [y,mo] = m.split('-').map(Number);
+  mo += delta;
+  while(mo < 1){ mo += 12; y--; }
+  while(mo > 12){ mo -= 12; y++; }
+  return y + '-' + String(mo).padStart(2,'0');
+}
+function monthLabel(m){
+  const [y,mo] = m.split('-').map(Number);
+  return new Date(y, mo-1, 1).toLocaleString('en',{month:'short'}).toUpperCase() + ' ' + y;
+}
+function fmt(n,d=0){return '$' + n.toLocaleString('en-CA',{minimumFractionDigits:d,maximumFractionDigits:d})}
+function catSum(c){return c.items.reduce((s,i)=>s+i.v,0)}
+function parseNum(s){const n = parseFloat(String(s).replace(/[^0-9.]/g,'')); return isNaN(n)?0:n}
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+
+function setStatus(txt, cls){
+  const el = document.getElementById('status');
+  el.textContent = txt; el.className = 'status' + (cls?' '+cls:'');
+}
+
+async function load(m){
+  if(loadCtrl) loadCtrl.abort();
+  loadCtrl = new AbortController();
+  setStatus('loading ' + monthLabel(m).toLowerCase() + '…');
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('loaderr').style.display = 'none';
+  try{
+    const r = await fetch(`${API}?month=${m}&token=${TOKEN}`, { signal: loadCtrl.signal });
+    if(!r.ok) throw new Error('API ' + r.status);
+    const j = await r.json();
+    if(j.data){
+      state = j.data;
+      if(!state.incomes) state.incomes = { nadia: 1713.85, kai: 0 };
+      if(j.seededFrom){
+        setStatus('new month · seeded from ' + monthLabel(j.seededFrom).toLowerCase() + ' · edit to save', '');
+      } else {
+        setStatus('saved ' + (j.updatedAt ? new Date(j.updatedAt).toLocaleDateString('en-CA') : ''), 'saved');
+      }
+    } else {
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      setStatus('new month · defaults · edit to save');
+    }
+    document.getElementById('app').style.display = '';
+    syncAll();
+  }catch(e){
+    if(e.name === 'AbortError') return;
+    const le = document.getElementById('loaderr');
+    le.style.display = ''; le.textContent = 'Could not load — ' + e.message + '. Pull to refresh or try again.';
+    setStatus('offline', 'err');
+  }
+}
+
+function queueSave(){
+  setStatus('saving…', 'saving');
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{
+      const r = await fetch(API, {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-widget-token':TOKEN},
+        body: JSON.stringify({ month, data: state })
+      });
+      if(!r.ok) throw new Error('API ' + r.status);
+      setStatus('saved · ' + monthLabel(month).toLowerCase(), 'saved');
+    }catch(e){
+      setStatus('save failed — ' + e.message, 'err');
+    }
+  }, 700);
+}
+
+function renderCards(){
+  const visible = state.cats.filter(c=>!c.loan || state.loanOn);
+  const maxCat = Math.max(...visible.map(catSum), 1);
+  document.getElementById('cards').innerHTML = visible.map(c=>{
+    const ci = state.cats.indexOf(c);
+    const sum = catSum(c);
+    return `<div class="card${c.loan?' loan':''}">
+      <div class="chead">
+        <div class="cleft"><span class="cicon">${c.icon}</span><span class="cname">${esc(c.name)}</span></div>
+        <div class="csum">${fmt(sum, sum%1?2:0)}</div>
+      </div>
+      <div class="cbar"><i style="width:${(sum/maxCat*100).toFixed(1)}%"></i></div>
+      ${c.items.map((i,ii)=>`<div class="item"><div class="k">${esc(i.k)}${i.sub?`<small>${esc(i.sub)}</small>`:''}</div><input class="ev" data-c="${ci}" data-i="${ii}" inputmode="decimal" value="${i.v}"></div>`).join('')}
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.ev').forEach(inp=>{
+    inp.addEventListener('input', ()=>{
+      state.cats[inp.dataset.c].items[inp.dataset.i].v = parseNum(inp.value);
+      renderTotals(); queueSave();
+    });
+    inp.addEventListener('keydown', e=>{ if(e.key==='Enter') inp.blur(); });
+  });
+}
+function renderTotals(){
+  const visible = state.cats.filter(c=>!c.loan || state.loanOn);
+  const total = visible.reduce((s,c)=>s+catSum(c),0);
+  document.getElementById('total').innerHTML = fmt(total,2) + '<small> CAD</small>';
+  const nInc = state.incomes.nadia, kInc = state.incomes.kai;
+  const covered = Math.min(total, nInc + kInc);
+  const nPct = total>0 ? Math.min(100, nInc/total*100) : 100;
+  const kPct = total>0 ? Math.min(100-nPct, kInc/total*100) : 0;
+  document.getElementById('salbar').style.width = nPct + '%';
+  document.getElementById('kaibar').style.width = kPct + '%';
+  document.getElementById('savbar').style.width = Math.max(0, 100-nPct-kPct) + '%';
+  const deficit = total - (nInc + kInc);
+  const savamt = document.getElementById('savamt'), savlbl = document.getElementById('savlbl');
+  if(deficit > 0){
+    savamt.textContent = fmt(deficit); savamt.style.color = 'var(--amber)';
+    savlbl.textContent = 'from savings this month';
+  } else {
+    savamt.textContent = fmt(-deficit) + ' surplus'; savamt.style.color = 'var(--green)';
+    savlbl.textContent = 'left over this month';
+  }
+  const visCards = document.querySelectorAll('#cards .card');
+  visible.forEach((c,idx)=>{
+    const el = visCards[idx]?.querySelector('.csum');
+    if(el){ const s = catSum(c); el.textContent = fmt(s, s%1?2:0); }
+  });
+}
+function syncLoanToggle(){
+  document.querySelectorAll('#tgLoan span').forEach(x=>x.classList.toggle('on', (x.dataset.v==='yes')===state.loanOn));
+}
+function syncIncomes(){
+  document.getElementById('incNadia').value = state.incomes.nadia;
+  document.getElementById('incKai').value = state.incomes.kai;
+}
+function syncAll(){
+  document.getElementById('monthLbl').textContent = monthLabel(month);
+  syncLoanToggle(); syncIncomes(); renderCards(); renderTotals();
+}
+
+document.getElementById('prev').addEventListener('click', ()=>{ month = shiftMonth(month,-1); load(month); });
+document.getElementById('next').addEventListener('click', ()=>{ month = shiftMonth(month, 1); load(month); });
+document.getElementById('tgLoan').addEventListener('click', e=>{
+  const s = e.target.closest('span'); if(!s || !state) return;
+  state.loanOn = s.dataset.v==='yes';
+  syncLoanToggle(); renderCards(); renderTotals(); queueSave();
+});
+['incNadia','incKai'].forEach(id=>{
+  const el = document.getElementById(id);
+  el.addEventListener('input', ()=>{
+    state.incomes[id==='incNadia'?'nadia':'kai'] = parseNum(el.value);
+    renderTotals(); queueSave();
+  });
+  el.addEventListener('keydown', e=>{ if(e.key==='Enter') el.blur(); });
+});
+
+document.getElementById('monthLbl').textContent = monthLabel(month);
+load(month);
+</script>
+</body>
+</html>
